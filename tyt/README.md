@@ -13,3 +13,21 @@
 - `node render_kareler.js <konu>`: `kareler/<konu>/` içine sahne karelerini üretir
 - `sh pano.sh <konu>`: Tüm kareleri tek bir panoda (`kareler/<konu>/pano.png`) toplar
 - `node render_giris.js <konu>`: Giriş animasyonunun sessiz önizlemesini (`kareler/<konu>/giris_onizleme.mp4`) üretir. Sayfada `?s=giris&t=<sn>` o anı, `?s=giris&oynat=1` canlı oynatmayı gösterir
+
+## Giriş formatı (bütün TYT videolarında aynı)
+
+Örnek: `konular/isi_sicaklik.html` → `#giris`
+
+- **Süre:** 6 sn (her zaman 5–7 sn arası).
+- **Arka plan:** Diğer sahnelerle aynı koyu arka plan; tam ekran renkli sahne yok.
+- **Üst kısım, yukarıdan aşağı:**
+  1. Kırmızı "TYT FİZİK" etiketi.
+  2. Büyük konu başlığı, BÜYÜK HARFLE (`.hk-baslik`): sarı → turuncu → kırmızı renk geçişi, hafif turuncu parlama, altında aynı renkte çizgi.
+  3. Merak uyandıran soru (60 px), anahtar kelime turuncu (`<em>`); kelime kelime belirir.
+- **Animasyon (alt kısım):**
+  - Herkesin günlük hayattan tanıdığı bir olayı adım adım canlandırır.
+  - Yerler yazıyla değil, eşyalarla tanıtılır. Örneğin banyo duşakabin ve lavaboyla, oturma odası televizyon ve koltukla gösterilir.
+  - Sayı ve sıcaklık gibi değerler küçük etiket ya da termometreyle gösterilir.
+- **Altta:** Cevabın ipucunu veren tek satır.
+- **Üretim sırası:** Önce fotoğraf (son kare) gönderilir; onaydan sonra sessiz önizleme videosu çıkarılır.
+- **Seslendirme:** Kullanıcı onay vermeden asla yapılmaz.

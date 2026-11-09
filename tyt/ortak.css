@@ -83,3 +83,13 @@ svg text{font-family:Inter}
 .sik div{font:600 36px Inter;padding:16px 24px;border:2px solid #4b5563;border-radius:16px;background:#1f2430}
 .sik div.dogru{border-color:var(--ok);background:rgba(74,222,128,.12);color:#fff}
 .sik div b{color:var(--orange);margin-right:14px}
+
+/* --- giriş başlığı (tüm konular): büyük, sıcak renk geçişli konu adı + aynı renkte alt çizgi ---
+   Kullanım: <div class="hk-top" style="top:70px"><span>TYT FİZİK</span></div>
+             <div class="hk-baslik">KONU ADI</div>
+             <div class="hk-soru" style="top:320px;font-size:60px;color:#e5e7eb">… <em>ANAHTAR</em> …</div> */
+.hk-baslik{position:absolute;left:0;right:0;top:165px;text-align:center;font:900 96px/1.05 Inter;letter-spacing:1px;
+  background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.hk-baslik::after{content:"";display:block;width:240px;height:10px;border-radius:5px;margin:16px auto 0;
+  background:linear-gradient(90deg,#fde047,#fb923c,#ef4444)}
