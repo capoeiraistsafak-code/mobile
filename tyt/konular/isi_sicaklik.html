@@ -511,7 +511,7 @@ OZEL.k1=function(t,z){
 };
 OZEL.kapak=function(t){ /* Takip Et kartı 4.6 sn'de gelir, 6.6 sn'de gider */
   const g=Math.min(1,Math.max(0,(t-4.6)/.35)), c=Math.min(1,Math.max(0,(t-6.6)/.35)), e=g*(1-c);
-  const k=document.getElementById('kpTakip'); k.style.opacity=e; k.style.transform=`translateX(-50%) translateY(${(1-e)*60}px) scale(${.85+.15*e})`;
+  const k=document.getElementById('kpTakip'); k.querySelector('b').textContent=t>=5.6?'Takip ediliyor ✓':'Takip Et'; k.querySelector('b').style.background=t>=5.6?'#16a34a':'#2563eb'; k.style.opacity=e; k.style.transform=`translateX(-50%) translateY(${(1-e)*60}px) scale(${.85+.15*e})`;
 };
 </script>
 </body>
