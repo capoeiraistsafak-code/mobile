@@ -1,5 +1,9 @@
 # TYT Fizik videoları
 
+> **Format:** "Konu Anlatımı" oturumunun "1 Dakikada Fizik" motoru (`format-referans/`). TYT videoları `video/` klasöründeki kopyasıyla yapılır:
+> `video/konu.html?k=<konu>` · içerik `video/<konu>.js` (meta, sayfalar `P`, giriş `hook`) · kareler/video `node video/rec.js 30 cikti.mp4` · efekt sesleri `python3 video/ses_konu.py`.
+> TYT farkları: üst yazılar "5 DAKİKADA TYT · TYT FİZİK", sayfada ve bantta "ADIM" yerine bölümün sorusu, girişte büyük renkli konu başlığı.
+
 5 dakikalık, 1080×1920 dikey, koyu temalı konu anlatımı videoları.
 
 **Video akışı:** Giriş (6 sn animasyon: büyük konu başlığı + soru + hikâye; her zaman 5–7 sn) → Kapak ("5 DAKİKADA TYT") → 7 adım (her adımın altında "TYT TUZAĞI" kutusu, son adım TYT tarzı soru) → Kapanış (KONU BİTTİ + Takip Et)

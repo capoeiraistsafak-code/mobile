@@ -1,0 +1,168 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;font-family:Inter,sans-serif}
+.f{width:1080px;height:1920px;position:relative;overflow:hidden}
+.desk{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,#3a4150,#252a35)}
+.cam{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.paper{width:1000px;height:1414px;background:#fff;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:"Noto Serif",serif;color:#16181D}
+.ph{position:absolute;left:30px;right:30px;top:24px;height:180px;border-bottom:2.5px solid #16181D;text-align:center}
+.ph .t1{font:700 24px "Noto Serif";padding-top:6px}
+.ph .t2{font:700 19px "Noto Serif";margin-top:4px}
+.ph .t3{font:700 15px Inter;color:#D62828;margin-top:6px;letter-spacing:.5px}
+.ph .flds{position:absolute;left:0;right:150px;bottom:12px;display:flex;gap:14px;font:600 14px Inter}
+.ph .flds span{border:1.5px solid #16181D;padding:5px 8px;flex:1;text-align:left}
+.ph .flds span.p{flex:.5;color:#D62828;border-color:#D62828}
+.plogo{position:absolute;right:0;top:20px;width:128px;height:128px}
+.plogo .img{position:absolute;inset:0;border-radius:50%;border:6px solid #F5A300;background:url(logo_taslak.png) center/cover}
+.ring{position:absolute;left:50%;top:50%;width:128px;height:128px;margin:-64px 0 0 -64px;border-radius:50%;border:5px solid #F5A300;opacity:0}
+.vline{position:absolute;left:500px;top:220px;bottom:30px;border-left:1.5px solid #9aa3b2}
+.q{position:absolute;width:450px;height:380px;font-size:15.5px;line-height:1.42}
+.q b.n{font:700 17px "Noto Serif";display:block;margin-bottom:3px}
+.q b.n i{font:600 12px Inter;font-style:normal;color:#fff;background:#D62828;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:2px}
+.q svg{display:block}
+.h{padding-right:14px;font-family:Caveat;font-weight:700;color:#1D3FB8;font-size:23px;line-height:1.15;position:absolute;white-space:nowrap;clip-path:inset(0 100% 0 0)}
+.bx{border:2px solid #D62828;color:#D62828;padding:0 4px;border-radius:2px;display:inline-block;line-height:1.05}
+.ck{color:#16A34A;font-size:30px;display:inline-block;transform:scale(0)}
+.puan{position:absolute;right:30px;bottom:60px;width:440px;text-align:center;font:700 20px "Noto Serif"}
+.puan .s{font:700 64px Caveat;color:#D62828;border:3px solid #D62828;border-radius:50%;width:130px;height:130px;margin:10px auto 0;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:0}
+.band{position:absolute;left:40px;right:40px;top:60px;background:#2a303c;border:3px solid #F5A300;border-radius:22px;padding:20px 26px;text-align:center;color:#fff;opacity:0}
+.band b{display:block;font:800 52px Inter;color:#F5C400}
+.band span{font:600 34px Inter}
+.tag{display:inline-block;margin-top:12px;background:#D62828;color:#fff;font:800 26px Inter;padding:6px 16px;border-radius:8px}
+.hl{position:absolute;background:rgba(255,224,0,.62);mix-blend-mode:multiply;border-radius:3px 7px 5px 8px;transform-origin:0 50%;transform:scaleX(0)}
+.pen{position:absolute;left:0;top:0;font-family:"Noto Color Emoji";font-size:52px;line-height:1;transform-origin:61px 54px;opacity:0;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.22));z-index:6;pointer-events:none}
+.flogo{position:absolute;left:869px;top:275px;width:144px;height:144px;opacity:0}
+.fimg{position:absolute;inset:0;border-radius:50%;border:6px solid #F5A300;background:url(logo_taslak.png) center/cover;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.flogo .ring{width:144px;height:144px;margin:-72px 0 0 -72px;border-width:6px}
+.follow{position:absolute;z-index:9;left:60px;right:60px;bottom:205px;height:190px;background:#fff;border-radius:34px;box-shadow:0 18px 50px rgba(0,0,0,.45);display:flex;align-items:center;gap:26px;padding:0 30px;opacity:0;border:4px solid #F5A300}
+.fl-logo{width:130px;height:130px;flex:none;border-radius:50%;border:6px solid #F5A300;background:url(logo_taslak.png) center/cover}
+.fl-txt{flex:1;min-width:0}.fl-txt b{display:block;font:800 46px Inter;color:#2a303c}.fl-txt span{font:600 28px Inter;color:#5b6270}
+.fl-btn{flex:none;background:#0095F6;color:#fff;font:800 38px Inter;padding:22px 34px;border-radius:18px;white-space:nowrap}
+.fl-btn.done{background:#E4E7EC;color:#2a303c}
+.tap{position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.55);border:5px solid rgba(42,48,60,.55);right:100px;top:50px;opacity:0;pointer-events:none}
+.cta{position:absolute;left:0;right:0;bottom:55px;text-align:center;opacity:0}
+.cta b{display:block;font:800 52px Inter;color:#F5C400}
+.cta span{font:600 36px Inter;color:#cbd5e1}
+.fade{position:absolute;inset:0;background:#1c2029;opacity:0}
+
+.q{height:580px;font-size:15px;line-height:1.42}
+.q b.n{font-size:16px}
+.vline{bottom:20px}
+.tb{border-collapse:collapse;width:100%;font:14px/1.25 "Noto Serif";margin-top:5px}
+.tb th,.tb td{border:1.3px solid #16181D;padding:2px 7px;text-align:left;height:27px;vertical-align:middle}
+.tb th{background:#eef1f5;font:700 13px Inter}
+.h.in{position:relative;display:inline-block;font-size:21px;line-height:1;top:1px}
+.sc{position:absolute;left:0;width:450px}
+.em{position:absolute;font-family:"Noto Color Emoji";line-height:1;transform-origin:50% 50%}
+.lab{position:absolute;font:700 12px Inter;color:#5b6270}
+.dy{list-style:none;margin-top:4px}
+.dy li{margin:3px 0;position:relative;padding-left:50px}
+.dy .par{position:absolute;left:0;top:-2px;font:600 15px Inter;color:#16181D;width:46px;letter-spacing:3px}
+.dy .par .h{left:11px;top:-1px}
+.ul{position:absolute;height:3px;background:#F5A300;transform-origin:0 50%;transform:scaleX(0);border-radius:2px}
+.band .tag{font-size:24px}
+.ax{font:600 12px Inter;fill:#5b6270}
+/* kapak */
+#cover{position:absolute;inset:0;z-index:7;opacity:0;background:radial-gradient(circle at 50% 38%,#3a4150,#1f232c);display:flex;flex-direction:column;align-items:center;color:#fff;text-align:center}
+.cv-1dk{margin-top:110px;display:flex;align-items:center;gap:16px;font:900 58px Inter;color:#fff;background:#D62828;padding:14px 34px 14px 26px;border-radius:999px;box-shadow:0 10px 30px rgba(214,40,40,.45);letter-spacing:.5px}
+.cv-1dk span{font-family:"Noto Color Emoji";font-size:52px}
+.cv-top{margin-top:34px;font:900 92px Inter;color:#F5C400;letter-spacing:1px}
+.cv-logo{margin-top:44px;width:400px;height:400px;border-radius:50%;border:14px solid #F5A300;padding:0;box-shadow:0 0 0 10px rgba(245,163,0,.18),0 20px 60px rgba(0,0,0,.5);overflow:hidden}
+.cv-img{width:100%;height:100%;background:url(logo_taslak.png) center/cover}
+.cv-hook{margin-top:40px;padding:0 50px;font:900 76px/1.08 Inter;color:#fff;text-shadow:0 6px 24px rgba(0,0,0,.45)}
+.cv-hook em{font-style:normal;color:#1f232c;background:#F5C400;padding:0 12px;border-radius:12px}
+.cv-logo.sm{width:280px;height:280px;margin-top:40px}
+.cv-k{margin-top:56px;font:900 104px Inter;line-height:1;background:#F5A300;color:#1f232c;padding:18px 34px;border-radius:24px;transform:rotate(-2deg)}
+.cv-t{margin-top:56px;font:800 68px Inter;line-height:1.1;padding:0 60px}
+.cv-s{margin-top:26px;font:600 40px Inter;color:#cbd5e1;padding:0 70px;line-height:1.25}
+.cv-code{margin-top:34px;font:700 34px Inter;color:#F5C400;border:3px solid #F5C400;border-radius:14px;padding:8px 22px}
+.cv-bot{position:absolute;bottom:90px;font:700 40px Inter;color:#fff;opacity:.9}
+
+/* giriş animasyonu (soru + hikâye): koyu arka plan */
+#hook{position:absolute;inset:0;z-index:7;opacity:0;background:radial-gradient(circle at 50% 45%,#3a4150,#1f232c);overflow:hidden}
+.hk-top{position:absolute;left:0;right:0;top:110px;text-align:center;font:900 40px Inter;color:#fff}
+.hk-top span{font-family:"Noto Color Emoji";margin-right:10px}
+.hk-q{position:absolute;left:50px;right:50px;top:200px;text-align:center;font:900 78px/1.18 Inter;color:#fff}
+.hkw{display:inline-block;opacity:0}
+.hkw.vrg{color:#1f232c;background:#F5C400;padding:0 12px;border-radius:12px}
+.hk-sc{position:absolute;left:0;top:760px;width:1080px;height:1000px}
+.hk-chip{position:absolute;font:900 44px Inter;color:#fff;padding:10px 26px;border-radius:16px;opacity:0;white-space:nowrap}
+.hk-big{position:absolute;font:900 220px Inter;color:#F5C400;opacity:0;text-shadow:0 10px 40px rgba(0,0,0,.5)}
+/* tek büyük sayfa düzeni */
+/* koyu tema: konu sayfaları da koyu (11, 12 ve sonrası) */
+.koyu .pg{background:#262b36;box-shadow:0 10px 30px rgba(0,0,0,.35);border:1.5px solid #3a4150;color:#e5e7eb}
+.koyu .pg .hd{border-bottom-color:#64748b}
+.koyu .pg .hd .t1,.koyu .pg .hd .uname,.koyu .q b.n{color:#fff}
+.koyu .pg .hd .t2{color:#fb7185}
+.koyu .pg .slot{background:#2a303c}
+.koyu .qt b{color:#fb7185}
+.koyu .hl{background:rgba(245,196,0,.38);mix-blend-mode:normal}
+.koyu .h{color:#8ec5ff}
+.koyu .ck{color:#4ade80}
+.koyu .grid line{stroke:rgba(255,255,255,.07)}
+.koyu .pl{stroke:#cbd5e1}
+.koyu .ax{fill:#94a3b8}
+.koyu .pg [stroke="#16181D"]{stroke:#e2e8f0}
+.koyu .pg [fill="#16181D"]{fill:#e2e8f0}
+.koyu .pg [stroke="#1D3FB8"],.koyu .pg [style*="stroke:#1D3FB8"]{stroke:#60a5fa!important}
+.koyu .pg [fill="#1D3FB8"]{fill:#60a5fa}
+.koyu .pg [stroke="#D62828"],.koyu .pg [style*="stroke:#D62828"]{stroke:#f87171!important}
+.koyu .pg [fill="#D62828"]{fill:#f87171}
+.koyu .pg [stroke="#475569"]{stroke:#cbd5e1}
+.koyu .pg [stroke="#94a3b8"]{stroke:#64748b}
+.koyu .pg [fill="#b45309"]{fill:#fbbf24}
+.koyu .pg [fill="#1d4ed8"]{fill:#93c5fd}
+
+.pg{position:absolute;top:0;width:465px;height:758px;background:#fff;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:"Noto Serif",serif;color:#16181D;overflow:hidden}
+.pg .hd{position:absolute;left:12px;right:12px;top:8px;height:88px;border-bottom:1.5px solid #16181D}
+.pg .hd .t1{font:800 16px Inter;color:#2a303c;margin-top:0;letter-spacing:.2px}
+.pg .hd .t2{font:700 8.5px Inter;color:#D62828;margin-top:3px;letter-spacing:.3px}
+.pg .hd .un{position:absolute;left:0;right:90px;bottom:7px;display:flex;align-items:baseline;gap:10px}
+.pg .hd .uname{font:800 20px "Noto Serif";color:#16181D}
+.pg .hd .ucnt{font:800 13px Inter;color:#fff;background:#D62828;border-radius:5px;padding:1px 7px}
+.pg .hd .flds{position:absolute;left:0;right:92px;bottom:8px;display:flex;gap:7px;font:600 9px Inter}
+.pg .hd .flds span{border:1px solid #16181D;padding:3px 5px;flex:1}
+.pg .hd .flds span.p{flex:.55;color:#D62828;border-color:#D62828}
+.pg .slot{position:absolute;left:383px;top:9px;width:72px;height:72px;border-radius:50%;border:2.5px solid #F5A300;background:#fdf3dc}
+.pg .q{position:absolute;left:12px;top:106px;width:441px;height:640px}
+.grid line{stroke:#e3e7ee;stroke-width:1}
+.pl{fill:none;stroke:#4b4f57;stroke-width:1.8;stroke-linecap:round}
+.vlab{font:800 15px Inter}
+
+.qt b{color:#D62828}
+
+/* ---- TYT eklemeleri ---- */
+.band.soru b{font-size:44px;line-height:1.15}
+.hk-top.tyt{top:70px}
+.hk-pill{display:inline-block;background:#D62828;color:#fff;font:900 40px Inter;padding:10px 26px;border-radius:14px}
+.hk-baslik{position:absolute;left:0;right:0;top:165px;text-align:center;font:900 96px/1.05 Inter;letter-spacing:1px;
+  background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.hk-baslik::after{content:"";display:block;width:240px;height:10px;border-radius:5px;margin:16px auto 0;background:linear-gradient(90deg,#fde047,#fb923c,#ef4444)}
+.tyt-hook .hk-q{top:320px;font-size:60px;color:#e5e7eb}
+.tyt-hook .hk-sc{top:500px;height:1220px}
+</style></head><body>
+<div class="f">
+  <div class="desk"></div>
+  <div class="cam" id="cam"><div id="pages"></div>
+  </div>
+  <div class="pen" id="pen">✏️</div>
+    <div class="band" id="bend"></div>
+  <div id="bands"></div>
+  <div class="flogo" id="flogo"><div class="ring" id="fr1"></div><div class="ring" id="fr2"></div><div class="fimg" id="fimg"></div></div>
+  <div class="follow" id="follow"><div class="fl-logo"></div><div class="fl-txt"><b>Şafak Hoca</b><span>Fizik · konu anlatımı</span></div><div class="fl-btn" id="flbtn">Takip Et</div><div class="tap" id="tap"></div></div>
+  <div class="cta" id="cta"><b>3 adım · animasyonlu anlatım</b><span>Kaydet, yazılıdan önce tekrar et!</span></div>
+  <div id="hook"></div>
+  <div id="cover"></div>
+  <div class="fade" id="fade"></div>
+</div>
+<script>
+const Q=new URLSearchParams(location.search), K=Q.get('k')||'isi_sicaklik', SY=Q.get('s');
+const load=src=>new Promise(r=>{const e=document.createElement('script');e.src=src;e.onload=r;e.onerror=r;document.body.appendChild(e);});
+Promise.all(['700 23px Caveat','400 15px "Noto Serif"','700 17px "Noto Serif"','800 52px Inter','600 34px Inter','40px "Noto Color Emoji"'].map(f=>document.fonts.load(f,'ğşıİçö₁²√🧭'))).then(async()=>{
+  await load('konu_yardim.js'); await load(K+'.js'); if(SY) await load(SY+'.js'); await load('konu_motor.js');});
+</script>
+</body></html>
