@@ -7,7 +7,7 @@
 
 | # | Sahne | Zaman | Süre |
 |---|---|---|---|
-| 1 | Giriş (animasyon: pencere + petek + konveksiyon): "Küçücük bir petek koca odayı nasıl ısıtıyor?" | 0:00–0:15 | 15 sn |
+| 1 | Giriş (animasyon: kombi → sıcak su → petekler → soğuk su geri döner): "Kalorifer petekleri evi nasıl ısıtıyor?" | 0:00–0:15 | 15 sn |
 | 2 | Kapak + Takip Et | 0:15–0:22 | 7 sn |
 | 3 | Adım 1 · Isı ≠ sıcaklık | 0:22–0:55 | 33 sn |
 | 4 | Adım 2 · Sıcaklık ölçekleri | 0:55–1:30 | 35 sn |
@@ -23,8 +23,8 @@
 ## Seslendirme metni
 
 ### 1 · Giriş (0:00–0:15)
-*Ekran (koyu arka plan, format aynı): soru kelime kelime belirir → karlı pencere (−5 °C) → petek gelir ve yavaşça ısınır (turuncuya döner) → üstünden sıcak hava yükselir → odada konveksiyon okları döner (turuncu yükselir, mavi iner) → "oda" sıcaklığı 8 °C'den 22 °C'ye çıkar → "Hem de neden hep pencerenin altında?"*
-Dışarıda eksi beş derece, kar yağıyor. İçeride yirmi iki derece, kedi bile mışıl mışıl uyuyor. Peki duvardaki o küçücük petek koca odayı nasıl ısıtıyor? Hem de neden hep pencerenin altında duruyor? Cevap 5 dakikada.
+*Ekran (koyu arka plan, format aynı): soru kelime kelime belirir → kombi gelir, alev yanar, göstergesi 70 °C'ye çıkar → borular ve iki petek belirir → su akmaya başlar: kombiden çıkan sıcak su (kırmızı damlalar) peteklere gider, petekte zikzak çizerek ilerlerken soğur (maviye döner), dönüş borusundan kombiye geri döner → "sıcak su 70 °C" ve "dönüş 50 °C" etiketleri → petekler ısınıp turuncuya döner, üstlerinden sıcak hava yükselir → "oda" 8 °C'den 22 °C'ye çıkar → "Sırrı, peteklerin içinde dolaşan SU."*
+Kışın evdeki petekler sıcacık olur, ama içlerinde ateş yanmıyor. Ateş kombide yanıyor. Peki o ısı kombiden kalkıp odana nasıl geliyor? Kalorifer petekleri evi nasıl ısıtıyor? Sırrı, peteklerin içinde dolaşan suda. Kombide yetmiş dereceye ısınan su borulardan peteğe gidiyor, ısısını odaya bırakıyor ve soğuyarak geri dönüyor. Bu döngünün fiziğini 5 dakikada çözüyoruz.
 
 ### 2 · Kapak (0:15–0:22)
 Ben Şafak Hoca. 5 dakikada TYT'lik ısı ve sıcaklık. Takip etmeyi unutma, başlıyoruz.
@@ -50,7 +50,7 @@ Sıcak ve soğuk iki maddeyi karıştırınca sıcak olan ısı verir, soğuk ol
 **TYT tuzağı:** Denge sıcaklığı her zaman iki sıcaklığın arasındadır. Tam ortalama ise yalnızca ısı sığaları eşitse çıkar.
 
 ### 8 · Adım 6 · Isı aktarım yolları (3:35–4:10)
-Ve girişteki sorunun cevabı. Petek odayı üç yolla ısıtır. Bir: iletim. Sıcak su peteğin metaline dokunarak ısı verir; ısı tanecikten taneciğe geçer. İki: konveksiyon. Peteğin ısıttığı hava hafifler ve yükselir, soğuk hava aşağı iner ve peteğe gelir. Böylece odada dönen bir hava akımı oluşur. Petek pencerenin altındadır, çünkü camdan gelen soğuk havayı hemen ısıtıp yükseltir ve bu döngüyü başlatır. Üç: ışıma. Peteğin yanında durunca yüzünde hissettiğin sıcaklık ışımadır; Güneş de Dünya'yı böyle ısıtır.
+Ve girişteki sorunun cevabı. Petek odayı üç yolla ısıtır. Bir: iletim. Sıcak su peteğin metaline dokunarak ısı verir; ısı tanecikten taneciğe geçer. İki: konveksiyon. Peteğin ısıttığı hava hafifler ve yükselir, soğuk hava aşağı iner ve peteğe gelir. Böylece odada dönen bir hava akımı oluşur. Kombideki ısıyı peteğe taşıyan su da aynı şeyi yapar: ısıyı kendisiyle birlikte taşır. Akışkanın ısıyı taşıması, yani konveksiyon. Petek pencerenin altındadır, çünkü camdan gelen soğuk havayı hemen ısıtıp yükseltir. Üç: ışıma. Peteğin yanında durunca yüzünde hissettiğin sıcaklık ışımadır; Güneş de Dünya'yı böyle ısıtır.
 **TYT tuzağı:** Konveksiyon yalnızca akışkanlarda, yani sıvı ve gazlarda olur. Işıma için madde gerekmez; boşlukta da olur.
 
 ### 9 · Adım 7 · TYT tarzı soru (4:10–4:50)
