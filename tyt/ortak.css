@@ -146,3 +146,4 @@ svg text{font-family:Inter}
 .zincir{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;font:800 32px Inter;color:#fff;margin:10px 0 16px}
 .zincir span{background:#1f2430;border:3px solid var(--amber);border-radius:14px;padding:10px 16px}
 .zincir em{font-style:normal;color:var(--sari);font-size:38px}
+.f{background-repeat:no-repeat;background-size:100% 100%}

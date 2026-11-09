@@ -1,60 +1,84 @@
-# TYT Fizik · Isı ve Sıcaklık — 1. Video (taslak)
+# Isı ve Sıcaklık · Seslendirme metni (TASLAK)
 
-- **Format:** 1080×1920 dikey, koyu tema, yaklaşık 5 dakika
-- **Akış:** Giriş (soru + hikâye) → Kapak → 7 adım (anlatım + TYT tuzağı) → Kapanış
-- **Kareler:** `../kareler/isi_sicaklik/` (her sahnenin son hâli). Sayfa: `isi_sicaklik.html?s=<sahne>`
-- **Durum:** Taslak; video ve ses üretilmedi.
+> Onay verilmeden ses üretilmez. Süreler kelime sayısından tahmindir (≈0,4 sn/kelime); ses üretilince gerçek sürelerle değişir.
 
-| # | Sahne | Zaman | Süre |
-|---|---|---|---|
-| 1 | Giriş (animasyon: kombi → sıcak su → petekler → soğuk su geri döner): "Kalorifer petekleri evi nasıl ısıtıyor?" | 0:00–0:15 | 15 sn |
-| 2 | Kapak + Takip Et | 0:15–0:22 | 7 sn |
-| 3 | Adım 1 · Isı ≠ sıcaklık | 0:22–0:55 | 33 sn |
-| 4 | Adım 2 · Sıcaklık ölçekleri | 0:55–1:30 | 35 sn |
-| 5 | Adım 3 · Öz ısı ve ısı sığası | 1:30–2:15 | 45 sn |
-| 6 | Adım 4 · Hal değişimi | 2:15–2:55 | 40 sn |
-| 7 | Adım 5 · Isıl denge | 2:55–3:35 | 40 sn |
-| 8 | Adım 6 · Isı aktarım yolları | 3:35–4:10 | 35 sn |
-| 9 | Adım 7 · TYT tarzı soru | 4:10–4:50 | 40 sn |
-| 10 | Kapanış: KONU BİTTİ + Takip Et | 4:50–5:00 | 10 sn |
+## Giriş (~5 sn)
+
+Kalorifer petekleri evi nasıl ısıtıyor? Sırrı, içlerinde dolaşan suda!
+
+## Kapak (~7 sn)
+
+Ben Şafak Hoca. Beş dakikada TYT'lik ısı ve sıcaklık. Takip etmeyi unutma, başlıyoruz!
+
+## Isı nedir? Sıcaklık nedir? Farkı ne? (~39 sn)
+
+Önce en temel soru: sıcaklık nedir? Sıcaklık, maddeyi oluşturan taneciklerin ortalama hareket enerjisinin göstergesidir.
+Tanecikler ne kadar hızlı titreşirse, sıcaklık o kadar yüksek olur.
+Peki ısı nedir? Isı, sıcaklık farkı yüzünden sıcaktan soğuğa aktarılan enerjidir.
+Farkı ne? Sıcaklık ortalamadır, madde miktarına bağlı değildir.
+İç enerji ise taneciklerin toplam enerjisidir, madde arttıkça artar.
+Isı da aktarılan enerjidir; cisim ısı içermez.
+Petek yetmiş derece, oda yirmi iki derece; ısı petekten odaya akar.
+Dikkat! Aynı sıcaklıktaki bir kova suyun iç enerjisi bir bardaktan fazladır, ama ısısı fazladır demek yanlış.
+
+## Isı neyle, sıcaklık neyle ölçülür? (~24 sn)
+
+Peki ısı neyle, sıcaklık neyle ölçülür? Sıcaklığı termometreyle doğrudan ölçeriz; birimi santigrat, fahrenhayt ya da kelvindir.
+Isı ise doğrudan ölçülemez. Kalorimetre kabına konan maddenin sıcaklık değişiminden hesaplanır.
+Birimi joule ya da kaloridir; bir kalori yaklaşık dört virgül on sekiz joule.
+Dikkat! Termometre ısıyı değil, sıcaklığı ölçer. Termometreyle ısı ölçülür diyen şık yanlış.
+
+## Termometreler arasındaki fark ne? (~28 sn)
+
+Termometreler arasındaki fark ne? Termometre, ısınınca genleşen bir sıvıyla çalışır.
+Buz erirken santigrat sıfır, fahrenhayt otuz iki, kelvin iki yüz yetmiş üç gösterir.
+Su kaynarken yüz, iki yüz on iki ve üç yüz yetmiş üç.
+Yani ölçekler aynı noktalara farklı sayılar verir. Dönüşüm için tek formül yeter.
+Dikkat: sıcaklık on derece artarsa, kelvinde de on artar. Değişimde iki yüz yetmiş üç eklenmez!
+
+## Aynı ısıyı alan maddeler neden farklı ısınır? (~32 sn)
+
+Aynı ısıyı alan maddeler neden farklı ısınır? Cevap öz ısıda. Q eşittir m çarpı c çarpı delta T.
+Öz ısı, bir gram maddenin sıcaklığını bir derece artırmak için gereken ısıdır ve maddeyi tanıtır.
+Güneşin altında kum hızla ısınır, su ise yavaş ısınır; çünkü suyun öz ısısı çok büyüktür.
+İşte bu yüzden kaloriferde su dolaşır: kazandan peteğe bol ısı taşır.
+Dikkat: m çarpı c, yani ısı sığası kütleye bağlıdır, ayırt edici değildir.
+
+## Hal değişimi nasıl olur? (~28 sn)
+
+Hal değişimi nasıl olur? Isı alan madde erir, buharlaşır; ısı veren madde donar, yoğuşur.
+Eksi yirmi derecedeki buzu ısıtalım. Sıcaklık sıfıra çıkar.
+Sonra grafik yataylaşır: buz erirken sıcaklık sabit kalır.
+Hepsi su olunca sıcaklık yüze çıkar, ve kaynarken yine sabit kalır.
+Bu sırada gereken ısı, Q eşittir m çarpı L.
+Dikkat: yatay bölgede sıcaklık sabit, ama madde ısı almaya devam eder!
+
+## Isıl denge nedir? (~24 sn)
+
+Isıl denge nedir? Sıcak madde ısı verir, soğuk madde ısı alır; sıcaklıklar eşitlenince aktarım durur.
+Yirmi derecedeki yüz gram suyu, seksen derecedeki iki yüz gram suyla karıştıralım.
+Verilen ısı alınan ısıya eşit: denge sıcaklığı altmış derece.
+Denge sıcaklığı, kütlesi büyük olan sıcak suya daha yakın.
+Dikkat: tam ortalama, ancak ısı sığaları eşitse çıkar.
+
+## Isı nasıl yayılır? (~27 sn)
+
+Isı nasıl yayılır? Üç yolla. Birincisi iletim: sıcak su peteğin metaline dokunarak ısı verir.
+İkincisi konveksiyon: ısınan hava yükselir, soğuk hava aşağı iner ve odada döner.
+Üçüncüsü ışıma: peteğin yanında yüzünde hissettiğin sıcaklık. Güneş de bizi böyle ısıtır.
+Çift cam, mont ve termos ise ısı aktarımını yavaşlatır.
+Dikkat: konveksiyon yalnızca sıvı ve gazlarda olur; ışıma için madde gerekmez.
+
+## Genleşme nedir? Isıyla, sıcaklıkla ilişkisi ne? (~23 sn)
+
+Son soru: genleşme nedir? Madde ısı alınca sıcaklığı artar, tanecikleri daha çok titreşir ve birbirinden uzaklaşır. Madde genleşir.
+Bir çubuğun uzaması: delta L eşittir L sıfır çarpı lambda çarpı delta T.
+Yani zincir şu: ısı alır, sıcaklık artar, tanecikler uzaklaşır, madde genleşir.
+Dikkat: su sıfır ile dört derece arasında ısıtılınca büzülür!
+
+## Kapanış (~8 sn)
+
+Konu bitti! Isı aktarılır, sıcaklık ölçülür, madde genleşir. Sıradaki TYT konusu için takipte kal.
 
 ---
-
-## Seslendirme metni
-
-### 1 · Giriş (0:00–0:15)
-*Ekran (koyu arka plan, format aynı): soru kelime kelime belirir → kombi gelir, alev yanar, göstergesi 70 °C'ye çıkar → borular ve iki petek belirir → su akmaya başlar: kombiden çıkan sıcak su (kırmızı damlalar) peteklere gider, petekte zikzak çizerek ilerlerken soğur (maviye döner), dönüş borusundan kombiye geri döner → "sıcak su 70 °C" ve "dönüş 50 °C" etiketleri → petekler ısınıp turuncuya döner, üstlerinden sıcak hava yükselir → "oda" 8 °C'den 22 °C'ye çıkar → "Sırrı, peteklerin içinde dolaşan SU."*
-Kışın evdeki petekler sıcacık olur, ama içlerinde ateş yanmıyor. Ateş kombide yanıyor. Peki o ısı kombiden kalkıp odana nasıl geliyor? Kalorifer petekleri evi nasıl ısıtıyor? Sırrı, peteklerin içinde dolaşan suda. Kombide yetmiş dereceye ısınan su borulardan peteğe gidiyor, ısısını odaya bırakıyor ve soğuyarak geri dönüyor. Bu döngünün fiziğini 5 dakikada çözüyoruz.
-
-### 2 · Kapak (0:15–0:22)
-Ben Şafak Hoca. 5 dakikada TYT'lik ısı ve sıcaklık. Takip etmeyi unutma, başlıyoruz.
-
-### 3 · Adım 1 · Isı ≠ sıcaklık (0:22–0:55)
-İlk kural: ısı ve sıcaklık aynı şey değil. Sıcaklık, maddeyi oluşturan taneciklerin ortalama hareket enerjisinin göstergesidir. Termometreyle ölçülür, birimi santigrat, fahrenhayt ya da kelvindir. Isı ise sıcaklık farkı yüzünden bir yerden başka yere aktarılan enerjidir. Kalorimetre kabıyla ölçülür, birimi joule ya da kaloridir. Isı her zaman sıcaktan soğuğa akar ve sıcaklıklar eşitlenince durur.
-**TYT tuzağı:** "Bir kova suyun ısısı daha fazladır" demek yanlış. Cisimler ısı içermez, ısı yalnızca aktarılır.
-
-### 4 · Adım 2 · Sıcaklık ölçekleri (0:55–1:30)
-Üç termometreye bak. Buz eridiğinde Celsius sıfır, Fahrenhayt otuz iki, Kelvin iki yüz yetmiş üç gösterir. Su kaynadığında yüz, iki yüz on iki ve üç yüz yetmiş üç. Dönüşüm için tek formül yeter: C bölü yüz, eşittir F eksi otuz iki bölü yüz seksen, eşittir K eksi iki yüz yetmiş üç bölü yüz. Kelvin'de eksi değer yoktur; sıfır kelvin mutlak sıfırdır.
-**TYT tuzağı:** Sıcaklık on derece artarsa Kelvin'de de on artar. Değişimde iki yüz yetmiş üç eklenmez.
-
-### 5 · Adım 3 · Öz ısı ve ısı sığası (1:30–2:15)
-Kaloriferde neden su dolaşıyor? Cevap öz ısıda. Bir maddeye verilen ısı Q eşittir m çarpı c çarpı delta T. Buradaki c öz ısıdır: bir gram maddenin sıcaklığını bir derece artırmak için gereken ısı. Öz ısı maddeyi tanıtır, yani ayırt edicidir ve kütleye bağlı değildir. Suyun öz ısısı bir kalori, kumunki yaklaşık sıfır virgül iki. Aynı ısıyı alan kum sudan yaklaşık beş kat fazla ısınır; su ise ısıyı zor alır ama çok fazla depolar. Kazanda ısınan su, bu bol ısıyı borular boyunca peteğe taşır.
-**TYT tuzağı:** m çarpı c yani ısı sığası kütleye bağlıdır, ayırt edici değildir. Ayırt edici olan öz ısıdır.
-
-### 6 · Adım 4 · Hal değişimi (2:15–2:55)
-Eksi yirmi derecedeki buzu ısıtalım. Önce sıcaklık sıfıra çıkar. Sonra grafik yataylaşır: buz erirken sıcaklık sabit kalır. Hepsi su olunca sıcaklık yeniden yüze kadar artar ve kaynama başlar; burada da sıcaklık sabittir. Hal değişimi sırasında gereken ısı Q eşittir m çarpı L. L, erime ya da buharlaşma ısısıdır.
-**TYT tuzağı:** Yatay bölgede sıcaklık değişmiyor ama madde ısı almaya devam ediyor. "Isı almıyor" diyen şık yanlış.
-
-### 7 · Adım 5 · Isıl denge (2:55–3:35)
-Sıcak ve soğuk iki maddeyi karıştırınca sıcak olan ısı verir, soğuk olan ısı alır. Kural basit: verilen ısı eşittir alınan ısı. Yirmi derecedeki yüz gram suyu, seksen derecedeki iki yüz gram suyla karıştıralım. Yüz çarpı T eksi yirmi, eşittir iki yüz çarpı seksen eksi T. Buradan T altmış derece çıkar. Gördüğün gibi denge sıcaklığı, ısı sığası büyük olan sıcak suya daha yakın.
-**TYT tuzağı:** Denge sıcaklığı her zaman iki sıcaklığın arasındadır. Tam ortalama ise yalnızca ısı sığaları eşitse çıkar.
-
-### 8 · Adım 6 · Isı aktarım yolları (3:35–4:10)
-Ve girişteki sorunun cevabı. Petek odayı üç yolla ısıtır. Bir: iletim. Sıcak su peteğin metaline dokunarak ısı verir; ısı tanecikten taneciğe geçer. İki: konveksiyon. Peteğin ısıttığı hava hafifler ve yükselir, soğuk hava aşağı iner ve peteğe gelir. Böylece odada dönen bir hava akımı oluşur. Kombideki ısıyı peteğe taşıyan su da aynı şeyi yapar: ısıyı kendisiyle birlikte taşır. Akışkanın ısıyı taşıması, yani konveksiyon. Petek pencerenin altındadır, çünkü camdan gelen soğuk havayı hemen ısıtıp yükseltir. Üç: ışıma. Peteğin yanında durunca yüzünde hissettiğin sıcaklık ışımadır; Güneş de Dünya'yı böyle ısıtır.
-**TYT tuzağı:** Konveksiyon yalnızca akışkanlarda, yani sıvı ve gazlarda olur. Işıma için madde gerekmez; boşlukta da olur.
-
-### 9 · Adım 7 · TYT tarzı soru (4:10–4:50)
-Şimdi sıra sende. Kütleleri 2m ve m olan X ve Y sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. Sıcaklıkları on ve kırk derece artıyor. Öz ısılar oranı cX bölü cY kaçtır? Videoyu durdur ve çöz. … Bakalım: Özdeş ısıtıcı, eşit süre, demek ki aldıkları ısı eşit. 2m çarpı cX çarpı on, eşittir m çarpı cY çarpı kırk. Yirmi cX eşittir kırk cY, yani cX bölü cY eşittir iki. Doğru şık D.
-
-### 10 · Kapanış (4:50–5:00)
-Konu bitti. Isı aktarılır, sıcaklık ölçülür. Q eşittir m c delta T, hal değişiminde m L. Verilen ısı alınan ısıya eşit. Ve ısı; iletim, konveksiyon ve ışımayla yayılır. Sıradaki TYT konusu için takipte kal.
+**Toplam: ~4 dk 5 sn**

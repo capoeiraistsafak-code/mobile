@@ -5,6 +5,8 @@
 <title>TYT · Isı ve Sıcaklık</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../ortak.css">
+<script src="isi_sicaklik_metin.js"></script>
+<script src="../anim.js"></script>
 <style>
 .sicak{--sc:#fb923c}
 .ax{stroke:#cbd5e1;stroke-width:4;fill:none}
@@ -165,27 +167,44 @@
   <div class="kp2-imza">Şafak Hoca · Fizik</div>
 </section>
 
-<!-- ================= 3 · BÖLÜM 1: Isı nedir? Sıcaklık nedir? Farkı ne? (0:13–0:48) ================= -->
+<!-- ================= 3 · BÖLÜM 1: Isı nedir? Sıcaklık nedir? Farkı ne? (0:13–0:53) =================
+     Animasyon: tanecikler (sıcak hızlı, soğuk yavaş) → ısı oku sıcaktan soğuğa → soğuk kap ısınır, tanecikleri hızlanır. -->
 <section class="sahne" id="k1">
   <div class="ust-kutu"><div class="u1 soru-u">Isı nedir? Sıcaklık nedir? Farkı ne?</div></div>
   <div class="pg">
     <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
     <div class="pg-baslik">Isı ve Sıcaklık</div>
     <div class="pg-cizgi"></div>
-    <div class="sq">Sıcaklık nedir?</div>
-    <p class="tanim">Maddeyi oluşturan taneciklerin <span class="f">ortalama hareket enerjisinin</span> göstergesidir.</p>
-    <div class="sq">Isı nedir?</div>
-    <p class="tanim">Sıcaklık farkı yüzünden sıcaktan soğuğa <span class="f">aktarılan enerjidir</span>.</p>
-    <div class="sq">Farkı ne?</div>
+    <div class="sq" data-a="gir:s1">Sıcaklık nedir?</div>
+    <p class="tanim" data-a="gir:s1:.8">Maddeyi oluşturan taneciklerin <span class="f" data-a="fosfor:t1:1.6">ortalama hareket enerjisinin</span> göstergesidir.</p>
+    <svg viewBox="0 0 980 270" width="100%" height="235" id="k1Kap">
+      <g data-a="pop:p">
+        <rect x="20" y="20" width="400" height="230" rx="22" fill="#2a1f24" stroke="#ef4444" stroke-width="5"/>
+        <circle class="tnS" data-x="60" data-y="75" data-f="2.03" data-w="0.86" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="75" data-f="4.09" data-w="0.83" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="75" data-f="3.37" data-w="0.95" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="75" data-f="0.36" data-w="1.00" r="13" fill="#fb923c"/><circle class="tnS" data-x="380" data-y="75" data-f="0.24" data-w="0.97" r="13" fill="#fb923c"/><circle class="tnS" data-x="60" data-y="145" data-f="0.44" data-w="0.84" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="145" data-f="2.67" data-w="1.13" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="145" data-f="0.78" data-w="0.89" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="145" data-f="3.94" data-w="1.18" r="13" fill="#fb923c"/><circle class="tnS" data-x="380" data-y="145" data-f="3.62" data-w="0.96" r="13" fill="#fb923c"/><circle class="tnS" data-x="60" data-y="215" data-f="6.13" data-w="0.82" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="215" data-f="5.39" data-w="0.92" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="215" data-f="0.91" data-w="0.85" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="215" data-f="1.94" data-w="1.13" r="13" fill="#fb923c"/>
+        <rect x="34" y="-6" width="130" height="50" rx="25" fill="#dc2626"/><text x="99" y="28" fill="#fff" font-size="30" font-weight="900" text-anchor="middle">70 °C</text>
+      </g>
+      <g data-a="pop:p:.6">
+        <rect x="560" y="20" width="400" height="230" rx="22" fill="#1c2433" stroke="#60a5fa" stroke-width="5"/>
+        <circle class="tnC" data-x="600" data-y="75" data-f="1.13" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="75" data-f="4.01" data-w="0.95" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="75" data-f="3.44" data-w="0.83" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="75" data-f="0.37" data-w="0.88" r="13" fill="#60a5fa"/><circle class="tnC" data-x="920" data-y="75" data-f="4.27" data-w="0.97" r="13" fill="#60a5fa"/><circle class="tnC" data-x="600" data-y="145" data-f="1.97" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="145" data-f="2.85" data-w="0.92" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="145" data-f="4.99" data-w="1.08" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="145" data-f="1.53" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="920" data-y="145" data-f="3.30" data-w="1.15" r="13" fill="#60a5fa"/><circle class="tnC" data-x="600" data-y="215" data-f="4.58" data-w="0.92" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="215" data-f="6.16" data-w="0.85" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="215" data-f="2.63" data-w="1.10" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="215" data-f="0.95" data-w="1.00" r="13" fill="#60a5fa"/>
+        <rect x="574" y="-6" width="130" height="50" rx="25" fill="#1d4ed8"/><text id="k1Soguk" x="639" y="28" fill="#fff" font-size="30" font-weight="900" text-anchor="middle">10 °C</text>
+      </g>
+      <defs><marker id="k1ok" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fb923c"/></marker></defs>
+      <line x1="430" y1="150" x2="545" y2="150" stroke="#fb923c" stroke-width="12" stroke-linecap="round" marker-end="url(#k1ok)" data-a="ciz:t3:.8"/>
+      <text x="488" y="128" fill="#fdba74" font-size="32" font-weight="900" text-anchor="middle" data-a="gir:t3">ısı</text>
+    </svg>
+    <div class="sq" data-a="gir:t2">Isı nedir?</div>
+    <p class="tanim" data-a="gir:t2:.8">Sıcaklık farkı yüzünden <span class="f" data-a="fosfor:t3:1.4">sıcaktan soğuğa aktarılan enerjidir</span>.</p>
+    <div class="sq" data-a="gir:fark">Farkı ne?</div>
     <div class="kartlar">
-      <div class="kart"><b>Sıcaklık</b><span>ortalama enerji</span><i>madde miktarına bağlı değil</i></div>
-      <div class="kart"><b>İç enerji</b><span>toplam enerji</span><i>madde miktarı artınca artar</i></div>
-      <div class="kart"><b>Isı</b><span>aktarılan enerji</span><i>cisim ısı içermez</i></div>
+      <div class="kart" data-a="pop:t4"><b>Sıcaklık</b><span>ortalama enerji</span><i>madde miktarına bağlı değil</i></div>
+      <div class="kart" data-a="pop:t5"><b>İç enerji</b><span>toplam enerji</span><i>madde miktarı artınca artar</i></div>
+      <div class="kart" data-a="pop:t6"><b>Isı</b><span>aktarılan enerji</span><i>cisim ısı içermez</i></div>
     </div>
-    <p class="not">Petek 70 °C, oda 22 °C → ısı petekten odaya akar <span class="ok">✓</span></p>
-    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Aynı sıcaklıktaki bir kova su, bir bardak sudan daha fazla <strong>iç enerjiye</strong> sahiptir ama "daha fazla ısısı var" demek <strong>yanlış</strong>: ısı yalnızca aktarılır.</div>
+    <p class="not" data-a="yaz:t7:1.8">Petek 70 °C, oda 22 °C → ısı petekten odaya akar <span class="ok">✓</span></p>
+    <div class="tuzak" data-a="pop:t8"><b class="b">TYT TUZAĞI</b><br>Aynı sıcaklıktaki bir kova su, bir bardak sudan daha fazla <strong>iç enerjiye</strong> sahiptir ama "daha fazla ısısı var" demek <strong>yanlış</strong>: ısı yalnızca aktarılır.</div>
   </div>
 </section>
+
 
 <!-- ================= 4 · BÖLÜM 2: Isı neyle, sıcaklık neyle ölçülür? (0:48–1:15) ================= -->
 <section class="sahne" id="k2">
@@ -476,6 +495,19 @@ if(s==='giris'){
   if(q.get('oynat')){const t0=performance.now();(function d(){ciz(((performance.now()-t0)/1000)%GIRIS_SURE);requestAnimationFrame(d)})();}
   else ciz(q.has('t')?+q.get('t'):GIRIS_SURE);
 }
+</script>
+
+<script>
+/* Bölüm 1: tanecikler titreşir; ısı akmaya başlayınca (t3) soğuk kabın tanecikleri hızlanır, sıcaklığı yükselir */
+OZEL.k1=function(t,z){
+  const isin=Math.min(1,Math.max(0,(t-z.t3)/6));
+  document.querySelectorAll('#k1 .tnS').forEach(c=>{const f=+c.dataset.f,w=+c.dataset.w;
+    c.setAttribute('cx',+c.dataset.x+16*Math.sin(t*9*w+f)); c.setAttribute('cy',+c.dataset.y+14*Math.cos(t*11*w+f*1.7));});
+  const A=5+7*isin, H=2.2+4*isin;
+  document.querySelectorAll('#k1 .tnC').forEach(c=>{const f=+c.dataset.f,w=+c.dataset.w;
+    c.setAttribute('cx',+c.dataset.x+A*Math.sin(t*H*w+f)); c.setAttribute('cy',+c.dataset.y+A*.9*Math.cos(t*H*1.2*w+f*1.7));});
+  document.getElementById('k1Soguk').textContent=Math.round(10+15*isin)+' °C';
+};
 </script>
 </body>
 </html>
