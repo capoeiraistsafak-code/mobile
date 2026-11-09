@@ -134,3 +134,15 @@ svg text{font-family:Inter}
 .pg-adim{font:700 38px "DejaVu Serif",Georgia,serif;color:#fff;margin-bottom:26px}
 .pg-adim .etk{display:inline-block;vertical-align:middle;font:900 26px Inter;background:#dc2626;color:#fff;padding:5px 14px;border-radius:6px;margin-left:12px;letter-spacing:.5px}
 .ust-kutu ~ .pg .tanim{font-family:"DejaVu Serif",Georgia,serif;font-size:38px}
+
+/* --- soru soru anlatım: üst kutuda bölümün sorusu, sayfada alt sorular --- */
+.ust-kutu .u1.soru-u{font:900 46px/1.15 Inter;text-align:center;padding:0 30px}
+.sq{font:700 40px "DejaVu Serif",Georgia,serif;color:#fff;border-left:8px solid #dc2626;padding-left:16px;margin:8px 0 14px}
+.kartlar{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:6px 0 20px}
+.kart{background:#1f2430;border:3px solid #4b5563;border-radius:18px;padding:18px 14px;text-align:center}
+.kart b{display:block;font:900 34px Inter;color:#fff;margin-bottom:8px}
+.kart span{display:block;font:600 27px/1.35 Inter;color:#e5e7eb}
+.kart i{display:block;font:600 23px/1.3 Inter;color:#9ca3af;font-style:normal;margin-top:8px}
+.zincir{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;font:800 32px Inter;color:#fff;margin:10px 0 16px}
+.zincir span{background:#1f2430;border:3px solid var(--amber);border-radius:14px;padding:10px 16px}
+.zincir em{font-style:normal;color:var(--sari);font-size:38px}
