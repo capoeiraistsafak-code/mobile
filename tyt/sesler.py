@@ -1,4 +1,5 @@
-"""Konu anlatımı efekt sesleri — "Konu Anlatımı" oturumundaki ses_konu.py ile aynı yöntem ve seviyeler.
+"""Konu anlatımı efekt sesleri — "Konu Anlatımı" oturumundaki ses_konu.py (format-referans/) ile aynı yöntem ve seviyeler.
+Fosforun sesi yok (orijinalde de yok).
 Kayıtlar (kullanıcının yüklediği dosyalar) tyt/sesler/ klasöründe:
   kalem.wav  ← "Kalem yazma sesi.mp3"   (kalem yazarken doğal parçalar; düz çizgide düzleştirilmiş sürtünme)
   gecis.wav  ← "Geçiş 1.mp3"            (bölüm / sayfa geçişi)
@@ -57,10 +58,10 @@ def fade(x, a=0.03, b=0.06):
 
 
 def write_sound(dur):          # doğal yazı: kaydın kendi ritmi
-    x = take(dur); return fade(x / rms(x) * db(-30))
+    x = take(dur); return fade(x / rms(x) * db(-40.4))
 
 
-def line_sound(dur, seviye=-32):  # dalgalanma düzleştirilmiş tek düze sürtünme
+def line_sound(dur, seviye=-42.4):  # dalgalanma düzleştirilmiş tek düze sürtünme
     x = take(dur); e = np.sqrt(smooth(x ** 2, int(0.03 * SR))) + 1e-4
     y = smooth(x / e, 3)
     return fade(y / rms(y) * db(seviye), 0.04, 0.08)
@@ -76,12 +77,11 @@ for o in E['olaylar']:
     tur, a, d = o['tur'], o['bas'], o.get('sure', .5)
     if tur == 'yaz': add(write_sound(d + 0.05), a, 1.0)
     elif tur == 'ciz': add(line_sound(d + 0.05), a, 1.0)
-    elif tur == 'fosfor': add(line_sound(d + 0.05, -36), a, 1.0)
     elif tur == 'onay': add(check_click(), a + 0.12, db(-12))
-    elif tur == 'gecis': add(GECIS / peak(GECIS), a, db(-8))
+    elif tur == 'gecis': add(GECIS / peak(GECIS), a, db(-11))
     elif tur == 'takip':
-        add(TIK / peak(TIK), a + 0.02, db(-9))   # kart çıkınca
-        add(TIK / peak(TIK), a + 1.0, db(-7))    # Takip Et'e tıklanınca
+        add(TIK / peak(TIK), a + 0.02, db(-12))   # kart çıkınca
+        add(TIK / peak(TIK), a + 1.0, db(-10))    # Takip Et'e tıklanınca
 
 mix = np.tanh(mix / 0.95) * 0.95                  # yumuşak sınırlayıcı
 pcm = (np.stack([mix, mix], 1) * 32767).astype(np.int16)

@@ -34,7 +34,7 @@
       if (tur === 'gir') { el.style.opacity = e; el.style.transform = `translateY(${(1 - e) * 24}px)`; }
       else if (tur === 'pop') {
         el.style.opacity = e; el.style.transformBox = 'fill-box'; el.style.transformOrigin = 'center';
-        el.style.transform = `scale(${.6 + .4 * (p < 1 ? Math.min(1.08, e * 1.08) : 1)})`;
+        el.style.transform = `${el.dataset.r || ''} scale(${.6 + .4 * (p < 1 ? Math.min(1.08, e * 1.08) : 1)})`;
       }
       else if (tur === 'fosfor') { el.style.backgroundSize = `${e * 100}% 100%`; }
       else if (tur === 'ciz') {
