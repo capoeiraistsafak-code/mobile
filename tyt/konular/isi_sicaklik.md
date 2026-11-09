@@ -7,7 +7,7 @@
 
 | # | Sahne | Zaman | Süre |
 |---|---|---|---|
-| 1 | Giriş (oda + kalorifer peteği): "Küçücük bir petek koca odayı nasıl ısıtıyor?" | 0:00–0:15 | 15 sn |
+| 1 | Giriş (animasyon: pencere + petek + konveksiyon): "Küçücük bir petek koca odayı nasıl ısıtıyor?" | 0:00–0:15 | 15 sn |
 | 2 | Kapak + Takip Et | 0:15–0:22 | 7 sn |
 | 3 | Adım 1 · Isı ≠ sıcaklık | 0:22–0:55 | 33 sn |
 | 4 | Adım 2 · Sıcaklık ölçekleri | 0:55–1:30 | 35 sn |
@@ -23,7 +23,7 @@
 ## Seslendirme metni
 
 ### 1 · Giriş (0:00–0:15)
-*Ekran: kış gecesi, karlı pencere (−5 °C), altında kalorifer peteği, oda 22 °C, halıda uyuyan kedi; odada dönen sıcak (turuncu) ve soğuk (mavi) hava okları.*
+*Ekran (koyu arka plan, format aynı): soru kelime kelime belirir → karlı pencere (−5 °C) → petek gelir ve yavaşça ısınır (turuncuya döner) → üstünden sıcak hava yükselir → odada konveksiyon okları döner (turuncu yükselir, mavi iner) → "oda" sıcaklığı 8 °C'den 22 °C'ye çıkar → "Hem de neden hep pencerenin altında?"*
 Dışarıda eksi beş derece, kar yağıyor. İçeride yirmi iki derece, kedi bile mışıl mışıl uyuyor. Peki duvardaki o küçücük petek koca odayı nasıl ısıtıyor? Hem de neden hep pencerenin altında duruyor? Cevap 5 dakikada.
 
 ### 2 · Kapak (0:15–0:22)

@@ -12,3 +12,4 @@
 - `ortak.css`: Tüm konuların ortak stili (renkler, sayfa, kapak, tuzak kutusu)
 - `node render_kareler.js <konu>`: `kareler/<konu>/` içine sahne karelerini üretir
 - `sh pano.sh <konu>`: Tüm kareleri tek bir panoda (`kareler/<konu>/pano.png`) toplar
+- `node render_giris.js <konu>`: Giriş animasyonunun sessiz önizlemesini (`kareler/<konu>/giris_onizleme.mp4`) üretir. Sayfada `?s=giris&t=<sn>` o anı, `?s=giris&oynat=1` canlı oynatmayı gösterir
