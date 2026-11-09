@@ -2,7 +2,7 @@
 
 - **Format:** 1080×1920 dikey, koyu tema, yaklaşık 5 dakika
 - **Akış:** Giriş (soru + hikâye) → Kapak → 7 adım (anlatım + TYT tuzağı) → Kapanış
-- **Kareler:** `kareler/` klasöründe (her sahnenin son hâli). Şablon: `sablon.html?s=<sahne>`
+- **Kareler:** `../kareler/elektrostatik/` (her sahnenin son hâli). Sayfa: `elektrostatik.html?s=<sahne>`
 - **Durum:** Taslak; video ve ses üretilmedi.
 
 | # | Sahne | Zaman | Süre |

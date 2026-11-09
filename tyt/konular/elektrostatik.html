@@ -2,95 +2,10 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<title>TYT Şablon</title>
+<title>TYT · Elektrostatik</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-<style>
-/* ===== TYT video şablonu · 1080×1920 · koyu tema ===== */
-:root{
-  --bg1:#3a4150; --bg2:#1f232c;
-  --pg:#262b36; --pgline:#3a4150;
-  --ink:#e5e7eb; --ink2:#9ca3af; --white:#fff;
-  --red:#ef4444; --orange:#f97316; --pink:#fb7185;
-  --fosfor:rgba(250,204,21,.38);
-  --kalem:#93c5fd; --ok:#4ade80;
-  --plus:#f87171; --minus:#60a5fa;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg2)}
-body{font-family:Inter,sans-serif;color:var(--ink)}
-.sahne{position:absolute;inset:0;display:none;
-  background:radial-gradient(circle at 50% 45%,var(--bg1),var(--bg2))}
-.sahne.on{display:block}
+<link rel="stylesheet" href="../ortak.css">
 
-/* --- üst bant (adım sayfaları) --- */
-.bant{position:absolute;left:60px;right:60px;top:70px;display:flex;justify-content:space-between;align-items:center}
-.etiket{background:var(--red);color:#fff;font:900 30px Inter;padding:12px 24px;border-radius:14px;letter-spacing:1px}
-.adim{font:800 30px Inter;color:#fff;background:#111827;border:2px solid #4b5563;padding:12px 24px;border-radius:14px}
-.adim b{color:var(--orange)}
-
-/* --- sayfa --- */
-.pg{position:absolute;left:50px;right:50px;top:170px;bottom:190px;background:var(--pg);
-  border:1.5px solid var(--pgline);border-radius:28px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:56px 56px}
-.hd{border-bottom:3px solid #64748b;padding-bottom:22px;margin-bottom:36px}
-.hd .t1{font:900 62px/1.1 Inter;color:#fff}
-.hd .t2{font:600 30px Inter;color:var(--ink2);margin-top:10px}
-.tanim{font:500 40px/1.5 Inter;color:var(--ink);margin-bottom:30px}
-.f{background:linear-gradient(transparent 18%,var(--fosfor) 18%,var(--fosfor) 88%,transparent 88%);
-  color:#fff;font-weight:800;padding:0 4px}
-.v{color:var(--pink);font-weight:800}
-.not{font:700 46px/1.25 Caveat,cursive;color:var(--kalem)}
-.not .ok{color:var(--ok)}
-.formul{font:800 64px Inter;color:#fff;text-align:center;margin:26px 0;padding:26px;border:3px dashed #64748b;border-radius:22px}
-.formul small{display:block;font:600 30px Inter;color:var(--ink2);margin-top:12px}
-.liste{list-style:none;font:500 38px/1.45 Inter}
-.liste li{margin:14px 0;padding-left:48px;position:relative}
-.liste li::before{content:"";position:absolute;left:6px;top:22px;width:18px;height:18px;border-radius:50%;background:var(--orange)}
-svg text{font-family:Inter}
-
-/* --- alt bilgi --- */
-.alt{position:absolute;left:60px;right:60px;bottom:70px;display:flex;align-items:center;gap:22px}
-.logo{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--red));
-  display:flex;align-items:center;justify-content:center;font:900 34px Inter;color:#fff;flex:none}
-.alt .ad{font:800 30px Inter;color:#fff}
-.alt .ad small{display:block;font:600 24px Inter;color:var(--ink2)}
-.ilerleme{flex:1;height:12px;background:#374151;border-radius:6px;overflow:hidden}
-.ilerleme i{display:block;height:100%;background:var(--orange);border-radius:6px}
-.zaman{font:700 26px Inter;color:var(--ink2);min-width:120px;text-align:right}
-
-/* --- giriş --- */
-.hk-top{position:absolute;left:0;right:0;top:110px;text-align:center;font:900 40px Inter;color:#fff}
-.hk-top span{background:var(--red);padding:10px 22px;border-radius:12px}
-.hk-soru{position:absolute;left:70px;right:70px;top:250px;text-align:center;font:900 84px/1.15 Inter;color:#fff}
-.hk-soru em{font-style:normal;color:var(--orange)}
-.hk-alt{position:absolute;left:0;right:0;bottom:200px;text-align:center;font:700 40px Inter;color:var(--ink2)}
-
-/* --- kapak --- */
-.kp{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:130px;text-align:center}
-.kp .pill{display:flex;align-items:center;gap:14px;background:var(--red);color:#fff;font:900 40px Inter;padding:16px 34px;border-radius:999px}
-.kp .sinav{font:900 150px/1 Inter;color:#fff;margin-top:60px;letter-spacing:4px}
-.kp .sinav span{color:var(--orange)}
-.kp .ders{font:800 54px Inter;color:var(--ink2);margin-top:6px;letter-spacing:10px}
-.kp .soru{font:900 70px/1.15 Inter;color:#fff;margin:70px 70px 0}
-.kp .soru em{font-style:normal;color:var(--orange)}
-.kp .logo{width:170px;height:170px;font-size:66px;margin-top:70px;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
-.kp .ka{background:var(--orange);color:#fff;font:900 38px Inter;padding:14px 32px;border-radius:14px;margin-top:50px;letter-spacing:2px}
-.kp .konu{font:900 96px Inter;color:#fff;margin-top:26px}
-.kp .alt2{font:600 36px Inter;color:var(--ink2);margin-top:20px}
-.takip{white-space:nowrap;position:absolute;left:50%;transform:translateX(-50%);bottom:110px;display:flex;align-items:center;gap:20px;
-  background:#fff;color:#111827;font:900 40px Inter;padding:20px 40px 20px 22px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.takip .logo{width:72px;height:72px;font-size:28px}
-.takip b{background:#2563eb;color:#fff;padding:10px 24px;border-radius:999px;font-size:32px}
-
-/* --- soru (adım 7) --- */
-.tuzak{position:absolute;left:56px;right:56px;bottom:50px;border:3px solid var(--red);border-radius:22px;
-  background:rgba(239,68,68,.10);padding:26px 30px;font:600 34px/1.4 Inter;color:var(--ink)}
-.tuzak b.b{display:inline-block;background:var(--red);color:#fff;font:900 26px Inter;padding:6px 16px;border-radius:10px;margin-bottom:12px;letter-spacing:1px}
-.tuzak strong{color:#fff}
-.sik{display:grid;grid-template-columns:1fr;gap:16px;margin-top:28px}
-.sik div{font:600 36px Inter;padding:16px 24px;border:2px solid #4b5563;border-radius:16px;background:#1f2430}
-.sik div.dogru{border-color:var(--ok);background:rgba(74,222,128,.12);color:#fff}
-.sik div b{color:var(--orange);margin-right:14px}
-</style>
 </head>
 <body>
 

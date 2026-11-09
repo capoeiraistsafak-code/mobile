@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>TYT · Isı ve Sıcaklık</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../ortak.css">
+<style>
+.sicak{--sc:#fb923c}
+.ax{stroke:#cbd5e1;stroke-width:4;fill:none}
+.cz{stroke:#fb923c;stroke-width:8;fill:none;stroke-linejoin:round;stroke-linecap:round}
+</style>
+</head>
+<body>
+
+<!-- ================= 1 · GİRİŞ (0:00–0:15) ================= -->
+<section class="sahne" id="giris">
+  <div class="hk-top"><span>TYT FİZİK</span></div>
+  <div class="hk-soru">Kum ayağını <em>YAKIYOR</em>, deniz neden serin?</div>
+  <svg viewBox="0 0 1080 900" width="1080" height="900" style="position:absolute;top:640px;left:0">
+    <!-- güneş -->
+    <circle cx="540" cy="120" r="90" fill="#facc15"/>
+    <g stroke="#facc15" stroke-width="10" stroke-linecap="round">
+      <line x1="540" y1="0" x2="540" y2="-10"/><line x1="410" y1="120" x2="380" y2="120"/><line x1="670" y1="120" x2="700" y2="120"/>
+      <line x1="450" y1="30" x2="430" y2="10"/><line x1="630" y1="30" x2="650" y2="10"/>
+      <line x1="450" y1="210" x2="430" y2="230"/><line x1="630" y1="210" x2="650" y2="230"/>
+    </g>
+    <!-- ışınlar -->
+    <g stroke="#fde68a" stroke-width="5" stroke-dasharray="14 12" opacity=".8">
+      <line x1="480" y1="230" x2="280" y2="560"/><line x1="600" y1="230" x2="800" y2="560"/>
+    </g>
+    <!-- kum -->
+    <path d="M40 600 Q200 560 380 600 L540 600 L540 860 L40 860 Z" fill="#d6a85c"/>
+    <!-- deniz -->
+    <path d="M540 600 Q620 580 700 600 T860 600 T1040 600 L1040 860 L540 860 Z" fill="#2563eb"/>
+    <path d="M560 650 q40 -20 80 0 t80 0 t80 0 t80 0 t80 0" fill="none" stroke="#93c5fd" stroke-width="6"/>
+    <!-- termometre etiketleri -->
+    <g font-weight="900" font-size="64" text-anchor="middle">
+      <text x="290" y="760" fill="#7c2d12">50 °C</text>
+      <text x="790" y="760" fill="#dbeafe">24 °C</text>
+    </g>
+    <g fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round">
+      <path d="M200 560 q-15 -30 0 -60 q15 -30 0 -60"/><path d="M290 560 q-15 -30 0 -60 q15 -30 0 -60"/><path d="M380 560 q-15 -30 0 -60 q15 -30 0 -60"/>
+    </g>
+  </svg>
+  <div class="hk-alt">Aynı Güneş, farklı sıcaklık. Sırrı 5 dakikada.</div>
+</section>
+
+<!-- ================= 2 · KAPAK (0:15–0:22) ================= -->
+<section class="sahne" id="kapak">
+  <div class="kp">
+    <div class="pill">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+      5 DAKİKADA TYT
+    </div>
+    <div class="sinav">T<span>Y</span>T</div>
+    <div class="ders">FİZİK</div>
+    <div class="soru">Kum ayağını <em>YAKIYOR</em>, deniz neden serin?</div>
+    <div class="logo">ŞH</div>
+    <div class="ka">KONU ANLATIMI</div>
+    <div class="konu">Isı ve Sıcaklık</div>
+    <div class="alt2">Öz ısı · Hal değişimi · Isıl denge · Genleşme</div>
+  </div>
+  <div class="takip"><div class="logo">ŞH</div>Şafak Hoca <b>Takip Et</b></div>
+</section>
+
+<!-- ================= 3 · ADIM 1: ISI ≠ SICAKLIK (0:22–0:55) ================= -->
+<section class="sahne" id="a1">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>1</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Isı ≠ Sıcaklık</div><div class="t2">TYT'nin ilk sorduğu fark</div></div>
+    <p class="tanim"><span class="f">Sıcaklık</span>, taneciklerin <span class="v">ortalama</span> hareket enerjisinin göstergesidir. <span class="f">Isı</span>, sıcaklık farkı yüzünden <span class="v">aktarılan</span> enerjidir.</p>
+    <svg viewBox="0 0 980 300" width="100%" height="300">
+      <g font-weight="800" text-anchor="middle">
+        <rect x="20" y="20" width="440" height="230" rx="22" fill="#1f2430" stroke="#4b5563" stroke-width="3"/>
+        <text x="240" y="80" fill="#fff" font-size="40">Sıcaklık</text>
+        <text x="240" y="140" fill="#e5e7eb" font-size="32" font-weight="600">termometre ile</text>
+        <text x="240" y="190" fill="#e5e7eb" font-size="32" font-weight="600">°C · °F · K</text>
+        <text x="240" y="235" fill="#9ca3af" font-size="26" font-weight="600">(madde miktarına bağlı değil)</text>
+        <rect x="520" y="20" width="440" height="230" rx="22" fill="#1f2430" stroke="#4b5563" stroke-width="3"/>
+        <text x="740" y="80" fill="#fff" font-size="40">Isı (Q)</text>
+        <text x="740" y="140" fill="#e5e7eb" font-size="32" font-weight="600">kalorimetre kabı ile</text>
+        <text x="740" y="190" fill="#e5e7eb" font-size="32" font-weight="600">joule · kalori</text>
+        <text x="740" y="235" fill="#9ca3af" font-size="26" font-weight="600">(bir enerji türüdür)</text>
+      </g>
+    </svg>
+    <p class="not" style="margin-top:20px">Isı her zaman sıcaktan soğuğa akar → sıcaklıklar eşitlenince durur <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Bir kova suyun ısısı, bir bardak suyun ısısından fazladır demek <strong>yanlış</strong>. Cisimler ısı içermez, ısı yalnızca <strong>aktarılır</strong>.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:18%"></i></div><div class="zaman">0:22</div></div>
+</section>
+
+<!-- ================= 4 · ADIM 2: TERMOMETRELER (0:55–1:30) ================= -->
+<section class="sahne" id="a2">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>2</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Sıcaklık Ölçekleri</div><div class="t2">Celsius · Fahrenheit · Kelvin</div></div>
+    <svg viewBox="0 0 980 540" width="100%" height="540">
+      <g font-weight="900" text-anchor="middle">
+        <defs><g id="trm">
+          <rect x="-28" y="60" width="56" height="380" rx="28" fill="#1f2430" stroke="#cbd5e1" stroke-width="4"/>
+          <circle cx="0" cy="465" r="48" fill="#ef4444" stroke="#cbd5e1" stroke-width="4"/>
+          <rect x="-12" y="180" width="24" height="290" rx="12" fill="#ef4444"/>
+        </g></defs>
+        <line x1="0" y1="103" x2="940" y2="103" stroke="#fca5a5" stroke-width="3" stroke-dasharray="10 8"/>
+        <line x1="0" y1="383" x2="940" y2="383" stroke="#93c5fd" stroke-width="3" stroke-dasharray="10 8"/>
+        <use href="#trm" x="200"/><use href="#trm" x="490"/><use href="#trm" x="780"/>
+        <text x="200" y="40" fill="#fff" font-size="40">°C</text><text x="490" y="40" fill="#fff" font-size="40">°F</text><text x="780" y="40" fill="#fff" font-size="40">K</text>
+        <g font-size="34" text-anchor="start" stroke="#262b36" stroke-width="12" paint-order="stroke">
+          <text x="250" y="115" fill="#fca5a5">100</text><text x="250" y="395" fill="#93c5fd">0</text>
+          <text x="540" y="115" fill="#fca5a5">212</text><text x="540" y="395" fill="#93c5fd">32</text>
+          <text x="830" y="115" fill="#fca5a5">373</text><text x="830" y="395" fill="#93c5fd">273</text>
+        </g>
+        <text x="0" y="90" fill="#fca5a5" font-size="26" text-anchor="start">su kaynar</text>
+        <text x="0" y="370" fill="#93c5fd" font-size="26" text-anchor="start">buz erir</text>
+      </g>
+    </svg>
+    <div class="formul" style="font-size:42px;white-space:nowrap">C / 100 = (F − 32) / 180 = (K − 273) / 100<small>Kelvin'de eksi değer yoktur · 0 K mutlak sıfır</small></div>
+    <p class="not">Δ(°C) = Δ(K) · ama 1 °C'lik değişim = 1,8 °F <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Sıcaklık <strong>10 °C artarsa</strong> Kelvin'de de 10 artar, 283 değil! Değişimde 273 eklenmez.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:30%"></i></div><div class="zaman">0:55</div></div>
+</section>
+
+<!-- ================= 5 · ADIM 3: ÖZ ISI (1:30–2:15) ================= -->
+<section class="sahne" id="a3">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>3</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Öz Isı ve Isı Sığası</div><div class="t2">Kumsalın cevabı burada</div></div>
+    <div class="formul">Q = m · c · ΔT<small>c: öz ısı · m·c: ısı sığası</small></div>
+    <p class="tanim"><span class="f">Öz ısı</span>, 1 gram maddenin sıcaklığını 1 °C artırmak için gereken ısıdır. <span class="v">Ayırt edicidir</span>, kütleye bağlı değildir.</p>
+    <svg viewBox="0 0 980 300" width="100%" height="300">
+      <g font-weight="900" text-anchor="middle">
+        <rect x="40" y="40" width="400" height="200" rx="22" fill="#d6a85c"/>
+        <text x="240" y="115" fill="#451a03" font-size="42">KUM</text>
+        <text x="240" y="170" fill="#451a03" font-size="32">c ≈ 0,2 cal/g·°C</text>
+        <text x="240" y="220" fill="#7c2d12" font-size="34">hızlı ısınır</text>
+        <rect x="540" y="40" width="400" height="200" rx="22" fill="#2563eb"/>
+        <text x="740" y="115" fill="#fff" font-size="42">SU</text>
+        <text x="740" y="170" fill="#dbeafe" font-size="32">c = 1 cal/g·°C</text>
+        <text x="740" y="220" fill="#dbeafe" font-size="34">yavaş ısınır</text>
+      </g>
+    </svg>
+    <p class="not">Aynı ısıyı alan kum, sudan ~5 kat fazla ısınır <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br><strong>Isı sığası (m·c)</strong> kütleye bağlıdır, ayırt edici <strong>değildir</strong>. Öz ısı (c) ise ayırt edicidir.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:45%"></i></div><div class="zaman">1:30</div></div>
+</section>
+
+<!-- ================= 6 · ADIM 4: HAL DEĞİŞİMİ (2:15–2:55) ================= -->
+<section class="sahne" id="a4">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>4</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Hal Değişimi</div><div class="t2">Sıcaklık durur, ısı akmaya devam eder</div></div>
+    <svg viewBox="0 0 980 560" width="100%" height="560">
+      <defs><marker id="okax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#cbd5e1"/></marker></defs>
+      <line x1="90" y1="500" x2="950" y2="500" class="ax" marker-end="url(#okax)"/>
+      <line x1="90" y1="520" x2="90" y2="30" class="ax" marker-end="url(#okax)"/>
+      <text x="950" y="545" fill="#cbd5e1" font-size="32" font-weight="800" text-anchor="end">Q (verilen ısı)</text>
+      <text x="110" y="45" fill="#cbd5e1" font-size="32" font-weight="800">T (°C)</text>
+      <g font-size="30" font-weight="800" fill="#cbd5e1" text-anchor="end">
+        <text x="78" y="130">100</text><text x="78" y="400">0</text><text x="78" y="470">−20</text>
+      </g>
+      <line x1="90" y1="120" x2="940" y2="120" stroke="#475569" stroke-width="2" stroke-dasharray="8 8"/>
+      <line x1="90" y1="390" x2="940" y2="390" stroke="#475569" stroke-width="2" stroke-dasharray="8 8"/>
+      <polyline class="cz" points="90,460 170,390 360,390 520,120 860,120 930,60"/>
+      <g font-size="30" font-weight="800" text-anchor="middle">
+        <text x="120" y="440" fill="#93c5fd">katı</text>
+        <text x="265" y="370" fill="#fff">erime</text><text x="265" y="430" fill="#9ca3af" font-size="26">katı + sıvı</text>
+        <text x="470" y="270" fill="#93c5fd">sıvı</text>
+        <text x="690" y="100" fill="#fff">kaynama</text><text x="690" y="160" fill="#9ca3af" font-size="26">sıvı + gaz</text>
+        <text x="920" y="45" fill="#93c5fd">gaz</text>
+      </g>
+    </svg>
+    <div class="formul">Q = m · L<small>L: erime ya da buharlaşma ısısı (sabit sıcaklıkta)</small></div>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Yatay bölgede sıcaklık sabit ama madde <strong>ısı almaya devam ediyor</strong>. "Isı almıyor" diyen şık yanlış.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:58%"></i></div><div class="zaman">2:15</div></div>
+</section>
+
+<!-- ================= 7 · ADIM 5: ISIL DENGE (2:55–3:35) ================= -->
+<section class="sahne" id="a5">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>5</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Isıl Denge</div><div class="t2">Verilen ısı = alınan ısı</div></div>
+    <p class="tanim">Sıcak cisim ısı <span class="f">verir</span>, soğuk cisim ısı <span class="f">alır</span>. Sıcaklıklar eşitlenince aktarım durur.</p>
+    <svg viewBox="0 0 980 360" width="100%" height="360">
+      <g font-weight="900" text-anchor="middle">
+        <path d="M60 60 v220 q0 30 30 30 h160 q30 0 30 -30 v-220" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="65" y="180" width="210" height="125" rx="22" fill="#60a5fa" opacity=".75"/>
+        <text x="170" y="230" fill="#fff" font-size="36">100 g</text><text x="170" y="280" fill="#fff" font-size="36">20 °C</text>
+        <text x="345" y="180" fill="#fff" font-size="60">+</text>
+        <path d="M410 60 v220 q0 30 30 30 h160 q30 0 30 -30 v-220" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="415" y="110" width="210" height="195" rx="22" fill="#f97316" opacity=".8"/>
+        <text x="520" y="200" fill="#fff" font-size="36">200 g</text><text x="520" y="250" fill="#fff" font-size="36">80 °C</text>
+        <text x="710" y="180" fill="#fff" font-size="60">→</text>
+        <path d="M770 30 v250 q0 30 30 30 h120 q30 0 30 -30 v-250" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="775" y="70" width="170" height="235" rx="22" fill="#f59e0b" opacity=".8"/>
+        <text x="860" y="170" fill="#fff" font-size="36">300 g</text><text x="860" y="220" fill="#fff" font-size="40">60 °C</text>
+      </g>
+    </svg>
+    <p class="not">100·(T − 20) = 200·(80 − T) → T = 60 °C <span class="ok">✓</span></p>
+    <p class="not">Denge sıcaklığı, ısı sığası büyük olana yakın çıkar</p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Denge sıcaklığı her zaman <strong>iki sıcaklığın arasındadır</strong>. Ortalama (50 °C) ancak ısı sığaları eşitse çıkar.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:72%"></i></div><div class="zaman">2:55</div></div>
+</section>
+
+<!-- ================= 8 · ADIM 6: GENLEŞME (3:35–4:10) ================= -->
+<section class="sahne" id="a6">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>6</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">Genleşme</div><div class="t2">Isınan madde büyür</div></div>
+    <div class="formul">ΔL = L₀ · λ · ΔT<small>λ: boyca uzama katsayısı (ayırt edici)</small></div>
+    <svg viewBox="0 0 980 260" width="100%" height="260">
+      <g font-weight="900">
+        <rect x="40" y="40" width="640" height="56" rx="10" fill="#94a3b8"/>
+        <text x="360" y="80" fill="#1f2937" font-size="32" text-anchor="middle">L₀ (soğuk)</text>
+        <rect x="40" y="150" width="760" height="56" rx="10" fill="#fb923c"/>
+        <text x="360" y="190" fill="#431407" font-size="32" text-anchor="middle">ısıtılmış</text>
+        <line x1="680" y1="30" x2="680" y2="230" stroke="#fff" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="740" y="140" fill="#fff" font-size="36" text-anchor="middle">ΔL</text>
+      </g>
+    </svg>
+    <ul class="liste">
+      <li>Ray aralarındaki <b>boşluklar</b>, köprü <b>derzleri</b></li>
+      <li>Delikli levha ısınınca <b>delik de büyür</b></li>
+    </ul>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Su <strong>0 °C → 4 °C</strong> arasında ısıtılınca hacmi <strong>küçülür</strong>. Suyun özkütlesi 4 °C'de en büyüktür; göller bu yüzden üstten donar.</div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:84%"></i></div><div class="zaman">3:35</div></div>
+</section>
+
+<!-- ================= 9 · ADIM 7: TYT SORUSU (4:10–4:50) ================= -->
+<section class="sahne" id="a7">
+  <div class="bant"><div class="etiket">TYT · ISI VE SICAKLIK</div><div class="adim">ADIM <b>7</b> / 7</div></div>
+  <div class="pg">
+    <div class="hd"><div class="t1">TYT Tarzı Soru</div><div class="t2">20 saniye dur, önce sen çöz</div></div>
+    <p class="tanim" style="font-size:36px">Kütleleri <b style="color:#fff">2m</b> ve <b style="color:#fff">m</b> olan X ve Y sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. Sıcaklıkları <b style="color:#fff">10 °C</b> ve <b style="color:#fff">40 °C</b> artıyor.<br><span class="f">Öz ısılar oranı c<sub>X</sub> / c<sub>Y</sub> kaçtır?</span></p>
+    <svg viewBox="0 0 980 230" width="100%" height="230">
+      <g font-family="Caveat" font-weight="700" fill="var(--kalem)" font-size="50">
+        <text x="20" y="60">Q eşit → 2m · cₓ · 10 = m · cᵧ · 40</text>
+        <text x="20" y="130">20 cₓ = 40 cᵧ</text>
+        <text x="20" y="200">cₓ / cᵧ = 2</text>
+      </g>
+    </svg>
+    <div class="sik">
+      <div><b>A)</b> 1/4</div>
+      <div><b>B)</b> 1/2</div>
+      <div><b>C)</b> 1</div>
+      <div class="dogru"><b>D)</b> 2 &nbsp;✓</div>
+      <div><b>E)</b> 4</div>
+    </div>
+  </div>
+  <div class="alt"><div class="logo">ŞH</div><div class="ad">Şafak Hoca<small>TYT Fizik</small></div><div class="ilerleme"><i style="width:97%"></i></div><div class="zaman">4:10</div></div>
+</section>
+
+<!-- ================= 10 · KAPANIŞ (4:50–5:00) ================= -->
+<section class="sahne" id="kapanis">
+  <div class="kp" style="padding-top:330px">
+    <div class="pill">TYT FİZİK</div>
+    <div class="konu" style="font-size:130px;margin-top:70px">KONU<br>BİTTİ</div>
+    <div class="alt2" style="font-size:44px;margin-top:40px">Isı ve Sıcaklık ✓</div>
+    <ul class="liste" style="text-align:left;margin-top:70px;font-size:40px">
+      <li>Isı aktarılır, sıcaklık ölçülür</li><li>Q = m·c·ΔT · Q = m·L</li>
+      <li>Verilen ısı = alınan ısı</li><li>Su 0–4 °C arası büzülür</li>
+    </ul>
+    <div class="alt2" style="margin-top:60px">Sıradaki TYT konusu için takipte kal</div>
+  </div>
+  <div class="takip"><div class="logo">ŞH</div>Şafak Hoca <b>Takip Et</b></div>
+</section>
+
+<script>
+const s=new URLSearchParams(location.search).get('s')||'giris';
+(document.getElementById(s)||document.getElementById('giris')).classList.add('on');
+</script>
+</body>
+</html>
