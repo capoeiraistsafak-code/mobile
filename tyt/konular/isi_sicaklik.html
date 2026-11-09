@@ -155,16 +155,17 @@
 <!-- ================= 2 · KAPAK (0:06–0:13) ================= -->
 <section class="sahne" id="kapak">
   <div class="kp2">
-    <div class="pill2"><svg width="50" height="50" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="8.5" fill="#fff"/><circle cx="12" cy="13.5" r="6.6" fill="none" stroke="#dc2626" stroke-width="1.4"/><path d="M12 9.5v4.2l2.6 1.6" stroke="#111827" stroke-width="1.8" stroke-linecap="round" fill="none"/><rect x="9.5" y="2" width="5" height="2.6" rx="1" fill="#fff"/></svg>5 DAKİKADA TYT</div>
-    <div class="sinif2">TYT FİZİK</div>
-    <div class="soru2">Kalorifer petekleri evi <mark>NASIL</mark> ısıtıyor?</div>
-    <div class="logo-foto"></div>
-    <div class="ka2">KONU ANLATIMI</div>
-    <div class="konu2">Isı ve Sıcaklık</div>
-    <div class="ders2">Isıdan genleşmeye, ünitenin tamamı</div>
-    <div class="kod2">TYT · 2026-2027</div>
+    <div class="pill2" data-a="pop:0.2"><svg width="50" height="50" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="8.5" fill="#fff"/><circle cx="12" cy="13.5" r="6.6" fill="none" stroke="#dc2626" stroke-width="1.4"/><path d="M12 9.5v4.2l2.6 1.6" stroke="#111827" stroke-width="1.8" stroke-linecap="round" fill="none"/><rect x="9.5" y="2" width="5" height="2.6" rx="1" fill="#fff"/></svg>5 DAKİKADA TYT</div>
+    <div class="sinif2" data-a="gir:0.6">TYT FİZİK</div>
+    <div class="soru2" data-a="gir:1.0">Kalorifer petekleri evi <mark>NASIL</mark> ısıtıyor?</div>
+    <div class="logo-foto" data-a="pop:1.6"></div>
+    <div class="ka2" data-a="pop:2.3:.35">KONU ANLATIMI</div>
+    <div class="konu2" data-a="gir:3.0">Isı ve Sıcaklık</div>
+    <div class="ders2" data-a="gir:3.4">Isıdan genleşmeye, ünitenin tamamı</div>
+    <div class="kod2" data-a="pop:3.8">TYT · 2026-2027</div>
   </div>
-  <div class="kp2-imza">Şafak Hoca · Fizik</div>
+  <div class="kp2-imza" data-a="gir:4.2">Şafak Hoca · Fizik</div>
+  <div class="takip" id="kpTakip" style="bottom:200px"><div class="logo-foto" style="width:80px;height:80px;border-width:4px"></div>Şafak Hoca <b>Takip Et</b></div>
 </section>
 
 <!-- ================= 3 · BÖLÜM 1: Isı nedir? Sıcaklık nedir? Farkı ne? (0:13–0:53) =================
@@ -507,6 +508,10 @@ OZEL.k1=function(t,z){
   document.querySelectorAll('#k1 .tnC').forEach(c=>{const f=+c.dataset.f,w=+c.dataset.w;
     c.setAttribute('cx',+c.dataset.x+A*Math.sin(t*H*w+f)); c.setAttribute('cy',+c.dataset.y+A*.9*Math.cos(t*H*1.2*w+f*1.7));});
   document.getElementById('k1Soguk').textContent=Math.round(10+15*isin)+' °C';
+};
+OZEL.kapak=function(t){ /* Takip Et kartı 4.6 sn'de gelir, 6.6 sn'de gider */
+  const g=Math.min(1,Math.max(0,(t-4.6)/.35)), c=Math.min(1,Math.max(0,(t-6.6)/.35)), e=g*(1-c);
+  const k=document.getElementById('kpTakip'); k.style.opacity=e; k.style.transform=`translateX(-50%) translateY(${(1-e)*60}px) scale(${.85+.15*e})`;
 };
 </script>
 </body>
