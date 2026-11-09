@@ -13,37 +13,106 @@
 </head>
 <body>
 
-<!-- ================= 1 · GİRİŞ (0:00–0:15) ================= -->
-<section class="sahne" id="giris">
-  <div class="hk-top"><span>TYT FİZİK</span></div>
-  <div class="hk-soru">Kum ayağını <em>YAKIYOR</em>, deniz neden serin?</div>
-  <svg viewBox="0 0 1080 900" width="1080" height="900" style="position:absolute;top:640px;left:0">
-    <!-- güneş -->
-    <circle cx="540" cy="120" r="90" fill="#facc15"/>
-    <g stroke="#facc15" stroke-width="10" stroke-linecap="round">
-      <line x1="540" y1="0" x2="540" y2="-10"/><line x1="410" y1="120" x2="380" y2="120"/><line x1="670" y1="120" x2="700" y2="120"/>
-      <line x1="450" y1="30" x2="430" y2="10"/><line x1="630" y1="30" x2="650" y2="10"/>
-      <line x1="450" y1="210" x2="430" y2="230"/><line x1="630" y1="210" x2="650" y2="230"/>
+<!-- ================= 1 · GİRİŞ (0:00–0:15) · plaj ================= -->
+<section class="sahne" id="giris" style="background:#0c4a6e">
+  <svg viewBox="0 0 1080 1920" width="1080" height="1920" style="position:absolute;inset:0">
+    <defs>
+      <linearGradient id="gok" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0369a1"/><stop offset=".55" stop-color="#38bdf8"/><stop offset="1" stop-color="#e0f2fe"/>
+      </linearGradient>
+      <radialGradient id="gunesP" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#fffbeb"/><stop offset=".35" stop-color="#fde047"/><stop offset=".6" stop-color="#facc15" stop-opacity=".55"/><stop offset="1" stop-color="#facc15" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="deniz" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0369a1"/><stop offset=".5" stop-color="#0284c7"/><stop offset="1" stop-color="#22d3ee"/>
+      </linearGradient>
+      <linearGradient id="kum" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fde7b0"/><stop offset=".5" stop-color="#f4c77a"/><stop offset="1" stop-color="#e0a458"/>
+      </linearGradient>
+      <linearGradient id="ust" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0b1220" stop-opacity=".85"/><stop offset=".6" stop-color="#0b1220" stop-opacity=".35"/><stop offset="1" stop-color="#0b1220" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="alt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0b1220" stop-opacity="0"/><stop offset="1" stop-color="#0b1220" stop-opacity=".75"/>
+      </linearGradient>
+      <filter id="bulanik"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <!-- gökyüzü -->
+    <rect width="1080" height="1000" fill="url(#gok)"/>
+    <circle cx="820" cy="660" r="260" fill="url(#gunesP)"/>
+    <circle cx="820" cy="660" r="78" fill="#fffbeb"/>
+    <!-- bulutlar -->
+    <g fill="#fff" opacity=".9" filter="url(#bulanik)">
+      <ellipse cx="220" cy="720" rx="130" ry="34"/><ellipse cx="290" cy="700" rx="80" ry="34"/>
+      <ellipse cx="560" cy="800" rx="110" ry="26"/><ellipse cx="610" cy="785" rx="60" ry="24"/>
     </g>
-    <!-- ışınlar -->
-    <g stroke="#fde68a" stroke-width="5" stroke-dasharray="14 12" opacity=".8">
-      <line x1="480" y1="230" x2="280" y2="560"/><line x1="600" y1="230" x2="800" y2="560"/>
-    </g>
-    <!-- kum -->
-    <path d="M40 600 Q200 560 380 600 L540 600 L540 860 L40 860 Z" fill="#d6a85c"/>
+    <!-- uzak ada -->
+    <path d="M0 900 Q90 860 190 880 Q260 850 330 900 Z" fill="#0f766e" opacity=".75"/>
     <!-- deniz -->
-    <path d="M540 600 Q620 580 700 600 T860 600 T1040 600 L1040 860 L540 860 Z" fill="#2563eb"/>
-    <path d="M560 650 q40 -20 80 0 t80 0 t80 0 t80 0 t80 0" fill="none" stroke="#93c5fd" stroke-width="6"/>
-    <!-- termometre etiketleri -->
-    <g font-weight="900" font-size="64" text-anchor="middle">
-      <text x="290" y="760" fill="#7c2d12">50 °C</text>
-      <text x="790" y="760" fill="#dbeafe">24 °C</text>
+    <rect y="895" width="1080" height="560" fill="url(#deniz)"/>
+    <rect y="895" width="1080" height="6" fill="#e0f2fe" opacity=".6"/>
+    <g fill="none" stroke="#e0f2fe" stroke-linecap="round" opacity=".55">
+      <path d="M60 960 q30 -10 60 0" stroke-width="4"/><path d="M420 990 q40 -12 80 0" stroke-width="4"/>
+      <path d="M760 950 q30 -10 60 0" stroke-width="4"/><path d="M220 1060 q50 -14 100 0" stroke-width="5"/>
+      <path d="M640 1090 q50 -14 100 0" stroke-width="5"/><path d="M900 1040 q40 -12 80 0" stroke-width="5"/>
+      <path d="M80 1180 q60 -16 120 0" stroke-width="6"/><path d="M480 1200 q60 -16 120 0" stroke-width="6"/>
     </g>
-    <g fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round">
-      <path d="M200 560 q-15 -30 0 -60 q15 -30 0 -60"/><path d="M290 560 q-15 -30 0 -60 q15 -30 0 -60"/><path d="M380 560 q-15 -30 0 -60 q15 -30 0 -60"/>
+    <!-- güneş yansıması -->
+    <g fill="#fef9c3" opacity=".7">
+      <rect x="790" y="915" width="60" height="6" rx="3"/><rect x="770" y="945" width="100" height="6" rx="3"/>
+      <rect x="800" y="980" width="44" height="6" rx="3"/><rect x="760" y="1020" width="120" height="7" rx="3"/>
+    </g>
+    <!-- kıyı köpüğü + kum -->
+    <path d="M0 1330 Q200 1290 420 1330 T820 1310 T1080 1300 L1080 1920 L0 1920 Z" fill="#ecfeff" opacity=".85"/>
+    <path d="M0 1350 Q200 1310 420 1350 T820 1330 T1080 1320 L1080 1920 L0 1920 Z" fill="url(#kum)"/>
+    <path d="M0 1380 Q220 1345 440 1380 T840 1360 T1080 1350" fill="none" stroke="#b45309" stroke-width="4" opacity=".25"/>
+    <!-- palmiye -->
+    <path d="M150 1560 Q130 1300 210 1060" fill="none" stroke="#78350f" stroke-width="30" stroke-linecap="round"/>
+    <g fill="#15803d">
+      <path d="M210 1060 Q100 1000 10 1070 Q110 1040 210 1075 Z"/>
+      <path d="M210 1060 Q320 990 420 1060 Q310 1035 210 1075 Z"/>
+      <path d="M210 1060 Q150 960 60 940 Q150 990 205 1072 Z"/>
+      <path d="M210 1060 Q280 950 380 950 Q290 990 215 1072 Z"/>
+      <path d="M210 1060 Q230 960 200 900 Q245 970 220 1072 Z"/>
+    </g>
+    <g fill="#166534"><circle cx="198" cy="1082" r="16"/><circle cx="224" cy="1086" r="16"/></g>
+    <!-- şemsiye + havlu -->
+    <line x1="775" y1="1130" x2="740" y2="1640" stroke="#f8fafc" stroke-width="12" stroke-linecap="round"/>
+    <path d="M775 1130 L590 1265 Q636.0 1237 682 1265 Z" fill="#ef4444" stroke="#b91c1c" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M775 1130 L682 1265 Q728.5 1237 775 1265 Z" fill="#fff" stroke="#b91c1c" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M775 1130 L775 1265 Q821.5 1237 868 1265 Z" fill="#ef4444" stroke="#b91c1c" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M775 1130 L868 1265 Q914.0 1237 960 1265 Z" fill="#fff" stroke="#b91c1c" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="775" cy="1130" r="9" fill="#f8fafc"/>
+    <path d="M520 1720 L860 1660 L900 1780 L560 1840 Z" fill="#2563eb"/>
+    <path d="M540 1780 L875 1720" stroke="#facc15" stroke-width="16"/>
+    <!-- ayak izleri -->
+    <g fill="#c58a3e" opacity=".75">
+      <ellipse cx="380" cy="1820" rx="20" ry="34" transform="rotate(-20 380 1820)"/>
+      <ellipse cx="440" cy="1730" rx="18" ry="32" transform="rotate(-20 440 1730)"/>
+      <ellipse cx="420" cy="1630" rx="17" ry="30" transform="rotate(-20 420 1630)"/>
+      <ellipse cx="480" cy="1545" rx="16" ry="28" transform="rotate(-20 480 1545)"/>
+      <ellipse cx="460" cy="1460" rx="14" ry="25" transform="rotate(-20 460 1460)"/>
+    </g>
+    <!-- sıcak hava dalgaları (kum) -->
+    <g fill="none" stroke="#fff7ed" stroke-width="7" stroke-linecap="round" opacity=".75">
+      <path d="M300 1560 q-18 -30 0 -60 q18 -30 0 -60"/>
+      <path d="M380 1600 q-18 -30 0 -60 q18 -30 0 -60"/>
+      <path d="M560 1560 q-18 -30 0 -60 q18 -30 0 -60"/>
+    </g>
+    <!-- okunurluk için koyu geçişler -->
+    <rect width="1080" height="640" fill="url(#ust)"/>
+    <rect y="1600" width="1080" height="320" fill="url(#alt)"/>
+    <!-- sıcaklık etiketleri -->
+    <g font-family="Inter" font-weight="900" text-anchor="middle">
+      <rect x="240" y="1385" width="250" height="96" rx="48" fill="#dc2626" stroke="#fff" stroke-width="5"/>
+      <text x="365" y="1450" fill="#fff" font-size="54">50 °C</text>
+      <rect x="560" y="1015" width="250" height="96" rx="48" fill="#1d4ed8" stroke="#fff" stroke-width="5"/>
+      <text x="685" y="1080" fill="#fff" font-size="54">24 °C</text>
     </g>
   </svg>
-  <div class="hk-alt">Aynı Güneş, farklı sıcaklık. Sırrı 5 dakikada.</div>
+  <div class="hk-top"><span>TYT FİZİK</span></div>
+  <div class="hk-soru" style="text-shadow:0 4px 18px rgba(0,0,0,.55)">Kum ayağımızı <em>YAKARKEN</em> deniz nasıl <em style="color:#7dd3fc">SERİN</em> olabiliyor?</div>
+  <div class="hk-alt" style="bottom:110px;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6)">Aynı Güneş, farklı sıcaklık. Cevap 5 dakikada.</div>
 </section>
 
 <!-- ================= 2 · KAPAK (0:15–0:22) ================= -->
@@ -55,7 +124,7 @@
     </div>
     <div class="sinav">T<span>Y</span>T</div>
     <div class="ders">FİZİK</div>
-    <div class="soru">Kum ayağını <em>YAKIYOR</em>, deniz neden serin?</div>
+    <div class="soru">Kum ayağımızı <em>YAKARKEN</em> deniz nasıl serin olabiliyor?</div>
     <div class="logo">ŞH</div>
     <div class="ka">KONU ANLATIMI</div>
     <div class="konu">Isı ve Sıcaklık</div>

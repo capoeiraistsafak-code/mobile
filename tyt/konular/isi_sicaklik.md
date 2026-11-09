@@ -7,7 +7,7 @@
 
 | # | Sahne | Zaman | Süre |
 |---|---|---|---|
-| 1 | Giriş: "Kum ayağını yakıyor, deniz neden serin?" | 0:00–0:15 | 15 sn |
+| 1 | Giriş (plaj): "Kum ayağımızı yakarken deniz nasıl serin olabiliyor?" | 0:00–0:15 | 15 sn |
 | 2 | Kapak + Takip Et | 0:15–0:22 | 7 sn |
 | 3 | Adım 1 · Isı ≠ sıcaklık | 0:22–0:55 | 33 sn |
 | 4 | Adım 2 · Sıcaklık ölçekleri | 0:55–1:30 | 35 sn |
@@ -23,7 +23,8 @@
 ## Seslendirme metni
 
 ### 1 · Giriş (0:00–0:15)
-Yazın kumsalda yürürken kum ayağını yakar ama denize girince serinlersin. İkisinin üstünde de aynı Güneş var. Peki kum elli derece olurken deniz neden yirmi dört derecede kalıyor? Cevabı bu videoda, üstelik TYT'nin en çok sorduğu yerden.
+*Ekran: tam ekran plaj; kumda "50 °C", denizde "24 °C" etiketi, kumun üstünde sıcak hava dalgaları.*
+Temmuz, öğle sıcağı. Havluya koşarken kum ayağını yakıyor, zıplaya zıplaya gidiyorsun. Ama birkaç adım ötede deniz serin. İkisinin üstünde de aynı Güneş var. Peki kum ayağımızı yakarken deniz nasıl serin olabiliyor? Cevap 5 dakikada.
 
 ### 2 · Kapak (0:15–0:22)
 Ben Şafak Hoca. 5 dakikada TYT'lik ısı ve sıcaklık. Takip etmeyi unutma, başlıyoruz.
