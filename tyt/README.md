@@ -16,7 +16,14 @@
 
 ## Giriş formatı (bütün TYT videolarında aynı)
 
-Örnek: `konular/isi_sicaklik.html` → `#giris`
+**Onaylı örnek (Şafak Hoca tarzı):** `konular/isi_sicaklik.html` → `#giris`, video `kareler/isi_sicaklik/giris_onizleme.mp4`
+
+Bu tarzı yapan şeyler:
+- **Konu:** Herkesin evinde gördüğü bir sistem seçilir (kalorifer: kombi → borular → petekler).
+- **Süreç:** Fiziksel olay adım adım ve sürekli akarak görünür. Su kombide ısınır (mavi → kırmızı), peteklere gider, orada soğur (kırmızı → mavi) ve geri döner.
+- **Sonuç:** Odalarda ısınma görünür hâle gelir: petek turuncuya döner, sıcak hava yükselir, konveksiyon okları döner, termometreler artar.
+- **Yer:** Mekânlar eşyalarla anlaşılır. Banyo duşakabin, lavabo, fayans ve havluyla gösterilir, pencere yoktur. Oturma odası TV, koltuk, lambader ve pencereyle gösterilir.
+- **Düzen:** Kaynak (kombi) üstte, etkilenen yerler altta.
 
 - **Süre:** 6 sn (her zaman 5–7 sn arası).
 - **Arka plan:** Diğer sahnelerle aynı koyu arka plan; tam ekran renkli sahne yok.
