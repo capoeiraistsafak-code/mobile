@@ -1,6 +1,6 @@
-// Girişin sessiz önizleme videosu: node render_giris.js <konu> [sn=8] [fps=30]
+// Girişin sessiz önizleme videosu: node render_giris.js <konu> [sn=6] [fps=30]
 const {chromium}=require('playwright');const path=require('path');const fs=require('fs');const {execSync}=require('child_process');
-const [konu,sure='8',fps='30']=process.argv.slice(2);
+const [konu,sure='6',fps='30']=process.argv.slice(2);
 const html='file://'+path.resolve(__dirname,'konular',konu+'.html')+'?s=giris&t=0';
 const tmp=fs.mkdtempSync('/tmp/giris_');
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1080,height:1920}});

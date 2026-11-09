@@ -15,14 +15,14 @@
 </head>
 <body>
 
-<!-- ================= 1 · GİRİŞ (0:00–0:08) · koyu arka plan · büyük konu başlığı · kombi üstte, odalar altta =================
+<!-- ================= 1 · GİRİŞ (0:00–0:06) · koyu arka plan · büyük konu başlığı · kombi üstte, odalar altta =================
      Odalarda yazı yok, eşyalarla tanınır: banyo (fayans, aynalı lavabo, duşakabin, peteğin üstünde havlu, pencere yok),
      oturma odası (pencere, televizyon + ünite, koltuk, lambader). Sıcaklık duvar termometresinde.
      Kombide ısınan su (mavi→kırmızı) soldaki borudan iki odanın peteğine iner, peteklerde soğur (kırmızı→mavi),
      sağdaki borudan kombiye döner.
      Zaman (sn): 0 başlık · 0.4–1.3 soru · 1.0 kombi · 1.3 alev · 1.6 odalar · 1.9 borular + petekler · 2.2 su akar ·
      2.7 "70 °C" · 3.2 "50 °C" · 2.9–5.5 petekler ısınır · 3.4 sıcak hava · 4.0 konveksiyon · 3.5–7 odalar 10→24 / 10→22 °C ·
-     6.2 alt yazı. Toplam 8 sn. ?t=<sn> o anı, ?oynat=1 canlı oynatmayı gösterir. -->
+     6.2 alt yazı (8 sn'lik tasarım ölçeği; gerçek süre 6 sn, hepsi ×0,75). ?t=<sn> o anı, ?oynat=1 canlı oynatmayı gösterir. -->
 <section class="sahne" id="giris">
   <div class="hk-top" style="top:70px"><span>TYT FİZİK</span></div>
   <div class="hk-baslik" id="gBaslik">ISI VE SICAKLIK</div>
@@ -406,7 +406,7 @@ const gir=(t,bas,sure=.5)=>sınır((t-bas)/sure);           // 0→1 geçiş
 const yumusak=x=>x*x*(3-2*x);
 const $=id=>document.getElementById(id);
 const renk=(f)=>{const a=[239,68,68],b=[59,130,246];return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*f)).join(',')})`};
-const NS='http://www.w3.org/2000/svg', ARA=34, HIZ=230, GIRIS_SURE=8;
+const NS='http://www.w3.org/2000/svg', ARA=34, HIZ=230, GIRIS_SURE=6, TASARIM_SURE=8;
 let damlalar=null;
 function damlaKur(){damlalar=[];const g=$('gDamla');
   document.querySelectorAll('#giris .yol').forEach(y=>{const L=y.getTotalLength(), n=Math.floor(L/ARA);
@@ -414,6 +414,7 @@ function damlaKur(){damlalar=[];const g=$('gDamla');
     for(let i=0;i<n;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',tur==='ic'||tur==='isit'?7:8);
       (tur==='ic'||tur==='isit'?y.parentNode:g).appendChild(c);damlalar.push({c,y,L,i,tur});}});}
 window.ciz=function(t){
+  t=t*TASARIM_SURE/GIRIS_SURE;   // 8 sn'lik tasarım zaman çizelgesi 6 sn'ye sıkıştırılır
   if(!damlalar)damlaKur();
   document.querySelectorAll('#giris .k').forEach(k=>{const i=+k.dataset.i, a=yumusak(gir(t,.4+i*.18,.3));
     k.style.opacity=a; k.style.display='inline-block'; k.style.transform=`translateY(${(1-a)*24}px)`;});

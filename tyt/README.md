@@ -2,7 +2,7 @@
 
 5 dakikalık, 1080×1920 dikey, koyu temalı konu anlatımı videoları.
 
-**Video akışı:** Giriş (soru + hikâye) → Kapak ("5 DAKİKADA TYT") → 7 adım (her adımın altında "TYT TUZAĞI" kutusu, son adım TYT tarzı soru) → Kapanış (KONU BİTTİ + Takip Et)
+**Video akışı:** Giriş (6 sn animasyon: büyük konu başlığı + soru + hikâye; her zaman 5–7 sn) → Kapak ("5 DAKİKADA TYT") → 7 adım (her adımın altında "TYT TUZAĞI" kutusu, son adım TYT tarzı soru) → Kapanış (KONU BİTTİ + Takip Et)
 
 | Sıra | Konu | Sayfa | Metin | Durum |
 |---|---|---|---|---|
