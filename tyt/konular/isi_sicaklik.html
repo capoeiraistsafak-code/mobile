@@ -14,74 +14,67 @@
 <body>
 
 <!-- ================= 1 · GİRİŞ (0:00–0:08) · koyu arka plan + kalorifer su devresi =================
-     Kombide ısınan su (mavi→kırmızı) Banyo ve Oturma odasındaki peteklere gider, orada soğur (kırmızı→mavi), kombiye döner.
-     Zaman (sn): 0.2–1.1 soru · 1.0 ev · 1.3 kombi · 1.6 alev · 1.9 borular + petekler · 2.2 su akar ·
-     2.8 "70 °C" · 3.3 "50 °C" · 3–6 petekler ısınır · 3.5–7 odalar ısınır · 6.2 alt yazı. Toplam 8 sn.
+     Kombiye dönen soğuk su serpantinde ısınır (mavi→kırmızı), Banyo ve Oturma odası peteklerine gider,
+     orada soğur (kırmızı→mavi), kombiye döner.
+     Zaman (sn): 0.2–1.1 soru · 1.2 kombi · 1.5 alev · 1.9 borular + petekler · 2.2 su akar · 2.8 "70 °C" ·
+     3.3 "50 °C" · 3–6 petekler ısınır · 3.5–7 odalar 10→24 / 10→22 °C · 6.2 alt yazı. Toplam 8 sn.
      ?t=<sn> o anı, ?oynat=1 canlı oynatmayı gösterir. -->
 <section class="sahne" id="giris">
   <div class="hk-top"><span>TYT FİZİK</span></div>
   <div class="hk-soru"><span class="k" data-i="0">Kalorifer</span> <span class="k" data-i="1">petekleri</span> <span class="k" data-i="2">evi</span> <span class="k" data-i="3"><em>NASIL</em></span> <span class="k" data-i="4">ısıtıyor?</span></div>
-  <svg viewBox="0 0 1080 1100" width="1080" height="1100" style="position:absolute;top:500px;left:0">
-    <!-- ev kesiti -->
-    <g id="gEv" font-family="Inter" font-weight="800" text-anchor="middle">
-      <rect class="odaIsi" id="gBanyoIsi" x="350" y="260" width="330" height="720" fill="#f97316" opacity="0"/>
-      <rect class="odaIsi" id="gOturmaIsi" x="680" y="260" width="340" height="720" fill="#f97316" opacity="0"/>
-      <path d="M40 270 L540 60 L1040 270" fill="none" stroke="#64748b" stroke-width="8" stroke-linejoin="round"/>
-      <rect x="60" y="260" width="960" height="720" fill="none" stroke="#64748b" stroke-width="6"/>
-      <line x1="350" y1="260" x2="350" y2="980" stroke="#64748b" stroke-width="6"/>
-      <line x1="680" y1="260" x2="680" y2="980" stroke="#64748b" stroke-width="6"/>
-      <text x="515" y="320" fill="#e5e7eb" font-size="36">Banyo</text>
-      <text x="850" y="320" fill="#e5e7eb" font-size="36">Oturma odası</text>
-      <g id="gBanyoEt"><rect x="430" y="345" width="170" height="64" rx="32" fill="#ea580c"/><text id="gBanyoT" x="515" y="389" fill="#fff" font-size="34" font-weight="900">24 °C</text></g>
-      <g id="gOturmaEt"><rect x="765" y="345" width="170" height="64" rx="32" fill="#ea580c"/><text id="gOturmaT" x="850" y="389" fill="#fff" font-size="34" font-weight="900">22 °C</text></g>
-    </g>
+  <svg viewBox="0 0 1080 1080" width="1080" height="1080" style="position:absolute;top:520px;left:0">
     <!-- kombi -->
     <g id="gKombi" font-family="Inter" font-weight="900" text-anchor="middle">
-      <rect x="90" y="340" width="200" height="370" rx="20" fill="#e5e7eb" stroke="#94a3b8" stroke-width="4"/>
-      <rect x="110" y="355" width="160" height="56" rx="10" fill="#1f2937"/>
-      <text id="gKombiT" x="190" y="395" fill="#4ade80" font-size="30">--</text>
-      <rect x="105" y="420" width="170" height="270" rx="12" fill="#1f2937"/>
-      <path d="M270 700 V600 H120 V570 H260 V540 H120 V510 H260 V480 H120 V450 H260 V430 H300" fill="none" stroke="#475569" stroke-width="10" stroke-linejoin="round" opacity=".6"/>
-      <path class="yol isit" d="M270 700 V600 H120 V570 H260 V540 H120 V510 H260 V480 H120 V450 H260 V430 H300" fill="none" stroke="none"/>
-      <g id="gAlev" transform="translate(185 680)">
-        <path d="M0 0 C -34 -14, -26 -52, 0 -78 C 26 -52, 34 -14, 0 0 Z" fill="#f97316"/>
-        <path d="M0 0 C -16 -8, -12 -32, 0 -48 C 12 -32, 16 -8, 0 0 Z" fill="#facc15"/>
+      <rect x="60" y="120" width="210" height="340" rx="22" fill="#e5e7eb" stroke="#94a3b8" stroke-width="4"/>
+      <rect x="90" y="140" width="150" height="56" rx="10" fill="#1f2937"/>
+      <text id="gKombiT" x="165" y="180" fill="#4ade80" font-size="30">--</text>
+      <rect x="78" y="215" width="174" height="230" rx="12" fill="#1f2937"/>
+      <path d="M270 380 H240 V360 H90 V330 H240 V300 H90 V270 H240 V245 H270" fill="none" stroke="#475569" stroke-width="10" stroke-linejoin="round" opacity=".6"/>
+      <path class="yol isit" d="M270 380 H240 V360 H90 V330 H240 V300 H90 V270 H240 V245 H270" fill="none" stroke="none"/>
+      <g id="gAlev" transform="translate(165 440)">
+        <path d="M0 0 C -30 -10, -24 -40, 0 -58 C 24 -40, 30 -10, 0 0 Z" fill="#f97316"/>
+        <path d="M0 0 C -14 -6, -10 -24, 0 -36 C 10 -24, 14 -6, 0 0 Z" fill="#facc15"/>
       </g>
-      <text x="190" y="760" fill="#cbd5e1" font-size="32">kombi</text>
+      <text x="165" y="505" fill="#cbd5e1" font-size="32">kombi</text>
     </g>
     <!-- borular -->
     <g id="gBoru" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M300 430 H325 V720 H778 V780" stroke="#7f1d1d" stroke-width="16"/>
-      <path d="M418 720 V780" stroke="#7f1d1d" stroke-width="16"/>
-      <path d="M942 930 V955 H270 V705" stroke="#1e3a8a" stroke-width="16"/>
-      <path d="M582 930 V955" stroke="#1e3a8a" stroke-width="16"/>
+      <path d="M270 245 H340 V470 H740 V515" stroke="#7f1d1d" stroke-width="18"/>
+      <path d="M380 470 V515" stroke="#7f1d1d" stroke-width="18"/>
+      <path d="M960 765 V830 H300 V380 H270" stroke="#1e3a8a" stroke-width="18"/>
+      <path d="M600 765 V830" stroke="#1e3a8a" stroke-width="18"/>
     </g>
-    <path class="yol sicak" d="M300 430 H325 V720 H418 V780" fill="none" stroke="none"/>
-    <path class="yol sicak" d="M418 720 H778 V780" fill="none" stroke="none"/>
-    <path class="yol soguk" d="M582 930 V955 H270 V700" fill="none" stroke="none"/>
-    <path class="yol soguk" d="M942 930 V955 H582" fill="none" stroke="none"/>
+    <path class="yol sicak" d="M270 245 H340 V470 H380 V515" fill="none" stroke="none"/>
+    <path class="yol sicak" d="M380 470 H740 V515" fill="none" stroke="none"/>
+    <path class="yol soguk" d="M600 765 V830 H300 V380 H270" fill="none" stroke="none"/>
+    <path class="yol soguk" d="M960 765 V830 H600" fill="none" stroke="none"/>
     <g class="gPetek" id="gP1">
-      <rect x="400" y="780" width="220" height="150" rx="12" fill="#94a3b8"/>
-      <rect x="408" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="437" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="466" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="495" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="525" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="554" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="583" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
-      <g class="gIsi" opacity="0"><rect x="408" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="437" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="466" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="495" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="525" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="554" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="583" y="788" width="23" height="134" rx="9" fill="#fb923c"/></g>
-      <path d="M418 780 V810 H602 V855 H418 V900 H602 V930" fill="none" stroke="#1e293b" stroke-width="10" stroke-linejoin="round" opacity=".3"/>
-      <path class="yol ic" d="M418 780 V810 H602 V855 H418 V900 H602 V930" fill="none" stroke="none"/>
+      <rect x="360" y="515" width="260" height="250" rx="12" fill="#94a3b8"/>
+      <rect x="372" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="403" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="434" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="465" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="496" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="527" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="558" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="589" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <g class="gIsi" opacity="0"><rect x="372" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="403" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="434" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="465" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="496" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="527" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="558" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="589" y="525" width="24" height="230" rx="10" fill="#fb923c"/></g>
+      <path d="M380 520 V560 H600 V600 H380 V640 H600 V680 H380 V720 H600 V760" fill="none" stroke="#1e293b" stroke-width="12" stroke-linejoin="round" opacity=".35"/>
+      <path class="yol ic" d="M380 520 V560 H600 V600 H380 V640 H600 V680 H380 V720 H600 V760" fill="none" stroke="none"/>
     </g>
     <g class="gPetek" id="gP2">
-      <rect x="760" y="780" width="220" height="150" rx="12" fill="#94a3b8"/>
-      <rect x="768" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="797" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="826" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="855" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="885" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="914" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="943" y="788" width="23" height="134" rx="9" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
-      <g class="gIsi" opacity="0"><rect x="768" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="797" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="826" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="855" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="885" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="914" y="788" width="23" height="134" rx="9" fill="#fb923c"/><rect x="943" y="788" width="23" height="134" rx="9" fill="#fb923c"/></g>
-      <path d="M778 780 V810 H962 V855 H778 V900 H962 V930" fill="none" stroke="#1e293b" stroke-width="10" stroke-linejoin="round" opacity=".3"/>
-      <path class="yol ic" d="M778 780 V810 H962 V855 H778 V900 H962 V930" fill="none" stroke="none"/>
+      <rect x="720" y="515" width="260" height="250" rx="12" fill="#94a3b8"/>
+      <rect x="732" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="763" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="794" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="825" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="856" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="887" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="918" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="949" y="525" width="24" height="230" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <g class="gIsi" opacity="0"><rect x="732" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="763" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="794" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="825" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="856" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="887" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="918" y="525" width="24" height="230" rx="10" fill="#fb923c"/><rect x="949" y="525" width="24" height="230" rx="10" fill="#fb923c"/></g>
+      <path d="M740 520 V560 H960 V600 H740 V640 H960 V680 H740 V720 H960 V760" fill="none" stroke="#1e293b" stroke-width="12" stroke-linejoin="round" opacity=".35"/>
+      <path class="yol ic" d="M740 520 V560 H960 V600 H740 V640 H960 V680 H740 V720 H960 V760" fill="none" stroke="none"/>
     </g>
     <g id="gDamla"></g>
-    <g id="gDalga"><path class="dalga" data-i="0" d="M450 760 q-12 -20 0 -40 q12 -20 0 -40" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="1" d="M560 760 q-12 -20 0 -40 q12 -20 0 -40" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="2" d="M820 760 q-12 -20 0 -40 q12 -20 0 -40" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="3" d="M930 760 q-12 -20 0 -40 q12 -20 0 -40" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/></g>
+    <g id="gDalga"><path class="dalga" data-i="0" d="M440 500 q-14 -22 0 -44 q14 -22 0 -44" fill="none" stroke="#fdba74" stroke-width="7" stroke-linecap="round"/><path class="dalga" data-i="1" d="M560 500 q-14 -22 0 -44 q14 -22 0 -44" fill="none" stroke="#fdba74" stroke-width="7" stroke-linecap="round"/><path class="dalga" data-i="2" d="M800 500 q-14 -22 0 -44 q14 -22 0 -44" fill="none" stroke="#fdba74" stroke-width="7" stroke-linecap="round"/><path class="dalga" data-i="3" d="M920 500 q-14 -22 0 -44 q14 -22 0 -44" fill="none" stroke="#fdba74" stroke-width="7" stroke-linecap="round"/></g>
+    <!-- etiketler -->
     <g font-family="Inter" font-weight="900" text-anchor="middle">
-      <g id="gEtS"><rect x="520" y="650" width="150" height="56" rx="28" fill="#dc2626"/><text x="595" y="689" fill="#fff" font-size="30">70 °C</text></g>
-      <g id="gEtC"><rect x="520" y="1000" width="150" height="56" rx="28" fill="#1d4ed8"/><text x="595" y="1039" fill="#fff" font-size="30">50 °C</text></g>
+      <g id="gEtS"><rect x="380" y="195" width="300" height="70" rx="35" fill="#dc2626"/><text x="530" y="243" fill="#fff" font-size="34">sıcak su 70 °C</text></g>
+      <g id="gEtC"><rect x="20" y="560" width="250" height="64" rx="32" fill="#1d4ed8"/><text x="145" y="603" fill="#fff" font-size="30">dönüş 50 °C</text></g>
+      <g id="gBanyoEt"><text x="490" y="900" fill="#e5e7eb" font-size="38" font-weight="800">Banyo</text>
+        <rect x="390" y="925" width="200" height="72" rx="36" fill="#ea580c"/><text id="gBanyoT" x="490" y="975" fill="#fff" font-size="40">24 °C</text></g>
+      <g id="gOturmaEt"><text x="850" y="900" fill="#e5e7eb" font-size="38" font-weight="800">Oturma odası</text>
+        <rect x="750" y="925" width="200" height="72" rx="36" fill="#ea580c"/><text id="gOturmaT" x="850" y="975" fill="#fff" font-size="40">22 °C</text></g>
     </g>
   </svg>
-  <div class="hk-alt" id="gAlt" style="bottom:130px">Sırrı, peteklerin içinde dolaşan <b style="color:#fff">SU</b>.</div>
+  <div class="hk-alt" id="gAlt" style="bottom:150px">Sırrı, peteklerin içinde dolaşan <b style="color:#fff">SU</b>.</div>
 </section>
 
 <!-- ================= 2 · KAPAK (0:15–0:22) ================= -->
@@ -349,11 +342,10 @@ window.ciz=function(t){
   if(!damlalar)damlaKur();
   document.querySelectorAll('#giris .k').forEach(k=>{const i=+k.dataset.i, a=yumusak(gir(t,.2+i*.18,.3));
     k.style.opacity=a; k.style.display='inline-block'; k.style.transform=`translateY(${(1-a)*24}px)`;});
-  $('gEv').style.opacity=yumusak(gir(t,1.0,.5));
-  $('gKombi').style.opacity=yumusak(gir(t,1.3,.4));
-  const al=yumusak(gir(t,1.6,.35));
-  $('gAlev').setAttribute('transform',`translate(185 680) scale(${(.2+.8*al)*(1+.06*Math.sin(t*14))} ${(.2+.8*al)*(1+.1*Math.sin(t*11))})`);
-  $('gAlev').style.opacity=al; $('gKombiT').textContent=t<1.6?'--':Math.round(20+50*yumusak(gir(t,1.6,1.2)))+' °C';
+  $('gKombi').style.opacity=yumusak(gir(t,1.2,.4));
+  const al=yumusak(gir(t,1.5,.35));
+  $('gAlev').setAttribute('transform',`translate(165 440) scale(${(.2+.8*al)*(1+.06*Math.sin(t*14))} ${(.2+.8*al)*(1+.1*Math.sin(t*11))})`);
+  $('gAlev').style.opacity=al; $('gKombiT').textContent=t<1.5?'--':Math.round(20+50*yumusak(gir(t,1.5,1.3)))+' °C';
   const br=yumusak(gir(t,1.9,.4)); $('gBoru').style.opacity=br;
   document.querySelectorAll('#giris .gPetek').forEach(p=>p.style.opacity=br);
   const su=yumusak(gir(t,2.2,.5));
@@ -363,8 +355,6 @@ window.ciz=function(t){
   $('gEtS').style.opacity=yumusak(gir(t,2.8,.4)); $('gEtC').style.opacity=yumusak(gir(t,3.3,.4));
   $('gP1').querySelector('.gIsi').setAttribute('opacity',.55*yumusak(gir(t,3.0,2.5)));
   $('gP2').querySelector('.gIsi').setAttribute('opacity',.55*yumusak(gir(t,3.4,2.5)));
-  $('gBanyoIsi').setAttribute('opacity',.12*yumusak(gir(t,3.5,3)));
-  $('gOturmaIsi').setAttribute('opacity',.12*yumusak(gir(t,3.9,3)));
   $('gBanyoEt').style.opacity=yumusak(gir(t,3.5,.4)); $('gOturmaEt').style.opacity=yumusak(gir(t,3.9,.4));
   $('gBanyoT').textContent=Math.round(10+14*yumusak(gir(t,3.5,3.3)))+' °C';
   $('gOturmaT').textContent=Math.round(10+12*yumusak(gir(t,3.9,3.3)))+' °C';
