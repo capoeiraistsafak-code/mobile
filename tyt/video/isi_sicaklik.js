@@ -14,6 +14,8 @@ const PETEK = (p, x, y, w, h, n = 6) => `<rect x="${x}" y="${y}" width="${w}" he
 const petekIsi = (p, k, n = 6) => { for (let i = 0; i < n; i++) at(p + i, 'opacity', 0.6 * k); };
 const T = (id, x, y, txt, col = '#e2e8f0', sz = 15, extra = '') => `<text id="${id}" x="${x}" y="${y}" font-family="Inter" font-weight="800" font-size="${sz}" fill="${col}" ${extra}>${txt}</text>`;
 const S = {};   // sayfalar arası durum (adım → late)
+// el yazısındaki gibi kesir: pay üstte, payda altta, arada çizgi
+const KS = (pay, payda) => `<span class="ks"><span>${pay}</span><span>${payda}</span></span>`;
 
 window.KONU = {
   meta: {tema: 'koyu', sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
@@ -67,7 +69,7 @@ window.KONU = {
       `<line id="p2d1" x1="20" y1="175" x2="430" y2="175" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        <line id="p2d2" x1="20" y1="65" x2="430" y2="65" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        ${T('p2e1', 4, 192, 'buz erir', '#93c5fd', 12, 'opacity="0"')}${T('p2e2', 4, 58, 'su kaynar', '#fca5a5', 12, 'opacity="0"')}`, false) +
-    H(1, 'C/100 = (F−32)/180 = (K−273)/100', 0, 372, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 414, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 456, 'Değişimde'),
+    H(1, KS('C', '100') + ' = ' + KS('F − 32', '180') + ' = ' + KS('K − 273', '100'), 0, 360, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 430, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 472, 'Değişimde'),
    init: () => { for (let i = 0; i < 3; i++) termo('p2l' + i, 215, 6); },
    steps: [
      {d: 2.4, o: [], f: s => { const k = ease(prog(s, 0, 1.6)); for (let i = 0; i < 3; i++) { termo('p2l' + i, 215, 6 + 34 * k); at('p2a' + i, 'opacity', prog(s, 1.2 + i * .3, 1.6 + i * .3)); }
@@ -88,8 +90,8 @@ window.KONU = {
       <rect x="250" y="118" width="96" height="32" rx="16" fill="#1d4ed8"/>${T('p3st', 264, 140, '20 °C', '#fff', 17)}
       <g id="p3w" opacity="0" fill="none" stroke="#fdba74" stroke-width="3" stroke-linecap="round"><path d="M140 150 q-8 -12 0 -24 q8 -12 0 -24"/><path d="M175 150 q-8 -12 0 -24 q8 -12 0 -24"/></g>`, false,
       EM('p3g', '☀️', 190, 0, 52, 'opacity:0')) +
-    H(1, 'Kum hızlı, su yavaş ısınır', 0, 362, 'hızla') + H(2, 'Su: öz ısı büyük (c = 1 cal/g·°C)', 0, 404, 'büyüktür') +
-    H(3, 'Kaloriferde su: bol ısı taşır ' + CK, 0, 446, 'kaloriferde') + H(4, 'm·c = ısı sığası (ayırt edici değil)', 0, 488, 'sığası'),
+    H(1, 'Kum hızlı, su yavaş ısınır', 0, 362, 'hızla') + H(2, 'Su: öz ısı büyük (c = 1 ' + KS('cal', 'g·°C') + ')', 0, 396, 'büyüktür') +
+    H(3, 'Kaloriferde su: bol ısı taşır ' + CK, 0, 454, 'kaloriferde') + H(4, 'm·c = ısı sığası (ayırt edici değil)', 0, 496, 'sığası'),
    init: () => {},
    steps: [
      {d: 3.6, o: [1], f: s => { st('p3g', {opacity: prog(s, 0, 0.4), transform: `rotate(${s * 20}deg)`}); at('p3r', 'opacity', prog(s, 0.3, 0.7) * (0.7 + 0.3 * Math.sin(s * 8)));
