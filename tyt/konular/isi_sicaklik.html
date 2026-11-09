@@ -64,7 +64,7 @@
         <path d="M110 605 H284 V640 H126 V675 H284 V700" fill="none" stroke="#1e293b" stroke-width="8" stroke-linejoin="round" opacity=".3"/>
         <path class="yol ic" d="M110 605 H284 V640 H126 V675 H284 V700" fill="none" stroke="none"/>
       </g>
-      <path d="M232 584 h58 v84 q-29 10 -58 0 z" fill="#f472b6"/><rect x="232" y="584" width="58" height="14" fill="#ec4899"/>
+      <g class="havlu"><path d="M232 584 h58 v84 q-29 10 -58 0 z" fill="#f472b6"/><rect x="232" y="584" width="58" height="14" fill="#ec4899"/></g>
       <path class="dalga" data-i="0" d="M150 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="1" d="M205 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="2" d="M260 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/>
       <g fill="none" stroke-width="7" stroke-linecap="round">
         <path class="akis" d="M330 575 C 334 515, 328 420, 330 380" stroke="#fb923c" marker-end="url(#gOkT)"/>
@@ -424,7 +424,7 @@ window.ciz=function(t){
   $('gAlev').setAttribute('transform',`translate(540 278) scale(${(.2+.8*al)*(1+.06*Math.sin(t*14))} ${(.2+.8*al)*(1+.1*Math.sin(t*11))})`);
   $('gAlev').style.opacity=al; $('gKombiT').textContent=t<1.3?'--':Math.round(20+50*yumusak(gir(t,1.3,1.4)))+' °C';
   const br=yumusak(gir(t,1.9,.4)); $('gBoru').style.opacity=br;
-  document.querySelectorAll('#giris .gPetek').forEach(p=>p.style.opacity=br);
+  document.querySelectorAll('#giris .gPetek, #giris .havlu').forEach(p=>p.style.opacity=br);
   const su=yumusak(gir(t,2.2,.5));
   damlalar.forEach(d=>{let x=(d.i*ARA+(t-2.2)*HIZ)%d.L; if(x<0)x+=d.L; const pt=d.y.getPointAtLength(x);
     d.c.setAttribute('cx',pt.x); d.c.setAttribute('cy',pt.y); d.c.style.opacity=t<2.2?0:su;
