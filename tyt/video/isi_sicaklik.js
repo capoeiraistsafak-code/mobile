@@ -16,6 +16,8 @@ const T = (id, x, y, txt, col = '#e2e8f0', sz = 15, extra = '') => `<text id="${
 const S = {};   // sayfalar arası durum (adım → late)
 // el yazısındaki gibi kesir: pay üstte, payda altta, arada çizgi
 const KS = (pay, payda) => `<span class="ks"><span>${pay}</span><span>${payda}</span></span>`;
+// kesrin altına neye ait olduğunu yaz (ör. Celsius)
+const KSA = (kesir, ad) => `<span class="ksa">${kesir}<i>${ad}</i></span>`;
 
 window.KONU = {
   meta: {tema: 'koyu', sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
@@ -63,13 +65,13 @@ window.KONU = {
   // 3 ---------------------------------------------------------------
   {konu: 'Termometreler', soru: 'Termometreler arasındaki fark ne?',
    html: `<span class="qt">Termometre, ısınınca <b>genleşen bir sıvıyla</b> çalışır. Ölçekler, buzun erime ve suyun kaynama noktasına <b>farklı sayılar</b> verir.</span>` +
-    SCENE(100, 290, [['°C', 80, '0', '100', 'Celsius'], ['°F', 220, '32', '212', 'Fahrenheit'], ['K', 360, '273', '373', 'Kelvin']].map(([ad, x, a, b, isim], i) =>
-      TERMO('p2l' + i, x, 34, 215) + T('p2n' + i, x, 262, ad, '#fff', 18, 'text-anchor="middle"') + T('p2m' + i, x, 282, isim, '#cbd5e1', 13, 'text-anchor="middle"') +
+    SCENE(100, 250, [['°C', 80, '0', '100'], ['°F', 220, '32', '212'], ['K', 360, '273', '373']].map(([ad, x, a, b], i) =>
+      TERMO('p2l' + i, x, 34, 215) + T('p2n' + i, x - 12, 22, ad, '#fff', 17) +
       T('p2a' + i, x + 20, 180, a, '#93c5fd', 16, 'opacity="0"') + T('p2b' + i, x + 20, 70, b, '#fca5a5', 16, 'opacity="0"')).join('') +
       `<line id="p2d1" x1="20" y1="175" x2="430" y2="175" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        <line id="p2d2" x1="20" y1="65" x2="430" y2="65" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        ${T('p2e1', 4, 192, 'buz erir', '#93c5fd', 12, 'opacity="0"')}${T('p2e2', 4, 58, 'su kaynar', '#fca5a5', 12, 'opacity="0"')}`, false) +
-    H(1, KS('C', '100') + ' = ' + KS('F − 32', '180') + ' = ' + KS('K − 273', '100'), 0, 400, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 470, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 512, 'Değişimde'),
+    H(1, KSA(KS('C', '100'), 'Celsius') + ' = ' + KSA(KS('F − 32', '180'), 'Fahrenheit') + ' = ' + KSA(KS('K − 273', '100'), 'Kelvin'), 0, 360, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 456, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 498, 'Değişimde'),
    init: () => { for (let i = 0; i < 3; i++) termo('p2l' + i, 215, 6); },
    steps: [
      {d: 2.4, o: [], f: s => { const k = ease(prog(s, 0, 1.6)); for (let i = 0; i < 3; i++) { termo('p2l' + i, 215, 6 + 34 * k); at('p2a' + i, 'opacity', prog(s, 1.2 + i * .3, 1.6 + i * .3)); }
