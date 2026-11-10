@@ -5,6 +5,8 @@
 - **Konu videosu** (`FORMAT.md`, "5 Dakikada TYT" motoru, `video/`): koyu masa, sayfalar yan yana, kamera sayfadan sayfaya **uzaklaşıp yakınlaşarak** kayar; fosfor, kalem notları, Takip Et kartı, kapak.
 - **Soru Videosu 2. Format** (`format-soru2/FORMAT_2.md`): her soru tek sayfa, "SORU n / N", olay animasyonu, kalemle çözüm, sonuç kutusu ve ✓.
 
+**Görünüm: BEYAZ TEST KAĞIDI.** Koyu masa üzerinde beyaz kağıt sayfalar (içerikte `tema: 'koyu'` YOK); basılı soru siyah serif, şık harfleri kırmızı, kalem mavi, cevap kutusu kırmızı. Kamera sayfadan sayfaya uzaklaşıp yakınlaşır. Giriş ve kapak koyu kalır (konu videosundaki gibi).
+
 Örnek: **Isı ve Sıcaklık** → içerik `video/isi_sicaklik_soru.js`, kareler `kareler/isi_sicaklik_soru/`.
 
 ## Kural: konu videosu → soru videosu
