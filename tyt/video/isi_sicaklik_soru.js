@@ -4,7 +4,7 @@
 // → kalem doğru şıkkın etrafına kırmızı kutu çizer, şık büyüyüp parlar, "Cevap" + ✓. Sesler konu videosundaki gibi (kalem, çizgi, ✓, geçiş).
 
 document.head.insertAdjacentHTML('beforeend', `<style>
-.sk{display:grid;grid-template-columns:repeat(3,1fr);gap:3px 6px;margin-top:8px;font:14.5px/1.35 "Noto Serif",serif}
+.sk{display:grid;grid-template-columns:repeat(3,1fr);gap:1px 6px;margin-top:6px;font:14.5px/1.35 "Noto Serif",serif}
 .sk.c1{grid-template-columns:1fr}
 .sk>span{padding:1px 6px;border-radius:7px;border:2px solid transparent}
 .sk>span>b{color:#D62828!important;font-family:Inter;font-weight:800;margin-right:3px}
@@ -55,208 +55,224 @@ const kutuIsik = (i, h) => { const k = drawnK(`p${i}b3`), e = $(`p${i}o${h}`);
   e.style.background = `rgba(214,40,40,${0.10 * k})`; e.style.transform = `scale(${1 + 0.1 * Math.sin(Math.PI * k)})`; };
 const CEVAP = (o, h, x, y) => H(o, `Cevap: <span class="bx">${h}</span> ` + CK, x, y, 'cevap');
 
+// bimetal şerit: k = 0 (düz) … 1 (en çok bükülmüş); bakır dışta (üstte), aşağı bükülür
+const bimetalYol = (k, off) => { const L = 320, kap = 0.0042 * k, n = 32; let d = '';
+  for (let j = 0; j <= n; j++) { const u = L * j / n, th = kap * u; const x = kap ? Math.sin(th) / kap : u, y = kap ? (1 - Math.cos(th)) / kap : 0;
+    d += (j ? 'L' : 'M') + (40 + x - off * Math.sin(th)).toFixed(1) + ' ' + (60 + y + off * Math.cos(th)).toFixed(1) + ' '; } return d; };
+const bimetal = k => { at('p7u', 'd', bimetalYol(k, -4.5)); at('p7a', 'd', bimetalYol(k, 4.5)); };
+const bimetalUc = k => { const kap = 0.0042 * k, th = kap * 320; return [40 + Math.sin(th) / kap, 60 + (1 - Math.cos(th)) / kap]; };
+
 window.KONU = {
-  meta: {sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
+  meta: {satir: 670, sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
     tur: 'SORU ÇÖZÜMÜ', adim: 'SORU', bitti: '8 SORU TAMAM',
     kapakAlt: '8 konu · 8 soru · animasyonlu çözüm', sonraki: 'Elektrostatik', kanca: 'Haydi şimdi SORU çözelim!',
     hookBaslik: 'ISI VE SICAKLIK', introSure: 8.2},
   P: [
-  // 1 · Isı ve Sıcaklık ------------------------------------------------
+  // 1 · Isı ve Sıcaklık · metal ve tahta kaşık ------------------------------------
   {konu: 'Isı ve Sıcaklık',
-   html: `<span class="qt">Sıcaklıkları 70 °C ve 10 °C olan K ve L cisimleri birbirine dokundurulup dış ortamdan yalıtılıyor. Buna göre;<br>
-     I. Isı, K'den L'ye aktarılır.<br>II. L'nin taneciklerinin ortalama hareket enerjisi artar.<br>III. K daha çok ısı içerdiği için sıcaktır.<br>
+   html: `<span class="qt">Ece, uzun süredir aynı mutfakta duran metal ve tahta kaşıklara aynı anda dokunuyor ve metal kaşığı daha soğuk hissediyor.<br>Buna göre,<br>
+     I. Kaşıkların sıcaklıkları eşittir.<br>II. Metal kaşık, elden birim zamanda daha çok ısı alır.<br>III. Tahta kaşığın sıcaklığı metal kaşığınkinden büyüktür.<br>
      yargılarından hangileri doğrudur?</span>` +
-    SK(0, ['Yalnız I', 'Yalnız III', 'I ve II', 'II ve III', 'I, II ve III']) +
-    SCENE(262, 165, `<g id="p0g" opacity="0">
-      <rect x="6" y="28" width="190" height="130" rx="14" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/>${TN('p0h', 10, 6, 28, 190, 130, '#fb923c')}
-      <rect x="245" y="28" width="190" height="130" rx="14" fill="#dbeafe" stroke="#60a5fa" stroke-width="3"/>${TN('p0c', 10, 245, 28, 190, 130, '#60a5fa')}
-      ${T('p0kn', 14, 20, 'K', '#16181D', 18)}${T('p0ht', 40, 20, '70 °C', '#D62828', 17)}${T('p0ln', 253, 20, 'L', '#16181D', 18)}${T('p0ct', 279, 20, '10 °C', '#1D4ED8', 17)}</g>
-      ${ARR('p0a', '#F5A300')}` + MARK(1, 38, 27, 96, 27) + MARK(2, 277, 27, 335, 27), false) +
-    H(3, 'I. sıcaktan → soğuğa ✓', 0, 440, 'sıcaktan') + H(4, 'II. T artar → hareket enerjisi artar ✓', 0, 478, 'artar') +
-    H(5, 'III. Cisim ısı içermez, ısı aktarılır ✗', 0, 516, 'içermez') + KUTU(0, 6) + CEVAP(10, 'C', 0, 562),
+    SK(0, ['Yalnız I', 'Yalnız III', 'I ve II', 'II ve III', 'I, II ve III'], 1) +
+    SCENE(392, 152, `<line x1="0" y1="128" x2="441" y2="128" stroke="#94a3b8" stroke-width="3"/>
+      <g><ellipse cx="62" cy="112" rx="34" ry="12" fill="#cbd5e1" stroke="#475569" stroke-width="2"/><rect x="94" y="108" width="100" height="8" rx="4" fill="#cbd5e1" stroke="#475569" stroke-width="2"/></g>
+      <g><ellipse cx="282" cy="112" rx="34" ry="12" fill="#d6a85c" stroke="#92400e" stroke-width="2"/><rect x="314" y="108" width="100" height="8" rx="4" fill="#d6a85c" stroke="#92400e" stroke-width="2"/></g>
+      ${T('p0a', 30, 146, 'Metal: 22 °C', '#16181D', 14)}${T('p0b', 250, 146, 'Tahta: 22 °C', '#16181D', 14)}
+      ${Array.from({length: 6}, (_, i) => `<circle id="p0m${i}" cx="${52 + (i % 3) * 10}" cy="60" r="4" fill="#ef4444" opacity="0"/>`).join('')}
+      ${Array.from({length: 2}, (_, i) => `<circle id="p0w${i}" cx="${276 + i * 10}" cy="60" r="4" fill="#ef4444" opacity="0"/>`).join('')}
+      ${T('p0s', 110, 70, 'brr… soğuk!', '#1D4ED8', 15, 'opacity="0"')}${T('p0n', 330, 70, 'normal', '#92400e', 15, 'opacity="0"')}` +
+      MARK(1, 76, 151, 120, 151) + MARK(2, 296, 151, 340, 151), false,
+      EM('p0h1', '👇', 40, -20, 40, 'opacity:0') + EM('p0h2', '👇', 260, -20, 40, 'opacity:0')) +
+    H(3, 'I. Aynı ortam → sıcaklıklar eşit ✓', 0, 548, 'ortam') + H(4, 'II. Metal iyi iletken → ısıyı hızlı alır ✓', 0, 580, 'iletken') +
+    H(5, 'III. Sıcaklıklar eşit ✗', 0, 612, 'eşit') + KUTU(0, 6) + CEVAP(10, 'C', 250, 612),
    init: () => kutuKur(0, 'C'),
    steps: [
-     {d: 4.0, o: [], f: s => { at('p0g', 'opacity', ease(prog(s, 0, 0.5))); const k = ease(prog(s, 0.6, 1.3));
-       arr('p0a', 198, 94, 198 + 45 * k, 94, k > 0 ? 1 : 0, 'ısı', -6, -12); S.p0 = prog(s, 1.0, 4.0); }},
+     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0, 0.9)); st('p0h1', {opacity: prog(s, 0, 0.3), top: (-20 + 34 * k) + 'px'}); st('p0h2', {opacity: prog(s, 0, 0.3), top: (-20 + 34 * k) + 'px'});
+       S.p0 = prog(s, 0.9, 1.2); at('p0s', 'opacity', prog(s, 1.6, 2.0)); at('p0n', 'opacity', prog(s, 1.6, 2.0)); }},
      {d: 0.6, o: [1, 2, 3, 4], f: () => {}},
      {d: 0.6, o: [5], f: () => {}},
      {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
    ],
-   late: time => { kutuIsik(0, 'C'); const h = S.p0 || 0; titre('p0h', 10, time, 6 - 3 * h, 10 - 4 * h); titre('p0c', 10, time, 1.5 + 3 * h, 2.5 + 3.5 * h);
-     $('p0ht').textContent = Math.round(70 - 30 * h) + ' °C'; $('p0ct').textContent = Math.round(10 + 30 * h) + ' °C'; }},
+   late: time => { kutuIsik(0, 'C'); const a = S.p0 || 0;
+     for (let i = 0; i < 6; i++) { const f = (time * 1.6 + i / 6) % 1; at('p0m' + i, 'cy', 60 + 42 * f); at('p0m' + i, 'opacity', a * (1 - f * 0.6)); }
+     for (let i = 0; i < 2; i++) { const f = (time * 0.4 + i / 2) % 1; at('p0w' + i, 'cy', 60 + 42 * f); at('p0w' + i, 'opacity', a * (1 - f * 0.6)); } }},
 
-  // 2 · Ölçme ----------------------------------------------------------
+  // 2 · Ölçme · çaydanlık ve bardak ------------------------------------------------
   {konu: 'Ölçme',
-   html: `<span class="qt">Isı ve sıcaklık ile ilgili;<br>I. Sıcaklık, termometre ile doğrudan ölçülür.<br>II. Isı, kalorimetre kabında sıcaklık değişiminden hesaplanır.<br>
-     III. Isının SI birimi kaloridir.<br>yargılarından hangileri doğrudur?</span>` +
-    SK(1, ['Yalnız I', 'I ve II', 'I ve III', 'II ve III', 'I, II ve III']) +
-    SCENE(232, 215, TERMO('p1l1', 80, 20, 175) + T('p1a', 32, 214, 'Termometre', '#16181D', 15) +
-      `<rect x="230" y="62" width="190" height="130" rx="14" fill="#475569" stroke="#cbd5e1" stroke-width="2.5"/>
-       <rect x="246" y="78" width="158" height="100" rx="8" fill="#1f2430"/><rect id="p1su" x="250" y="112" width="150" height="62" rx="6" fill="#60a5fa" opacity=".75"/>
-       <rect x="222" y="50" width="206" height="18" rx="6" fill="#94a3b8"/>
-       <circle id="p1top" cx="300" cy="10" r="15" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>` +
-      TERMO('p1l2', 380, 22, 150) + T('p1b', 258, 214, 'Kalorimetre kabı', '#16181D', 15) +
-      MARK(1, 30, 221, 120, 221) + MARK(3, 256, 221, 384, 221), false) +
-    H(2, 'I. doğrudan ✓', 18, 452, 'doğrudan') + H(4, 'II. hesaplanır ✓', 255, 452, 'hesaplanır') +
-    H(5, 'III. SI birimi joule (J) ✗', 0, 496, 'joule') + KUTU(1, 6) + CEVAP(10, 'B', 0, 542),
-   init: () => { termo('p1l1', 175, 30); termo('p1l2', 150, 20); kutuKur(1, 'B'); },
-   late: () => kutuIsik(1, 'B'),
+   html: `<span class="qt">Bir çaydanlıktaki 1 kg su ile bir bardaktaki 0,2 kg suyun sıcaklıkları termometreyle ölçülüyor ve ikisi de 90 °C bulunuyor.<br>Buna göre,<br>
+     I. Suların sıcaklıkları eşittir.<br>II. Suların iç enerjileri eşittir.<br>III. Termometreyle ölçülen büyüklük, suyun içerdiği ısıdır.<br>
+     yargılarından hangileri doğrudur?</span>` +
+    SK(1, ['Yalnız I', 'Yalnız II', 'I ve II', 'II ve III', 'I, II ve III'], 1) +
+    SCENE(392, 156, `<path d="M20 150 h140 q4 -78 -70 -86 q-74 8 -70 86z" fill="#94a3b8" stroke="#475569" stroke-width="2.5"/>
+      <path d="M150 112 q30 -6 42 -34" fill="none" stroke="#475569" stroke-width="9" stroke-linecap="round"/><rect x="74" y="56" width="32" height="10" rx="5" fill="#475569"/>
+      <path d="M220 74 h70 l-8 76 h-54z" fill="#bfdbfe" stroke="#475569" stroke-width="2.5"/>` +
+      TERMO('p1t1', 60, 0, 108) + TERMO('p1t2', 255, 0, 108) +
+      T('p1a', 74, 30, '', '#D62828', 15) + T('p1b', 268, 30, '', '#D62828', 15) + T('p1m1', 66, 140, '1 kg', '#fff', 15) + T('p1m2', 236, 140, '0,2 kg', '#1D3FB8', 13) +
+      `<rect id="p1e1" x="330" y="150" width="34" height="0" fill="#f59e0b"/><rect id="p1e2" x="384" y="150" width="34" height="0" fill="#f59e0b"/>
+       <line x1="320" y1="150" x2="430" y2="150" stroke="#16181D" stroke-width="2"/>` + T('p1et', 330, 14, 'İç enerji', '#16181D', 14), false) +
+    H(1, 'I. İkisi de 90 °C ✓', 0, 552, 'ikisi') + H(2, 'II. Kütle büyük → iç enerji büyük ✗', 0, 584, 'kütle') +
+    H(3, 'III. Termometre sıcaklığı ölçer ✗', 0, 616, 'sıcaklığı') + KUTU(1, 4) + CEVAP(8, 'A', 300, 616) + MARK(9, 0, 0, 0, 0),
+   init: () => { termo('p1t1', 108, 8); termo('p1t2', 108, 8); kutuKur(1, 'A'); },
    steps: [
-     {d: 2.2, o: [1, 2], f: s => termo('p1l1', 175, 30 + 105 * ease(prog(s, 0, 2.0)))},
-     {d: 3.2, o: [3, 4], f: s => { const k = ease(prog(s, 0, 0.9)); at('p1top', 'cy', 10 + 140 * k); at('p1top', 'opacity', 1 - 0.3 * prog(s, 0.9, 1.4));
-       termo('p1l2', 150, 20 + 80 * ease(prog(s, 1.0, 3.0))); at('p1su', 'fill', k >= 1 ? '#f59e0b' : '#60a5fa'); }},
-     {d: 0.6, o: [5], f: () => {}},
-     {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
-   ]},
+     {d: 3.4, o: [], f: s => { const k = ease(prog(s, 0, 1.8)); termo('p1t1', 108, 8 + 72 * k); termo('p1t2', 108, 8 + 72 * k);
+       $('p1a').textContent = s > 0.1 ? Math.round(20 + 70 * k) + ' °C' : ''; $('p1b').textContent = s > 0.1 ? Math.round(20 + 70 * k) + ' °C' : '';
+       const e = ease(prog(s, 1.8, 3.2)); at('p1e1', 'y', 150 - 120 * e); at('p1e1', 'height', 120 * e); at('p1e2', 'y', 150 - 24 * e); at('p1e2', 'height', 24 * e); }},
+     {d: 0.6, o: [1, 2], f: () => {}},
+     {d: 0.6, o: [3], f: () => {}},
+     {d: 0.6, o: [4, 5, 6, 7, 8], f: () => {}},
+   ],
+   late: () => kutuIsik(1, 'A')},
 
-  // 3 · Termometreler --------------------------------------------------
+  // 3 · Termometreler · öğrencinin X termometresi --------------------------------
   {konu: 'Termometreler',
-   html: `<span class="qt">Celsius termometresi 40 °C'yi gösterdiği anda Fahrenheit termometresi kaç °F'yi gösterir?</span>` +
-    SK(2, ['72', '88', '96', '104', '140']) +
-    SCENE(130, 250, [['°C', 110, '0', '100', 'p2c'], ['°F', 330, '32', '212', 'p2f']].map(([ad, x, a, b, id]) =>
-      TERMO(id, x, 30, 215) + T(id + 'n', x - 14, 20, ad, '#16181D', 18) +
-      T(id + 'a', x + 22, 196, a, '#1D4ED8', 16) + T(id + 'b', x + 22, 66, b, '#D62828', 16) +
-      T(id + 'v', x - 74, 0, '', '#B45309', 18)).join('') +
-      `<line x1="40" y1="191" x2="420" y2="191" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="6 5"/>
-       <line x1="40" y1="61" x2="420" y2="61" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6 5"/>
-       ${T('p2e1', 4, 186, 'buz', '#1D4ED8', 12)}${T('p2e2', 4, 56, 'kaynar', '#D62828', 12)}` + MARK(1, 40, 139, 420, 139, '#B45309', 2.5), false) +
-    H(2, KS('40', '100'), 86, 392, 'kırk') + H(3, '=', 205, 405, 'eşittir') + H(4, KS('F − 32', '180'), 285, 392, 'eksi') +
-    H(5, 'F − 32 = 72  →  F = 104 °F', 0, 470, 'yetmiş') + KUTU(2, 6) + CEVAP(10, 'D', 0, 516),
-   init: () => { termo('p2c', 215, 6); termo('p2f', 215, 6); kutuKur(2, 'D'); },
-   late: () => kutuIsik(2, 'D'),
+   html: `<span class="qt">Bir öğrenci yaptığı X termometresinde buzun erime noktasını 20, suyun kaynama noktasını 120 olarak işaretliyor. Isıtılan su, Celsius termometresinde 30 °C'yi gösterdiği anda X termometresi kaç °X'i gösterir?</span>` +
+    SK(2, ['40', '50', '60', '70', '80'], 1) +
+    SCENE(262, 190, BEHER('p2k', 110, 40, 220, 110, 80, '#bfdbfe') +
+      `<rect id="p2i1" x="150" y="94" width="26" height="22" rx="4" fill="#f8fafc" stroke="#93c5fd" stroke-width="2"/><rect id="p2i2" x="262" y="100" width="24" height="20" rx="4" fill="#f8fafc" stroke="#93c5fd" stroke-width="2"/>
+       <rect x="120" y="166" width="200" height="12" rx="5" fill="#64748b"/>` + ALEV('p2f1', 180, 166) + ALEV('p2f2', 260, 166) +
+      TERMO('p2x', 190, 0, 130, '#2563eb') + TERMO('p2c', 250, 0, 130) +
+      T('p2xn', 146, 12, 'X', '#2563eb', 17) + T('p2cn', 268, 12, '°C', '#D62828', 15) +
+      T('p2xa', 150, 136, '20', '#2563eb', 12) + T('p2xb', 144, 34, '120', '#2563eb', 12) + T('p2ca', 266, 136, '0', '#D62828', 12) + T('p2cb', 266, 34, '100', '#D62828', 12) +
+      T('p2xv', 92, 0, '', '#2563eb', 16) + T('p2cv', 280, 0, '', '#D62828', 16) + MARK(1, 120, 100, 320, 100, '#B45309', 2.5), false) +
+    H(2, KS('X − 20', '100'), 140, 456, 'iks') + H(3, '=', 222, 468, 'eşittir') + H(4, KS('30', '100'), 244, 456, 'otuz') +
+    H(5, 'X − 20 = 30  →  X = 50 °X', 0, 520, 'elli') + KUTU(2, 6) + CEVAP(10, 'B', 0, 562),
+   init: () => { termo('p2x', 130, 6); termo('p2c', 130, 6); kutuKur(2, 'B'); },
    steps: [
-     {d: 3.2, o: [], f: s => { const k = ease(prog(s, 0, 2.6)); termo('p2c', 215, 6 + 52 * k); termo('p2f', 215, 6 + 52 * k);
-       $('p2cv').textContent = s > 0.1 ? Math.round(40 * k) + ' °C' : ''; $('p2fv').textContent = s > 0.1 ? Math.round(32 + 72 * k) + ' °F' : '';
-       at('p2cv', 'y', 215 - 52 * k + 4); at('p2fv', 'y', 215 - 52 * k + 4); }},
+     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.4, 3.2)); alev('p2f1', 180, 166, prog(s, 0, 0.4), s); alev('p2f2', 260, 166, prog(s, 0, 0.4), s + 1);
+       at('p2i1', 'opacity', 1 - prog(s, 0.4, 1.6)); at('p2i2', 'opacity', 1 - prog(s, 0.6, 1.8)); const h = 6 + 30 * k;
+       termo('p2x', 130, h); termo('p2c', 130, h); $('p2xv').textContent = s > 0.3 ? Math.round(20 + 30 * k) + ' °X' : ''; $('p2cv').textContent = s > 0.3 ? Math.round(30 * k) + ' °C' : '';
+       at('p2xv', 'y', 130 - h + 5); at('p2cv', 'y', 130 - h + 5); at('p2ks', 'fill', k > 0.5 ? '#93c5fd' : '#bfdbfe'); }},
      {d: 0.6, o: [1, 2, 3, 4], f: () => {}},
      {d: 0.6, o: [5], f: () => {}},
      {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
-   ]},
+   ],
+   late: () => kutuIsik(2, 'B')},
 
-  // 4 · Öz Isı ---------------------------------------------------------
+  // 4 · Öz Isı · K, L, M sıvıları ve grafik -------------------------------------
   {konu: 'Öz Isı',
-   html: `<span class="qt">Kütleleri eşit X ve Y sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. X'in sıcaklığı 10 °C, Y'nin sıcaklığı 20 °C artıyor. Buna göre X'in öz ısısının Y'nin öz ısısına oranı kaçtır?</span>` +
-    SK(3, ['2', '4', '1', KS('1', '2'), KS('1', '4')]) +
-    SCENE(196, 210, BEHER('p3x', 40, 30, 140, 120, 70, '#60a5fa') + BEHER('p3y', 260, 30, 140, 120, 70, '#a78bfa') +
-      `<rect x="45" y="170" width="130" height="14" rx="5" fill="#64748b"/><rect x="265" y="170" width="130" height="14" rx="5" fill="#64748b"/>` +
-      ALEV('p3f1', 110, 168) + ALEV('p3f2', 330, 168) +
-      T('p3xn', 100, 125, 'X', '#fff', 22) + T('p3yn', 320, 125, 'Y', '#fff', 22) +
-      `<rect x="62" y="0" width="96" height="26" rx="13" fill="#1d4ed8"/><rect x="282" y="0" width="96" height="26" rx="13" fill="#7c3aed"/>` +
-      T('p3xt', 76, 19, '+0 °C', '#fff', 16) + T('p3yt', 296, 19, '+0 °C', '#fff', 16) +
-      MARK(1, 62, 33, 158, 33) + MARK(3, 282, 33, 378, 33), false) +
-    H(2, 'ΔT = 10 °C', 60, 412, 'on') + H(4, 'ΔT = 20 °C', 278, 412, 'yirmi') +
-    H(5, 'Q = m · c · ΔT  →  Q, m eşit', 0, 452, 'eşit') +
-    H(6, 'c · ΔT eşit  →  ' + KS('c<sub>X</sub>', 'c<sub>Y</sub>') + ' = ' + KS('20', '10') + ' = 2', 0, 492, 'oran') + KUTU(3, 7) + CEVAP(11, 'A', 0, 560),
-   init: () => kutuKur(3, 'A'),
-   late: () => kutuIsik(3, 'A'),
+   html: `<span class="qt">Eşit kütleli K, L ve M sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. Sıvıların sıcaklık-zaman grafiği şekildeki gibidir.<br>
+     Buna göre, sıvıların öz ısıları c<sub>K</sub>, c<sub>L</sub> ve c<sub>M</sub> arasındaki ilişki nedir?</span>` +
+    SK(3, ['c<sub>K</sub> > c<sub>L</sub> > c<sub>M</sub>', 'c<sub>L</sub> > c<sub>K</sub> > c<sub>M</sub>', 'c<sub>M</sub> > c<sub>L</sub> > c<sub>K</sub>',
+      'c<sub>K</sub> = c<sub>L</sub> > c<sub>M</sub>', 'c<sub>M</sub> > c<sub>K</sub> > c<sub>L</sub>'], 1) +
+    SCENE(262, 200, ['K', 'L', 'M'].map((h, j) => BEHER('p3' + h, 8 + j * 58, 70, 48, 60, 44, '#93c5fd') + `<rect x="${10 + j * 58}" y="150" width="44" height="8" rx="3" fill="#64748b"/>` +
+        ALEV('p3f' + j, 32 + j * 58, 150) + T('p3n' + j, 26 + j * 58, 62, h, '#16181D', 15)).join('') +
+      `<line x1="200" y1="180" x2="432" y2="180" stroke="#16181D" stroke-width="2.5"/><line x1="200" y1="186" x2="200" y2="8" stroke="#16181D" stroke-width="2.5"/>
+       <polygon points="432,180 422,175 422,185" fill="#16181D"/><polygon points="200,8 195,18 205,18" fill="#16181D"/>
+       <text class="ax" x="388" y="198">zaman</text><text class="ax" x="206" y="16">T (°C)</text>` +
+      MARK(1, 200, 160, 400, 40, '#D62828', 3.5, 'p3g0') + MARK(2, 200, 160, 400, 80, '#B45309', 3.5, 'p3g1') + MARK(3, 200, 160, 400, 120, '#1D4ED8', 3.5, 'p3g2') +
+      T('p3lK', 406, 40, 'K', '#D62828', 15) + T('p3lL', 406, 84, 'L', '#B45309', 15) + T('p3lM', 406, 124, 'M', '#1D4ED8', 15), false) +
+    H(4, 'Q ve m eşit  →  c · ΔT eşit', 0, 486, 'eşit') + H(5, 'ΔT: K > L > M  →  c: M > L > K', 0, 522, 'büyük') +
+    KUTU(3, 6) + CEVAP(10, 'C', 0, 562),
+   init: () => { kutuKur(3, 'C'); ['p3lK', 'p3lL', 'p3lM'].forEach(id => at(id, 'opacity', 0)); },
    steps: [
-     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.4, 3.4)); const t = s; alev('p3f1', 110, 168, prog(s, 0, 0.4), t); alev('p3f2', 330, 168, prog(s, 0, 0.4), t);
-       $('p3xt').textContent = '+' + Math.round(10 * k) + ' °C'; $('p3yt').textContent = '+' + Math.round(20 * k) + ' °C';
-       at('p3ys', 'fill', k > 0.5 ? '#f472b6' : '#a78bfa'); }},
-     {d: 0.6, o: [1, 2, 3, 4], f: () => {}},
-     {d: 0.6, o: [5, 6], f: () => {}},
-     {d: 0.6, o: [7, 8, 9, 10, 11], f: () => {}},
-   ]},
-
-  // 5 · Hal Değişimi ---------------------------------------------------
-  {konu: 'Hal Değişimi',
-   html: `<span class="qt">Saf bir katının sıcaklık-ısı grafiği şekildeki gibidir. Buna göre;<br>I. Madde L aralığında hal değiştirir.<br>II. L aralığında madde ısı almaz.<br>
-     III. Maddenin erime sıcaklığı 40 °C'dir.<br>yargılarından hangileri doğrudur?</span>` +
-    SK(4, ['Yalnız I', 'Yalnız II', 'I ve II', 'I ve III', 'II ve III']) +
-    SCENE(228, 215, `<line x1="40" y1="190" x2="432" y2="190" stroke="#16181D" stroke-width="2.5"/><line x1="40" y1="197" x2="40" y2="10" stroke="#16181D" stroke-width="2.5"/>
-      <polygon points="432,190 422,185 422,195" fill="#16181D"/><polygon points="40,10 35,20 45,20" fill="#16181D"/>
-      <text class="ax" x="372" y="210">Q (ısı)</text><text class="ax" x="48" y="18">T (°C)</text><text class="ax" x="14" y="114">40</text>
-      <line x1="40" y1="110" x2="430" y2="110" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 5"/>` +
-      MARK(1, 40, 175, 130, 110, '#60a5fa', 4, 'p4g0') + MARK(2, 130, 110, 270, 110, '#F5A300', 4, 'p4g1') + MARK(3, 270, 110, 380, 30, '#f87171', 4, 'p4g2') +
-      T('p4K', 76, 132, 'K', '#93c5fd', 16) + T('p4L', 192, 100, 'L', '#B45309', 16) + T('p4M', 312, 62, 'M', '#fca5a5', 16), false,
-      EM('p4i1', '🧊', 66, 160, 30, 'opacity:0') + EM('p4i2', '💧', 186, 112, 30, 'opacity:0') + EM('p4i3', '💧', 300, 120, 30, 'opacity:0')) +
-    H(4, 'I. L: erime (katı + sıvı) ✓', 0, 452, 'erime') + H(5, 'II. Isı alır ama T sabit ✗', 0, 490, 'sabit') +
-    H(6, 'III. Erime sıcaklığı 40 °C ✓', 0, 528, 'kırk') + KUTU(4, 7) + CEVAP(11, 'D', 0, 572),
-   steps: [
+     {d: 3.2, o: [], f: s => { const k = ease(prog(s, 0.3, 3.0)); ['K', 'L', 'M'].forEach((h, j) => { alev('p3f' + j, 32 + j * 58, 150, prog(s, 0, 0.4), s + j);
+       at('p3' + h + 's', 'fill', k > [0.3, 0.5, 0.8][j] ? ['#f87171', '#fb923c', '#fcd34d'][j] : '#93c5fd'); }); }},
      {d: 0.6, o: [1, 2, 3], f: () => {}},
      {d: 0.6, o: [4, 5], f: () => {}},
-     {d: 0.6, o: [6], f: () => {}},
-     {d: 0.6, o: [7, 8, 9, 10, 11], f: () => {}},
-   ],
-   init: () => kutuKur(4, 'D'),
-   late: () => { kutuIsik(4, 'D'); const k = [0, 1, 2].map(j => drawnK('p4g' + j));       // grafik çizildikçe hâller belirir
-     st('p4i1', {opacity: k[0] > 0.1 ? 1 - prog(k[1], 0.5, 1) : 0}); st('p4i2', {opacity: k[1] > 0.3 ? 1 - prog(k[2], 0.5, 1) : 0}); st('p4i3', {opacity: k[2] > 0.3 ? 1 : 0});
-     ['p4K', 'p4L', 'p4M'].forEach((id, j) => at(id, 'opacity', prog(k[j], 0.5, 0.9))); }},
-
-  // 6 · Isıl Denge -----------------------------------------------------
-  {konu: 'Isıl Denge',
-   html: `<span class="qt">30 °C'deki 200 g su ile 90 °C'deki 100 g su, ısıca yalıtılmış bir kapta karıştırılıyor. Isı alışverişi yalnız sular arasında olduğuna göre denge sıcaklığı kaç °C olur?</span>` +
-    SK(5, ['40', '45', '50', '60', '70']) +
-    SCENE(176, 200, `<g id="p5A">${BEHER('p5a', 10, 40, 120, 130, 96, '#60a5fa')}${T('p5am', 40, 120, '200 g', '#fff', 16)}${T('p5at', 40, 146, '30 °C', '#fff', 18)}</g>
-      <g id="p5B">${BEHER('p5b', 150, 40, 110, 130, 54, '#f97316')}${T('p5bm', 178, 140, '100 g', '#fff', 15)}${T('p5bt', 176, 164, '90 °C', '#fff', 16)}</g>
-      ${ARR('p5ok', '#F5A300')}
-      <g id="p5C" opacity="0">${BEHER('p5c', 300, 20, 130, 150, 130, '#f59e0b')}${T('p5cm', 330, 100, '300 g', '#fff', 16)}${T('p5ct', 326, 130, '? °C', '#fff', 20)}</g>` +
-      MARK(4, 324, 138, 396, 138), false) +
-    H(1, 'Q<sub>verilen</sub> = Q<sub>alınan</sub>', 0, 392, 'verilen') +
-    H(2, '200 · (T − 30) = 100 · (90 − T)', 0, 430, 'iki') +
-    H(3, '300 · T = 15000  →  T = ' + KS('15000', '300') + ' = 50 °C', 0, 470, 'elli') +
-    H(5, 'Kütlesi büyük olana (30 °C) yakın', 0, 528, 'yakın') + KUTU(5, 6) + CEVAP(10, 'C', 0, 568),
-   init: () => kutuKur(5, 'C'),
-   late: () => kutuIsik(5, 'C'),
-   steps: [
-     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0, 0.8)); arr('p5ok', 268, 100, 268 + 26 * k, 100, k > 0 ? 1 : 0, '', 0, 0);
-       const c = ease(prog(s, 0.6, 1.6)); at('p5C', 'opacity', c); at('p5A', 'opacity', 1 - 0.55 * c); at('p5B', 'opacity', 1 - 0.55 * c);
-       $('p5ct').textContent = s < 1.6 ? '? °C' : Math.round(lerp(30, 50, ease(prog(s, 1.6, 3.4)))) + ' °C'; }},
-     {d: 0.6, o: [1, 2], f: () => {}},
-     {d: 0.6, o: [3, 4, 5], f: () => {}},
      {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
-   ]},
-
-  // 7 · Isı Aktarımı ---------------------------------------------------
-  {konu: 'Isı Aktarımı',
-   html: `<span class="qt">Aşağıdakilerin hangisinde ısı, madde gerekmeden yalnızca ışıma yoluyla aktarılır?</span>` +
-    SK(6, ['Çaya konan metal kaşığın sapının ısınması', 'Kaloriferin odadaki havayı dolaştırarak ısıtması', 'Ocaktaki tencerenin dibinin ısınması',
-      'Denizden karaya esen meltem rüzgârı', "Güneş enerjisinin uzay boşluğundan Dünya'ya ulaşması"], 1) +
-    SCENE(232, 190, `<g id="p6a" opacity="0"><path d="M20 90 v70 q0 12 12 12 h56 q12 0 12 -12 v-70z" fill="#92400e" stroke="#cbd5e1" stroke-width="2.5"/>
-        <line x1="70" y1="120" x2="118" y2="40" stroke="#64748b" stroke-width="7" stroke-linecap="round"/>
-        <line id="p6as" x1="70" y1="120" x2="70" y2="120" stroke="#ef4444" stroke-width="7" stroke-linecap="round"/></g>
-      <g id="p6b" opacity="0"><rect x="150" y="130" width="110" height="46" rx="6" fill="#94a3b8"/><rect id="p6bi" x="156" y="136" width="98" height="34" rx="5" fill="#fb923c" opacity="0"/>
-        <g fill="none" stroke-width="4" stroke-linecap="round"><path id="p6k1" d="M205 120 C 205 80, 205 50, 210 30" stroke="#fb923c" stroke-dasharray="10 8"/>
-        <path id="p6k2" d="M220 26 C 245 30, 262 60, 262 120" stroke="#60a5fa" stroke-dasharray="10 8"/></g></g>
-      <g id="p6c" opacity="0"><rect x="290" y="0" width="151" height="190" rx="10" fill="#0b1020"/>
-        ${[[310, 30], [420, 20], [360, 150], [430, 120], [300, 110]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join('')}
-        <circle cx="318" cy="40" r="22" fill="#fde047"/><circle cx="410" cy="150" r="20" fill="#3b82f6"/><path d="M398 140 q8 4 10 14 q8 -2 12 6" fill="none" stroke="#22c55e" stroke-width="4"/>
-        </g>` + MARK(3, 336, 58, 392, 134, '#facc15') + MARK(4, 328, 66, 382, 140, '#facc15') + MARK(5, 346, 50, 402, 126, '#facc15'), false) +
-    H(1, 'A, C: iletim', 6, 438, 'iletim') + H(2, 'B, D: konveksiyon', 140, 438, 'konveksiyon') + H(6, 'E: ışıma ✓', 316, 438, 'ışıma') +
-    H(7, 'Işıma boşlukta da olur', 0, 482, 'boşlukta') + KUTU(6, 8) + CEVAP(12, 'E', 0, 526),
-   init: () => kutuKur(6, 'E'),
-   steps: [
-     {d: 2.0, o: [1], f: s => { at('p6a', 'opacity', prog(s, 0, 0.4)); const k = ease(prog(s, 0.4, 1.9)); at('p6as', 'x2', 70 + 48 * k); at('p6as', 'y2', 120 - 80 * k); }},
-     {d: 2.0, o: [2], f: s => { at('p6b', 'opacity', prog(s, 0, 0.4)); at('p6bi', 'opacity', 0.7 * prog(s, 0.3, 1.0)); S.p6b = prog(s, 0.3, 0.8); }},
-     {d: 1.0, o: [3, 4, 5, 6], f: s => { at('p6c', 'opacity', prog(s, 0, 0.4)); }},
-     {d: 0.6, o: [7], f: () => {}},
-     {d: 0.6, o: [8, 9, 10, 11, 12], f: () => {}},
    ],
-   late: time => { kutuIsik(6, 'E'); const b = S.p6b || 0; for (let i = 1; i <= 2; i++) { $('p6k' + i).style.strokeDashoffset = -time * 30; $('p6k' + i).style.opacity = b; } }},
+   late: () => { kutuIsik(3, 'C'); ['p3lK', 'p3lL', 'p3lM'].forEach((id, j) => at(id, 'opacity', prog(drawnK('p3g' + j), 0.8, 1))); }},
 
-  // 8 · Genleşme -------------------------------------------------------
-  {konu: 'Genleşme',
-   html: `<span class="qt">Aynı sıcaklıkta boyları eşit olan K ve L metal çubuklarının sıcaklıkları eşit miktarda artırılınca K'nin boyu L'ninkinden daha çok uzuyor. Buna göre;<br>
-     I. K'nin boyca uzama katsayısı L'ninkinden büyüktür.<br>II. Isınan çubukların tanecikleri arasındaki uzaklık artar.<br>III. Eşit miktarda soğutulursa K, L'den daha çok kısalır.<br>
-     yargılarından hangileri doğrudur?</span>` +
-    SK(7, ['Yalnız I', 'I ve II', 'I ve III', 'II ve III', 'I, II ve III']) +
-    SCENE(306, 150, `<rect id="p7k" x="30" y="24" width="300" height="26" rx="6" fill="#94a3b8"/>${T('p7kn', 4, 44, 'K', '#16181D', 18)}
-      <rect id="p7l" x="30" y="94" width="300" height="26" rx="6" fill="#94a3b8"/>${T('p7ln', 4, 114, 'L', '#16181D', 18)}
-      <line x1="330" y1="10" x2="330" y2="140" stroke="#16181D" stroke-width="2" stroke-dasharray="5 5"/>
-      ${ARR('p7dk', '#B45309')}${ARR('p7dl', '#B45309')}` + ALEV('p7f1', 120, 82) + ALEV('p7f2', 220, 82) + ALEV('p7f3', 120, 150) + ALEV('p7f4', 220, 150) +
-      MARK(1, 400, 18, 400, 58) + MARK(2, 360, 88, 360, 128), false) +
-    H(3, 'ΔL = L<sub>0</sub> · λ · ΔT', 0, 462, 'uzama') + H(4, 'L<sub>0</sub>, ΔT eşit  →  λ<sub>K</sub> > λ<sub>L</sub>   I ✓', 0, 500, 'katsayı') +
-    H(5, 'II. Tanecikler uzaklaşır ✓    III. ✓', 0, 538, 'uzaklaşır') + KUTU(7, 6) + CEVAP(10, 'E', 0, 578),
-   init: () => kutuKur(7, 'E'),
-   late: () => kutuIsik(7, 'E'),
+  // 5 · Hal Değişimi · buzlu bardakta damlacıklar ---------------------------------
+  {konu: 'Hal Değişimi',
+   html: `<span class="qt">Aşağıdaki olayların hangisinde madde, çevresine ısı verir?</span>` +
+    SK(4, ['Kolonyanın elde buharlaşması', 'Buzun erimesi', 'Islak çamaşırın kuruması',
+      'Buzlu bardağın dış yüzeyinde su damlacıklarının oluşması', 'Naftalinin süblimleşmesi'], 1) +
+    SCENE(196, 210, `<path d="M150 40 h130 l-14 150 h-102z" fill="#f0f9ff" stroke="#475569" stroke-width="3"/>
+      <path d="M156 80 h118 l-10 106 h-98z" fill="#fde68a" opacity=".85"/>
+      <rect x="180" y="86" width="26" height="24" rx="4" fill="#f8fafc" stroke="#93c5fd" stroke-width="2" transform="rotate(-12 193 98)"/>
+      <rect x="226" y="98" width="26" height="24" rx="4" fill="#f8fafc" stroke="#93c5fd" stroke-width="2" transform="rotate(10 239 110)"/>
+      ${Array.from({length: 10}, (_, i) => `<circle id="p4v${i}" cx="0" cy="0" r="4" fill="#94a3b8" opacity="0"/>`).join('')}
+      ${Array.from({length: 10}, (_, i) => `<ellipse id="p4d${i}" cx="${i % 2 ? 279 - (i * 3) % 10 : 152 + (i * 3) % 10}" cy="${60 + i * 12}" rx="3.5" ry="5" fill="#3b82f6" opacity="0"/>`).join('')}
+      ${T('p4a', 4, 30, 'su buharı', '#64748b', 14)}${T('p4b', 330, 140, 'su damlası', '#1D4ED8', 14)}${ARR('p4o', '#D62828')}` +
+      MARK(1, 328, 147, 404, 147), false) +
+    H(2, 'Yoğuşma: buhar → sıvı, ısı verir ✓', 0, 426, 'yoğuşma') + H(3, 'Buharlaşma, erime, süblimleşme: ısı alır', 0, 462, 'alır') +
+    KUTU(4, 4) + CEVAP(8, 'D', 0, 506),
+   init: () => kutuKur(4, 'D'),
    steps: [
-     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.4, 3.4)); ['p7f1', 'p7f2', 'p7f3', 'p7f4'].forEach((id, j) => alev(id, j % 2 ? 220 : 120, j < 2 ? 82 : 150, prog(s, 0, 0.4), s + j));
-       at('p7k', 'width', 300 + 70 * k); at('p7l', 'width', 300 + 30 * k); at('p7k', 'fill', k > 0.4 ? '#fb923c' : '#94a3b8'); at('p7l', 'fill', k > 0.4 ? '#fb923c' : '#94a3b8');
-       arr('p7dk', 330, 14, 330 + 70 * k, 14, k > 0.08 ? 1 : 0, 'ΔL', 0, -4); arr('p7dl', 330, 84, 330 + 30 * k, 84, k > 0.15 ? 1 : 0, '', 0, 0); }},
+     {d: 3.6, o: [], f: s => { S.p4 = s; const k = ease(prog(s, 2.0, 2.6)); arr('p4o', 300, 120, 300 - 12 * k, 120, k > 0 ? 1 : 0, 'ısı verir', 40, -12); }},
+     {d: 0.6, o: [1, 2], f: () => {}},
+     {d: 0.6, o: [3], f: () => {}},
+     {d: 0.6, o: [4, 5, 6, 7, 8], f: () => {}},
+   ],
+   late: time => { kutuIsik(4, 'D'); const s = S.p4 || 0;
+     for (let i = 0; i < 10; i++) { const left = i % 2 === 0, f = (time * 0.5 + i / 10) % 1, y = 50 + (i * 14) % 130;
+       at('p4v' + i, 'cx', left ? 20 + 125 * f : 420 - 128 * f); at('p4v' + i, 'cy', y + 4 * Math.sin(time * 3 + i)); at('p4v' + i, 'opacity', prog(s, 0, 0.5) * (1 - f));
+       at('p4d' + i, 'opacity', prog(s, 0.6 + i * 0.12, 0.9 + i * 0.12)); } }},
+
+  // 6 · Isıl Denge · çay ve kaşık --------------------------------------------------
+  {konu: 'Isıl Denge',
+   html: `<span class="qt">Isıca yalıtılmış bir ortamda 80 °C'deki çayın içine 20 °C'deki metal kaşık konuyor. Isıl denge sağlanıncaya kadar,<br>
+     I. Çayın sıcaklığı azalır.<br>II. Kaşığın aldığı ısı, çayın verdiği ısıya eşittir.<br>III. Denge anında çay ile kaşığın sıcaklıkları eşittir.<br>
+     yargılarından hangileri doğrudur?</span>` +
+    SK(5, ['Yalnız I', 'Yalnız III', 'I ve II', 'II ve III', 'I, II ve III'], 1) +
+    SCENE(318, 165, `<defs><linearGradient id="p5gr" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#f97316"/><stop id="p5st" offset="0" stop-color="#f97316"/><stop id="p5st2" offset="0" stop-color="#94a3b8"/></linearGradient></defs>
+      <path d="M120 30 q-12 50 14 66 q-24 22 -12 66 h84 q12 -44 -12 -66 q26 -16 14 -66z" fill="#b45309" fill-opacity=".85" stroke="#475569" stroke-width="2.5"/>
+      <rect x="112" y="162" width="104" height="8" rx="3" fill="#94a3b8"/>
+      <line x1="180" y1="140" x2="262" y2="6" stroke="url(#p5gr)" stroke-width="7" stroke-linecap="round"/>
+      <g id="p5b" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"><path d="M140 22 q-8 -10 0 -20"/><path d="M160 22 q-8 -10 0 -20"/></g>
+      ${T('p5c', 290, 70, 'Çay: 80 °C', '#b45309', 16)}${T('p5k', 290, 110, 'Kaşık: 20 °C', '#475569', 16)}${ARR('p5o', '#D62828')}` +
+      MARK(1, 330, 76, 382, 76) + MARK(2, 346, 116, 398, 116), false) +
+    H(3, 'I. Çay ısı verir, soğur ✓', 0, 500, 'soğur') + H(4, 'II. Yalıtılmış: Q<sub>verilen</sub> = Q<sub>alınan</sub> ✓', 0, 536, 'yalıtılmış') +
+    H(5, 'III. Dengede sıcaklıklar eşit ✓', 0, 572, 'dengede') + KUTU(5, 6) + CEVAP(10, 'E', 260, 572),
+   init: () => kutuKur(5, 'E'),
+   steps: [
+     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.6, 3.4)); const a = ease(prog(s, 0.2, 0.7)); arr('p5o', 196, 120, 196 + 36 * a, 120 - 50 * a, a > 0 ? 1 : 0, 'ısı', -10, -6);
+       at('p5st', 'offset', 0.15 + 0.85 * k); at('p5st2', 'offset', 0.2 + 0.8 * k);
+       $('p5c').textContent = 'Çay: ' + Math.round(80 - 5 * k) + ' °C'; $('p5k').textContent = 'Kaşık: ' + Math.round(20 + 55 * k) + ' °C'; }},
+     {d: 0.6, o: [1, 2, 3], f: () => {}},
+     {d: 0.6, o: [4, 5], f: () => {}},
+     {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
+   ],
+   late: time => { kutuIsik(5, 'E'); at('p5b', 'transform', `translate(0,${-6 * ((time * 0.8) % 1)})`); at('p5b', 'opacity', 0.6 + 0.4 * Math.sin(time * 3)); }},
+
+  // 7 · Isı Aktarımı · termos ----------------------------------------------------
+  {konu: 'Isı Aktarımı',
+   html: `<span class="qt">Termosun iç ve dış cidarları arasındaki bölmenin havası boşaltılarak vakum oluşturulmuştur.<br>
+     Buna göre, bu vakumlu bölme ısının hangi yolla ya da yollarla aktarılmasını engeller?</span>` +
+    SK(6, ['Yalnız iletim', 'Yalnız ışıma', 'İletim ve konveksiyon', 'Konveksiyon ve ışıma', 'İletim, konveksiyon ve ışıma'], 1) +
+    SCENE(304, 196, `<rect x="110" y="20" width="200" height="170" rx="22" fill="#e2e8f0" stroke="#475569" stroke-width="3"/>
+      <rect x="128" y="36" width="164" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+      <rect x="144" y="50" width="132" height="114" rx="12" fill="#78350f" stroke="#9ca3af" stroke-width="7"/>
+      <rect x="150" y="6" width="120" height="22" rx="6" fill="#475569"/>
+      ${Array.from({length: 7}, (_, i) => `<circle id="p6p${i}" cx="210" cy="110" r="5" fill="#fb923c"/>`).join('')}
+      <g id="p6r" fill="none" stroke="#facc15" stroke-width="3" stroke-linecap="round" opacity="0"><path d="M210 80 l40 -14"/><path d="M250 66 l-26 -10"/></g>
+      ${T('p6v', 328, 60, 'vakum', '#1D4ED8', 16)}${T('p6g', 328, 150, 'gümüş yüzey', '#475569', 14)}` +
+      MARK(1, 326, 54, 286, 44) + MARK(2, 328, 67, 380, 67), false) +
+    H(3, 'Vakumda tanecik yok:', 0, 512, 'tanecik') + H(4, '→ iletim ve konveksiyon olmaz ✓', 190, 512, 'olmaz') +
+    H(5, 'Işıma boşlukta da olur → gümüş yüzey yansıtır', 0, 548, 'yansıtır') + KUTU(6, 6) + CEVAP(10, 'C', 0, 586),
+   init: () => kutuKur(6, 'C'),
+   steps: [
+     {d: 3.6, o: [], f: s => { S.p6 = prog(s, 0, 0.4); at('p6r', 'opacity', prog(s, 2.0, 2.4)); }},
      {d: 0.6, o: [1, 2, 3, 4], f: () => {}},
      {d: 0.6, o: [5], f: () => {}},
      {d: 0.6, o: [6, 7, 8, 9, 10], f: () => {}},
-   ]},
+   ],
+   late: time => { kutuIsik(6, 'C'); const a = S.p6 || 0;
+     for (let i = 0; i < 7; i++) { const ang = i * 0.9 + time * (0.8 + i * 0.1); const R = 52 * Math.abs(Math.sin(time * 1.7 + i));   // duvara çarpar, geri döner
+       at('p6p' + i, 'cx', 210 + Math.cos(ang) * R); at('p6p' + i, 'cy', 107 + Math.sin(ang) * R * 0.85); at('p6p' + i, 'opacity', a); } }},
+
+  // 8 · Genleşme · bimetal şerit -------------------------------------------------
+  {konu: 'Genleşme',
+   html: `<span class="qt">Bakır ve demir şeritlerin birbirine perçinlenmesiyle yapılan bimetal şerit ısıtılınca, bakır şerit dış tarafta kalacak biçimde bükülüyor.<br>Buna göre,<br>
+     I. Bakırın boyca uzama katsayısı demirinkinden büyüktür.<br>II. Isıtılınca demir şerit, bakır şeritten daha çok uzar.<br>III. Bimetal şeritler, ütü ve fırın termostatlarında kullanılır.<br>
+     yargılarından hangileri doğrudur?</span>` +
+    SK(7, ['Yalnız I', 'Yalnız II', 'I ve II', 'I ve III', 'II ve III'], 1) +
+    SCENE(340, 150, `<rect x="10" y="30" width="30" height="60" fill="#64748b"/>
+      <line x1="40" y1="60" x2="360" y2="60" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <path id="p7u" fill="none" stroke="#f97316" stroke-width="9"/><path id="p7a" fill="none" stroke="#6b7280" stroke-width="9"/>
+      ${T('p7un', 44, 44, 'bakır', '#c2410c', 13)}${T('p7an', 44, 86, 'demir', '#374151', 13)}` +
+      ALEV('p7f1', 140, 140) + ALEV('p7f2', 240, 140) + MARK(1, 360, 60, 360, 60, '#1D3FB8', 3, 'p7e'), false) +
+    H(2, 'I. Dışta kalan daha çok uzar → λ<sub>bakır</sub> > λ<sub>demir</sub> ✓', 0, 500, 'dışta') +
+    H(3, 'II. Demir daha az uzar ✗', 0, 536, 'demir') + H(4, 'III. Termostat ✓', 0, 572, 'termostat') + KUTU(7, 5) + CEVAP(9, 'D', 200, 572),
+   init: () => { kutuKur(7, 'D'); bimetal(0); const e = bimetalUc(1); at('p7e', 'x2', e[0]); at('p7e', 'y2', e[1]); },
+   steps: [
+     {d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.4, 3.4)); alev('p7f1', 140, 140, prog(s, 0, 0.4), s); alev('p7f2', 240, 140, prog(s, 0, 0.4), s + 1); bimetal(k); }},
+     {d: 0.6, o: [1, 2], f: () => {}},
+     {d: 0.6, o: [3, 4], f: () => {}},
+     {d: 0.6, o: [5, 6, 7, 8, 9], f: () => {}},
+   ],
+   late: () => kutuIsik(7, 'D')},
   ]};
 
 // ---------- giriş: konu anlatımındaki 8 konu kartı → her biri bir test sorusuna döner ----------

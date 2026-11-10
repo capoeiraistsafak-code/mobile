@@ -19,6 +19,8 @@
 - Her soru, konu anlatımındaki **aynı sıradaki konudan** gelir ve sayfa başlığında o konunun adı kırmızı etikette yazar.
 - Sorular **TYT test** tarzındadır: soru kökü + A–E şıkları (öncüllü "I, II, III" ya da sayısal).
 - Cevaplar şıklara dağıtılır; girişte cevap gösterilmez.
+- **MEB TYT formatı:** günlük hayattan bağlamlı kök ("Ece, aynı mutfakta…", "Bir öğrenci yaptığı X termometresinde…"), "Buna göre," kalıbı, öncüller I–III ve "yargılarından hangileri doğrudur?", şıklar ÖSYM kitapçığındaki gibi **alt alta A)–E)**.
+- **Konu videosundaki görseller tekrar kullanılmaz:** her soru için yeni sahne ve yeni animasyon (ör. kaşıklar ve eller, çaydanlık + iç enerji sütunları, buzlu kapta X ve °C termometresi, K-L-M kapları + grafik, buzlu bardakta yoğuşma, çay + ısınan kaşık, termos kesiti, bükülen bimetal).
 
 ## Akış
 
@@ -57,7 +59,7 @@ Süre: ~5–6 dakika (ses gelince sese göre).
 |---|---|
 | `isi_sicaklik_soru.js` | Örnek içerik: `meta` (`tur: 'SORU ÇÖZÜMÜ'`, `adim: 'SORU'`, `bitti`), 8 soru sayfası, giriş `hook`, `SK` (şıklar), `MARK` (kalemle şekil işareti), `KUTU`/`kutuKur`/`kutuIsik` (doğru şıkka kalemle kutu), `CEVAP` |
 | `tahmini_sure_soru.js` | Ses yokken tahmini bölüm süreleri |
-| `seslendirme/isi_soru_metin.txt` | Seslendirme metni (43 paragraf) |
+| `seslendirme/isi_soru_metin.txt` | Seslendirme metni (42 paragraf) |
 | `kareler.js` | Onay kareleri: giriş, kapak, her sorunun son hâli, kamera geçişi, kapanış |
 | `konu_motor.js` | Ortak motor; `meta.tur`, `meta.adim`, `meta.bitti` seçenekleri eklendi (verilmezse konu videosu aynen kalır) |
 
@@ -66,7 +68,7 @@ cd tyt/video
 # Kareler (onay için)
 PAGE="$PWD/konu.html?m=test_motor&k=isi_sicaklik_soru&s=tahmini_sure_soru" node kareler.js ../kareler/isi_sicaklik_soru
 # Ses gelince (paragraf kimlikleri):
-IDS=intro,p0r,p0s0,p0s1,p0s2,p0s3,p1r,p1s0,p1s1,p1s2,p1s3,p2r,p2s0,p2s1,p2s2,p2s3,p3r,p3s0,p3s1,p3s2,p3s3,p4r,p4s0,p4s1,p4s2,p4s3,p5r,p5s0,p5s1,p5s2,p5s3,p6r,p6s0,p6s1,p6s2,p6s3,p6s4,p7r,p7s0,p7s1,p7s2,p7s3,outro
+IDS=intro,p0r,p0s0,p0s1,p0s2,p0s3,p1r,p1s0,p1s1,p1s2,p1s3,p2r,p2s0,p2s1,p2s2,p2s3,p3r,p3s0,p3s1,p3s2,p3s3,p4r,p4s0,p4s1,p4s2,p4s3,p5r,p5s0,p5s1,p5s2,p5s3,p6r,p6s0,p6s1,p6s2,p6s3,p7r,p7s0,p7s1,p7s2,p7s3,outro
 python3 -I seslendirme/senk.py seslendirme/isi_soru_metin.txt words.json $IDS sync_isi_soru ses_isi_soru.wav
 PAGE="$PWD/konu.html?m=test_motor&k=isi_sicaklik_soru&s=sync_isi_soru" node rec.js 30 sessiz.mp4
 ```

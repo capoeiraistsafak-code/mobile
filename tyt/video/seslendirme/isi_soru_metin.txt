@@ -1,85 +1,83 @@
 [curious] Isı ve sıcaklık konusunu anlattık… [excited] Haydi şimdi SORU çözelim! Ben Şafak Hoca, sekiz konu, sekiz TYT sorusu!
 
-[warmly] Birinci soru. Sıcaklıkları yetmiş ve on derece olan K ve L cisimleri birbirine dokunduruluyor ve dış ortamdan yalıtılıyor. Hangi yargılar doğru?
+[warmly] Birinci soru. Ece, aynı mutfakta duran metal ve tahta kaşıklara dokunuyor ve metal kaşığı daha soğuk hissediyor. Hangi yargılar doğru?
 
-[excited] Bakın… sıcak K'nin tanecikleri hızlı titreşiyor. Isı, sıcaktan soğuğa, K'den L'ye akıyor; sıcaklıklar eşitleniyor.
+[excited] Bakın… eller kaşıklara dokunuyor. Metal kaşıkta ısı, elden HIZLA akıyor; tahta kaşıkta ise çok yavaş.
 
-Birinci yargı doğru: ısı sıcaktan soğuğa aktarılır. İkinci yargı da doğru: L'nin sıcaklığı artıyor, yani taneciklerin ortalama hareket enerjisi ARTAR.
+Kaşıklar aynı ortamda; sıcaklıkları EŞİT, ikisi de yirmi iki derece. Birinci yargı doğru. Metal iyi iletkendir, elden birim zamanda daha çok ısı alır. İkinci yargı da doğru.
 
-[curious] Üçüncü yargıya dikkat! Cisim ısı İÇERMEZ; ısı, aktarılan enerjidir. Bu yargı yanlış.
+[curious] Tahta kaşık daha sıcak mı? Hayır! Sıcaklıklar eşit. Üçüncü yargı yanlış.
 
 [excited] Cevap C şıkkı: bir ve iki.
 
-[warmly] İkinci soru. Isı ve sıcaklığın ölçülmesiyle ilgili üç yargı var. Hangileri doğru?
+[warmly] İkinci soru. Çaydanlıktaki bir kilogram su ile bardaktaki sıfır virgül iki kilogram su, ikisi de doksan derece. Hangi yargılar doğru?
 
-Sıcaklık termometreyle DOĞRUDAN ölçülür. Birinci yargı doğru.
+[excited] Termometreler yükseliyor… ikisi de doksan derece! Ama iç enerji sütunlarına bakın: çaydanlığınki çok daha BÜYÜK.
 
-[excited] Kalorimetre kabına sıcak bir cisim atalım… suyun sıcaklığı artıyor. Isı doğrudan ölçülmez, bu değişimden HESAPLANIR. İkinci yargı da doğru.
+Sıcaklıklar eşit; birinci yargı doğru. Kütlesi büyük olanın iç enerjisi büyüktür; ikinci yargı yanlış.
 
-[curious] Peki ısının SI birimi kalori mi? Hayır! SI birimi JOULE. Üçüncü yargı yanlış.
+[curious] Termometre ısıyı değil, SICAKLIĞI ölçer. Üçüncü yargı da yanlış.
 
-[excited] Cevap B şıkkı: bir ve iki.
+[excited] Cevap A şıkkı: yalnız bir.
 
-[warmly] Üçüncü soru. Celsius termometresi kırk dereceyi gösterdiğinde, Fahrenheit termometresi kaçı gösterir?
+[warmly] Üçüncü soru. Bir öğrencinin yaptığı X termometresinde buz yirmi, kaynama yüz yirmi. Celsius otuz derece gösterirken X kaç gösterir?
 
-Buz erirken Celsius sıfır, Fahrenheit otuz iki gösterir. Su kaynarken yüz ve iki yüz on iki. İki termometre de aynı anda yükseliyor…
+[excited] Buzlu su ısınıyor… iki termometre de AYNI seviyeye çıkıyor, ama farklı sayılar gösteriyor.
 
-Formülü her termometrenin altına yazalım: kırk bölü yüz, eşittir, F eksi otuz iki bölü yüz seksen.
+Aynı seviye, aynı oran: X eksi yirmi bölü yüz, eşittir, otuz bölü yüz.
 
-[excited] F eksi otuz iki, yetmiş iki eder. Yani F, yüz dört derece!
+X eksi yirmi, otuz eder. Yani X, elli!
 
-Cevap D şıkkı: yüz dört.
+[excited] Cevap B şıkkı: elli.
 
-[warmly] Dördüncü soru. Kütleleri eşit X ve Y sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. X'in sıcaklığı on, Y'ninki yirmi derece artıyor. Öz ısıların oranı kaç?
+[warmly] Dördüncü soru. Eşit kütleli K, L ve M sıvıları özdeş ısıtıcılarla ısıtılıyor. Öz ısılar arasındaki ilişki nedir?
 
-[excited] Isıtıcılar özdeş, süre eşit; yani iki sıvı da EŞİT ısı alıyor. Ama X on, Y yirmi derece ısınıyor.
+[excited] Isıtıcılar özdeş, süre eşit; üç sıvı da EŞİT ısı alıyor. Grafiği çizelim… K en dik, M en yatık.
 
-Q eşittir m çarpı c çarpı delta T. Q ve m eşit olduğuna göre, c çarpı delta T de eşit olmalı.
+Q ve m eşit olduğuna göre, c çarpı delta T eşit olmalı.
 
-[curious] Az ısınan sıvının öz ısısı BÜYÜKTÜR. c X bölü c Y, yirmi bölü on, yani iki.
+[curious] En AZ ısınanın öz ısısı en BÜYÜKTÜR. Sıcaklık artışı K, L, M diye azalıyor; öz ısı ise M, L, K diye.
 
-[excited] Cevap A şıkkı: iki.
+[excited] Cevap C şıkkı.
 
-[warmly] Beşinci soru. Saf bir katının sıcaklık ısı grafiği veriliyor. Hangi yargılar doğru?
+[warmly] Beşinci soru. Hangi olayda madde, çevresine ısı verir?
 
-[excited] K aralığında katı ısınıyor. L aralığında sıcaklık kırk derecede SABİT kalıyor; madde eriyor. M aralığında sıvı ısınıyor.
+[excited] Havadaki su buharı soğuk bardağa çarpıyor… ve DAMLAYA dönüşüyor! Bu yoğuşma.
 
-L aralığında madde hal değiştirir; birinci yargı doğru. Ama dikkat: madde ısı ALIR, sadece sıcaklığı değişmez. İkinci yargı yanlış.
+Yoğuşmada buhar sıvıya döner ve ısı VERİR.
 
-Erime sıcaklığı kırk derece; üçüncü yargı doğru.
+[curious] Buharlaşma, erime ve süblimleşmede ise madde ısı ALIR.
 
-[excited] Cevap D şıkkı: bir ve üç.
+[excited] Cevap D şıkkı.
 
-[warmly] Altıncı soru. Otuz derecedeki iki yüz gram su ile doksan derecedeki yüz gram su karıştırılıyor. Denge sıcaklığı kaç derece?
+[warmly] Altıncı soru. Yalıtılmış ortamda seksen derecelik çaya yirmi derecelik metal kaşık konuyor. Isıl denge sağlanana kadar hangi yargılar doğru?
 
-[excited] Sıcak su ısı veriyor, soğuk su ısı alıyor… ve karışım dengeye geliyor.
+[excited] Isı çaydan kaşığa akıyor… kaşık ucundan sapına doğru ISINIYOR, sıcaklıklar yetmiş beşte buluşuyor.
 
-Verilen ısı, alınan ısıya eşit. İki yüz çarpı T eksi otuz, eşittir yüz çarpı doksan eksi T.
+Çay ısı verir ve soğur; birinci yargı doğru. Ortam yalıtılmış; verilen ısı, alınan ısıya EŞİT. İkinci yargı da doğru.
 
-Üç yüz T eşittir on beş bin; T, elli derece! Dikkat: sonuç, kütlesi BÜYÜK olan suyun sıcaklığına daha yakın.
-
-[excited] Cevap C şıkkı: elli.
-
-[warmly] Yedinci soru. Hangisinde ısı, madde gerekmeden yalnızca ışıma yoluyla aktarılır?
-
-Çaydaki kaşığın sapı, dokunarak ısınıyor: bu İLETİM. Tencerenin dibi de öyle.
-
-Kalorifer havayı dolaştırarak ısıtıyor: bu KONVEKSİYON. Meltem rüzgârı da öyle.
-
-[excited] Güneş'in enerjisi ise uzay boşluğundan geçip Dünya'ya ulaşıyor: işte IŞIMA!
-
-[curious] Unutmayın: ışıma, madde olmayan BOŞLUKTA da olur.
-
-[excited] Cevap E şıkkı.
-
-[warmly] Sekizinci soru. Boyları eşit K ve L çubukları eşit miktarda ısıtılınca K daha çok uzuyor. Hangi yargılar doğru?
-
-[excited] Isınan çubukların tanecikleri daha çok titreşiyor ve birbirinden uzaklaşıyor. K, L'den daha çok uzuyor!
-
-Delta L eşittir L sıfır çarpı lambda çarpı delta T. L sıfır ve delta T eşit; o hâlde K'nin uzama katsayısı BÜYÜK. Birinci yargı doğru.
-
-Tanecikler arası uzaklık artar; ikinci yargı doğru. Eşit soğutulursa K yine daha çok kısalır; üçüncü yargı da doğru.
+Dengede sıcaklıklar eşittir; üçüncü yargı da doğru.
 
 [excited] Cevap E şıkkı: hepsi!
+
+[warmly] Yedinci soru. Termosun cidarları arasındaki bölmenin havası boşaltılmış. Bu vakum, ısının hangi yollarla aktarılmasını engeller?
+
+[excited] Sıcak kahvenin tanecikleri duvara çarpıp geri dönüyor… vakumdan GEÇEMİYOR!
+
+Vakumda tanecik yoktur; bu yüzden iletim ve konveksiyon OLMAZ.
+
+[curious] Işıma ise boşlukta da yayılır; onu gümüş kaplı yüzey yansıtır.
+
+[excited] Cevap C şıkkı: iletim ve konveksiyon.
+
+[warmly] Sekizinci soru. Bakır ve demirden yapılan bimetal şerit ısıtılınca, bakır dışta kalacak şekilde bükülüyor. Hangi yargılar doğru?
+
+[excited] Alevler yanıyor… şerit yavaş yavaş BÜKÜLÜYOR!
+
+Dışta kalan şerit daha çok uzamıştır; bakırın uzama katsayısı büyüktür. Birinci yargı doğru, ikinci yargı yanlış.
+
+Bimetal şeritler ütü ve fırın termostatlarında kullanılır; üçüncü yargı doğru.
+
+[excited] Cevap D şıkkı: bir ve üç.
 
 [excited] Sekiz konu, sekiz soru, TAMAM! [warmly] Kaydet, sınavdan önce tekrar çöz. Sıradaki konu elektrostatik… Takipte kal!
