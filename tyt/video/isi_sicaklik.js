@@ -44,14 +44,14 @@ window.KONU = {
   // 2 ---------------------------------------------------------------
   {konu: 'Ölçme', soru: 'Isı neyle, sıcaklık neyle ölçülür?',
    html: `<span class="qt"><b>Sıcaklık</b> termometreyle doğrudan ölçülür. <b>Isı</b> doğrudan ölçülemez; <b>kalorimetre kabında</b> sıcaklık değişiminden hesaplanır.</span>` +
-    SCENE(100, 240, TERMO('p1l1', 80, 20, 190) + T('p1a', 30, 232, 'Termometre', '#e2e8f0', 15) +
+    SCENE(100, 275, TERMO('p1l1', 80, 20, 190) + T('p1a', 30, 232, 'Termometre', '#e2e8f0', 15) + T('p1a2', 18, 256, 'Sıcaklık · °C · °F · K', '#fca5a5', 14) +
       `<rect x="230" y="70" width="190" height="150" rx="14" fill="#475569" stroke="#cbd5e1" stroke-width="2.5"/>
        <rect x="246" y="86" width="158" height="120" rx="8" fill="#1f2430"/><rect id="p1su" x="250" y="130" width="150" height="72" rx="6" fill="#60a5fa" opacity=".75"/>
        <rect x="222" y="58" width="206" height="18" rx="6" fill="#94a3b8"/>
        <circle id="p1top" cx="300" cy="10" r="16" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>` +
-      TERMO('p1l2', 380, 26, 168) + T('p1b', 250, 238, 'Kalorimetre kabı', '#e2e8f0', 15), false) +
-    H(1, 'Sıcaklık: °C · °F · K', 0, 362, 'termometreyle') + H(2, 'Isı: joule · kalori', 0, 404, 'Birimi') +
-    H(3, '1 cal ≈ 4,18 J ' + CK, 0, 446, 'kalori') + H(4, 'Termometre ısıyı ölçmez!', 0, 488, 'Dikkat'),
+      TERMO('p1l2', 380, 26, 168) + T('p1b', 262, 238, 'Kalorimetre kabı', '#e2e8f0', 15) + T('p1b2', 290, 262, 'Isı · J · cal', '#fdba74', 14), false) +
+    H(1, 'Sıcaklık: °C · °F · K', 0, 392, 'termometreyle') + H(2, 'Isı: joule · kalori', 0, 434, 'Birimi') +
+    H(3, '1 cal ≈ 4,18 J ' + CK, 0, 476, 'kalori') + H(4, 'Termometre ısıyı ölçmez!', 0, 518, 'Dikkat'),
    init: () => { termo('p1l1', 190, 30); termo('p1l2', 168, 20); },
    steps: [
      {d: 2.2, o: [1], f: s => termo('p1l1', 190, 30 + 120 * ease(prog(s, 0, 2.0)))},
@@ -63,13 +63,13 @@ window.KONU = {
   // 3 ---------------------------------------------------------------
   {konu: 'Termometreler', soru: 'Termometreler arasındaki fark ne?',
    html: `<span class="qt">Termometre, ısınınca <b>genleşen bir sıvıyla</b> çalışır. Ölçekler, buzun erime ve suyun kaynama noktasına <b>farklı sayılar</b> verir.</span>` +
-    SCENE(100, 250, [['°C', 80, '0', '100'], ['°F', 220, '32', '212'], ['K', 360, '273', '373']].map(([ad, x, a, b], i) =>
-      TERMO('p2l' + i, x, 34, 215) + T('p2n' + i, x - 12, 22, ad, '#fff', 17) +
+    SCENE(100, 290, [['°C', 80, '0', '100', 'Celsius'], ['°F', 220, '32', '212', 'Fahrenheit'], ['K', 360, '273', '373', 'Kelvin']].map(([ad, x, a, b, isim], i) =>
+      TERMO('p2l' + i, x, 34, 215) + T('p2n' + i, x, 262, ad, '#fff', 18, 'text-anchor="middle"') + T('p2m' + i, x, 282, isim, '#cbd5e1', 13, 'text-anchor="middle"') +
       T('p2a' + i, x + 20, 180, a, '#93c5fd', 16, 'opacity="0"') + T('p2b' + i, x + 20, 70, b, '#fca5a5', 16, 'opacity="0"')).join('') +
       `<line id="p2d1" x1="20" y1="175" x2="430" y2="175" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        <line id="p2d2" x1="20" y1="65" x2="430" y2="65" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        ${T('p2e1', 4, 192, 'buz erir', '#93c5fd', 12, 'opacity="0"')}${T('p2e2', 4, 58, 'su kaynar', '#fca5a5', 12, 'opacity="0"')}`, false) +
-    H(1, KS('C', '100') + ' = ' + KS('F − 32', '180') + ' = ' + KS('K − 273', '100'), 0, 360, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 430, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 472, 'Değişimde'),
+    H(1, KS('C', '100') + ' = ' + KS('F − 32', '180') + ' = ' + KS('K − 273', '100'), 0, 400, 'formül') + H(2, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 470, 'on') + H(3, "Kelvin'de eksi değer yok", 0, 512, 'Değişimde'),
    init: () => { for (let i = 0; i < 3; i++) termo('p2l' + i, 215, 6); },
    steps: [
      {d: 2.4, o: [], f: s => { const k = ease(prog(s, 0, 1.6)); for (let i = 0; i < 3; i++) { termo('p2l' + i, 215, 6 + 34 * k); at('p2a' + i, 'opacity', prog(s, 1.2 + i * .3, 1.6 + i * .3)); }
