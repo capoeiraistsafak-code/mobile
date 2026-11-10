@@ -1,0 +1,85 @@
+[curious] Isı ve sıcaklık konusunu anlattık… [excited] Haydi şimdi SORU çözelim! Ben Şafak Hoca, sekiz konu, sekiz TYT sorusu!
+
+[warmly] Birinci soru. Sıcaklıkları yetmiş ve on derece olan K ve L cisimleri birbirine dokunduruluyor ve dış ortamdan yalıtılıyor. Hangi yargılar doğru?
+
+[excited] Bakın… sıcak K'nin tanecikleri hızlı titreşiyor. Isı, sıcaktan soğuğa, K'den L'ye akıyor; sıcaklıklar eşitleniyor.
+
+Birinci yargı doğru: ısı sıcaktan soğuğa aktarılır. İkinci yargı da doğru: L'nin sıcaklığı artıyor, yani taneciklerin ortalama hareket enerjisi ARTAR.
+
+[curious] Üçüncü yargıya dikkat! Cisim ısı İÇERMEZ; ısı, aktarılan enerjidir. Bu yargı yanlış.
+
+[excited] Cevap C şıkkı: bir ve iki.
+
+[warmly] İkinci soru. Isı ve sıcaklığın ölçülmesiyle ilgili üç yargı var. Hangileri doğru?
+
+Sıcaklık termometreyle DOĞRUDAN ölçülür. Birinci yargı doğru.
+
+[excited] Kalorimetre kabına sıcak bir cisim atalım… suyun sıcaklığı artıyor. Isı doğrudan ölçülmez, bu değişimden HESAPLANIR. İkinci yargı da doğru.
+
+[curious] Peki ısının SI birimi kalori mi? Hayır! SI birimi JOULE. Üçüncü yargı yanlış.
+
+[excited] Cevap B şıkkı: bir ve iki.
+
+[warmly] Üçüncü soru. Celsius termometresi kırk dereceyi gösterdiğinde, Fahrenheit termometresi kaçı gösterir?
+
+Buz erirken Celsius sıfır, Fahrenheit otuz iki gösterir. Su kaynarken yüz ve iki yüz on iki. İki termometre de aynı anda yükseliyor…
+
+Formülü her termometrenin altına yazalım: kırk bölü yüz, eşittir, F eksi otuz iki bölü yüz seksen.
+
+[excited] F eksi otuz iki, yetmiş iki eder. Yani F, yüz dört derece!
+
+Cevap D şıkkı: yüz dört.
+
+[warmly] Dördüncü soru. Kütleleri eşit X ve Y sıvıları özdeş ısıtıcılarla eşit süre ısıtılıyor. X'in sıcaklığı on, Y'ninki yirmi derece artıyor. Öz ısıların oranı kaç?
+
+[excited] Isıtıcılar özdeş, süre eşit; yani iki sıvı da EŞİT ısı alıyor. Ama X on, Y yirmi derece ısınıyor.
+
+Q eşittir m çarpı c çarpı delta T. Q ve m eşit olduğuna göre, c çarpı delta T de eşit olmalı.
+
+[curious] Az ısınan sıvının öz ısısı BÜYÜKTÜR. c X bölü c Y, yirmi bölü on, yani iki.
+
+[excited] Cevap A şıkkı: iki.
+
+[warmly] Beşinci soru. Saf bir katının sıcaklık ısı grafiği veriliyor. Hangi yargılar doğru?
+
+[excited] K aralığında katı ısınıyor. L aralığında sıcaklık kırk derecede SABİT kalıyor; madde eriyor. M aralığında sıvı ısınıyor.
+
+L aralığında madde hal değiştirir; birinci yargı doğru. Ama dikkat: madde ısı ALIR, sadece sıcaklığı değişmez. İkinci yargı yanlış.
+
+Erime sıcaklığı kırk derece; üçüncü yargı doğru.
+
+[excited] Cevap D şıkkı: bir ve üç.
+
+[warmly] Altıncı soru. Otuz derecedeki iki yüz gram su ile doksan derecedeki yüz gram su karıştırılıyor. Denge sıcaklığı kaç derece?
+
+[excited] Sıcak su ısı veriyor, soğuk su ısı alıyor… ve karışım dengeye geliyor.
+
+Verilen ısı, alınan ısıya eşit. İki yüz çarpı T eksi otuz, eşittir yüz çarpı doksan eksi T.
+
+Üç yüz T eşittir on beş bin; T, elli derece! Dikkat: sonuç, kütlesi BÜYÜK olan suyun sıcaklığına daha yakın.
+
+[excited] Cevap C şıkkı: elli.
+
+[warmly] Yedinci soru. Hangisinde ısı, madde gerekmeden yalnızca ışıma yoluyla aktarılır?
+
+Çaydaki kaşığın sapı, dokunarak ısınıyor: bu İLETİM. Tencerenin dibi de öyle.
+
+Kalorifer havayı dolaştırarak ısıtıyor: bu KONVEKSİYON. Meltem rüzgârı da öyle.
+
+[excited] Güneş'in enerjisi ise uzay boşluğundan geçip Dünya'ya ulaşıyor: işte IŞIMA!
+
+[curious] Unutmayın: ışıma, madde olmayan BOŞLUKTA da olur.
+
+[excited] Cevap E şıkkı.
+
+[warmly] Sekizinci soru. Boyları eşit K ve L çubukları eşit miktarda ısıtılınca K daha çok uzuyor. Hangi yargılar doğru?
+
+[excited] Isınan çubukların tanecikleri daha çok titreşiyor ve birbirinden uzaklaşıyor. K, L'den daha çok uzuyor!
+
+Delta L eşittir L sıfır çarpı lambda çarpı delta T. L sıfır ve delta T eşit; o hâlde K'nin uzama katsayısı BÜYÜK. Birinci yargı doğru.
+
+Tanecikler arası uzaklık artar; ikinci yargı doğru. Eşit soğutulursa K yine daha çok kısalır; üçüncü yargı da doğru.
+
+[excited] Cevap E şıkkı: hepsi!
+
+[excited] Sekiz konu, sekiz soru, TAMAM! [warmly] Kaydet, sınavdan önce tekrar çöz. Sıradaki konu elektrostatik… Takipte kal!

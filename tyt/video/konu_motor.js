@@ -1,4 +1,5 @@
-// Konu anlatımı videoları · ortak motor (TYT kopyası: meta.ust1/ust2, sayfada ve bantta bölüm sorusu p.soru, girişte büyük başlık meta.hookBaslik). Seslendirmeye eşlenir:
+// Konu anlatımı videoları · ortak motor (TYT kopyası: meta.ust1/ust2, sayfada ve bantta bölüm sorusu p.soru, girişte büyük başlık meta.hookBaslik;
+// soru çözümü için meta.tur (kapak/başlık yazısı), meta.adim ("SORU"), meta.bitti (kapanış bandı)). Seslendirmeye eşlenir:
 // her bölümün (giriş, okuma, adım, kapanış) süresi SYNC.segs'ten gelir; fosfor, animasyon ve kalem o bölümün içinde ilerler.
 (async () => {
 const {meta: M, P} = window.KONU;
@@ -21,24 +22,24 @@ $('cover').innerHTML = `<div class="cv-1dk"><span>⏱</span>${UST1}</div>
   <div class="cv-top">${UST2}</div>
   ${M.kanca ? `<div class="cv-hook">${M.kanca.replace(/([A-ZÇĞİÖŞÜ]{3,})/g, '<em>$1</em>')}</div>` : ''}
   <div class="cv-logo${M.kanca ? ' sm' : ''}"><div class="cv-img"></div></div>
-  <div class="cv-k">KONU ANLATIMI</div>
+  <div class="cv-k">${M.tur || 'KONU ANLATIMI'}</div>
   <div class="cv-t">${M.baslik}</div>
   <div class="cv-s">${M.kapakAlt}</div>
   <div class="cv-code">${M.kazanim} · 2026-2027</div>
   <div class="cv-bot">Şafak Hoca · Fizik</div>`;
-$('bend').innerHTML = `<b>KONU BİTTİ</b><span>Sıradaki: ${M.sonraki}</span>`;
+$('bend').innerHTML = `<b>${M.bitti || 'KONU BİTTİ'}</b><span>Sıradaki: ${M.sonraki}</span>`;
 
 // ---------- sayfalar ----------
 const GAP = 560, pagesEl = $('pages');
 P.forEach((p, i) => {
   const d = document.createElement('div'); d.className = 'pg'; d.style.left = (i * GAP) + 'px';
-  d.innerHTML = `<div class="hd"><div class="t1">${UST2} · KONU ANLATIMI</div><div class="t2">${M.baslik.toLocaleUpperCase('tr')} · ${M.kazanim} · ŞAFAK HOCA</div>
+  d.innerHTML = `<div class="hd"><div class="t1">${UST2} · ${M.tur || 'KONU ANLATIMI'}</div><div class="t2">${M.baslik.toLocaleUpperCase('tr')} · ${M.kazanim} · ŞAFAK HOCA</div>
     <div class="un"><span class="uname">${M.unite}</span><span class="ucnt">${i + 1} / ${P.length}</span></div></div><div class="slot"></div>
-    <div class="q"><b class="n">${p.soru ? p.soru : `ADIM ${i + 1} <i>${p.konu.toLocaleUpperCase('tr')}</i>`}</b>${p.html}</div>`;   // TYT: adım yerine bölümün sorusu
+    <div class="q"><b class="n">${p.soru ? p.soru : `${M.adim || 'ADIM'} ${i + 1} <i>${p.konu.toLocaleUpperCase('tr')}</i>`}</b>${p.html}</div>`;   // TYT: adım yerine bölümün sorusu
   pagesEl.appendChild(d); p.el = d.querySelector('.q'); if (p.init) p.init();
 });
 $('bands').innerHTML = P.map((p, i) => p.soru ? `<div class="band soru" id="bq${i}"><b>${p.soru}</b><span>${M.baslik}</span></div>`
-  : `<div class="band" id="bq${i}"><b>ADIM ${i + 1} / ${P.length}</b><span>${p.konu}</span></div>`).join('');
+  : `<div class="band" id="bq${i}"><b>${M.adim || 'ADIM'} ${i + 1} / ${P.length}</b><span>${p.konu}</span></div>`).join('');
 await document.fonts.ready;
 
 // ---------- ölçüm ----------

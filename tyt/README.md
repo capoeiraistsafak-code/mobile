@@ -11,6 +11,7 @@
 | Sıra | Konu | Sayfa | Metin | Durum |
 |---|---|---|---|---|
 | 1 | Isı ve Sıcaklık | `konular/isi_sicaklik.html` | `konular/isi_sicaklik.md` | taslak |
+| 1 | Isı ve Sıcaklık · **Soru Çözümü** | `video/konu.html?k=isi_sicaklik_soru` | `video/seslendirme/isi_soru_metin.txt` | kareler onay bekliyor (`FORMAT_SORU.md`) |
 | – | Elektrostatik | `konular/elektrostatik.html` | `konular/elektrostatik.md` | taslak (örnek) |
 
 - `ortak.css`: Tüm konuların ortak stili (renkler, sayfa, kapak, tuzak kutusu)
