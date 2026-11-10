@@ -1,0 +1,13 @@
+On ikinci sınıf fizik! Birinci dönem birinci yazılıda çıkabilecek beş çembersel hareket sorusunu adım adım çözüyoruz. Kaydet, yazılıdan önce tekrar et!
+
+Birinci soru. Cisim on saniyede beş tur atıyor. Periyot, bir turun süresidir, on bölü beş, iki saniye. Frekans, periyodun tersidir, sıfır virgül beş hertz. Çizgisel hız, çevre bölü periyottur. İki pi r bölü T, yani iki çarpı üç çarpı iki bölü iki, altı metre bölü saniye. Açısal hız, iki pi bölü T, üç radyan bölü saniyedir.
+
+İkinci soru. Merkezcil ivme, hızın karesi bölü yarıçaptır. Otuz altı bölü üç, on iki metre bölü saniye kare. Merkezcil kuvvet, kütle çarpı merkezcil ivme, iki çarpı on iki, yirmi dört newtondur. Bu kuvveti ipteki gerilme sağlar. İp koparsa merkezcil kuvvet ortadan kalkar. Cisim o anki hızının yönünde, yani çembere teğet doğrultuda düzgün doğrusal hareket yapar.
+
+Üçüncü soru. Yatay virajda merkezcil kuvveti sürtünme kuvveti sağlar. Araç savrulmadan dönerken, kütle çarpı v kare bölü r, en fazla k çarpı m çarpı g olabilir. Kütleler sadeleşir ve v kare, k çarpı g çarpı r olur. Sıfır virgül sekiz çarpı on çarpı elli, dört yüz eder. Araç en fazla yirmi metre bölü saniye hızla dönebilir.
+
+Dördüncü soru. Kaymadan yuvarlanan tekerlekte merkezin hızı, açısal hız çarpı yarıçaptır. Dört çarpı sıfır virgül beş, iki metre bölü saniye. En üst noktada öteleme ve dönme hızları aynı yöndedir ve toplanır. Bu nokta dört metre bölü saniye hızla gider. Yere değen noktada ise hızlar zıt yönlüdür ve birbirini götürür, bu noktanın hızı sıfırdır.
+
+Beşinci soru. Patenciye dışarıdan tork etki etmediği için açısal momentum korunur. Açısal momentum, eylemsizlik momenti çarpı açısal hızdır. İlk durumda dört çarpı üç, on iki. Patenci kollarını kapatınca eylemsizlik momenti ikiye düşer. On iki eşittir iki çarpı omega, buradan omega altı radyan bölü saniye. Kollarını kapatan patenci daha hızlı döner.
+
+Beş soru tamam! Videoyu kaydet, arkadaşınla paylaş. Yazılında başarılar!

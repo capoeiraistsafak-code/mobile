@@ -1,0 +1,13 @@
+On birinci sınıf fizik! Birinci dönem birinci yazılıda çıkabilecek beş soruyu adım adım çözüyoruz. Kaydet, yazılıdan önce tekrar et!
+
+Birinci soru. Serbest bırakılan cismin ilk hızı sıfırdır ve sabit g ivmesiyle düşer. Yükseklik, yarım çarpı g çarpı t karedir. Seksen eşittir beş t kare, buradan t kare on altı, t dört saniye bulunur. Yere çarpma hızı, g çarpı t, on çarpı dört, kırk metre bölü saniyedir. Dikkat et, cisim her saniye bir öncekinden daha fazla yol alır.
+
+İkinci soru. Yukarı atılan topun hızı her saniye on metre bölü saniye azalır. Tepe noktasında hız sıfır olur. Çıkış süresi, otuz bölü on, üç saniyedir. En büyük yükseklik, ilk hızın karesi bölü iki g, yani dokuz yüz bölü yirmi, kırk beş metredir. İniş süresi de çıkışa eşittir. Top havada üç artı üç, altı saniye kalır.
+
+Üçüncü soru. Gülle yatay atıldığı için hareketi iki bileşene ayırıyoruz. Düşeyde ilk hız sıfırdır ve sabit g ivmesi vardır. Kırk beş eşittir beş t kare, buradan t üç saniye. Yatayda ivme yoktur, hız sabittir. Menzil, kırk çarpı üç, yüz yirmi metredir. Yere çarparken yatay hız kırk, düşey hız otuzdur. Pisagordan çarpma hızı elli metre bölü saniye bulunur.
+
+Dördüncü soru. Topun hızını bileşenlerine ayırıyoruz. Yatay bileşen, elli çarpı sıfır virgül sekiz, kırk metre bölü saniye. Düşey bileşen, elli çarpı sıfır virgül altı, otuz metre bölü saniye. Düşeyde çıkış süresi üç saniye, uçuş süresi altı saniyedir. Menzil, kırk çarpı altı, iki yüz kırk metre. En büyük yükseklik, dokuz yüz bölü yirmi, kırk beş metredir.
+
+Beşinci soru. Önce serbest cisim diyagramını çiziyoruz. Ağırlık kırk newton aşağı, tepki kuvveti kırk newton yukarı, bunlar birbirini dengeler. Yatayda otuz newtonluk kuvvete karşı on newtonluk sürtünme kuvveti vardır. Net kuvvet, otuz eksi on, yirmi newton eder. Newton'ın ikinci yasasından ivme, yirmi bölü dört, beş metre bölü saniye karedir.
+
+Beş soru tamam! Videoyu kaydet, arkadaşınla paylaş. Yazılında başarılar!

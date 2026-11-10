@@ -59,3 +59,7 @@ src/
 ```bash
 npm run typecheck
 ```
+
+## TYT videoları
+
+Video formatları ve üretim dosyaları `tyt/` klasöründe (bkz. `tyt/README.md`, `tyt/FORMAT.md`).

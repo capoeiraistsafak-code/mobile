@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>TYT · Isı ve Sıcaklık</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../ortak.css">
+<script src="isi_sicaklik_metin.js"></script>
+<script src="../anim.js"></script>
+<style>
+.sicak{--sc:#fb923c}
+.ax{stroke:#cbd5e1;stroke-width:4;fill:none}
+.cz{stroke:#fb923c;stroke-width:8;fill:none;stroke-linejoin:round;stroke-linecap:round}
+</style>
+</head>
+<body>
+
+<!-- ================= 1 · GİRİŞ (0:00–0:06) · koyu arka plan · büyük konu başlığı · kombi üstte, odalar altta =================
+     Odalarda yazı yok, eşyalarla tanınır: banyo (fayans, aynalı lavabo, duşakabin, peteğin üstünde havlu, pencere yok),
+     oturma odası (pencere, televizyon + ünite, koltuk, lambader). Sıcaklık duvar termometresinde.
+     Kombide ısınan su (mavi→kırmızı) soldaki borudan iki odanın peteğine iner, peteklerde soğur (kırmızı→mavi),
+     sağdaki borudan kombiye döner.
+     Zaman (sn): 0 başlık · 0.4–1.3 soru · 1.0 kombi · 1.3 alev · 1.6 odalar · 1.9 borular + petekler · 2.2 su akar ·
+     2.7 "70 °C" · 3.2 "50 °C" · 2.9–5.5 petekler ısınır · 3.4 sıcak hava · 4.0 konveksiyon · 3.5–7 odalar 10→24 / 10→22 °C ·
+     6.2 alt yazı (8 sn'lik tasarım ölçeği; gerçek süre 6 sn, hepsi ×0,75). ?t=<sn> o anı, ?oynat=1 canlı oynatmayı gösterir. -->
+<section class="sahne" id="giris">
+  <div class="hk-top" style="top:70px"><span>TYT FİZİK</span></div>
+  <div class="hk-baslik" id="gBaslik">ISI VE SICAKLIK</div>
+  <div class="hk-soru" style="top:320px;font-size:60px;color:#e5e7eb"><span class="k" data-i="0">Kalorifer</span> <span class="k" data-i="1">petekleri</span> <span class="k" data-i="2">evi</span> <span class="k" data-i="3"><em>NASIL</em></span> <span class="k" data-i="4">ısıtıyor?</span></div>
+  <svg viewBox="0 0 1080 1220" width="1080" height="1220" style="position:absolute;top:500px;left:0">
+    <defs>
+      <marker id="gOkT" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fb923c"/></marker>
+      <marker id="gOkM" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#60a5fa"/></marker>
+    </defs>
+    <g class="gOda" id="gBanyo">
+      <rect x="70" y="330" width="940" height="410" rx="20" fill="#1f2a3a" stroke="#475569" stroke-width="4"/>
+      <line x1="72" y1="372" x2="1008" y2="372" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="414" x2="1008" y2="414" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="456" x2="1008" y2="456" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="498" x2="1008" y2="498" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="540" x2="1008" y2="540" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="582" x2="1008" y2="582" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="624" x2="1008" y2="624" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="666" x2="1008" y2="666" stroke="#2b3547" stroke-width="2"/><line x1="72" y1="708" x2="1008" y2="708" stroke="#2b3547" stroke-width="2"/><line x1="112" y1="332" x2="112" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="154" y1="332" x2="154" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="196" y1="332" x2="196" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="238" y1="332" x2="238" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="280" y1="332" x2="280" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="322" y1="332" x2="322" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="364" y1="332" x2="364" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="406" y1="332" x2="406" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="448" y1="332" x2="448" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="490" y1="332" x2="490" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="532" y1="332" x2="532" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="574" y1="332" x2="574" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="616" y1="332" x2="616" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="658" y1="332" x2="658" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="700" y1="332" x2="700" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="742" y1="332" x2="742" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="784" y1="332" x2="784" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="826" y1="332" x2="826" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="868" y1="332" x2="868" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="910" y1="332" x2="910" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="952" y1="332" x2="952" y2="715" stroke="#2b3547" stroke-width="2"/><line x1="994" y1="332" x2="994" y2="715" stroke="#2b3547" stroke-width="2"/>
+      <line x1="80" y1="715" x2="1000" y2="715" stroke="#64748b" stroke-width="4"/>
+      <!-- ayna + lavabo -->
+      <ellipse cx="430" cy="440" rx="62" ry="78" fill="#bae6fd" opacity=".35" stroke="#e2e8f0" stroke-width="6"/>
+      <path d="M402 420 l30 -30 M418 448 l40 -40" stroke="#fff" stroke-width="5" opacity=".6" stroke-linecap="round"/>
+      <path d="M370 548 H490 Q486 602 430 606 Q374 602 370 548 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="4"/>
+      <path d="M430 548 V528 H452" fill="none" stroke="#cbd5e1" stroke-width="7" stroke-linecap="round"/>
+      <rect x="418" y="604" width="24" height="111" rx="8" fill="#e2e8f0"/>
+      <!-- duşakabin -->
+      <rect x="700" y="380" width="280" height="320" rx="6" fill="#7dd3fc" opacity=".14"/>
+      <rect x="700" y="380" width="280" height="320" rx="6" fill="none" stroke="#e2e8f0" stroke-width="6"/>
+      <line x1="840" y1="380" x2="840" y2="700" stroke="#e2e8f0" stroke-width="4"/>
+      <rect x="806" y="520" width="8" height="60" rx="4" fill="#e2e8f0"/>
+      <path d="M720 392 l40 70 M870 392 l40 70" stroke="#fff" stroke-width="5" opacity=".35" stroke-linecap="round"/>
+      <path d="M950 700 V410 H900 V428" fill="none" stroke="#cbd5e1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M872 428 h56 l-8 16 h-40 z" fill="#cbd5e1"/>
+      <g stroke="#7dd3fc" stroke-width="4" stroke-linecap="round" opacity=".85">
+        <line x1="886" y1="452" x2="878" y2="490"/><line x1="900" y1="452" x2="900" y2="496"/><line x1="914" y1="452" x2="922" y2="490"/>
+        <line x1="882" y1="510" x2="874" y2="548"/><line x1="900" y1="514" x2="900" y2="556"/><line x1="918" y1="510" x2="926" y2="548"/>
+      </g>
+      <rect x="692" y="700" width="296" height="15" rx="4" fill="#e2e8f0"/>
+      <g font-family="Inter" font-weight="900">
+        <rect x="100" y="350" width="14" height="50" rx="7" fill="#e5e7eb"/><circle cx="107" cy="404" r="11" fill="#ef4444"/>
+        <rect x="104" y="368" width="6" height="34" fill="#ef4444"/>
+        <text class="odaT" x="126" y="396" fill="#fff" font-size="34">10 °C</text></g>
+      <g class="gPetek">
+        <rect x="110" y="590" width="190" height="110" rx="10" fill="#94a3b8"/>
+        <rect x="117" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="146" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="176" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="205" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="234" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="264" y="597" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <g class="gIsi" opacity="0"><rect x="117" y="597" width="23" height="96" rx="8" fill="#fb923c"/><rect x="146" y="597" width="23" height="96" rx="8" fill="#fb923c"/><rect x="176" y="597" width="23" height="96" rx="8" fill="#fb923c"/><rect x="205" y="597" width="23" height="96" rx="8" fill="#fb923c"/><rect x="234" y="597" width="23" height="96" rx="8" fill="#fb923c"/><rect x="264" y="597" width="23" height="96" rx="8" fill="#fb923c"/></g>
+        <path d="M110 605 H284 V640 H126 V675 H284 V700" fill="none" stroke="#1e293b" stroke-width="8" stroke-linejoin="round" opacity=".3"/>
+        <path class="yol ic" d="M110 605 H284 V640 H126 V675 H284 V700" fill="none" stroke="none"/>
+      </g>
+      <g class="havlu"><path d="M232 584 h58 v84 q-29 10 -58 0 z" fill="#f472b6"/><rect x="232" y="584" width="58" height="14" fill="#ec4899"/></g>
+      <path class="dalga" data-i="0" d="M150 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="1" d="M205 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="2" d="M260 578 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/>
+      <g fill="none" stroke-width="7" stroke-linecap="round">
+        <path class="akis" d="M330 575 C 334 515, 328 420, 330 380" stroke="#fb923c" marker-end="url(#gOkT)"/>
+        <path class="akis" d="M350 360 C 420 354, 570 354, 645 360" stroke="#fb923c" marker-end="url(#gOkT)"/>
+        <path class="akis" d="M660 385 C 664 480, 664 635, 660 690" stroke="#60a5fa" marker-end="url(#gOkM)"/>
+        <path class="akis" d="M645 707 C 570 713, 420 713, 345 707" stroke="#60a5fa" marker-end="url(#gOkM)"/>
+      </g>
+    </g>
+    <g class="gOda" id="gOturma">
+      <rect x="70" y="780" width="940" height="410" rx="20" fill="#2a2320" stroke="#475569" stroke-width="4"/>
+      <rect x="72" y="1165" width="936" height="23" fill="#5b3a22"/>
+      <line x1="80" y1="1165" x2="1000" y2="1165" stroke="#64748b" stroke-width="4"/>
+      <!-- pencere -->
+      <clipPath id="kesOturma"><rect x="140" y="830" width="130" height="130"/></clipPath>
+      <rect x="140" y="830" width="130" height="130" rx="6" fill="#13203f"/>
+      <g clip-path="url(#kesOturma)"><circle class="kar" data-x="160" data-y="10" data-h="1.0" data-ust="830" data-boy="130" r="4" fill="#fff"/><circle class="kar" data-x="190" data-y="60" data-h="1.3" data-ust="830" data-boy="130" r="3" fill="#fff"/><circle class="kar" data-x="220" data-y="30" data-h="0.9" data-ust="830" data-boy="130" r="5" fill="#fff"/><circle class="kar" data-x="250" data-y="90" data-h="1.1" data-ust="830" data-boy="130" r="3" fill="#fff"/><circle class="kar" data-x="175" data-y="110" data-h="0.8" data-ust="830" data-boy="130" r="3" fill="#fff"/><circle class="kar" data-x="240" data-y="5" data-h="1.2" data-ust="830" data-boy="130" r="4" fill="#fff"/></g>
+      <rect x="140" y="830" width="130" height="130" rx="6" fill="none" stroke="#cbd5e1" stroke-width="7"/>
+      <line x1="205" y1="830" x2="205" y2="960" stroke="#cbd5e1" stroke-width="5"/><line x1="140" y1="895" x2="270" y2="895" stroke="#cbd5e1" stroke-width="5"/>
+      <rect x="128" y="960" width="154" height="10" rx="4" fill="#cbd5e1"/>
+      <!-- televizyon + ünite -->
+      <rect x="560" y="860" width="240" height="145" rx="10" fill="#0b1220" stroke="#475569" stroke-width="7"/>
+      <rect x="572" y="872" width="216" height="121" rx="4" fill="#1e3a8a"/>
+      <path d="M580 985 L640 925 L680 955 L720 905 L780 985 Z" fill="#22c55e" opacity=".85"/><circle cx="755" cy="895" r="12" fill="#facc15"/>
+      <rect x="664" y="1005" width="32" height="20" fill="#475569"/>
+      <rect x="560" y="1090" width="240" height="70" rx="8" fill="#7c4a24"/><line x1="680" y1="1090" x2="680" y2="1160" stroke="#5b3417" stroke-width="4"/>
+      <circle cx="660" cy="1125" r="5" fill="#d6a85c"/><circle cx="700" cy="1125" r="5" fill="#d6a85c"/>
+      <!-- koltuk -->
+      <rect x="845" y="1035" width="150" height="70" rx="20" fill="#0d9488"/>
+      <rect x="835" y="1085" width="170" height="55" rx="16" fill="#14b8a6"/>
+      <rect x="826" y="1060" width="30" height="92" rx="12" fill="#0f766e"/><rect x="984" y="1060" width="24" height="92" rx="12" fill="#0f766e"/>
+      <rect x="868" y="1050" width="48" height="38" rx="10" fill="#fde68a"/>
+      <!-- lambader -->
+      <line x1="815" y1="930" x2="815" y2="1160" stroke="#cbd5e1" stroke-width="6"/><path d="M790 930 h50 l-12 -42 h-26 z" fill="#fde68a"/>
+      <g font-family="Inter" font-weight="900">
+        <rect x="872" y="795" width="14" height="50" rx="7" fill="#e5e7eb"/><circle cx="879" cy="849" r="11" fill="#ef4444"/>
+        <rect x="876" y="813" width="6" height="34" fill="#ef4444"/>
+        <text class="odaT" x="898" y="841" fill="#fff" font-size="34">10 °C</text></g>
+      <g class="gPetek">
+        <rect x="110" y="1040" width="190" height="110" rx="10" fill="#94a3b8"/>
+        <rect x="117" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="146" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="176" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="205" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="234" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="264" y="1047" width="23" height="96" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <g class="gIsi" opacity="0"><rect x="117" y="1047" width="23" height="96" rx="8" fill="#fb923c"/><rect x="146" y="1047" width="23" height="96" rx="8" fill="#fb923c"/><rect x="176" y="1047" width="23" height="96" rx="8" fill="#fb923c"/><rect x="205" y="1047" width="23" height="96" rx="8" fill="#fb923c"/><rect x="234" y="1047" width="23" height="96" rx="8" fill="#fb923c"/><rect x="264" y="1047" width="23" height="96" rx="8" fill="#fb923c"/></g>
+        <path d="M110 1055 H284 V1090 H126 V1125 H284 V1150" fill="none" stroke="#1e293b" stroke-width="8" stroke-linejoin="round" opacity=".3"/>
+        <path class="yol ic" d="M110 1055 H284 V1090 H126 V1125 H284 V1150" fill="none" stroke="none"/>
+      </g>
+      <path class="dalga" data-i="0" d="M150 1028 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="1" d="M205 1028 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/><path class="dalga" data-i="2" d="M260 1028 q-10 -14 0 -28 q10 -14 0 -28" fill="none" stroke="#fdba74" stroke-width="6" stroke-linecap="round"/>
+      <g fill="none" stroke-width="7" stroke-linecap="round">
+        <path class="akis" d="M330 1025 C 334 965, 328 870, 330 830" stroke="#fb923c" marker-end="url(#gOkT)"/>
+        <path class="akis" d="M350 810 C 420 804, 435 804, 510 810" stroke="#fb923c" marker-end="url(#gOkT)"/>
+        <path class="akis" d="M525 835 C 529 930, 529 1085, 525 1140" stroke="#60a5fa" marker-end="url(#gOkM)"/>
+        <path class="akis" d="M510 1157 C 435 1163, 420 1163, 345 1157" stroke="#60a5fa" marker-end="url(#gOkM)"/>
+      </g>
+    </g>
+    <!-- borular: gidiş solda, dönüş sağda -->
+    <g id="gBoru" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M440 110 H40 V1055 H110" stroke="#7f1d1d" stroke-width="16"/>
+      <path d="M40 605 H110" stroke="#7f1d1d" stroke-width="16"/>
+      <path d="M284 700 V728 H1045 V260 H640" stroke="#1e3a8a" stroke-width="16"/>
+      <path d="M284 1150 V1178 H1045 V728" stroke="#1e3a8a" stroke-width="16"/>
+    </g>
+    <path class="yol sicak" d="M440 110 H40 V605 H110" fill="none" stroke="none"/>
+    <path class="yol sicak" d="M40 605 V1055 H110" fill="none" stroke="none"/>
+    <path class="yol soguk" d="M284 700 V728 H1045 V260 H640" fill="none" stroke="none"/>
+    <path class="yol soguk" d="M284 1150 V1178 H1045 V728" fill="none" stroke="none"/>
+    <!-- kombi -->
+    <g id="gKombi" font-family="Inter" font-weight="900" text-anchor="middle">
+      <rect x="440" y="10" width="200" height="290" rx="20" fill="#e5e7eb" stroke="#94a3b8" stroke-width="4"/>
+      <rect x="460" y="24" width="160" height="50" rx="10" fill="#1f2937"/>
+      <text id="gKombiT" x="540" y="60" fill="#4ade80" font-size="28">--</text>
+      <rect x="455" y="85" width="170" height="200" rx="12" fill="#1f2937"/>
+      <path d="M640 260 H612 V200 H468 V170 H612 V140 H468 V110 H440" fill="none" stroke="#475569" stroke-width="9" stroke-linejoin="round" opacity=".6"/>
+      <path class="yol isit" d="M640 260 H612 V200 H468 V170 H612 V140 H468 V110 H440" fill="none" stroke="none"/>
+      <g id="gAlev" transform="translate(540 278)">
+        <path d="M0 0 C -26 -10, -20 -34, 0 -50 C 20 -34, 26 -10, 0 0 Z" fill="#f97316"/>
+        <path d="M0 0 C -12 -6, -9 -20, 0 -30 C 9 -20, 12 -6, 0 0 Z" fill="#facc15"/>
+      </g>
+    </g>
+    <g id="gDamla"></g>
+    <g font-family="Inter" font-weight="900" text-anchor="middle">
+      <g id="gEtS"><rect x="170" y="82" width="150" height="56" rx="28" fill="#dc2626"/><text x="245" y="121" fill="#fff" font-size="30">70 °C</text></g>
+      <g id="gEtC"><rect x="770" y="232" width="150" height="56" rx="28" fill="#1d4ed8"/><text x="845" y="271" fill="#fff" font-size="30">50 °C</text></g>
+    </g>
+  </svg>
+  <div class="hk-alt" id="gAlt" style="bottom:120px">Sırrı, peteklerin içinde dolaşan <b style="color:#fff">SU</b>.</div>
+</section>
+
+<!-- ================= 2 · KAPAK (0:06–0:13) ================= -->
+<section class="sahne" id="kapak">
+  <div class="kp2">
+    <div class="pill2" data-a="pop:0.2"><svg width="50" height="50" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="8.5" fill="#fff"/><circle cx="12" cy="13.5" r="6.6" fill="none" stroke="#dc2626" stroke-width="1.4"/><path d="M12 9.5v4.2l2.6 1.6" stroke="#111827" stroke-width="1.8" stroke-linecap="round" fill="none"/><rect x="9.5" y="2" width="5" height="2.6" rx="1" fill="#fff"/></svg>5 DAKİKADA TYT</div>
+    <div class="sinif2" data-a="gir:0.6">TYT FİZİK</div>
+    <div class="soru2" data-a="gir:1.0">Kalorifer petekleri evi <mark>NASIL</mark> ısıtıyor?</div>
+    <div class="logo-foto" data-a="pop:1.6"></div>
+    <div class="ka2" data-a="pop:2.3:.35" data-r="rotate(-2deg)">KONU ANLATIMI</div>
+    <div class="konu2" data-a="gir:3.0">Isı ve Sıcaklık</div>
+    <div class="ders2" data-a="gir:3.4">Isıdan genleşmeye, ünitenin tamamı</div>
+    <div class="kod2" data-a="pop:3.8">TYT · 2026-2027</div>
+  </div>
+  <div class="kp2-imza" data-a="gir:4.2">Şafak Hoca · Fizik</div>
+  <div class="takip" id="kpTakip" style="bottom:200px"><div class="logo-foto" style="width:80px;height:80px;border-width:4px"></div>Şafak Hoca <b>Takip Et</b></div>
+</section>
+
+<!-- ================= 3 · BÖLÜM 1: Isı nedir? Sıcaklık nedir? Farkı ne? (0:13–0:53) =================
+     Animasyon: tanecikler (sıcak hızlı, soğuk yavaş) → ısı oku sıcaktan soğuğa → soğuk kap ısınır, tanecikleri hızlanır. -->
+<section class="sahne" id="k1">
+  <div class="ust-kutu"><div class="u1 soru-u">Isı nedir? Sıcaklık nedir? Farkı ne?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <div class="sq" data-a="gir:s1">Sıcaklık nedir?</div>
+    <p class="tanim" data-a="gir:s1:.8">Maddeyi oluşturan taneciklerin <span class="f" data-a="fosfor:t1:1.6">ortalama hareket enerjisinin</span> göstergesidir.</p>
+    <svg viewBox="0 0 980 270" width="100%" height="235" id="k1Kap">
+      <g data-a="pop:p">
+        <rect x="20" y="20" width="400" height="230" rx="22" fill="#2a1f24" stroke="#ef4444" stroke-width="5"/>
+        <circle class="tnS" data-x="60" data-y="75" data-f="2.03" data-w="0.86" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="75" data-f="4.09" data-w="0.83" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="75" data-f="3.37" data-w="0.95" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="75" data-f="0.36" data-w="1.00" r="13" fill="#fb923c"/><circle class="tnS" data-x="380" data-y="75" data-f="0.24" data-w="0.97" r="13" fill="#fb923c"/><circle class="tnS" data-x="60" data-y="145" data-f="0.44" data-w="0.84" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="145" data-f="2.67" data-w="1.13" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="145" data-f="0.78" data-w="0.89" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="145" data-f="3.94" data-w="1.18" r="13" fill="#fb923c"/><circle class="tnS" data-x="380" data-y="145" data-f="3.62" data-w="0.96" r="13" fill="#fb923c"/><circle class="tnS" data-x="60" data-y="215" data-f="6.13" data-w="0.82" r="13" fill="#fb923c"/><circle class="tnS" data-x="140" data-y="215" data-f="5.39" data-w="0.92" r="13" fill="#fb923c"/><circle class="tnS" data-x="220" data-y="215" data-f="0.91" data-w="0.85" r="13" fill="#fb923c"/><circle class="tnS" data-x="300" data-y="215" data-f="1.94" data-w="1.13" r="13" fill="#fb923c"/>
+        <rect x="34" y="-6" width="130" height="50" rx="25" fill="#dc2626"/><text x="99" y="28" fill="#fff" font-size="30" font-weight="900" text-anchor="middle">70 °C</text>
+      </g>
+      <g data-a="pop:p:.6">
+        <rect x="560" y="20" width="400" height="230" rx="22" fill="#1c2433" stroke="#60a5fa" stroke-width="5"/>
+        <circle class="tnC" data-x="600" data-y="75" data-f="1.13" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="75" data-f="4.01" data-w="0.95" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="75" data-f="3.44" data-w="0.83" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="75" data-f="0.37" data-w="0.88" r="13" fill="#60a5fa"/><circle class="tnC" data-x="920" data-y="75" data-f="4.27" data-w="0.97" r="13" fill="#60a5fa"/><circle class="tnC" data-x="600" data-y="145" data-f="1.97" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="145" data-f="2.85" data-w="0.92" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="145" data-f="4.99" data-w="1.08" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="145" data-f="1.53" data-w="1.03" r="13" fill="#60a5fa"/><circle class="tnC" data-x="920" data-y="145" data-f="3.30" data-w="1.15" r="13" fill="#60a5fa"/><circle class="tnC" data-x="600" data-y="215" data-f="4.58" data-w="0.92" r="13" fill="#60a5fa"/><circle class="tnC" data-x="680" data-y="215" data-f="6.16" data-w="0.85" r="13" fill="#60a5fa"/><circle class="tnC" data-x="760" data-y="215" data-f="2.63" data-w="1.10" r="13" fill="#60a5fa"/><circle class="tnC" data-x="840" data-y="215" data-f="0.95" data-w="1.00" r="13" fill="#60a5fa"/>
+        <rect x="574" y="-6" width="130" height="50" rx="25" fill="#1d4ed8"/><text id="k1Soguk" x="639" y="28" fill="#fff" font-size="30" font-weight="900" text-anchor="middle">10 °C</text>
+      </g>
+      <defs><marker id="k1ok" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fb923c"/></marker></defs>
+      <line x1="430" y1="150" x2="545" y2="150" stroke="#fb923c" stroke-width="12" stroke-linecap="round" marker-end="url(#k1ok)" data-a="ciz:t3:.8"/>
+      <text x="488" y="128" fill="#fdba74" font-size="32" font-weight="900" text-anchor="middle" data-a="gir:t3">ısı</text>
+    </svg>
+    <div class="sq" data-a="gir:t2">Isı nedir?</div>
+    <p class="tanim" data-a="gir:t2:.8">Sıcaklık farkı yüzünden <span class="f" data-a="fosfor:t3:1.4">sıcaktan soğuğa aktarılan enerjidir</span>.</p>
+    <div class="sq" data-a="gir:fark">Farkı ne?</div>
+    <div class="kartlar">
+      <div class="kart" data-a="pop:t4"><b>Sıcaklık</b><span>ortalama enerji</span><i>madde miktarına bağlı değil</i></div>
+      <div class="kart" data-a="pop:t5"><b>İç enerji</b><span>toplam enerji</span><i>madde miktarı artınca artar</i></div>
+      <div class="kart" data-a="pop:t6"><b>Isı</b><span>aktarılan enerji</span><i>cisim ısı içermez</i></div>
+    </div>
+    <p class="not" data-a="yaz:t7:1.8">Petek 70 °C, oda 22 °C → ısı petekten odaya akar <span class="ok">✓</span></p>
+    <div class="tuzak" data-a="pop:t8"><b class="b">TYT TUZAĞI</b><br>Aynı sıcaklıktaki bir kova su, bir bardak sudan daha fazla <strong>iç enerjiye</strong> sahiptir ama "daha fazla ısısı var" demek <strong>yanlış</strong>: ısı yalnızca aktarılır.</div>
+  </div>
+</section>
+
+
+<!-- ================= 4 · BÖLÜM 2: Isı neyle, sıcaklık neyle ölçülür? (0:48–1:15) ================= -->
+<section class="sahne" id="k2">
+  <div class="ust-kutu"><div class="u1 soru-u">Isı neyle, sıcaklık neyle ölçülür?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <svg viewBox="0 0 980 470" width="100%" height="470">
+      <g font-family="Inter" font-weight="900" text-anchor="middle">
+        <rect x="205" y="40" width="50" height="300" rx="25" fill="#1f2430" stroke="#cbd5e1" stroke-width="4"/>
+        <circle cx="230" cy="365" r="42" fill="#ef4444" stroke="#cbd5e1" stroke-width="4"/>
+        <rect x="219" y="150" width="22" height="215" rx="11" fill="#ef4444"/>
+        <g stroke="#cbd5e1" stroke-width="3"><line x1="255" y1="80" x2="275" y2="80"/><line x1="255" y1="140" x2="275" y2="140"/><line x1="255" y1="200" x2="275" y2="200"/><line x1="255" y1="260" x2="275" y2="260"/></g>
+        <text x="230" y="445" fill="#fff" font-size="38">Termometre</text>
+        <rect x="610" y="120" width="250" height="250" rx="20" fill="#475569" stroke="#cbd5e1" stroke-width="4"/>
+        <rect x="640" y="150" width="190" height="200" rx="12" fill="#1f2430" stroke="#94a3b8" stroke-width="3"/>
+        <rect x="645" y="230" width="180" height="115" rx="10" fill="#60a5fa" opacity=".7"/>
+        <rect x="595" y="95" width="280" height="34" rx="10" fill="#94a3b8"/>
+        <line x1="700" y1="40" x2="700" y2="320" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/><line x1="680" y1="320" x2="720" y2="320" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+        <rect x="775" y="30" width="22" height="260" rx="11" fill="#1f2430" stroke="#cbd5e1" stroke-width="3"/><circle cx="786" cy="300" r="16" fill="#ef4444"/>
+        <text x="735" y="445" fill="#fff" font-size="38">Kalorimetre kabı</text>
+      </g>
+    </svg>
+    <div class="kartlar" style="grid-template-columns:1fr 1fr">
+      <div class="kart"><b>Sıcaklık</b><span>termometreyle doğrudan</span><i>°C · °F · K</i></div>
+      <div class="kart"><b>Isı</b><span>kalorimetre kabında, sıcaklık değişiminden hesaplanır</span><i>joule (J) · kalori (cal)</i></div>
+    </div>
+    <p class="not">1 kalori ≈ 4,18 joule <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Termometre <strong>ısıyı değil sıcaklığı</strong> ölçer. "Termometreyle ısı ölçülür" diyen şık yanlış.</div>
+  </div>
+</section>
+
+<!-- ================= 5 · BÖLÜM 3: Termometreler arasındaki fark ne? (1:15–1:50) ================= -->
+<section class="sahne" id="k3">
+  <div class="ust-kutu"><div class="u1 soru-u">Termometreler arasındaki fark ne?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <p class="tanim">Termometre, ısınınca <span class="f">genleşen bir sıvıyla</span> çalışır. Ölçekler, buzun erime ve suyun kaynama noktasına <span class="v">farklı sayılar</span> verir.</p>
+    <svg viewBox="0 0 980 540" width="100%" height="430">
+      <g font-weight="900" text-anchor="middle">
+        <defs><g id="trm">
+          <rect x="-28" y="60" width="56" height="380" rx="28" fill="#1f2430" stroke="#cbd5e1" stroke-width="4"/>
+          <circle cx="0" cy="465" r="48" fill="#ef4444" stroke="#cbd5e1" stroke-width="4"/>
+          <rect x="-12" y="180" width="24" height="290" rx="12" fill="#ef4444"/>
+        </g></defs>
+        <line x1="0" y1="103" x2="940" y2="103" stroke="#fca5a5" stroke-width="3" stroke-dasharray="10 8"/>
+        <line x1="0" y1="383" x2="940" y2="383" stroke="#93c5fd" stroke-width="3" stroke-dasharray="10 8"/>
+        <use href="#trm" x="200"/><use href="#trm" x="490"/><use href="#trm" x="780"/>
+        <text x="200" y="40" fill="#fff" font-size="40">°C</text><text x="490" y="40" fill="#fff" font-size="40">°F</text><text x="780" y="40" fill="#fff" font-size="40">K</text>
+        <g font-size="34" text-anchor="start" stroke="#262b36" stroke-width="12" paint-order="stroke">
+          <text x="250" y="115" fill="#fca5a5">100</text><text x="250" y="395" fill="#93c5fd">0</text>
+          <text x="540" y="115" fill="#fca5a5">212</text><text x="540" y="395" fill="#93c5fd">32</text>
+          <text x="830" y="115" fill="#fca5a5">373</text><text x="830" y="395" fill="#93c5fd">273</text>
+        </g>
+        <text x="0" y="90" fill="#fca5a5" font-size="26" text-anchor="start">su kaynar</text>
+        <text x="0" y="370" fill="#93c5fd" font-size="26" text-anchor="start">buz erir</text>
+      </g>
+    </svg>
+    <div class="formul" style="font-size:42px;white-space:nowrap">C / 100 = (F − 32) / 180 = (K − 273) / 100<small>Kelvin'de eksi değer yoktur · 0 K mutlak sıfır</small></div>
+    <p class="not">Δ(°C) = Δ(K) · ama 1 °C'lik değişim = 1,8 °F <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Sıcaklık <strong>10 °C artarsa</strong> Kelvin'de de 10 artar, 283 değil! Değişimde 273 eklenmez.</div>
+  </div>
+</section>
+
+<!-- ================= 6 · BÖLÜM 4: Aynı ısıyı alan maddeler neden farklı ısınır? (1:50–2:25) ================= -->
+<section class="sahne" id="k4">
+  <div class="ust-kutu"><div class="u1 soru-u">Aynı ısıyı alan maddeler neden farklı ısınır?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <div class="formul">Q = m · c · ΔT<small>c: öz ısı · m·c: ısı sığası</small></div>
+    <p class="tanim"><span class="f">Öz ısı</span>, 1 gram maddenin sıcaklığını 1 °C artırmak için gereken ısıdır. <span class="v">Ayırt edicidir</span>, kütleye bağlı değildir.</p>
+    <svg viewBox="0 0 980 300" width="100%" height="300">
+      <g font-weight="900" text-anchor="middle">
+        <rect x="40" y="40" width="400" height="200" rx="22" fill="#d6a85c"/>
+        <text x="240" y="115" fill="#451a03" font-size="42">KUM</text>
+        <text x="240" y="170" fill="#451a03" font-size="32">c ≈ 0,2 cal/g·°C</text>
+        <text x="240" y="220" fill="#7c2d12" font-size="34">hızlı ısınır</text>
+        <rect x="540" y="40" width="400" height="200" rx="22" fill="#2563eb"/>
+        <text x="740" y="115" fill="#fff" font-size="42">SU</text>
+        <text x="740" y="170" fill="#dbeafe" font-size="32">c = 1 cal/g·°C</text>
+        <text x="740" y="220" fill="#dbeafe" font-size="34">yavaş ısınır</text>
+      </g>
+    </svg>
+    <p class="not">Su, öz ısısı büyük olduğu için kazandan peteğe bol ısı taşır <span class="ok">✓</span></p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br><strong>Isı sığası (m·c)</strong> kütleye bağlıdır, ayırt edici <strong>değildir</strong>. Öz ısı (c) ise ayırt edicidir.</div>
+  </div>
+</section>
+
+<!-- ================= 7 · BÖLÜM 5: Hal değişimi nasıl olur? (2:25–3:00) ================= -->
+<section class="sahne" id="k5">
+  <div class="ust-kutu"><div class="u1 soru-u">Hal değişimi nasıl olur?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <p class="tanim">Isı alan madde <span class="f">erir, buharlaşır</span>; ısı veren madde <span class="v">donar, yoğuşur</span>. Saf maddede hal değişirken <span class="f">sıcaklık sabit kalır</span>.</p>
+    <svg viewBox="0 0 980 560" width="100%" height="470">
+      <defs><marker id="okax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#cbd5e1"/></marker></defs>
+      <line x1="90" y1="500" x2="950" y2="500" class="ax" marker-end="url(#okax)"/>
+      <line x1="90" y1="520" x2="90" y2="30" class="ax" marker-end="url(#okax)"/>
+      <text x="950" y="545" fill="#cbd5e1" font-size="32" font-weight="800" text-anchor="end">Q (verilen ısı)</text>
+      <text x="110" y="45" fill="#cbd5e1" font-size="32" font-weight="800">T (°C)</text>
+      <g font-size="30" font-weight="800" fill="#cbd5e1" text-anchor="end">
+        <text x="78" y="130">100</text><text x="78" y="400">0</text><text x="78" y="470">−20</text>
+      </g>
+      <line x1="90" y1="120" x2="940" y2="120" stroke="#475569" stroke-width="2" stroke-dasharray="8 8"/>
+      <line x1="90" y1="390" x2="940" y2="390" stroke="#475569" stroke-width="2" stroke-dasharray="8 8"/>
+      <polyline class="cz" points="90,460 170,390 360,390 520,120 860,120 930,60"/>
+      <g font-size="30" font-weight="800" text-anchor="middle">
+        <text x="120" y="440" fill="#93c5fd">katı</text>
+        <text x="265" y="370" fill="#fff">erime</text><text x="265" y="430" fill="#9ca3af" font-size="26">katı + sıvı</text>
+        <text x="470" y="270" fill="#93c5fd">sıvı</text>
+        <text x="690" y="100" fill="#fff">kaynama</text><text x="690" y="160" fill="#9ca3af" font-size="26">sıvı + gaz</text>
+        <text x="920" y="45" fill="#93c5fd">gaz</text>
+      </g>
+    </svg>
+    <div class="formul">Q = m · L<small>L: erime ya da buharlaşma ısısı (sabit sıcaklıkta)</small></div>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Yatay bölgede sıcaklık sabit ama madde <strong>ısı almaya devam ediyor</strong>. "Isı almıyor" diyen şık yanlış.</div>
+  </div>
+</section>
+
+<!-- ================= 8 · BÖLÜM 6: Isıl denge nedir? (3:00–3:30) ================= -->
+<section class="sahne" id="k6">
+  <div class="ust-kutu"><div class="u1 soru-u">Isıl denge nedir?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <p class="tanim">Sıcak cisim ısı <span class="f">verir</span>, soğuk cisim ısı <span class="f">alır</span>. Sıcaklıklar eşitlenince aktarım durur.</p>
+    <svg viewBox="0 0 980 360" width="100%" height="360">
+      <g font-weight="900" text-anchor="middle">
+        <path d="M60 60 v220 q0 30 30 30 h160 q30 0 30 -30 v-220" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="65" y="180" width="210" height="125" rx="22" fill="#60a5fa" opacity=".75"/>
+        <text x="170" y="230" fill="#fff" font-size="36">100 g</text><text x="170" y="280" fill="#fff" font-size="36">20 °C</text>
+        <text x="345" y="180" fill="#fff" font-size="60">+</text>
+        <path d="M410 60 v220 q0 30 30 30 h160 q30 0 30 -30 v-220" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="415" y="110" width="210" height="195" rx="22" fill="#f97316" opacity=".8"/>
+        <text x="520" y="200" fill="#fff" font-size="36">200 g</text><text x="520" y="250" fill="#fff" font-size="36">80 °C</text>
+        <text x="710" y="180" fill="#fff" font-size="60">→</text>
+        <path d="M770 30 v250 q0 30 30 30 h120 q30 0 30 -30 v-250" fill="none" stroke="#cbd5e1" stroke-width="5"/>
+        <rect x="775" y="70" width="170" height="235" rx="22" fill="#f59e0b" opacity=".8"/>
+        <text x="860" y="170" fill="#fff" font-size="36">300 g</text><text x="860" y="220" fill="#fff" font-size="40">60 °C</text>
+      </g>
+    </svg>
+    <p class="not">100·(T − 20) = 200·(80 − T) → T = 60 °C <span class="ok">✓</span></p>
+    <p class="not">Denge sıcaklığı, ısı sığası büyük olana yakın çıkar</p>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Denge sıcaklığı her zaman <strong>iki sıcaklığın arasındadır</strong>. Ortalama (50 °C) ancak ısı sığaları eşitse çıkar.</div>
+  </div>
+</section>
+
+<!-- ================= 9 · BÖLÜM 7: Isı nasıl yayılır? (3:30–4:05) ================= -->
+<section class="sahne" id="k7">
+  <div class="ust-kutu"><div class="u1 soru-u">Isı nasıl yayılır?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <svg viewBox="0 0 980 560" width="100%" height="440">
+      <defs>
+        <marker id="o1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fb923c"/></marker>
+        <marker id="o2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#60a5fa"/></marker>
+        <marker id="o3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#facc15"/></marker>
+      </defs>
+      <!-- petek -->
+      <rect x="300" y="300" width="380" height="190" rx="14" fill="#cbd5e1"/>
+      <g fill="#f8fafc" stroke="#94a3b8" stroke-width="2">
+        <rect x="312" y="310" width="30" height="170" rx="10"/><rect x="352" y="310" width="30" height="170" rx="10"/><rect x="392" y="310" width="30" height="170" rx="10"/>
+        <rect x="432" y="310" width="30" height="170" rx="10"/><rect x="472" y="310" width="30" height="170" rx="10"/><rect x="512" y="310" width="30" height="170" rx="10"/>
+        <rect x="552" y="310" width="30" height="170" rx="10"/><rect x="592" y="310" width="30" height="170" rx="10"/><rect x="632" y="310" width="30" height="170" rx="10"/>
+      </g>
+      <!-- 1 iletim: sıcak su → metal -->
+      <path d="M180 470 H300" stroke="#ef4444" stroke-width="22" stroke-linecap="round"/>
+      <text x="40" y="420" fill="#fff" font-size="36" font-weight="900">1 · İletim</text>
+      <text x="40" y="530" fill="#e5e7eb" font-size="28" font-weight="600">sıcak su → metal</text>
+      <!-- 2 konveksiyon: sıcak hava yükselir -->
+      <path d="M420 280 C 400 200, 460 140, 430 60" fill="none" stroke="#fb923c" stroke-width="9" stroke-dasharray="20 14" stroke-linecap="round" marker-end="url(#o1)"/>
+      <path d="M560 280 C 540 200, 600 140, 570 60" fill="none" stroke="#fb923c" stroke-width="9" stroke-dasharray="20 14" stroke-linecap="round" marker-end="url(#o1)"/>
+      <path d="M260 60 C 230 160, 230 230, 290 300" fill="none" stroke="#60a5fa" stroke-width="9" stroke-dasharray="20 14" stroke-linecap="round" marker-end="url(#o2)"/>
+      <text x="440" y="40" fill="#fff" font-size="36" font-weight="900">2 · Konveksiyon</text>
+      <!-- 3 ışıma -->
+      <g stroke="#facc15" stroke-width="8" stroke-linecap="round">
+        <line x1="700" y1="330" x2="830" y2="270" marker-end="url(#o3)"/><line x1="700" y1="395" x2="850" y2="395" marker-end="url(#o3)"/><line x1="700" y1="460" x2="830" y2="520" marker-end="url(#o3)"/>
+      </g>
+      <text x="740" y="220" fill="#fff" font-size="36" font-weight="900">3 · Işıma</text>
+    </svg>
+    <ul class="liste" style="font-size:34px">
+      <li><b>İletim:</b> tanecikten taneciğe, dokunarak (katılarda)</li>
+      <li><b>Konveksiyon:</b> sıcak akışkan yükselir, soğuğu iner</li>
+      <li><b>Işıma:</b> ışınla, madde gerekmeden (Güneş)</li>
+      <li><b>Yalıtım:</b> çift cam, mont, termos aktarımı yavaşlatır</li>
+    </ul>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Konveksiyon <strong>yalnızca akışkanlarda</strong> (sıvı, gaz) olur. Işıma için madde <strong>gerekmez</strong>; boşlukta da olur.</div>
+  </div>
+</section>
+
+<!-- ================= 10 · BÖLÜM 8: Genleşme nedir? Isıyla, sıcaklıkla ilişkisi ne? (4:05–4:45) ================= -->
+<section class="sahne" id="k8">
+  <div class="ust-kutu"><div class="u1 soru-u">Genleşme nedir? Isıyla, sıcaklıkla ilişkisi ne?</div></div>
+  <div class="pg">
+    <div class="pg-bas"><div class="pb1">TYT FİZİK · KONU ANLATIMI</div><div class="pb2">ISI VE SICAKLIK · TYT · ŞAFAK HOCA</div><div class="logo-foto"></div></div>
+    <div class="pg-baslik">Isı ve Sıcaklık</div>
+    <div class="pg-cizgi"></div>
+    <p class="tanim">Isınan maddenin tanecikleri daha çok titreşir, aralarındaki uzaklık artar: madde <span class="f">genleşir</span>. Soğuyunca <span class="v">büzülür</span>.</p>
+    <div class="formul">ΔL = L₀ · λ · ΔT<small>λ: boyca uzama katsayısı (ayırt edici)</small></div>
+    <svg viewBox="0 0 980 230" width="100%" height="200">
+      <g font-weight="900">
+        <rect x="40" y="30" width="640" height="56" rx="10" fill="#94a3b8"/>
+        <text x="360" y="70" fill="#1f2937" font-size="32" text-anchor="middle">L₀ (soğuk)</text>
+        <rect x="40" y="140" width="760" height="56" rx="10" fill="#fb923c"/>
+        <text x="360" y="180" fill="#431407" font-size="32" text-anchor="middle">ısıtılmış</text>
+        <line x1="680" y1="20" x2="680" y2="215" stroke="#fff" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="740" y="128" fill="#fff" font-size="36" text-anchor="middle">ΔL</text>
+      </g>
+    </svg>
+    <div class="zincir"><span>ısı alır</span><em>→</em><span>sıcaklık ↑</span><em>→</em><span>tanecikler uzaklaşır</span><em>→</em><span>genleşir</span></div>
+    <div class="tuzak"><b class="b">TYT TUZAĞI</b><br>Su <strong>0 °C → 4 °C</strong> arasında ısıtılınca hacmi <strong>küçülür</strong>; özkütlesi 4 °C'de en büyüktür. Delikli levha ısınınca <strong>delik de büyür</strong>.</div>
+  </div>
+</section>
+
+<!-- ================= 11 · KAPANIŞ (4:45–4:55) ================= -->
+<section class="sahne" id="kapanis">
+  <div class="kp" style="padding-top:330px">
+    <div class="pill">TYT FİZİK</div>
+    <div class="konu" style="font-size:130px;margin-top:70px">KONU<br>BİTTİ</div>
+    <div class="alt2" style="font-size:44px;margin-top:40px">Isı ve Sıcaklık ✓</div>
+    <ul class="liste" style="text-align:left;margin-top:70px;font-size:40px">
+      <li>Isı aktarılır, sıcaklık ölçülür</li><li>Q = m·c·ΔT · Q = m·L</li>
+      <li>Verilen ısı = alınan ısı</li><li>İletim · konveksiyon · ışıma</li><li>Isı → sıcaklık ↑ → genleşme</li>
+    </ul>
+    <div class="alt2" style="margin-top:60px">Sıradaki TYT konusu için takipte kal</div>
+  </div>
+  <div class="takip"><div class="logo-foto" style="width:80px;height:80px;border-width:4px"></div>Şafak Hoca <b>Takip Et</b></div>
+</section>
+
+<script>
+const q=new URLSearchParams(location.search);
+const s=q.get('s')||'giris';
+(document.getElementById(s)||document.getElementById('giris')).classList.add('on');
+
+/* ---- giriş animasyonu: ciz(t) t saniyedeki görüntüyü çizer (videoda kare kare çağrılır) ---- */
+const sınır=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const gir=(t,bas,sure=.5)=>sınır((t-bas)/sure);           // 0→1 geçiş
+const yumusak=x=>x*x*(3-2*x);
+const $=id=>document.getElementById(id);
+const renk=(f)=>{const a=[239,68,68],b=[59,130,246];return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*f)).join(',')})`};
+const NS='http://www.w3.org/2000/svg', ARA=34, HIZ=230, GIRIS_SURE=6, TASARIM_SURE=8;
+let damlalar=null;
+function damlaKur(){damlalar=[];const g=$('gDamla');
+  document.querySelectorAll('#giris .yol').forEach(y=>{const L=y.getTotalLength(), n=Math.floor(L/ARA);
+    const tur=['ic','isit','sicak','soguk'].find(c=>y.classList.contains(c));
+    for(let i=0;i<n;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',tur==='ic'||tur==='isit'?7:8);
+      (tur==='ic'||tur==='isit'?y.parentNode:g).appendChild(c);damlalar.push({c,y,L,i,tur});}});}
+window.ciz=function(t){
+  t=t*TASARIM_SURE/GIRIS_SURE;   // 8 sn'lik tasarım zaman çizelgesi 6 sn'ye sıkıştırılır
+  if(!damlalar)damlaKur();
+  document.querySelectorAll('#giris .k').forEach(k=>{const i=+k.dataset.i, a=yumusak(gir(t,.4+i*.18,.3));
+    k.style.opacity=a; k.style.display='inline-block'; k.style.transform=`translateY(${(1-a)*24}px)`;});
+  document.querySelectorAll('#giris .gOda').forEach(o=>o.style.opacity=yumusak(gir(t,1.6,.5)));
+  document.querySelectorAll('#giris .kar').forEach(c=>{const h=+c.dataset.h, y0=+c.dataset.y;
+    c.setAttribute('cx',+c.dataset.x+Math.sin(t*1.5+y0)*6); c.setAttribute('cy',+c.dataset.ust+((y0+t*35*h)%+c.dataset.boy));});
+  $('gKombi').style.opacity=yumusak(gir(t,1.0,.4));
+  const al=yumusak(gir(t,1.3,.35));
+  $('gAlev').setAttribute('transform',`translate(540 278) scale(${(.2+.8*al)*(1+.06*Math.sin(t*14))} ${(.2+.8*al)*(1+.1*Math.sin(t*11))})`);
+  $('gAlev').style.opacity=al; $('gKombiT').textContent=t<1.3?'--':Math.round(20+50*yumusak(gir(t,1.3,1.4)))+' °C';
+  const br=yumusak(gir(t,1.9,.4)); $('gBoru').style.opacity=br;
+  document.querySelectorAll('#giris .gPetek, #giris .havlu').forEach(p=>p.style.opacity=br);
+  const su=yumusak(gir(t,2.2,.5));
+  damlalar.forEach(d=>{let x=(d.i*ARA+(t-2.2)*HIZ)%d.L; if(x<0)x+=d.L; const pt=d.y.getPointAtLength(x);
+    d.c.setAttribute('cx',pt.x); d.c.setAttribute('cy',pt.y); d.c.style.opacity=t<2.2?0:su;
+    const f=x/d.L; d.c.setAttribute('fill',d.tur==='sicak'?renk(0):d.tur==='soguk'?renk(1):d.tur==='ic'?renk(f):renk(1-f));});
+  $('gEtS').style.opacity=yumusak(gir(t,2.7,.4)); $('gEtC').style.opacity=yumusak(gir(t,3.2,.4));
+  [['gBanyo',2.9,3.5,24],['gOturma',3.2,3.8,22]].forEach(([id,bas,od,son])=>{const o=$(id);
+    o.querySelector('.gIsi').setAttribute('opacity',.55*yumusak(gir(t,bas,2.7)));
+    o.querySelector('.odaT').textContent=Math.round(10+(son-10)*yumusak(gir(t,od,3.2)))+' °C';
+    o.querySelectorAll('.dalga').forEach(d=>{const i=+d.dataset.i, f=((t-3.4+i*.4)%1.4+1.4)%1.4/1.4, on=t>=3.4+i*.15?1:0;
+      d.style.opacity=on*Math.sin(Math.PI*f)*.95; d.style.transform=`translateY(${-f*40}px)`;});
+    const k=gir(t,4.0,1);
+    o.querySelectorAll('.akis').forEach((a,i)=>{a.style.strokeDasharray='22 16'; a.style.strokeDashoffset=-(t*55)%38;
+      a.style.opacity=yumusak(sınır(k*1.6-(i>1?.6:0)));});});
+  $('gAlt').style.opacity=yumusak(gir(t,6.2,.5));
+};
+if(s==='giris'){
+  if(q.get('oynat')){const t0=performance.now();(function d(){ciz(((performance.now()-t0)/1000)%GIRIS_SURE);requestAnimationFrame(d)})();}
+  else ciz(q.has('t')?+q.get('t'):GIRIS_SURE);
+}
+</script>
+
+<script>
+/* Bölüm 1: tanecikler titreşir; ısı akmaya başlayınca (t3) soğuk kabın tanecikleri hızlanır, sıcaklığı yükselir */
+OZEL.k1=function(t,z){
+  const isin=Math.min(1,Math.max(0,(t-z.t3)/6));
+  document.querySelectorAll('#k1 .tnS').forEach(c=>{const f=+c.dataset.f,w=+c.dataset.w;
+    c.setAttribute('cx',+c.dataset.x+16*Math.sin(t*9*w+f)); c.setAttribute('cy',+c.dataset.y+14*Math.cos(t*11*w+f*1.7));});
+  const A=5+7*isin, H=2.2+4*isin;
+  document.querySelectorAll('#k1 .tnC').forEach(c=>{const f=+c.dataset.f,w=+c.dataset.w;
+    c.setAttribute('cx',+c.dataset.x+A*Math.sin(t*H*w+f)); c.setAttribute('cy',+c.dataset.y+A*.9*Math.cos(t*H*1.2*w+f*1.7));});
+  document.getElementById('k1Soguk').textContent=Math.round(10+15*isin)+' °C';
+};
+OZEL.kapak=function(t){ /* Takip Et kartı 4.6 sn'de gelir, 6.6 sn'de gider */
+  const g=Math.min(1,Math.max(0,(t-4.6)/.35)), c=Math.min(1,Math.max(0,(t-6.6)/.35)), e=g*(1-c);
+  const k=document.getElementById('kpTakip'); k.querySelector('b').textContent=t>=5.6?'Takip ediliyor ✓':'Takip Et'; k.querySelector('b').style.background=t>=5.6?'#16a34a':'#2563eb'; k.style.opacity=e; k.style.transform=`translateX(-50%) translateY(${(1-e)*60}px) scale(${.85+.15*e})`;
+};
+</script>
+</body>
+</html>

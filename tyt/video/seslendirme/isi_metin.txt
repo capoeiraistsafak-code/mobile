@@ -1,0 +1,71 @@
+[curious] Kalorifer petekleri evi NASIL ısıtıyor? [excited] Sırrı, içlerinde dolaşan suda! Ben Şafak Hoca, beş dakikada TYT'lik ısı ve sıcaklık!
+
+[warmly] Sıcaklık, taneciklerin ortalama hareket enerjisinin göstergesidir. Isı ise sıcaklık farkı yüzünden sıcaktan soğuğa aktarılan enerjidir.
+
+Bakın… sıcak kaptaki tanecikler hızlı titreşiyor. Ne kadar hızlı titreşirse, sıcaklık o kadar YÜKSEK olur.
+
+[excited] Şimdi ısı akıyor! Sıcaktan soğuğa aktarılan enerji, soğuk kabın taneciklerini de hızlandırıyor.
+
+[curious] Peki iç enerji ne? İç enerji, taneciklerin TOPLAM enerjisidir. Ve unutmayın: cisim ısı içermez; ısı, aktarılan enerjidir.
+
+[warmly] Sıcaklık termometreyle doğrudan ölçülür. Isı doğrudan ölçülemez; kalorimetre kabında sıcaklık değişiminden hesaplanır.
+
+Termometreyle ölçtüğümüz sıcaklığın birimi santigrat, fahrenhayt ya da kelvindir.
+
+[excited] Kalorimetre kabına sıcak bir cisim atalım… suyun sıcaklığı artıyor! Isının birimi ise joule ya da kaloridir; bir kalori yaklaşık dört virgül on sekiz joule.
+
+[curious] Dikkat! Termometre ısıyı değil, SICAKLIĞI ölçer.
+
+[warmly] Termometre, ısınınca genleşen bir sıvıyla çalışır. Ölçekler, buzun erime ve suyun kaynama noktasına farklı sayılar verir.
+
+Buz erirken santigrat sıfır, fahrenhayt otuz iki, kelvin iki yüz yetmiş üç gösterir.
+
+[excited] Su kaynarken ise yüz, iki yüz on iki ve üç yüz yetmiş üç!
+
+[warmly] Dönüşüm için tek bir formül yeter. [curious] Dikkat: sıcaklık on derece artarsa kelvinde de on artar. Değişimde iki yüz yetmiş üç EKLENMEZ!
+
+[warmly] Öz ısı, bir gram maddenin sıcaklığını bir derece artırmak için gereken ısıdır ve maddeyi tanıtır. Verilen ısı, Q eşittir m çarpı c çarpı delta T.
+
+[excited] Güneş aynı! Ama kum hızla ısınıyor, su ise YAVAŞ.
+
+Çünkü suyun öz ısısı çok büyüktür. İşte bu yüzden kaloriferde su dolaşır; kazandan peteğe bol ısı taşır.
+
+[curious] Dikkat: m çarpı c, yani ısı sığası, kütleye bağlıdır; ayırt edici değildir.
+
+[warmly] Isı alan madde erir, buharlaşır; ısı veren madde donar, yoğuşur. Saf maddede hal değişirken sıcaklık sabit kalır.
+
+Eksi yirmi derecedeki buzu ısıtalım. Sıcaklık sıfıra çıkar, sonra grafik yataylaşır: buz erirken sıcaklık değişmez.
+
+[excited] Hepsi su olunca sıcaklık yüze çıkar, kaynarken yine sabit kalır!
+
+Erirken ve kaynarken sıcaklık sabit; gereken ısı, Q eşittir m çarpı L.
+
+[curious] Dikkat! Madde ısı alır ama sıcaklığı DEĞİŞMEZ.
+
+[warmly] Sıcak madde ısı verir, soğuk madde ısı alır; sıcaklıklar eşitlenince ısı aktarımı durur.
+
+Seksen derecedeki iki yüz gram su, yirmi derecedeki yüz gram suya ısı veriyor… sıcaklıklar birbirine yaklaşıyor.
+
+[excited] Verilen ısı, alınan ısıya eşit. Hesabı yapınca denge sıcaklığı: altmış derece!
+
+[warmly] Denge sıcaklığı, kütlesi büyük olana daha yakın.
+
+[warmly] Isı üç yolla yayılır: iletim, dokunarak; konveksiyon, akışkanla taşınarak; ve ışıma, madde gerekmeden.
+
+Birincisi iletim: sıcak su peteğin metaline dokunarak ısı verir.
+
+[excited] İkincisi konveksiyon: ısınan hava yükselir, soğuk hava iner ve odada döner.
+
+Üçüncüsü ışıma: peteğin yanında elinde hissettiğin sıcaklık. Güneş de bizi böyle ısıtır.
+
+[warmly] Çift cam, mont ve termos ise ısı aktarımını yavaşlatır.
+
+[warmly] Isı alan maddenin sıcaklığı artar, tanecikleri daha çok titreşir ve uzaklaşır: madde genleşir. Soğuyunca büzülür.
+
+[excited] Çubuğu ısıtalım… tanecikler açılıyor, çubuk UZUYOR!
+
+Boyca uzaması, delta L eşittir L sıfır çarpı lambda çarpı delta T. Yani zincir şu: ısı alır, sıcaklık artar, madde genleşir.
+
+[curious] Dikkat: su sıfır ile dört derece arasında ısıtılınca BÜZÜLÜR!
+
+[excited] Konu bitti! Isı aktarılır, sıcaklık ölçülür, madde genleşir. Sıradaki konu elektrostatik. Takip etmeyi unutmayın!

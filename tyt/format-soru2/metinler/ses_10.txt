@@ -1,0 +1,13 @@
+Onuncu sınıf fizik! Birinci dönem birinci yazılıda çıkabilecek beş soruyu adım adım çözüyoruz. Kaydet, yazılıdan önce tekrar et!
+
+Birinci soru. Araç yirmi metre bölü saniye sabit hızla gidiyor. Sabit hızlı harekette alınan yol, hız çarpı zamandır. On beş saniyede yirmi çarpı on beş, üç yüz metre yol alır. Tünelin uzunluğu bir virgül iki kilometre, yani bin iki yüz metredir. Geçiş süresi, bin iki yüz bölü yirmi, altmış saniyedir.
+
+İkinci soru. Konum zaman grafiğinde eğim hızı verir. Sıfır ile dört saniye arasında konum sıfırdan kırk metreye çıkıyor. Hız, kırk bölü dört, on metre bölü saniyedir. Dört ile sekiz saniye arasında konum değişmiyor, araç duruyor ve hızı sıfırdır. Sekiz ile on saniye arasında araç kırk metre geri dönüyor. Hız, eksi kırk bölü iki, eksi yirmi metre bölü saniyedir.
+
+Üçüncü soru. Araçlar birbirine doğru gittiği için aradaki uzaklık, hızlarının toplamıyla kapanır. Her saniye on artı yirmi, otuz metre yaklaşırlar. Üç yüz metre otuza bölünürse on saniye eder. Bu sürede K aracı on çarpı on, yüz metre yol alır. Yani karşılaşma noktası K'den yüz metre uzaktadır.
+
+Dördüncü soru. İvme, hızdaki değişimin zamana bölümüdür. Hız sıfırdan yirmi metre bölü saniyeye, dört saniyede çıkıyor. İvme, yirmi bölü dört, beş metre bölü saniye karedir. Duruştan başlayan araç için yol, yarım çarpı ivme çarpı zamanın karesidir. Yarım çarpı beş çarpı on altı, kırk metre eder. Altıncı saniyede hız, beş çarpı altı, otuz metre bölü saniyedir.
+
+Beşinci soru. Hız zaman grafiğinde eğim ivmeyi, alan ise yer değiştirmeyi verir. Sıfır ile iki saniye arasında hız on metre bölü saniye artıyor. İvme, on bölü iki, beş metre bölü saniye karedir. Altı ile sekiz saniye arasında hız on azalıyor, ivme eksi beştir. Toplam yer değiştirme için alanları topluyoruz. On artı kırk artı on, altmış metre eder.
+
+Beş soru tamam! Videoyu kaydet, arkadaşınla paylaş. Yazılında başarılar!

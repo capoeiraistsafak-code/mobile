@@ -1,0 +1,13 @@
+Dokuzuncu sınıf fizik! Birinci dönem birinci yazılıda çıkabilecek beş soruyu adım adım çözüyoruz. Kaydet, yazılıdan önce tekrar et!
+
+Birinci soru. Olayları inceleyen fiziğin alt dallarını buluyoruz. Gökkuşağı, ışığın kırılmasıyla oluşur, bunu optik inceler. Mıknatısın çiviyi çekmesi manyetizmadır. Buzun erimesi ısı ve sıcaklıkla ilgilidir, yani termodinamiktir. Arabanın hızlanması bir hareket olduğu için mekaniğin konusudur.
+
+İkinci soru. Temel nicelikler başka niceliklerden türetilemez, türetilmiş nicelikler ise temel niceliklerden elde edilir. Kütle temeldir, birimi kilogramdır. Zaman temeldir, birimi saniyedir. Elektrik akımı da temeldir, birimi amperdir. Hız, yolun zamana bölümüdür, bu yüzden türetilmiştir, birimi metre bölü saniyedir. Kuvvet de türetilmiştir, birimi newtondur.
+
+Üçüncü soru. Koşucu dört yüz metrelik pistte bir tur atıp başladığı yere dönüyor. Alınan yol dört yüz metredir ve skaler bir niceliktir. Yer değiştirme ise başlangıçtan bitişe çizilen oktur. Koşucu aynı noktaya döndüğü için yer değiştirme sıfırdır ve vektörel bir niceliktir. Ortalama sürat, dört yüz bölü seksen, beş metre bölü saniyedir. Ortalama hız ise sıfırdır.
+
+Dördüncü soru. Kutuya yirmi newton sağa, elli newton sola kuvvet uygulanıyor. Zıt yönlü kuvvetlerde büyükten küçük çıkarılır. Elli eksi yirmi, otuz newton eder ve bileşke büyük kuvvetin yönünde, yani sola doğrudur. Kuvvetler aynı yönde olsaydı toplanırdı. Yirmi artı elli, yetmiş newton olurdu.
+
+Beşinci soru. Kareli düzlemde bir bölme iki newtondur. F bir üç bölme, yani altı newton. F iki dört bölme, yani sekiz newton. Kuvvetler birbirine dik olduğu için uç uca ekleyip dik üçgen kuruyoruz. Pisagor bağıntısından R kare, altı kare artı sekiz kare, yani yüz eder. Bileşke kuvvet on newtondur ve disk bu yönde hareket eder.
+
+Beş soru tamam! Videoyu kaydet, arkadaşınla paylaş. Yazılında başarılar!

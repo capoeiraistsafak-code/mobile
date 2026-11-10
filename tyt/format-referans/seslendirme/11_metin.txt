@@ -1,0 +1,17 @@
+[excited] Ağır bir dolabı itmeye BAŞLAMAK, onu kaydırmaktan neden daha zor? [curious] Cevap… iki farklı sürtünme! [excited] Ben Şafak Hoca, bir dakikada öğreniyoruz!
+
+[warmly] Cisim durgunken etki eden sürtünmeye statik sürtünme denir. Uygulanan kuvvet arttıkça statik sürtünme de artar ve cisim kımıldamaz.
+
+Dolaba on newton uyguluyoruz… sürtünme de on newton, dolap yerinde.
+
+[excited] Kuvveti yirmiye çıkarıyoruz… sürtünme de YİRMİ! Dolap yine kımıldamıyor.
+
+[curious] Ama bu artışın bir sınırı var… en büyük statik sürtünme.
+
+[warmly] Kuvvet en büyük statik sürtünmeyi geçince cisim kaymaya başlar. Kayan cisme kinetik sürtünme etki eder ve bu kuvvet SABİTTİR.
+
+[excited] İşte dolap kaymaya başladı… artık sürtünme sabit.
+
+Grafikte de görüyoruz… önce yükselen statik sürtünme, sonra düşüp sabit kalan kinetik sürtünme.
+
+[excited] İşte bu yüzden harekete geçirmek, kaydırmaktan daha zor! Sıradaki derste sürtünme kuvvetini hesaplayacağız. Takip etmeyi unutmayın!
