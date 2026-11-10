@@ -168,6 +168,6 @@ html,body{width:1080px;height:1920px;overflow:hidden;font-family:Inter,sans-seri
 const Q=new URLSearchParams(location.search), K=Q.get('k')||'isi_sicaklik', SY=Q.get('s');
 const load=src=>new Promise(r=>{const e=document.createElement('script');e.src=src;e.onload=r;e.onerror=r;document.body.appendChild(e);});
 Promise.all(['700 23px Caveat','400 15px "Noto Serif"','700 17px "Noto Serif"','800 52px Inter','600 34px Inter','40px "Noto Color Emoji"'].map(f=>document.fonts.load(f,'ğşıİçö₁²√🧭'))).then(async()=>{
-  await load('konu_yardim.js'); await load(K+'.js'); if(SY) await load(SY+'.js'); await load('konu_motor.js');});
+  await load('konu_yardim.js'); await load(K+'.js'); if(SY) await load(SY+'.js'); await load((Q.get('m')||'konu_motor')+'.js');});
 </script>
 </body></html>

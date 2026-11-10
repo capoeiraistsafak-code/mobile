@@ -5,7 +5,11 @@
 - **Konu videosu** (`FORMAT.md`, "5 Dakikada TYT" motoru, `video/`): koyu masa, sayfalar yan yana, kamera sayfadan sayfaya **uzaklaşıp yakınlaşarak** kayar; fosfor, kalem notları, Takip Et kartı, kapak.
 - **Soru Videosu 2. Format** (`format-soru2/FORMAT_2.md`): her soru tek sayfa, "SORU n / N", olay animasyonu, kalemle çözüm, sonuç kutusu ve ✓.
 
-**Görünüm: BEYAZ TEST KAĞIDI.** Koyu masa üzerinde beyaz kağıt sayfalar (içerikte `tema: 'koyu'` YOK); basılı soru siyah serif, şık harfleri kırmızı, kalem mavi, cevap kutusu kırmızı. Kamera sayfadan sayfaya uzaklaşıp yakınlaşır. Giriş ve kapak koyu kalır (konu videosundaki gibi).
+**Görünüm: BEYAZ TEST KAĞIDI (Soru Videosu 1 düzeni).** Koyu masa üzerinde **tek bir beyaz sınav kağıdı**: başlıkta "TYT FİZİK · KONU", "KONU KONU TEST · 8 SORU", Şafak Hoca, Adı Soyadı / Sınıfı / No / Puan alanları ve logo; sorular **iki sütunda dörder** (Soru Videosu 1'deki 10 soruluk yazılı kağıdının 8 soruluk TYT testi hâli).
+- Kamera **bütün kağıdı** gösterir → **soruya yakınlaşır** → soru çözülür → **kağıda uzaklaşır** (çözülen sorular kağıtta görünür) → sıradaki soruya yakınlaşır.
+- Sonda kamera **puan kutusuna** gider, kırmızı "100" yazılır, sonra bütün kağıt + "8 SORU TAMAM".
+- Basılı soru siyah serif, şık harfleri kırmızı, kalem mavi, cevap kutusu kırmızı. Giriş ve kapak koyu kalır.
+- Motor: `video/test_motor.js` (konu motorunun kopyası; konu videosu `konu_motor.js` ile aynen kalır). Sayfa: `konu.html?m=test_motor&k=<içerik>&s=<sync>`.
 
 Örnek: **Isı ve Sıcaklık** → içerik `video/isi_sicaklik_soru.js`, kareler `kareler/isi_sicaklik_soru/`.
 
@@ -60,11 +64,11 @@ Süre: ~5–6 dakika (ses gelince sese göre).
 ```bash
 cd tyt/video
 # Kareler (onay için)
-PAGE="$PWD/konu.html?k=isi_sicaklik_soru&s=tahmini_sure_soru" node kareler.js ../kareler/isi_sicaklik_soru
+PAGE="$PWD/konu.html?m=test_motor&k=isi_sicaklik_soru&s=tahmini_sure_soru" node kareler.js ../kareler/isi_sicaklik_soru
 # Ses gelince (paragraf kimlikleri):
 IDS=intro,p0r,p0s0,p0s1,p0s2,p0s3,p1r,p1s0,p1s1,p1s2,p1s3,p2r,p2s0,p2s1,p2s2,p2s3,p3r,p3s0,p3s1,p3s2,p3s3,p4r,p4s0,p4s1,p4s2,p4s3,p5r,p5s0,p5s1,p5s2,p5s3,p6r,p6s0,p6s1,p6s2,p6s3,p6s4,p7r,p7s0,p7s1,p7s2,p7s3,outro
 python3 -I seslendirme/senk.py seslendirme/isi_soru_metin.txt words.json $IDS sync_isi_soru ses_isi_soru.wav
-PAGE="$PWD/konu.html?k=isi_sicaklik_soru&s=sync_isi_soru" node rec.js 30 sessiz.mp4
+PAGE="$PWD/konu.html?m=test_motor&k=isi_sicaklik_soru&s=sync_isi_soru" node rec.js 30 sessiz.mp4
 ```
 
 Yeni konu için: konu videosunun içerik dosyasındaki sayfa sırasını al, her sayfa için bir test sorusu yaz, `isi_sicaklik_soru.js`'yi örnek al.
