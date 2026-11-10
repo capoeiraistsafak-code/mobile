@@ -27,6 +27,7 @@ $('cover').innerHTML = `<div class="cv-1dk"><span>⏱</span>${UST1}</div>
   <div class="cv-s">${M.kapakAlt}</div>
   <div class="cv-code">${M.kazanim} · 2026-2027</div>
   <div class="cv-bot">Şafak Hoca · Fizik</div>`;
+if (M.takipAlt) document.querySelector('#follow .fl-txt span').textContent = M.takipAlt;   // Takip Et kartı alt yazısı (varsayılan: konu anlatımı)
 $('bend').innerHTML = `<b>${M.bitti || 'KONU BİTTİ'}</b><span>Sıradaki: ${M.sonraki}</span>`;
 
 // ---------- sayfalar ----------

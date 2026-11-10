@@ -19,7 +19,7 @@
 1. **Giriş (~6 sn):** Konu videosunun girişiyle aynı iskelet: kırmızı "TYT FİZİK", renk geçişli büyük konu başlığı, kelime kelime beliren cümle.
    - Cümle: **"Konuyu anlattık… Haydi şimdi SORU çözelim!"** (anahtar kelime SORU sarı zeminli).
    - Animasyon: konu anlatımındaki 8 konunun kartları (simge + ad) sırayla gelir, sonra her kart dönerek "SORU n" ve boş A–E şıklarına dönüşür. Altta "8 KONU · 8 SORU".
-2. **Kapak:** "Ben Şafak Hoca" denince. "5 DAKİKADA TYT", "TYT FİZİK", kanca "Haydi şimdi SORU çözelim!", logo, eğik sarı **"SORU ÇÖZÜMÜ"**, konu adı, "8 konu · 8 soru · animasyonlu çözüm", Takip Et kartı.
+2. **Kapak:** "Ben Şafak Hoca" denince. "5 DAKİKADA TYT", "TYT FİZİK", kanca "Haydi şimdi SORU çözelim!", logo, eğik sarı **"SORU ÇÖZÜMÜ"**, konu adı, "8 konu · 8 soru · animasyonlu çözüm", Takip Et kartı (alt yazısı **"Fizik · soru çözümü"**, `meta.takipAlt`).
 3. **Soru sayfaları:** Üst bantta "SORU n / 8" ve konunun adı; sayfada "SORU n" + konu etiketi.
    1. Soru kökü (ve öncüller) konuşmayla aynı hızda **fosforlanır**; şıklar altında basılı durur.
    2. **Olay animasyonu:** soruda anlatılan olay canlandırılır (ısı akışı, termometre yükselmesi, ısıtıcı, karışım, grafik çizimi, çubuğun uzaması…).
@@ -52,7 +52,7 @@ Süre: ~5–6 dakika (ses gelince sese göre).
 | `tahmini_sure_soru.js` | Ses yokken tahmini bölüm süreleri |
 | `seslendirme/isi_soru_metin.txt` | Seslendirme metni (43 paragraf) |
 | `kareler.js` | Onay kareleri: giriş, kapak, her sorunun son hâli, kamera geçişi, kapanış |
-| `konu_motor.js` | Ortak motor; `meta.tur`, `meta.adim`, `meta.bitti` seçenekleri eklendi (verilmezse konu videosu aynen kalır) |
+| `konu_motor.js` | Ortak motor; `meta.tur`, `meta.adim`, `meta.bitti`, `meta.takipAlt` seçenekleri eklendi (verilmezse konu videosu aynen kalır) |
 
 ```bash
 cd tyt/video
@@ -63,5 +63,9 @@ IDS=intro,p0r,p0s0,p0s1,p0s2,p0s3,p1r,p1s0,p1s1,p1s2,p1s3,p2r,p2s0,p2s1,p2s2,p2s
 python3 -I seslendirme/senk.py seslendirme/isi_soru_metin.txt words.json $IDS sync_isi_soru ses_isi_soru.wav
 PAGE="$PWD/konu.html?k=isi_sicaklik_soru&s=sync_isi_soru" node rec.js 30 sessiz.mp4
 ```
+
+Test videosu (seslendirmesiz, efekt sesli, tahmini sürelerle): EVENTS'i `ev.json` olarak kaydet, sonra
+`node rec.js 30 sessiz.mp4` → `python3 -I ses_konu.py ev.json mix.wav` → ffmpeg ile birleştir.
+Onaylı kareler ve test videosu: `kareler/isi_sicaklik_soru/`.
 
 Yeni konu için: konu videosunun içerik dosyasındaki sayfa sırasını al, her sayfa için bir test sorusu yaz, `isi_sicaklik_soru.js`'yi örnek al.

@@ -48,7 +48,7 @@ const CEVAP = (o, h, x, y) => H(o, `Cevap: <span class="bx">${h}</span> ` + CK, 
 
 window.KONU = {
   meta: {tema: 'koyu', sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
-    tur: 'SORU ÇÖZÜMÜ', adim: 'SORU', bitti: '8 SORU TAMAM',
+    tur: 'SORU ÇÖZÜMÜ', adim: 'SORU', bitti: '8 SORU TAMAM', takipAlt: 'Fizik · soru çözümü',
     kapakAlt: '8 konu · 8 soru · animasyonlu çözüm', sonraki: 'Elektrostatik', kanca: 'Haydi şimdi SORU çözelim!',
     hookBaslik: 'ISI VE SICAKLIK', introSure: 8.2},
   P: [
