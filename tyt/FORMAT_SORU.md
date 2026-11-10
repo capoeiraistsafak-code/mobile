@@ -22,9 +22,10 @@
 2. **Kapak:** "Ben Şafak Hoca" denince. "5 DAKİKADA TYT", "TYT FİZİK", kanca "Haydi şimdi SORU çözelim!", logo, eğik sarı **"SORU ÇÖZÜMÜ"**, konu adı, "8 konu · 8 soru · animasyonlu çözüm", Takip Et kartı.
 3. **Soru sayfaları:** Üst bantta "SORU n / 8" ve konunun adı; sayfada "SORU n" + konu etiketi.
    1. Soru kökü (ve öncüller) konuşmayla aynı hızda **fosforlanır**; şıklar altında basılı durur.
-   2. **Olay animasyonu:** soruda anlatılan olay canlandırılır (ısı akışı, termometre yükselmesi, ısıtıcı, karışım, grafik çizimi, çubuğun uzaması…).
+   2. **Animasyon + kalem birlikte (Soru Videosu 2. Format gibi):** soruda anlatılan olay canlandırılır (ısı akışı, termometre yükselmesi, ısıtıcı, karışım, çubuğun uzaması…) ve kalem **şekil üzerinde de çizer**: grafik kalemle çizilir, ışınlar kalemle çekilir, önemli değerlerin altı çizilir, uç noktalar işaretlenir (`MARK`).
    3. **Kalemle çözüm:** her not ait olduğu animasyonun hemen altına; formül parçaları kendi nesnesinin altına; bölmeler kesir (`KS`). Öncüller ✓ / ✗ ile işaretlenir.
-   4. **Cevap:** "Cevap: [harf]" kırmızı kutuda + ✓; doğru şık yeşil çerçeveyle işaretlenip hafifçe zıplar.
+   4. **Cevap:** kalem doğru şıkkın etrafına **kırmızı kutu** çizer (`KUTU` + `kutuKur`), kutu kapanınca şık büyüyüp parlar (`kutuIsik`); ardından "Cevap: [harf]" + ✓.
+   - **Sesler TYT konu videosundaki gibi** (`ses_konu.py`): kalemle yazma, kalemle çizgi (şekil işaretleri ve kutu dahil düz sürtünme), ✓ tık, sayfa geçişi, Takip Et tıklaması. Seslendirme ve fon müziği yok (test videosu).
    5. Kamera bir sonraki sayfaya **uzaklaşıp yakınlaşarak** geçer; ortadaki geçişte Takip Et kartı bir kez daha çıkar.
 4. **Kapanış:** "8 SORU TAMAM · Sıradaki: …" bandı ve Takip Et kartı.
 
@@ -48,7 +49,7 @@ Süre: ~5–6 dakika (ses gelince sese göre).
 
 | Dosya | Görevi |
 |---|---|
-| `isi_sicaklik_soru.js` | Örnek içerik: `meta` (`tur: 'SORU ÇÖZÜMÜ'`, `adim: 'SORU'`, `bitti`), 8 soru sayfası, giriş `hook`, `SK` (şıklar), `dogru` (doğru şık), `CEVAP` |
+| `isi_sicaklik_soru.js` | Örnek içerik: `meta` (`tur: 'SORU ÇÖZÜMÜ'`, `adim: 'SORU'`, `bitti`), 8 soru sayfası, giriş `hook`, `SK` (şıklar), `MARK` (kalemle şekil işareti), `KUTU`/`kutuKur`/`kutuIsik` (doğru şıkka kalemle kutu), `CEVAP` |
 | `tahmini_sure_soru.js` | Ses yokken tahmini bölüm süreleri |
 | `seslendirme/isi_soru_metin.txt` | Seslendirme metni (43 paragraf) |
 | `kareler.js` | Onay kareleri: giriş, kapak, her sorunun son hâli, kamera geçişi, kapanış |
