@@ -71,15 +71,16 @@ window.KONU = {
       `<line id="p2d1" x1="20" y1="175" x2="430" y2="175" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        <line id="p2d2" x1="20" y1="65" x2="430" y2="65" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
        ${T('p2e1', 4, 192, 'buz erir', '#93c5fd', 12, 'opacity="0"')}${T('p2e2', 4, 58, 'su kaynar', '#fca5a5', 12, 'opacity="0"')}`, false) +
-    H(1, KS('C', '100'), 58, 352, 'formül') + H(2, '= ' + KS('F − 32', '180'), 162, 352, 'formül') + H(3, '= ' + KS('K − 273', '100'), 299, 352, 'formül') +
-    H(4, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 430, 'on') + H(5, "Kelvin'de eksi değer yok", 0, 472, 'Değişimde'),
+    H(1, KS('C', '100'), 59, 352, 'formül') + H(2, '=', 145, 365, 'formül') + H(3, KS('F − 32', '180'), 188, 352, 'formül') +
+    H(4, '=', 285, 365, 'formül') + H(5, KS('K − 273', '100'), 325, 352, 'formül') +
+    H(6, 'ΔT: 10 °C artış = 10 K artış ' + CK, 0, 430, 'on') + H(7, "Kelvin'de eksi değer yok", 0, 472, 'Değişimde'),
    init: () => { for (let i = 0; i < 3; i++) termo('p2l' + i, 215, 6); },
    steps: [
      {d: 2.4, o: [], f: s => { const k = ease(prog(s, 0, 1.6)); for (let i = 0; i < 3; i++) { termo('p2l' + i, 215, 6 + 34 * k); at('p2a' + i, 'opacity', prog(s, 1.2 + i * .3, 1.6 + i * .3)); }
        at('p2d1', 'opacity', prog(s, 1.4, 1.8)); at('p2e1', 'opacity', prog(s, 1.4, 1.8)); }},
      {d: 2.6, o: [], f: s => { if (!s) return; const k = ease(prog(s, 0, 1.6)); for (let i = 0; i < 3; i++) { termo('p2l' + i, 215, 40 + 110 * k); at('p2b' + i, 'opacity', prog(s, 1.2 + i * .3, 1.6 + i * .3)); }
        at('p2d2', 'opacity', prog(s, 1.4, 1.8)); at('p2e2', 'opacity', prog(s, 1.4, 1.8)); }},
-     {d: 0.6, o: [1, 2, 3, 4, 5], f: () => {}},
+     {d: 0.6, o: [1, 2, 3, 4, 5, 6, 7], f: () => {}},
    ]},
 
   // 4 ---------------------------------------------------------------
