@@ -42,3 +42,12 @@ Bu tarzı yapan şeyler:
 - **Altta:** Cevabın ipucunu veren tek satır.
 - **Üretim sırası:** Önce fotoğraf (son kare) gönderilir; onaydan sonra sessiz önizleme videosu çıkarılır.
 - **Seslendirme:** Kullanıcı onay vermeden asla yapılmaz.
+
+## Notların yeri (bütün TYT videolarında)
+
+- **Notun yeri:** Bir animasyonla ilgili kalem notu, o animasyonun **hemen altına** yazılır. Notlar sayfanın altına toplu liste olarak yazılmaz.
+  - Örnek: "Sıcaklık: °C · °F · K" termometrenin altında, "Isı: joule · kalori" kalorimetre kabının altında.
+- **Formüller:** Bir formül birden fazla nesneye ait parçalardan oluşuyorsa, her parça kendi nesnesinin altına yazılır.
+  - Örnek: C/100 °C termometresinin, (F − 32)/180 °F termometresinin, (K − 273)/100 K termometresinin altında; aralarında "=".
+- **Bölmeler:** El yazısındaki gibi kesirle yazılır: pay üstte, payda altta, arada kesir çizgisi (`KS(pay, payda)`). "a/b" biçiminde yazılmaz.
+- **Genel notlar:** Belirli bir animasyona ait olmayan notlar (ör. "Dikkat" uyarıları) en alta yazılabilir.
