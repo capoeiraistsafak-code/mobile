@@ -74,3 +74,16 @@ PAGE="$PWD/konu.html?m=test_motor&k=isi_sicaklik_soru&s=sync_isi_soru" node rec.
 ```
 
 Yeni konu için: konu videosunun içerik dosyasındaki sayfa sırasını al, her sayfa için bir test sorusu yaz, `isi_sicaklik_soru.js`'yi örnek al.
+
+## Tuzak sorular videosu (aynı format)
+
+"TYT'de çıkabilecek tuzak sorular ve çözümleri": konunun 10 tuzak sorusu, test kağıdı (2 sütun × 5), MEB TYT formatı.
+- Bantta ve sayfada "TUZAK n / 10" (`meta.adim: 'TUZAK'`), kapakta "TUZAK SORULAR", kapanışta "10 TUZAK ÇÖZÜLDÜ".
+- Giriş: "TYT'de bu TUZAKLARA düşme!"; 10 kırmızı "⚠️ TUZAK n" kartı dönüp "SORU n"e dönüşür.
+- Her soruda kalem, öğrencinin düştüğü yanılgıyı kırmızı **"⚠ Tuzak: …"** notu olarak yazar (`TZ`), sonra cevap kutusu.
+- Sahne ve notlar şıkların bittiği yere kendiliğinden yerleşir (`yerlestir`).
+- Örnek: `video/isi_tuzak.js`, `video/tahmini_sure_tuzak.js`, `video/seslendirme/isi_tuzak_metin.txt` (52 paragraf: intro, p0r, p0s0…p0s3, …, p9s3, outro), kareler `kareler/isi_tuzak/`.
+
+```bash
+PAGE="$PWD/konu.html?m=test_motor&k=isi_tuzak&s=tahmini_sure_tuzak" node kareler.js ../kareler/isi_tuzak
+```
