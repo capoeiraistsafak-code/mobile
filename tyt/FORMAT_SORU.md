@@ -95,3 +95,9 @@ PAGE="$PWD/konu.html?m=test_motor&k=isi_tuzak&s=tahmini_sure_tuzak" node kareler
 - Kelime zamanları: `eleven_scribe_v1` (ücretsiz) → `seslendirme/tuzak/words.json`; `senk.py` paragraf sınırlarını metin ile yazıya dökmeyi hizalayarak bulur.
 - Ses fırlamasın: paragraf seviyeleri ortancanın ±2 dB'sine yumuşakça çekilir (`ses_isi_tuzak_duz.wav`, kesimler sessizlikte, 50 ms geçiş). Son karışım -14 LUFS.
 - `meta.kalemMin: 0.4`: kalem cevap kutusunu "Doğru cevap" cümlesine yetiştirir.
+
+### Sayfa düzeni ve kamera (güncel)
+
+- **Sayfa başına 5 soru** (`meta.sayfa: 5`), **3 sütun** (`meta.sutun: 3`); sorular deneme kitapçığındaki gibi **sütun sütun** numaralanır: 1–2 | 3–4 | 5. Ara sayfanın boş yuvasında "Diğer sayfaya geçiniz ➜", son sayfanınkinde PUAN kutusu. Sayfalar masada yan yana.
+- **Kamera:** başta ilk sayfanın tamamı → 1. soruya yakınlaşma. Sorular arasında bütün kağıda uzaklaşılmaz; kamera **azıcık geri çekilip** (`meta.dip`, varsayılan 0.45) sıradaki soruya kayar (1,6 sn). **Sayfa geçişinde** biraz daha geri çekilir (`meta.dipSayfa`, varsayılan 1.1), yan sayfaya kayar ve 6. soruya yaklaşır (2,6 sn). Yakınlık logaritmik ve yumuşak değişir (ani kesme yok).
+- Sonda puan kutusuna kırmızı "100", ardından son sayfanın tamamı.

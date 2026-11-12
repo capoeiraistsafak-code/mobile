@@ -11,7 +11,8 @@ const out = process.argv[2]; fs.mkdirSync(out, {recursive: true});
   if (E.sorular) {   // test kağıdı: bütün kağıt → her soru → uzak çekim → puan
     shots.push(['03_kagit', E.moves[0][0] - 0.1]);
     E.sorular.forEach((t, i) => shots.push([`${nn(i + 4)}_soru${i + 1}`, t]));
-    shots.push(['uzak_kagit', E.moves[7][1] + 0.3], ['gecis_ortasi', (E.moves[1][0] + E.moves[1][1]) / 2]);
+    const sg = E.moves.reduce((b, m, i) => (m[1] - m[0] > E.moves[b][1] - E.moves[b][0] && i > 0 && i < E.moves.length - 2 ? i : b), 1);   // en uzun ara geçiş = sayfa geçişi
+    shots.push(['gecis_soru', (E.moves[1][0] + E.moves[1][1]) / 2], ['gecis_sayfa', (E.moves[sg][0] + E.moves[sg][1]) / 2]);
     const m = E.moves[E.moves.length - 2]; shots.push(['zy_puan', m[1] + 1.2]);
   } else {
     E.moves.forEach(([a, b2], i) => shots.push([`${nn(i + 3)}_soru${i + 1}`, a - 0.05]));

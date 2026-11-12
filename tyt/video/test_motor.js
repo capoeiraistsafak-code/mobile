@@ -35,21 +35,36 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 .kg .pg{background:transparent;box-shadow:none;border:0;border-radius:0;height:${M.satir || 650}px}
 .kg .pg .hd,.kg .pg .slot,.kg #flogo{display:none}.kg .pg .q{top:6px}
 .kagit{position:absolute;left:0;top:0;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:"Noto Serif",serif;color:#16181D}
-.kagit .vline{top:250px}
-.kagit .puan .s{opacity:0}
+.kagit .vline{top:250px;bottom:40px}
+.kagit .puan .s,.puan .s{opacity:0}
+.gecin{position:absolute;width:440px;text-align:right;font:italic 700 26px "Noto Serif",serif;color:#16181D}
+.puan{width:440px}
 </style>`);
 document.body.classList.add('kg');
-const KX = [20, 515], KTOP = 250, ROW = M.satir || 650, ROWS = Math.ceil(P.length / 2);
-const KW = 1000, KH = KTOP + ROWS * ROW + 190;
-const kg = document.createElement('div'); kg.className = 'kagit'; Object.assign(kg.style, {width: KW + 'px', height: KH + 'px'});
-kg.innerHTML = `<div class="ph"><div class="t1">${UST2} · ${M.baslik.toLocaleUpperCase('tr')}</div><div class="t2">${M.kagitAlt || 'KONU KONU TEST'} · ${P.length} SORU</div>
-  <div class="t3">ŞAFAK HOCA · ${M.kazanim} · 2026-2027</div>
-  <div class="flds"><span>Adı Soyadı:</span><span>Sınıfı:</span><span>No:</span><span class="p">Puan:</span></div>
-  <div class="plogo"><div class="img"></div></div></div><div class="vline"></div>
-  <div class="puan" id="puan">PUAN<div class="s" id="puanS">100</div></div>`;
-$('pages').appendChild(kg);
+const PER = M.sayfa || P.length, COLS = M.sutun || 2, RPC = Math.ceil(PER / COLS), NPG = Math.ceil(P.length / PER);
+const CW = 495, KTOP = 250, ROW = M.satir || 650, KW = 30 + COLS * CW, KH = KTOP + RPC * ROW + 180, PGAP = 90;
+const PX = pg => pg * (KW + PGAP);
+const slot = (pg, j) => ({x: PX(pg) + 20 + Math.floor(j / RPC) * CW, y: KTOP + (j % RPC) * ROW});   // sütun sütun: 1-2 | 3-4 | 5
 const pagesEl = $('pages');
-const POS = P.map((_, i) => ({x: KX[i % 2], y: KTOP + Math.floor(i / 2) * ROW}));
+for (let pg = 0; pg < NPG; pg++) {
+  const kg = document.createElement('div'); kg.className = 'kagit'; Object.assign(kg.style, {left: PX(pg) + 'px', width: KW + 'px', height: KH + 'px'});
+  const n0 = pg * PER + 1, n1 = Math.min(P.length, (pg + 1) * PER);
+  kg.innerHTML = `<div class="ph"><div class="t1">${UST2} · ${M.baslik.toLocaleUpperCase('tr')}</div><div class="t2">${M.kagitAlt || 'KONU KONU TEST'} · ${P.length} SORU${NPG > 1 ? ` · ${pg + 1}. SAYFA (${n0}–${n1})` : ''}</div>
+    <div class="t3">ŞAFAK HOCA · ${M.kazanim} · 2026-2027</div>
+    <div class="flds"><span>Adı Soyadı:</span><span>Sınıfı:</span><span>No:</span><span class="p">Puan:</span></div>
+    <div class="plogo"><div class="img"></div></div></div>` +
+    Array.from({length: COLS - 1}, (_, c) => `<div class="vline" style="left:${12 + (c + 1) * CW}px"></div>`).join('');
+  pagesEl.appendChild(kg);
+  if (n1 - n0 + 1 < COLS * RPC) {                                   // boş yuva: ara sayfada "geçiniz", son sayfada puan
+    const sl = slot(pg, n1 - n0 + 1), e = document.createElement('div');
+    if (pg < NPG - 1) { e.className = 'gecin'; e.textContent = 'Diğer sayfaya geçiniz ➜'; Object.assign(e.style, {left: sl.x + 'px', top: (sl.y + ROW - 120) + 'px'}); }
+    else { e.className = 'puan'; e.id = 'puan'; e.innerHTML = 'PUAN<div class="s" id="puanS">100</div>'; Object.assign(e.style, {left: sl.x + 'px', top: (sl.y + 140) + 'px', right: 'auto', bottom: 'auto'}); }
+    pagesEl.appendChild(e);
+  }
+}
+if (!$('puan')) { const e = document.createElement('div'); e.className = 'puan'; e.id = 'puan'; e.innerHTML = 'PUAN<div class="s" id="puanS">100</div>';
+  Object.assign(e.style, {left: (PX(NPG - 1) + KW - 470) + 'px', top: (KH - 230) + 'px', right: 'auto', bottom: 'auto'}); pagesEl.appendChild(e); }
+const POS = P.map((_, i) => slot(Math.floor(i / PER), i % PER));
 P.forEach((p, i) => {
   const d = document.createElement('div'); d.className = 'pg'; d.style.left = POS[i].x + 'px'; d.style.top = POS[i].y + 'px';
   d.innerHTML = `<div class="hd"><div class="t1">${UST2} · ${M.tur || 'KONU ANLATIMI'}</div><div class="t2">${M.baslik.toLocaleUpperCase('tr')} · ${M.kazanim} · ŞAFAK HOCA</div>
@@ -83,9 +98,11 @@ const hls = P.map(p => {
 // ---------- zaman çizelgesi (sese göre) ----------
 const ZS = 2.15, TOPY = 236;
 const CAMS = P.map((_, i) => ({s: ZS, x: 40 - POS[i].x * ZS, y: TOPY - (POS[i].y + 6) * ZS}));
-const SF = Math.min(1000 / KW, 1640 / KH);                                   // bütün kağıt
-const FULL = {s: SF, x: 540 - KW / 2 * SF, y: 250 + (1640 - KH * SF) / 2};
-const PS = 2.0, PUAN = {s: PS, x: 540 - (KW - 260) * PS, y: 960 - (KH - 110) * PS};   // puan kutusu
+const SF = Math.min(1000 / KW, 1640 / KH);                                   // bir sayfanın tamamı
+const PAGEV = Array.from({length: NPG}, (_, pg) => ({s: SF, x: 540 - (PX(pg) + KW / 2) * SF, y: 250 + (1640 - KH * SF) / 2}));
+const FULL = PAGEV[0];
+const pz = $('puan'), PS = 1.7, PUAN = {s: PS, x: 540 - (parseFloat(pz.style.left) + 220) * PS, y: 960 - (parseFloat(pz.style.top) + 90) * PS};   // puan kutusu
+const DIP = M.dip != null ? M.dip : 0.45, DIP_SAYFA = M.dipSayfa != null ? M.dipSayfa : 1.1;   // sorular arası hafif geri çekilme; sayfa geçişinde biraz daha
 const moves = [], fades = [], items = [], fpulses = [], follows = [], HL = [], ANIMS = [], SEGT = {};
 let t = 0;
 const move = (A, B, d, dip = 0) => { moves.push([t, t + d, A, B, dip]); t += d; };
@@ -114,7 +131,7 @@ if (HK) {
 }
 t = introEnd + 0.5;
 t += 1.6;                                                          // bütün test kağıdı görünür
-move(FULL, CAMS[0], 1.4);
+move(FULL, CAMS[0], 1.8);
 fadeEl($('flogo'), t, t + 0.5);
 let band = fadeEl($('bq0'), t - 0.5, t);
 const SORU_T = [];
@@ -153,18 +170,17 @@ P.forEach((p, i) => {
   if (i === MID && P.length > 1) { follows.push(t); t += 3.0; }    // takip kartı: ortada
   band[3] = t; band[4] = t + 0.4; SORU_T.push(t - 0.05);
   if (i < P.length - 1) {
-    move(CAMS[i], FULL, 1.3);                                        // kağıda uzaklaş
-    t += 0.9;                                                         // bütün kağıt: çözülen sorular görünür
-    fpulses.push([t + 0.2, t + 1.4]);
-    move(FULL, CAMS[i + 1], 1.4);                                     // sıradaki soruya yakınlaş
+    const yeniSayfa = Math.floor((i + 1) / PER) !== Math.floor(i / PER);
+    if (yeniSayfa) move(CAMS[i], CAMS[i + 1], 2.6, DIP_SAYFA);       // sayfa geçişi: biraz geri çekil, yan sayfaya kay, yaklaş
+    else move(CAMS[i], CAMS[i + 1], 1.6, DIP);                       // sıradaki soru: azıcık geri çekil ve kay
     band = fadeEl($('bq' + (i + 1)), t - 0.5, t);
     t += 0.3;
   }
 });
 // puan kutusu: kırmızı kalemle 100, sonra bütün kağıt
-move(CAMS[P.length - 1], PUAN, 1.3);
+move(CAMS[P.length - 1], PUAN, 1.6, DIP);
 const puanT = t; t += 1.6;
-move(PUAN, FULL, 1.3);
+move(PUAN, PAGEV[NPG - 1], 1.8);
 // kapanış
 fadeEl($('bend'), t, t + 0.5);
 fpulses.push([t + 0.2, t + 1.4]);
@@ -210,7 +226,7 @@ function camAt(time) {
   for (const [a, b, A, B, dip] of moves) {
     if (time < a) break;
     if (time >= b) { c = B; continue; }
-    const k = ease(prog(time, a, b)), s = A.s - dip * Math.sin(Math.PI * k);
+    const k = ease(prog(time, a, b)), s = Math.exp(lerp(Math.log(A.s), Math.log(B.s), k)) - dip * Math.sin(Math.PI * k);   // yakınlık da yumuşakça değişir
     const cx = lerp((540 - A.x) / A.s, (540 - B.x) / B.s, k), cy = lerp((960 - A.y) / A.s, (960 - B.y) / B.s, k);
     c = {s, x: 540 - cx * s, y: 960 - cy * s};
   }

@@ -77,7 +77,7 @@ const ADIM = (n) => [{d: 0.6, o: n[0], f: () => {}}, {d: 0.6, o: n[1], f: () => 
 
 window.KONU = {
   meta: {satir: 690, sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
-    kalemMin: 0.4, tur: 'TUZAK SORULAR', adim: 'TUZAK', bitti: '10 TUZAK ÇÖZÜLDÜ', kagitAlt: 'TYT TUZAK SORULARI',
+    kalemMin: 0.4, sayfa: 5, sutun: 3, tur: 'TUZAK SORULAR', adim: 'TUZAK', bitti: '10 TUZAK ÇÖZÜLDÜ', kagitAlt: 'TYT TUZAK SORULARI',
     kapakAlt: '10 tuzak soru · animasyonlu çözüm', sonraki: 'Elektrostatik', kanca: 'TYT\'de bu TUZAKLARA düşme!',
     hookBaslik: 'ISI VE SICAKLIK', introSure: 8.2},
   P: [
