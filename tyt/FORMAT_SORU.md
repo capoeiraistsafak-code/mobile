@@ -103,3 +103,12 @@ PAGE="$PWD/konu.html?m=test_motor&k=isi_tuzak&s=tahmini_sure_tuzak" node kareler
 - Sonda puan kutusuna kırmızı "100", ardından son sayfanın tamamı.
 
 - **Doğru şık YEŞİL işaretlenir:** kalem şıkkın etrafına yeşil kutu çizer (`#16A34A`), kutu şıkkın yazısı kadardır (sütun genişliği kadar değil); "Cevap: X" kutusu da yeşil.
+
+### Bölümlere ayırma ve hız (Instagram, 3 dakika sınırı)
+
+- Video **iki bölüm** olarak çıkar, her biri 5 soru (bir sayfa): `konu.html?m=test_motor&k=isi_tuzak&b=1|2&s=sync_isi_tuzak_b1|b2`.
+  - 1. bölüm: giriş + kapak + tuzak 1–5; boş yuvada "Devamı 2. bölümde ➜"; puan yok; kapanış "5 TUZAK ÇÖZÜLDÜ · Sıradaki: 2. bölüm".
+  - 2. bölüm: kısa sessiz giriş + kapak ("2. bölüm · Tuzak 6–10") + tuzak 6–10 + puan 100 + kapanış konuşması.
+  - Motor seçenekleri: `meta.ilk` (numaralar ve ses kimlikleri ilk+1'den), `meta.toplam`, `meta.puanYok`, `meta.bosYazi`, `meta.outroSure`.
+- Her bölüm **1,3× hızlandırılır**: görüntü `setpts=PTS/1.3`, ses `atempo=1.3` (perde korunur, ses incelmez), ardından -14 LUFS. Hedef: her bölüm **3:00'ın altında** (Isı ve Sıcaklık: ~2:46 ve ~2:44).
+- Yeni ses üretilmez; tek seslendirme bölümlere ayrılır (`sync_isi_tuzak_b1/b2`).

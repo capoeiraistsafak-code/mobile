@@ -283,3 +283,12 @@ window.KONU = {
       const al = prog(t, 5.3, 5.8); st('hkAlt', {opacity: al, transform: `scale(${0.8 + 0.2 * ease(al)})`});
     }};
 })();
+
+// ---------- bölümler: konu.html?...&b=1 (tuzak 1–5) veya b=2 (tuzak 6–10); her biri 3 dakikanın altında, 1,3× hızlandırılır ----------
+(function () {
+  const b = new URLSearchParams(location.search).get('b'); if (!b) return;
+  const M = KONU.meta; M.toplam = 10; M.sayfa = 5;
+  if (b === '1') { KONU.P = KONU.P.slice(0, 5); M.puanYok = true; M.bosYazi = 'Devamı 2. bölümde ➜'; M.bitti = '5 TUZAK ÇÖZÜLDÜ';
+    M.sonraki = '2. bölüm · Tuzak 6–10'; M.outroSure = 3.5; M.kapakAlt = '1. bölüm · Tuzak 1–5'; }
+  else { KONU.P = KONU.P.slice(5); M.ilk = 5; M.kapakAlt = '2. bölüm · Tuzak 6–10'; M.introSure = 7; }
+})();

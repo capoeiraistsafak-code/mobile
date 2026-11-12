@@ -41,6 +41,7 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 .puan{width:440px}
 </style>`);
 document.body.classList.add('kg');
+const ILK = M.ilk || 0, TOP = M.toplam || P.length;   // bölüm: sorular ILK+1'den numaralanır, ses kimlikleri p<ILK+i>
 const PER = M.sayfa || P.length, COLS = M.sutun || 2, RPC = Math.ceil(PER / COLS), NPG = Math.ceil(P.length / PER);
 const CW = 495, KTOP = 250, ROW = M.satir || 650, KW = 30 + COLS * CW, KH = KTOP + RPC * ROW + 180, PGAP = 90;
 const PX = pg => pg * (KW + PGAP);
@@ -48,32 +49,34 @@ const slot = (pg, j) => ({x: PX(pg) + 20 + Math.floor(j / RPC) * CW, y: KTOP + (
 const pagesEl = $('pages');
 for (let pg = 0; pg < NPG; pg++) {
   const kg = document.createElement('div'); kg.className = 'kagit'; Object.assign(kg.style, {left: PX(pg) + 'px', width: KW + 'px', height: KH + 'px'});
-  const n0 = pg * PER + 1, n1 = Math.min(P.length, (pg + 1) * PER);
-  kg.innerHTML = `<div class="ph"><div class="t1">${UST2} · ${M.baslik.toLocaleUpperCase('tr')}</div><div class="t2">${M.kagitAlt || 'KONU KONU TEST'} · ${P.length} SORU${NPG > 1 ? ` · ${pg + 1}. SAYFA (${n0}–${n1})` : ''}</div>
+  const n0 = ILK + pg * PER + 1, n1 = ILK + Math.min(P.length, (pg + 1) * PER);
+  kg.innerHTML = `<div class="ph"><div class="t1">${UST2} · ${M.baslik.toLocaleUpperCase('tr')}</div><div class="t2">${M.kagitAlt || 'KONU KONU TEST'} · ${TOP} SORU${NPG > 1 || ILK || TOP > P.length ? ` · ${Math.floor(ILK / PER) + pg + 1}. SAYFA (${n0}–${n1})` : ''}</div>
     <div class="t3">ŞAFAK HOCA · ${M.kazanim} · 2026-2027</div>
     <div class="flds"><span>Adı Soyadı:</span><span>Sınıfı:</span><span>No:</span><span class="p">Puan:</span></div>
     <div class="plogo"><div class="img"></div></div></div>` +
     Array.from({length: COLS - 1}, (_, c) => `<div class="vline" style="left:${12 + (c + 1) * CW}px"></div>`).join('');
   pagesEl.appendChild(kg);
-  if (n1 - n0 + 1 < COLS * RPC) {                                   // boş yuva: ara sayfada "geçiniz", son sayfada puan
+  if (n1 - n0 + 1 < COLS * RPC) {
+    const sonSayfa = pg === NPG - 1 && !M.puanYok;                                   // boş yuva: ara sayfada "geçiniz", son sayfada puan
     const sl = slot(pg, n1 - n0 + 1), e = document.createElement('div');
-    if (pg < NPG - 1) { e.className = 'gecin'; e.textContent = 'Diğer sayfaya geçiniz ➜'; Object.assign(e.style, {left: sl.x + 'px', top: (sl.y + ROW - 120) + 'px'}); }
+    if (!sonSayfa) { e.className = 'gecin'; e.textContent = (pg === NPG - 1 && M.bosYazi) || 'Diğer sayfaya geçiniz ➜'; Object.assign(e.style, {left: sl.x + 'px', top: (sl.y + ROW - 120) + 'px'}); }
     else { e.className = 'puan'; e.id = 'puan'; e.innerHTML = 'PUAN<div class="s" id="puanS">100</div>'; Object.assign(e.style, {left: sl.x + 'px', top: (sl.y + 140) + 'px', right: 'auto', bottom: 'auto'}); }
     pagesEl.appendChild(e);
   }
 }
 if (!$('puan')) { const e = document.createElement('div'); e.className = 'puan'; e.id = 'puan'; e.innerHTML = 'PUAN<div class="s" id="puanS">100</div>';
   Object.assign(e.style, {left: (PX(NPG - 1) + KW - 470) + 'px', top: (KH - 230) + 'px', right: 'auto', bottom: 'auto'}); pagesEl.appendChild(e); }
+if (M.puanYok) $('puan').style.display = 'none';
 const POS = P.map((_, i) => slot(Math.floor(i / PER), i % PER));
 P.forEach((p, i) => {
   const d = document.createElement('div'); d.className = 'pg'; d.style.left = POS[i].x + 'px'; d.style.top = POS[i].y + 'px';
   d.innerHTML = `<div class="hd"><div class="t1">${UST2} · ${M.tur || 'KONU ANLATIMI'}</div><div class="t2">${M.baslik.toLocaleUpperCase('tr')} · ${M.kazanim} · ŞAFAK HOCA</div>
-    <div class="un"><span class="uname">${M.unite}</span><span class="ucnt">${i + 1} / ${P.length}</span></div></div><div class="slot"></div>
-    <div class="q"><b class="n">${p.soru ? p.soru : `${M.adim || 'ADIM'} ${i + 1} <i>${p.konu.toLocaleUpperCase('tr')}</i>`}</b>${p.html}</div>`;   // TYT: adım yerine bölümün sorusu
+    <div class="un"><span class="uname">${M.unite}</span><span class="ucnt">${ILK + i + 1} / ${TOP}</span></div></div><div class="slot"></div>
+    <div class="q"><b class="n">${p.soru ? p.soru : `${M.adim || 'ADIM'} ${ILK + i + 1} <i>${p.konu.toLocaleUpperCase('tr')}</i>`}</b>${p.html}</div>`;   // TYT: adım yerine bölümün sorusu
   pagesEl.appendChild(d); p.el = d.querySelector('.q'); if (p.init) p.init();
 });
 $('bands').innerHTML = P.map((p, i) => p.soru ? `<div class="band soru" id="bq${i}"><b>${p.soru}</b><span>${M.baslik}</span></div>`
-  : `<div class="band" id="bq${i}"><b>${M.adim || 'ADIM'} ${i + 1} / ${P.length}</b><span>${p.konu}</span></div>`).join('');
+  : `<div class="band" id="bq${i}"><b>${M.adim || 'ADIM'} ${ILK + i + 1} / ${TOP}</b><span>${p.konu}</span></div>`).join('');
 await document.fonts.ready;
 
 // ---------- ölçüm ----------
@@ -140,13 +143,13 @@ if (!HK) follows.push(t);                                         // takip kart�
 const MID = Math.floor(P.length / 2) - 1;
 P.forEach((p, i) => {
   // tanımı oku: fosfor, konuşmayla aynı hızda satır satır
-  const rid = `p${i}r`, rd = segDur(rid, 6);
+  const rid = `p${ILK + i}r`, rd = segDur(rid, 6);
   SEGT[rid] = t; const tw = hls[i].reduce((a, h) => a + h.w, 0); let acc = 0, prev = t + fracTime(rid, 0, rd);
   for (const h of hls[i]) { acc += h.w; const e = t + fracTime(rid, acc / tw, rd); HL.push({el: h.el, a: prev, b: e}); prev = e; }
   t += rd + 0.35;
   const els = [...p.el.querySelectorAll('[data-o]')];
   p.steps.forEach((sp, k) => {
-    const sid = `p${i}s${k}`, sd = segDur(sid, 3); SEGT[sid] = t;
+    const sid = `p${ILK + i}s${k}`, sd = segDur(sid, 3); SEGT[sid] = t;
     const aw = wordAt(sid, sp.aw) || 0;                              // animasyon belirli bir kelimeyle başlayabilir
     const ad = Math.min(sp.d, Math.max(0.6, sd - aw));               // animasyon konuşmanın içine sığar
     ANIMS.push({a: t + aw, d: ad, f: sp.f, sc: sp.d / ad});
@@ -178,15 +181,15 @@ P.forEach((p, i) => {
   }
 });
 // puan kutusu: kırmızı kalemle 100, sonra bütün kağıt
-move(CAMS[P.length - 1], PUAN, 1.6, DIP);
-const puanT = t; t += 1.6;
-move(PUAN, PAGEV[NPG - 1], 1.8);
+let puanT = -99;
+if (!M.puanYok) { move(CAMS[P.length - 1], PUAN, 1.6, DIP); puanT = t; t += 1.6; move(PUAN, PAGEV[NPG - 1], 1.8); }
+else move(CAMS[P.length - 1], PAGEV[NPG - 1], 1.8);
 // kapanış
 fadeEl($('bend'), t, t + 0.5);
 fpulses.push([t + 0.2, t + 1.4]);
 SEGT.outro = t + 0.4;
 follows.push(t + 0.6);                                            // takip kartı: sonda
-t = Math.max(t + 0.4 + segDur('outro', 6), t + 3.8);
+t = Math.max(t + 0.4 + segDur('outro', M.outroSure || 6), t + 3.8);
 const DUR = t + 0.9;
 
 // ---------- kalem ----------
@@ -281,7 +284,7 @@ function charMap(el) {
   return out;
 }
 window.EVENTS = {dur: DUR, segs: SEGT, writes: items.filter(it => it.kind !== 'ck').map(it => [it.a, it.b, it.kind, it.kind === 'h' ? charMap(it.el) : null]),
-  checks: items.filter(it => it.kind === 'ck').map(it => it.a).concat([puanT + 0.4]), sorular: SORU_T, kagit: [FULL, PUAN], highlights: HL.map(h => [h.a, h.b]), moves: moves.map(m => [m[0], m[1]]), follows};
+  checks: items.filter(it => it.kind === 'ck').map(it => it.a).concat(M.puanYok ? [] : [puanT + 0.4]), sorular: SORU_T, kagit: [FULL, PUAN], highlights: HL.map(h => [h.a, h.b]), moves: moves.map(m => [m[0], m[1]]), follows};
 window.render = render; window.DUR = DUR;
 render(0);
 })();
