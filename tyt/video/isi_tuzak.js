@@ -20,6 +20,7 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 .hk-kart .op i{width:46px;height:46px;border-radius:50%;border:3px solid #94a3b8;font:800 24px/40px Inter;font-style:normal;color:#cbd5e1;text-align:center}
 .hk-alt{position:absolute;left:0;right:0;top:1030px;text-align:center;font:900 64px Inter;color:#fff;opacity:0}
 .h .tz{color:#D62828}
+.pl[stroke-dashoffset="100"]{opacity:0}
 .hk-kart .tz{font:900 44px Inter;color:#F87171}
 .cv-k{font-size:84px!important}
 .hk-alt b{color:#1f232c;background:#F5C400;padding:0 14px;border-radius:14px}
@@ -76,7 +77,7 @@ const ADIM = (n) => [{d: 0.6, o: n[0], f: () => {}}, {d: 0.6, o: n[1], f: () => 
 
 window.KONU = {
   meta: {satir: 690, sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Isı ve Sıcaklık', unite: 'Isı ve Sıcaklık', kazanim: 'TYT',
-    tur: 'TUZAK SORULAR', adim: 'TUZAK', bitti: '10 TUZAK ÇÖZÜLDÜ', kagitAlt: 'TYT TUZAK SORULARI',
+    kalemMin: 0.4, tur: 'TUZAK SORULAR', adim: 'TUZAK', bitti: '10 TUZAK ÇÖZÜLDÜ', kagitAlt: 'TYT TUZAK SORULARI',
     kapakAlt: '10 tuzak soru · animasyonlu çözüm', sonraki: 'Elektrostatik', kanca: 'TYT\'de bu TUZAKLARA düşme!',
     hookBaslik: 'ISI VE SICAKLIK', introSure: 8.2},
   P: [

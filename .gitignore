@@ -41,3 +41,6 @@ yarn-error.*
 /android
 
 tyt/video/ses_isi.wav
+tyt/video/ses_isi_tuzak.wav
+tyt/video/ses_isi_tuzak_duz.wav
+tyt/video/seslendirme/tuzak/*.wav

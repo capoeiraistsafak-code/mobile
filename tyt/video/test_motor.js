@@ -139,7 +139,7 @@ P.forEach((p, i) => {
     });
     const nat = its.reduce((a, it) => a + it.nat + 0.18, 0);
     const ws = t + (sp.wAt != null ? sp.wAt : Math.min(ad * 0.7, sd * 0.35));
-    const sc = its.length ? Math.max(0.85, Math.min(1.6, (t + sd + 0.2 - ws) / nat)) : 1;  // kalem konuşmayla birlikte biter
+    const sc = its.length ? Math.max(M.kalemMin || 0.85, Math.min(1.6, (t + sd + 0.2 - ws) / nat)) : 1;   // kalemMin: kalem konuşmaya yetişsin diye en fazla bu kadar hızlanır  // kalem konuşmayla birlikte biter
     let w = ws;
     for (const it of its) {
       const kw = wordAt(sid, it.el.dataset && it.el.dataset.w);       // kalem, o kelime söylenince başlar
