@@ -87,3 +87,11 @@ Yeni konu için: konu videosunun içerik dosyasındaki sayfa sırasını al, her
 ```bash
 PAGE="$PWD/konu.html?m=test_motor&k=isi_tuzak&s=tahmini_sure_tuzak" node kareler.js ../kareler/isi_tuzak
 ```
+
+### Seslendirme (onaylı ilk örnek: tuzak sorular)
+
+- Ton: öğretmen gibi, "siz" hitabı, düzgün Türkçe. Her soruda aynı düzen: soru `[warmly]` → animasyon `[curious]` → öncüller `[warmly]` → "Dikkat! Tuzak şu —" `[firmly]` → "Doğru cevap …!" `[excited]`. Ton değişimleri paragraf başında; soru başına tek BÜYÜK harfli vurgu; vurgu duraklaması "—".
+- `eleven_v4` tek seferde en fazla **5.000 karakter** alır: metin soru sınırından ikiye bölünür (`seslendirme/tuzak/p1.mp3`, `p2.mp3`), aralarına 0,6 sn sessizlik konarak birleştirilir.
+- Kelime zamanları: `eleven_scribe_v1` (ücretsiz) → `seslendirme/tuzak/words.json`; `senk.py` paragraf sınırlarını metin ile yazıya dökmeyi hizalayarak bulur.
+- Ses fırlamasın: paragraf seviyeleri ortancanın ±2 dB'sine yumuşakça çekilir (`ses_isi_tuzak_duz.wav`, kesimler sessizlikte, 50 ms geçiş). Son karışım -14 LUFS.
+- `meta.kalemMin: 0.4`: kalem cevap kutusunu "Doğru cevap" cümlesine yetiştirir.
