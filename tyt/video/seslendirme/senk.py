@@ -8,7 +8,7 @@ W = [w for w in json.load(open(wj))['words'] if w.get('type') == 'word' and not 
 norm = lambda s: re.sub(r'[^\wçğıöşüâîû]', '', s.lower())
 segs, clips, words, k = {}, [], {}, 0
 for pid, p in zip(ids, paras):
-    n = len(p.split()); ws = W[k:k + n]; k += n
+    n = len([t for t in p.split() if re.search(r'[\wçğıöşüâîû]', t.lower())]); ws = W[k:k + n]; k += n   # '—' gibi işaretler kelime sayılmaz
     assert norm(ws[0]['text'])[:3] == norm(p.split()[0])[:3], (pid, ws[0]['text'], p.split()[0])
     a, b = ws[0]['start'], ws[-1]['end']
     clips.append({'id': pid, 'a': max(0, a - 0.06), 'b': b + 0.12})
