@@ -1,103 +1,103 @@
-[warmly] Merhaba arkadaşlar. TYT'de bu tuzaklara düşmemeniz için, ısı ve sıcaklık konusunda sınavda en çok yapılan on hatayı, on tuzak soruyla birlikte çözeceğiz. Ben Şafak Hoca. Kaleminizi alın ve ekrana odaklanın.
+[warmly] Merhaba arkadaşlar. TYT'de bu tuzaklara düşmemeniz için, ısı ve sıcaklık konusunda sınavda en çok yapılan on hatayı, on tuzak soruyla birlikte çözeceğiz. Ben Şafak Hoca. Kaleminizi alın ve ekrana odaklanın. [excited] Haydi başlayalım!
 
 [warmly] Birinci soru. K kabında seksen derecede yüz gram su, L kabında kırk derecede bir kilogram su var. Hangi yargılar doğru, birlikte bakalım.
 
-Ekrana bakın. K kabındaki tanecikler hızlı titreşiyor, ama sayıları az. L kabında tanecikler daha yavaş, fakat çok daha fazla.
+[curious] Ekrana bakın. K kabındaki tanecikler hızlı titreşiyor, ama sayıları az. L kabında tanecikler daha yavaş, fakat çok daha fazla.
 
-Birinci yargı yanlış, çünkü cisim ısı içermez — ısı aktarılan enerjidir. L'de tanecik sayısı çok fazla olduğu için iç enerjisi büyük olabilir, ikinci yargı doğru.
+[warmly] Birinci yargı yanlış, çünkü cisim ısı İÇERMEZ — ısı aktarılan enerjidir. L'de tanecik sayısı çok fazla olduğu için iç enerjisi büyük olabilir, ikinci yargı doğru.
 
-Sıcaklığı büyük olanın ortalama kinetik enerjisi de büyüktür, üçüncü yargı doğru. [curious] Buradaki tuzak — sıcak olanın ısısı fazladır diye düşünmek.
+[warmly] Sıcaklığı büyük olanın ortalama kinetik enerjisi de büyüktür, üçüncü yargı doğru. [firmly] Dikkat! Buradaki tuzak — sıcak olanın ısısı fazladır diye düşünmek.
 
-[warmly] Doğru cevap E şıkkı, iki ve üç.
+[excited] Doğru cevap E şıkkı, iki ve üç!
 
 [warmly] İkinci soru. Sıcaklığı yirmi derece artırılan bir cismin sıcaklık artışı, Kelvin ölçeğinde kaçtır?
 
-İki termometreyi izleyin. Biri on dereceden otuz dereceye, diğeri iki yüz seksen üç Kelvin'den üç yüz üç Kelvin'e çıkıyor.
+[curious] İki termometreyi izleyin. Biri on dereceden otuz dereceye, diğeri iki yüz seksen üç Kelvin'den üç yüz üç Kelvin'e çıkıyor.
 
-Celsius ve Kelvin ölçeklerinin bölmeleri eşittir. Üç yüz üç eksi iki yüz seksen üç, yirmi Kelvin eder.
+[warmly] Celsius ve Kelvin ölçeklerinin bölmeleri eşittir. Üç yüz üç eksi iki yüz seksen üç, yirmi Kelvin eder.
 
-[curious] Tuzak şu — yirmiye iki yüz yetmiş üç eklemek. İki yüz doksan üç bir sıcaklık değeridir — artış değildir.
+[firmly] Dikkat! Tuzak şu — yirmiye iki yüz yetmiş üç eklemek. İki yüz doksan üç bir sıcaklık değeridir — artış DEĞİLDİR.
 
-[warmly] Doğru cevap A şıkkı, yirmi.
+[excited] Doğru cevap A şıkkı, yirmi!
 
 [warmly] Üçüncü soru. Tencerede ısıtılan suyun sıcaklığı on derece artıyor. Bu artış Fahrenheit ölçeğinde kaçtır?
 
-Ocak yanıyor, su ısınıyor. Celsius yirmiden otuza, Fahrenheit altmış sekizden seksen altıya çıkıyor.
+[curious] Ocak yanıyor, su ısınıyor. Celsius yirmiden otuza, Fahrenheit altmış sekizden seksen altıya çıkıyor.
 
-Formülü her termometrenin altına yazıyoruz. Celsius'taki değişim bölü yüz, Fahrenheit'taki değişim bölü yüz seksene eşittir.
+[warmly] Formülü her termometrenin altına yazıyoruz. Celsius'taki değişim bölü yüz, Fahrenheit'taki değişim bölü yüz seksene eşittir.
 
-Fahrenheit'taki değişim, bir virgül sekiz çarpı on, yani on sekiz olur. [curious] Tuzak — on derece elli Fahrenheit'tır deyip artış yerine sıcaklık değerini yazmak.
+[warmly] Fahrenheit'taki değişim, bir virgül sekiz çarpı on, yani ON SEKİZ olur. [firmly] Dikkat! Tuzak şu — on derece elli Fahrenheit'tır deyip artış yerine sıcaklık değerini yazmak.
 
-[warmly] Doğru cevap B şıkkı, on sekiz.
+[excited] Doğru cevap B şıkkı, on sekiz!
 
 [warmly] Dördüncü soru. Sıfır derecedeki buz, sıfır derecedeki suya dönüşürken hangi yargılar doğrudur?
 
-Buza dikkatle bakın. Isı alıyor ve eriyor. Termometre hep sıfır dereceyi gösteriyor, ama iç enerji sütunu yükseliyor.
+[curious] Buza dikkatle bakın. Isı alıyor ve eriyor. Termometre hep sıfır dereceyi gösteriyor, ama iç enerji sütunu yükseliyor.
 
-Saf madde hal değiştirirken sıcaklığı sabit kalır, birinci yargı doğru. Erimek için dışarıdan ısı alır, ikinci yargı da doğru.
+[warmly] Saf madde hal değiştirirken sıcaklığı sabit kalır, birinci yargı doğru. Erimek için dışarıdan ısı alır, ikinci yargı da doğru.
 
-Isı alan maddenin iç enerjisi artar — üçüncü yargı yanlış. [curious] Tuzak — sıcaklık sabitse iç enerji de sabittir diye düşünmek.
+[warmly] Isı alan maddenin iç enerjisi ARTAR — üçüncü yargı yanlış. [firmly] Dikkat! Tuzak şu — sıcaklık sabitse iç enerji de sabittir diye düşünmek.
 
-[warmly] Doğru cevap C şıkkı, bir ve iki.
+[excited] Doğru cevap C şıkkı, bir ve iki!
 
 [warmly] Beşinci soru. Bir kaptaki suyun kütlesi iki katına çıkarılıyor. Hangi nicelikler iki katına çıkar?
 
-Suyun kütlesi iki katına çıktı. Öz ısı yazısına bakın, hâlâ aynı. Isı sığası sütunu ise iki katına çıkıyor.
+[curious] Suyun kütlesi iki katına çıktı. Öz ısı yazısına bakın, hâlâ aynı. Isı sığası sütunu ise iki katına çıkıyor.
 
-Öz ısı maddeye özgüdür ve değişmez, birinci yargı yanlış. Isı sığası kütle çarpı öz ısıdır, iki katına çıkar.
+[warmly] Öz ısı maddeye özgüdür ve DEĞİŞMEZ, birinci yargı yanlış. Isı sığası kütle çarpı öz ısıdır, iki katına çıkar.
 
-Sıcaklığı bir derece artırmak için gereken ısı da iki katına çıkar. [curious] Tuzak — kütle artınca öz ısı da artar diye düşünmek.
+[warmly] Sıcaklığı bir derece artırmak için gereken ısı da iki katına çıkar. [firmly] Dikkat! Tuzak şu — kütle artınca öz ısı da artar diye düşünmek.
 
-[warmly] Doğru cevap D şıkkı, iki ve üç.
+[excited] Doğru cevap D şıkkı, iki ve üç!
 
 [warmly] Altıncı soru. Yirmi derecedeki iki yüz gram su ile seksen derecedeki yüz gram su karıştırılıyor. Hangi yargılar doğrudur?
 
-Sürahiler kaseye dökülüyor. Karışımın sıcaklığı kırk derecede dengeye geliyor.
+[curious] Sürahiler kaseye dökülüyor. Karışımın sıcaklığı kırk derecede dengeye geliyor.
 
-Sıcak suyun verdiği ısı, soğuk suyun aldığı ısıya eşittir, birinci yargı doğru. İki yüz çarpı T eksi yirmi, yüz çarpı seksen eksi T'ye eşittir. Buradan T, kırk derece bulunur.
+[warmly] Sıcak suyun verdiği ısı, soğuk suyun aldığı ısıya eşittir, birinci yargı doğru. İki yüz çarpı T eksi yirmi, yüz çarpı seksen eksi T'ye eşittir. Buradan T, kırk derece bulunur.
 
-Sıcaklık değişimleri yirmi ve kırk derece, eşit değil. Denge sıcaklığı da elli değil — kırk derece. [curious] Tuzak — iki sıcaklığın ortalamasını almak.
+[warmly] Sıcaklık değişimleri yirmi ve kırk derece, eşit değil. Denge sıcaklığı da elli değil — KIRK derece. [firmly] Dikkat! Tuzak şu — iki sıcaklığın ortalamasını almak.
 
-[warmly] Doğru cevap A şıkkı, yalnız bir.
+[excited] Doğru cevap A şıkkı, yalnız bir!
 
 [warmly] Yedinci soru. İç enerjisi çok büyük olan on derecelik havuza, elli derecelik küçük bir demir bilye bırakılıyor. Isı hangi yöne akar?
 
-Bilye suya düşüyor. Okları takip edin, ısı bilyeden suya doğru yayılıyor.
+[curious] Bilye suya düşüyor. Okları takip edin, ısı BİLYEDEN suya doğru yayılıyor.
 
-Isı her zaman sıcaklığı yüksek olandan düşük olana akar. Akış da sıcaklıklar eşitlenince durur, iç enerjiler eşitlenince değil.
+[warmly] Isı her zaman sıcaklığı yüksek olandan düşük olana akar. Akış da sıcaklıklar eşitlenince durur, iç enerjiler eşitlenince değil.
 
-[curious] Tuzak — ısının iç enerjisi büyük olan sudan bilyeye aktığını düşünmek.
+[firmly] Dikkat! Tuzak şu — ısının iç enerjisi büyük olan sudan bilyeye aktığını düşünmek.
 
-[warmly] Doğru cevap B şıkkı.
+[excited] Doğru cevap B şıkkı!
 
 [warmly] Sekizinci soru. Güneş altında özdeş siyah ve beyaz tişörtler bekletiliyor. Hangi yargılar doğrudur?
 
-Güneş ışınlarına bakın. Siyah tişört ısınıyor, beyaz tişört ise ışınların çoğunu yansıtıyor.
+[curious] Güneş ışınlarına bakın. Siyah tişört ısınıyor, beyaz tişört ise ışınların çoğunu yansıtıyor.
 
-Koyu renkli yüzeyler ışınları daha çok soğurur, birinci yargı doğru. Uzay boşluktur, Güneş'in ısısı Dünya'ya ışıma ile gelir, ikinci yargı yanlış.
+[warmly] Koyu renkli yüzeyler ışınları daha çok soğurur, birinci yargı doğru. Uzay boşluktur, Güneş'in ısısı Dünya'ya IŞIMA ile gelir, ikinci yargı yanlış.
 
-Açık renkli yüzeyler ışınları daha çok yansıtır, üçüncü yargı doğru. [curious] Tuzak — Güneş'in ısısının iletimle geldiğini düşünmek.
+[warmly] Açık renkli yüzeyler ışınları daha çok yansıtır, üçüncü yargı doğru. [firmly] Dikkat! Tuzak şu — Güneş'in ısısının iletimle geldiğini düşünmek.
 
-[warmly] Doğru cevap D şıkkı, bir ve üç.
+[excited] Doğru cevap D şıkkı, bir ve üç!
 
 [warmly] Dokuzuncu soru. Ortasında dairesel delik olan bir metal levha ısıtılıyor. Hangi yargılar doğrudur?
 
-Levhayı izleyin. Isındıkça genleşiyor, delik de büyüyor ve bilye artık kolayca geçiyor.
+[curious] Levhayı izleyin. Isındıkça genleşiyor, delik de BÜYÜYOR ve bilye artık kolayca geçiyor.
 
-Levha her yönde genleşir, birinci yargı doğru. Delik de levha gibi büyür, ikinci yargı yanlış.
+[warmly] Levha her yönde genleşir, birinci yargı doğru. Delik de levha gibi büyür, ikinci yargı yanlış.
 
-Delik büyüdüğü için bilye daha kolay geçer, üçüncü yargı doğru. [curious] Tuzak — ısınınca deliğin küçüldüğünü düşünmek.
+[warmly] Delik büyüdüğü için bilye daha kolay geçer, üçüncü yargı doğru. [firmly] Dikkat! Tuzak şu — ısınınca deliğin küçüldüğünü düşünmek.
 
-[warmly] Doğru cevap C şıkkı, bir ve üç.
+[excited] Doğru cevap C şıkkı, bir ve üç!
 
 [warmly] Onuncu soru. Su sıfır dereceden dört dereceye kadar ısıtılıyor. Hangi yargılar doğrudur?
 
-Dereceli silindire bakın. Su ısınıyor, ama seviyesi — düşüyor. Bu yüzden göllerin dibi dört derecede kalır ve canlılar yaşamını sürdürür.
+[curious] Dereceli silindire bakın. Su ısınıyor, ama seviyesi — DÜŞÜYOR. Bu yüzden göllerin dibi dört derecede kalır ve canlılar yaşamını sürdürür.
 
-Sıfır ile dört derece arasında su ısınınca büzülür, hacmi azalır. Birinci yargı yanlış. Kütle sabit, hacim azaldığı için özkütle artar.
+[warmly] Sıfır ile dört derece arasında su ısınınca büzülür, hacmi azalır. Birinci yargı yanlış. Kütle sabit, hacim azaldığı için özkütle artar.
 
-Kütle değişmez, üçüncü yargı doğru. [curious] Tuzak — ısınan her maddenin genleştiğini düşünmek.
+[warmly] Kütle değişmez, üçüncü yargı doğru. [firmly] Dikkat! Tuzak şu — ısınan her maddenin genleştiğini düşünmek.
 
-[warmly] Doğru cevap E şıkkı, iki ve üç.
+[excited] Doğru cevap E şıkkı, iki ve üç!
 
-[warmly] Evet arkadaşlar, on tuzak sorunun hepsini birlikte çözdük. Bu videoyu kaydedin ve sınavdan önce bu tuzakları bir kez daha tekrar edin. Sıradaki konumuz elektrostatik, görüşmek üzere.
+[excited] Evet arkadaşlar, on tuzak sorunun hepsini birlikte çözdük! [warmly] Bu videoyu kaydedin ve sınavdan önce bu tuzakları bir kez daha tekrar edin. Sıradaki konumuz elektrostatik, görüşmek üzere.
