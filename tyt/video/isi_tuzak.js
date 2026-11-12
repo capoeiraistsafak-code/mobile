@@ -21,6 +21,9 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 .hk-kart .op i{width:46px;height:46px;border-radius:50%;border:3px solid #94a3b8;font:800 24px/40px Inter;font-style:normal;color:#cbd5e1;text-align:center}
 .hk-alt{position:absolute;left:0;right:0;top:1030px;text-align:center;font:900 64px Inter;color:#fff;opacity:0}
 .h .tz{color:#D62828}
+.cv-bolum{margin-top:34px;font:900 64px Inter;color:#fff;background:#D62828;padding:10px 40px;border-radius:999px;box-shadow:0 10px 30px rgba(214,40,40,.45);letter-spacing:1px}
+.cv-bolum+.cv-t{margin-top:30px}
+.hk-alt b{font-size:72px}
 .pl[stroke-dashoffset="100"]{opacity:0}
 .hk-kart .tz{font:900 44px Inter;color:#F87171}
 .cv-k{font-size:84px!important}
@@ -288,7 +291,14 @@ window.KONU = {
 (function () {
   const b = new URLSearchParams(location.search).get('b'); if (!b) return;
   const M = KONU.meta; M.toplam = 10; M.sayfa = 5;
+  const no = +b, ilk = (no - 1) * 5;
+  M.bolum = no + '. BÖLÜM';                                                     // kapakta kırmızı rozet
+  KONU.hook.html = KONU.hook.html.replace('10 TUZAK · <b>10 SORU</b>', `<b>${no}. BÖLÜM</b> · TUZAK ${ilk + 1}–${ilk + 5}`);
+  const f0 = KONU.hook.f;
+  KONU.hook.f = t => { f0(t);                                                   // girişte bölüm yazısı baştan görünür; bu bölümün kartları öne çıkar
+    const al = prog(t, 0.8, 1.3); st('hkAlt', {opacity: al, transform: `scale(${0.8 + 0.2 * ease(al)})`});
+    for (let i = 0; i < 10; i++) if (i < ilk || i >= ilk + 5) $('hkk' + i).style.opacity *= 0.35; };
   if (b === '1') { KONU.P = KONU.P.slice(0, 5); M.puanYok = true; M.bosYazi = 'Devamı 2. bölümde ➜'; M.bitti = '5 TUZAK ÇÖZÜLDÜ';
-    M.sonraki = '2. bölüm · Tuzak 6–10'; M.outroSure = 3.5; M.kapakAlt = '1. bölüm · Tuzak 1–5'; }
-  else { KONU.P = KONU.P.slice(5); M.ilk = 5; M.kapakAlt = '2. bölüm · Tuzak 6–10'; M.introSure = 7; }
+    M.sonraki = '2. bölüm · Tuzak 6–10'; M.outroSure = 3.5; M.kapakAlt = 'Tuzak 1–5'; }
+  else { KONU.P = KONU.P.slice(5); M.ilk = 5; M.kapakAlt = 'Tuzak 6–10'; M.introSure = 7.5; }
 })();

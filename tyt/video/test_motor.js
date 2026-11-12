@@ -24,6 +24,7 @@ $('cover').innerHTML = `<div class="cv-1dk"><span>⏱</span>${UST1}</div>
   ${M.kanca ? `<div class="cv-hook">${M.kanca.replace(/([A-ZÇĞİÖŞÜ]{3,})/g, '<em>$1</em>')}</div>` : ''}
   <div class="cv-logo${M.kanca ? ' sm' : ''}"><div class="cv-img"></div></div>
   <div class="cv-k">${M.tur || 'KONU ANLATIMI'}</div>
+  ${M.bolum ? `<div class="cv-bolum">${M.bolum}</div>` : ''}
   <div class="cv-t">${M.baslik}</div>
   <div class="cv-s">${M.kapakAlt}</div>
   <div class="cv-code">${M.kazanim} · 2026-2027</div>
