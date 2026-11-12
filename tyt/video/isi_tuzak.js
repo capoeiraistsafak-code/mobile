@@ -6,7 +6,8 @@
 document.head.insertAdjacentHTML('beforeend', `<style>
 .sk{display:grid;grid-template-columns:repeat(3,1fr);gap:1px 6px;margin-top:6px;font:14.5px/1.35 "Noto Serif",serif}
 .sk.c1{grid-template-columns:1fr}
-.sk>span{padding:1px 6px;border-radius:7px;border:2px solid transparent}
+.sk>span{padding:1px 6px;border-radius:7px;border:2px solid transparent;justify-self:start}   /* kutu şıkkın yazısı kadar */
+.bx{color:#15803D!important;border-color:#15803D!important}
 .sk>span>b{color:#D62828!important;font-family:Inter;font-weight:800;margin-right:3px}
 .koyu .bx{color:#f87171;border-color:#f87171}
 .hk-kart{position:absolute;width:440px;height:200px;border-radius:26px;background:#2a303c;border:4px solid #475569;opacity:0;
@@ -50,13 +51,13 @@ const SK = (i, ops, kol = 3) => `<div class="sk${kol === 1 ? ' c1' : ''}">${ops.
 const MARK = (o, x1, y1, x2, y2, col = '#1D3FB8', w = 3, id = '') => PL(o, x1, y1, x2, y2, `${id ? `id="${id}" ` : ''}style="stroke:${col};stroke-width:${w}"`);
 // doğru şıkkın etrafına kalemle kırmızı kutu (Soru Videosu 2. Format): 4 kenar, o0 … o0+3
 const KUTU = (i, o0) => `<svg width="441" height="640" style="position:absolute;left:0;top:0;overflow:visible;pointer-events:none">${[0, 1, 2, 3].map(k =>
-  PL(o0 + k, 0, 0, 0, 0, `id="p${i}b${k}" style="stroke:#D62828;stroke-width:3.5"`)).join('')}</svg>`;
+  PL(o0 + k, 0, 0, 0, 0, `id="p${i}b${k}" style="stroke:#16A34A;stroke-width:3.5"`)).join('')}</svg>`;
 const kutuKur = (i, h) => { const e = $(`p${i}o${h}`), x = e.offsetLeft - 4, y = e.offsetTop - 3, w = e.offsetWidth + 8, hh = e.offsetHeight + 6;
   [[x, y, x + w, y], [x + w, y, x + w, y + hh], [x + w, y + hh, x, y + hh], [x, y + hh, x, y]].forEach((q, k) => {
     const l = $(`p${i}b${k}`); ['x1', 'y1', 'x2', 'y2'].forEach((a, j) => l.setAttribute(a, q[j])); }); };
 // kutu kapanınca doğru şık büyüyüp parlar
 const kutuIsik = (i, h) => { const k = drawnK(`p${i}b3`), e = $(`p${i}o${h}`);
-  e.style.background = `rgba(214,40,40,${0.10 * k})`; e.style.transform = `scale(${1 + 0.1 * Math.sin(Math.PI * k)})`; };
+  e.style.background = `rgba(22,163,74,${0.12 * k})`; e.style.transform = `scale(${1 + 0.1 * Math.sin(Math.PI * k)})`; };
 const CEVAP = (o, h, x, y) => H(o, `Cevap: <span class="bx">${h}</span> ` + CK, x, y, 'cevap');
 
 
