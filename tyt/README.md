@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | 1 | Isı ve Sıcaklık | `konular/isi_sicaklik.html` | `konular/isi_sicaklik.md` | taslak |
 | 1 | Isı ve Sıcaklık · **Soru Çözümü** | `video/konu.html?k=isi_sicaklik_soru` | `video/seslendirme/isi_soru_metin.txt` | kareler onay bekliyor (`FORMAT_SORU.md`) |
-| 1 | Isı ve Sıcaklık · **Tuzak Sorular** (10 soru) | `video/konu.html?m=test_motor&k=isi_tuzak&s=sync_isi_tuzak` | `video/seslendirme/isi_tuzak_metin.txt` | **sesli video hazır**: `kareler/isi_tuzak/isi_tuzak_tyt.mp4` (6:51, tek parça) · **Instagram bölümleri (1,3×):** `kareler/isi_tuzak/isi_tuzak_bolum1.mp4` (2:46), `isi_tuzak_bolum2.mp4` (2:44), kapaklar `kapak_bolum1.png`, `kapak_bolum2.png` |
+| 1 | Isı ve Sıcaklık · **Tuzak Sorular** (10 soru) | `video/konu.html?m=test_motor&k=isi_tuzak&s=sync_isi_tuzak` | `video/seslendirme/isi_tuzak_metin.txt` | **sesli video hazır**: `kareler/isi_tuzak/isi_tuzak_tyt.mp4` (6:51, tek parça) · **Instagram bölümleri (1,3×):** `kareler/isi_tuzak/isi_tuzak_bolum1.mp4` (2:46), `isi_tuzak_bolum2.mp4` (2:50, giriş konuşmalı), kapaklar `kapak_bolum1.png`, `kapak_bolum2.png` |
 | – | Elektrostatik | `konular/elektrostatik.html` | `konular/elektrostatik.md` | taslak (örnek) |
 
 - `ortak.css`: Tüm konuların ortak stili (renkler, sayfa, kapak, tuzak kutusu)
