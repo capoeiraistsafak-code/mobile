@@ -300,5 +300,5 @@ window.KONU = {
     for (let i = 0; i < 10; i++) if (i < ilk || i >= ilk + 5) $('hkk' + i).style.opacity *= 0.35; };
   if (b === '1') { KONU.P = KONU.P.slice(0, 5); M.puanYok = true; M.bosYazi = 'Devamı 2. bölümde ➜'; M.bitti = '5 TUZAK ÇÖZÜLDÜ';
     M.sonraki = '2. bölüm · Tuzak 6–10'; M.outroSure = 3.5; M.kapakAlt = 'Tuzak 1–5'; }
-  else { KONU.P = KONU.P.slice(5); M.ilk = 5; M.kapakAlt = 'Tuzak 6–10'; M.introSure = 7.5; }
+  else { KONU.P = KONU.P.slice(5); M.ilk = 5; M.kapakAlt = 'Tuzak 6–10'; }   // giriş konuşması 1. bölümle aynı
 })();
