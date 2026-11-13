@@ -97,7 +97,7 @@ window.KONU = {
       ${Array.from({length: 18}, (_, j) => DOT('p0l' + j, 192 + (j % 6) * 41, 42 + Math.floor(j / 6) * 32, 6, '#3b82f6')).join('')}
       ${T('p0a', 30, 48, 'K · 100 g · 80 °C', '#D62828', 13)}${T('p0b', 230, 14, 'L · 1 kg · 40 °C', '#1D4ED8', 13)}` +
       MARK(1, 76, 52, 114, 52) + MARK(2, 300, 18, 338, 18), false) +
-    N(3, 140, 0, 'I. Cisim ısı içermez, ısı aktarılır ✗', 'içermez') + N(4, 140, 1, 'II. Çok tanecik → iç enerji büyük olabilir ✓', 'tanecik') +
+    N(3, 140, 0, 'I ✗ yanlış: cisim ısı içermez, ısı aktarılır', 'içermez') + N(4, 140, 1, 'II. Çok tanecik → iç enerji büyük olabilir ✓', 'tanecik') +
     N(5, 140, 2, 'III. T büyük → ortalama E<sub>k</sub> büyük ✓', 'ortalama') + TZ(6, 140, 3, '"sıcak olanın ısısı fazladır"') +
     KUTU(0, 7) + CV(11, 140, 4, 'E'),
    init: kur(0, 'E'),
@@ -148,7 +148,7 @@ window.KONU = {
       <rect x="352" y="20" width="34" height="110" fill="none" stroke="#16181D" stroke-width="2"/><rect id="p3e" x="354" y="128" width="30" height="0" fill="#f59e0b"/>
       ${T('p3et', 330, 146, 'İç enerji', '#16181D', 13)}${T('p3t', 12, 30, 'T = 0 °C', '#1D4ED8', 16)}` + MARK(1, 10, 36, 82, 36), false) +
     N(2, 150, 0, 'I. Saf madde: hal değişirken T sabit ✓', 'sabit') + N(3, 150, 1, 'II. Erimek için ısı alır ✓', 'alır') +
-    N(4, 150, 2, 'III. Isı alır → iç enerji artar ✗', 'artar') + TZ(5, 150, 3, '"T sabitse iç enerji de sabit"') + KUTU(3, 6) + CV(10, 150, 4, 'C'),
+    N(4, 150, 2, 'III ✗ yanlış: ısı alır → iç enerji artar', 'artar') + TZ(5, 150, 3, '"T sabitse iç enerji de sabit"') + KUTU(3, 6) + CV(10, 150, 4, 'C'),
    init: kur(3, 'C'),
    steps: [{d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.4, 3.4)), a = ease(prog(s, 0, 0.6));
        arr('p3o1', 40, 84, 40 + 70 * a, 84, a > 0 ? 1 : 0, 'ısı', -8, -10); arr('p3o2', 300, 84, 300 - 70 * a, 84, a > 0 ? 1 : 0, 'ısı', -8, -10);
@@ -167,7 +167,7 @@ window.KONU = {
       `<line x1="290" y1="140" x2="430" y2="140" stroke="#16181D" stroke-width="2"/><rect x="304" y="100" width="40" height="40" fill="#f59e0b"/>
        <rect id="p4s" x="372" y="140" width="40" height="0" fill="#f59e0b"/>${T('p4st', 300, 20, 'Isı sığası (m·c)', '#16181D', 13)}` +
       MARK(1, 150, 34, 236, 34), false) +
-    N(2, 150, 0, 'I. Öz ısı maddeye özgü, değişmez ✗', 'özgü') + N(3, 150, 1, 'II. Isı sığası = m · c → 2 katı ✓', 'sığası') +
+    N(2, 150, 0, 'I ✗ yanlış: öz ısı maddeye özgü, değişmez', 'özgü') + N(3, 150, 1, 'II. Isı sığası = m · c → 2 katı ✓', 'sığası') +
     N(4, 150, 2, 'III. Q = m · c · 1 → 2 katı ✓', 'gereken') + TZ(5, 150, 3, '"kütle artınca öz ısı da artar"') + KUTU(4, 6) + CV(10, 150, 4, 'D'),
    init: kur(4, 'D'),
    steps: [{d: 3.0, o: [], f: s => { const k = ease(prog(s, 0.2, 1.4)), b = ease(prog(s, 1.4, 2.8)); at('p4B', 'opacity', k); at('p4bm', 'opacity', k); at('p4c2', 'opacity', prog(s, 1.0, 1.5));
@@ -187,7 +187,7 @@ window.KONU = {
       <path d="M150 110 h140 q-6 44 -70 46 q-64 -2 -70 -46z" fill="#e2e8f0" stroke="#475569" stroke-width="2.5"/>
       <path id="p5k" d="M156 116 h128 q-6 34 -64 36 q-58 -2 -64 -36z" fill="#93c5fd" opacity="0"/>${T('p5kt', 192, 140, '', '#16181D', 15)}` + MARK(1, 190, 146, 252, 146), false) +
     N(2, 160, 0, 'I. Q<sub>verilen</sub> = Q<sub>alınan</sub> ✓', 'verilen') + N(3, 160, 1, '200 · (T − 20) = 100 · (80 − T) → T = 40 °C', 'kırk') +
-    N(4, 160, 2, 'II. ΔT: 20 ve 40, eşit değil ✗   III. ✗', 'değil') + TZ(5, 160, 3, 'ortalama alıp 50 °C demek') + KUTU(5, 6) + CV(10, 160, 4, 'A'),
+    N(4, 160, 2, 'II ✗ (ΔT: 20 ve 40)   III ✗ (40 °C, 50 değil)', 'değil') + TZ(5, 160, 3, 'ortalama alıp 50 °C demek') + KUTU(5, 6) + CV(10, 160, 4, 'A'),
    init: kur(5, 'A'),
    steps: [{d: 3.4, o: [], f: s => { const k = ease(prog(s, 0, 1.2)), c = ease(prog(s, 0.8, 3.0));
        at('p5j1', 'transform', `rotate(${35 * k} 90 30)`); at('p5j2', 'transform', `rotate(${-35 * k} 350 30)`); at('p5a1', 'opacity', k * (1 - prog(s, 2.4, 2.8))); at('p5a2', 'opacity', k * (1 - prog(s, 2.4, 2.8)));
@@ -225,7 +225,7 @@ window.KONU = {
       <path d="M300 46 l-34 18 l10 22 l14 -6 v62 h76 v-62 l14 6 l10 -22 l-34 -18 q-18 14 -36 0z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
       <g id="p7r" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" opacity="0"><path d="M58 44 l92 56"/><path d="M60 30 l250 64"/><path d="M310 94 l40 -50"/></g>
       ${T('p7a', 128, 162, '', '#D62828', 14)}${T('p7b', 290, 162, '', '#1D4ED8', 14)}` + MARK(1, 126, 168, 178, 168, '#D62828') + MARK(2, 288, 168, 340, 168), false) +
-    N(3, 160, 0, 'I. Koyu renk çok soğurur ✓', 'koyu') + N(4, 160, 1, 'II. Uzay boşluk: ışıma ile gelir ✗', 'ışıma') +
+    N(3, 160, 0, 'I. Koyu renk çok soğurur ✓', 'koyu') + N(4, 160, 1, 'II ✗ yanlış: uzay boşluk, ışıma ile gelir', 'ışıma') +
     N(5, 160, 2, 'III. Açık renk çok yansıtır ✓', 'açık') + TZ(6, 160, 3, '"Güneş ısısı iletimle gelir"') + KUTU(7, 7) + CV(11, 160, 4, 'D'),
    init: kur(7, 'D'),
    steps: [{d: 3.2, o: [], f: s => { at('p7r', 'opacity', prog(s, 0, 0.5)); const k = ease(prog(s, 0.5, 3.0));
@@ -237,15 +237,18 @@ window.KONU = {
   {konu: 'Yüzeyce Genleşme',
    html: `<span class="qt">Ortasında dairesel delik bulunan bir metal levha düzgün biçimde ısıtılıyor.<br>Buna göre,<br>I. Levhanın yüzey alanı artar.<br>II. Deliğin çapı küçülür.<br>
      III. Isıtılmadan önce delikten zor geçen bir bilye, ısıtıldıktan sonra delikten daha kolay geçer.<br>yargılarından hangileri doğrudur?</span>` + SK(8, S4, 1) +
-    SCENE(300, 160, `<line x1="80" y1="40" x2="360" y2="40" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5"/><line x1="80" y1="140" x2="360" y2="140" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5"/>
-      <g id="p8l"><path d="M120 50 h200 v80 h-200z M220 72 a18 18 0 1 0 0.1 0z" fill="#94a3b8" fill-rule="evenodd" stroke="#475569" stroke-width="2.5"/></g>
-      <circle id="p8b" cx="220" cy="0" r="19" fill="#475569"/>` + ALEV('p8f1', 160, 156) + ALEV('p8f2', 280, 156) + MARK(1, 196, 90, 244, 90, '#D62828'), false) +
-    N(2, 160, 0, 'I. Levha her yönde genleşir ✓', 'genleşir') + N(3, 160, 1, 'II. Delik de levha gibi büyür ✗', 'büyür') +
+    SCENE(300, 160, `<g id="p8l"><path d="M120 50 h200 v80 h-200z M220 72 a18 18 0 1 0 0.1 0z" fill="#94a3b8" fill-rule="evenodd" stroke="#475569" stroke-width="2.5"/>` +
+        MARK(1, 202, 90, 238, 90, '#D62828') + `</g>
+      <rect x="120" y="50" width="200" height="80" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <circle cx="220" cy="90" r="18" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle id="p8b" cx="220" cy="-10" r="19" fill="#475569" opacity="0"/>` + ALEV('p8f1', 160, 156) + ALEV('p8f2', 280, 156), false) +
+    N(2, 160, 0, 'I. Levha her yönde genleşir ✓', 'genleşir') + N(3, 160, 1, 'II ✗ yanlış: delik küçülmez, levha gibi büyür', 'büyür') +
     N(4, 160, 2, 'III. Delik büyür → bilye kolay geçer ✓', 'kolay') + TZ(5, 160, 3, '"ısınınca delik küçülür"') + KUTU(8, 6) + CV(10, 160, 4, 'C'),
    init: kur(8, 'C'),
    steps: [{d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.3, 2.6)); alev('p8f1', 160, 156, prog(s, 0, 0.4), s); alev('p8f2', 280, 156, prog(s, 0, 0.4), s + 1);
        at('p8l', 'transform', `translate(220 90) scale(${1 + 0.16 * k}) translate(-220 -90)`); at('p8l', 'fill', '');
-       $('p8l').firstChild.setAttribute('fill', k > 0.5 ? '#fb923c' : '#94a3b8'); const b = ease(prog(s, 2.6, 3.5)); at('p8b', 'cy', 10 + 80 * b); at('p8b', 'opacity', 1 - prog(s, 3.3, 3.5)); }},
+       $('p8l').firstChild.setAttribute('fill', k > 0.5 ? '#fb923c' : '#94a3b8'); const b = ease(prog(s, 2.5, 3.0)), g = ease(prog(s, 3.0, 3.6));   // bilye deliğin üstüne gelir, sonra içinden geçip uzaklaşır (küçülür)
+       at('p8b', 'cy', -10 + 100 * b); at('p8b', 'r', 19 * (1 - 0.55 * g)); at('p8b', 'opacity', prog(s, 2.4, 2.6) * (1 - prog(g, 0.7, 1))); }},
      ...ADIM([[1, 2, 3], [4, 5], [6, 7, 8, 9, 10]])],
    late: () => kutuIsik(8, 'C')},
 
@@ -259,7 +262,7 @@ window.KONU = {
       <rect x="200" y="20" width="230" height="130" rx="8" fill="#bfdbfe" stroke="#475569" stroke-width="2"/><rect x="200" y="20" width="230" height="22" fill="#f8fafc" stroke="#93c5fd" stroke-width="2"/>
       ${T('p9g1', 290, 36, 'buz 0 °C', '#1D4ED8', 12)}${T('p9g2', 282, 140, 'en dipte 4 °C', '#1D4ED8', 12)}` + MARK(1, 36, 52, 110, 52, '#D62828'), false,
       EM('p9f', '🐟', 330, 90, 26)) +
-    N(2, 160, 0, 'I. 0 → 4 °C: su büzülür, hacim azalır ✗', 'büzülür') + N(3, 160, 1, 'II. Kütle sabit, hacim azalır → özkütle artar ✓', 'özkütle') +
+    N(2, 160, 0, 'I ✗ yanlış: 0 → 4 °C su büzülür, hacim azalır', 'büzülür') + N(3, 160, 1, 'II. Kütle sabit, hacim azalır → özkütle artar ✓', 'özkütle') +
     N(4, 160, 2, 'III. Kütle değişmez ✓', 'kütle') + TZ(5, 160, 3, '"ısınan her madde genleşir"') + KUTU(9, 6) + CV(10, 160, 4, 'E'),
    init: kur(9, 'E'),
    steps: [{d: 3.2, o: [], f: s => { const k = ease(prog(s, 0.3, 2.8)); at('p9s', 'y', 52 + 8 * k); at('p9s', 'height', 95 - 8 * k); $('p9t').textContent = (4 * k).toFixed(0) + ' °C'; }},
