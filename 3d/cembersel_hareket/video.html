@@ -89,7 +89,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
   <div class="lay" id="cover">
     <div class="cv-1dk"><span>⏱</span>5 DAKİKADA AYT</div>
     <div class="cv-top">AYT FİZİK</div>
-    <div class="cv-hook">Su neden <em>DÖKÜLMEZ?</em></div>
+    <div class="cv-hook">Tren neden <em>DÜŞMEZ?</em></div>
     <div class="cv-logo"></div>
     <div class="cv-k">3D ANİMASYON</div>
     <div class="cv-t">Çembersel Hareket</div>
@@ -153,7 +153,7 @@ const SECT = Object.keys(T);
 const secAt = t => SECT.find(k => t >= T[k][0] && t < T[k][1]) || 'end';
 
 // giriş sorusu
-const HQ = ['Kova', 'ters', 'dönünce', 'su', 'neden', '*DÖKÜLMEZ?'];
+const HQ = ['Tren', 'ters', 'dönünce', 'neden', '*DÜŞMEZ?'];
 $('hkq').innerHTML = HQ.map(w => `<span class="hkw${w[0] === '*' ? ' vrg' : ''}">${w.replace('*', '')}</span>`).join(' ');
 
 // kalem notları (sahne başından itibaren sn)
@@ -410,8 +410,8 @@ function render(t) {
   Object.keys(LBL).forEach(k => place(k, new THREE.Vector3(), 0));
   if (!show3d) return;
   glTop = sec === 'hook' ? 540 : 330; $('gl').style.top = glTop + 'px';
-  const wide = sec === 'sc'; plate.scale.set(wide ? 21 / 12 : 1, 1, 1); plate.position.x = wide ? -1.8 : 0; grid.scale.set(wide ? 21 / 12 : 1, 1, 1); grid.position.x = plate.position.x;
-  G1.visible = sec === 's1'; G2.visible = sec === 'hook' || sec === 's2' || sec === 's3'; GV.visible = sec === 'sv'; GC.visible = sec === 'sc';
+  const wide = sec === 'sc' || sec === 'hook'; plate.scale.set(wide ? 21 / 12 : 1, 1, 1); plate.position.x = wide ? -1.8 : 0; grid.scale.set(wide ? 21 / 12 : 1, 1, 1); grid.position.x = plate.position.x;
+  G1.visible = sec === 's1'; G2.visible = sec === 's2' || sec === 's3'; GV.visible = sec === 'sv'; GC.visible = sec === 'sc' || sec === 'hook';
   ring.visible = trail.visible = false;
 
   if (sec === 's1') {
@@ -461,9 +461,11 @@ function render(t) {
     R3.render(scene, cam); return;
   }
 
-  if (sec === 'sc') {
+  if (sec === 'sc' || sec === 'hook') {
+    const HK = sec === 'hook';
     let s, cx = 0;                                                  // vagonun yoldaki yeri; yay sıkışması
-    if (u < SC.start) s = sAtSim(0);
+    if (HK) s = Math.min(sAtSim(ROLL.tBottom - 2.0 + u * 0.9), ROLL.sContact - 0.4);   // giriş: yokuştan iner, döngüyü döner
+    else if (u < SC.start) s = sAtSim(0);
     else if (u < SC.bottom) s = sAtSim(u - SC.start);
     else if (u < SC.resume) s = ROLL.sLoop;                         // döngünün dibinde dur (kuvvetleri göster)
     else if (u < SC.hit) s = sAtSim(ROLL.tBottom + (u - SC.resume));
@@ -476,8 +478,10 @@ function render(t) {
     const side = new THREE.Vector3().crossVectors(c.f, c.u).normalize(), up = new THREE.Vector3().crossVectors(side, c.f).normalize();
     wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, up, side));
     springG.scale.set((R_SPL - cx) / R_SPL, 1, 1); pad.position.set(R_WALL - (R_SPL - cx) - 0.05, R_TY + 0.3, -R_Z);
-    const camX = clamp(c.p.x * 0.8, -6.8, 4.4); setCam(camX + 2.2, 3.6, 14.5, camX - 0.2, 2.9, 0);
-    hLine.visible = u < SC.bottom + 0.3;
+    if (HK) setCam(1.2, 3.2, 11.2, -0.6, 2.5, 0);
+    else { const camX = clamp(c.p.x * 0.8, -6.8, 4.4); setCam(camX + 2.2, 3.6, 14.5, camX - 0.2, 2.9, 0); }
+    hLine.visible = !HK && u < SC.bottom + 0.3;
+    if (HK) { R3.render(scene, cam); return; }
     place('hh', new THREE.Vector3(-10.6, (R_H0 + R_TY) / 2, R_Z), clamp((u - 0.2) / 0.4) * (1 - clamp((u - SC.bottom) / 0.3)), -10, 0);
     if (u >= SC.bottom + 0.1 && u < SC.resume) {
       const k = clamp((u - SC.bottom - 0.1) / 0.5), base = c.p.clone().add(new THREE.Vector3(0, 0.5, 0.9));
