@@ -15,4 +15,5 @@ Kullanıcının ElevenLabs kredisi sınırlıdır (aylık 30.000). Daha önce bi
 
 # Kurallar
 
+- **Video süresi: EN FAZLA 2:59.** Hiçbir video 3:00 veya üstü olamaz (seslendirme eklendikten sonra da). Uzarsa sahneler kısaltılır ya da video bölümlere ayrılır; çıkarmadan önce süre kontrol edilir.
 - 3D fizik videoları: TYT formatı (`ccr-794836ce-0eqad8` dalı, `tyt/FORMAT*.md`) — arka plan, logo, başlık, efekt sesleri aynen; soru çözümü yok; Tinkercad/SolidWorks tarzı 3D animasyon (Three.js), gerçekçi değil.
