@@ -49,11 +49,14 @@ Bu format, "Konu Anlatımı" oturumundaki **"1 Dakikada Fizik" motorunun** (`tyt
   - İlk cümle merak uyandıran bir sorudur.
   - Rakamlar **yazıyla** yazılır (kelime eşlemesi kaymasın).
   - Her paragraf motordaki bir bölüme karşılık gelir: `intro, p0r, p0s0…, outro`.
-- **KREDİ KURALI (çok önemli):**
-  - Ses **üretmeden önce** kullanıcıya kaç kredi tutacağını söyle (`estimate_only`) ve **onay al**.
-  - **Tek üretim** yap (`generations_count: 1`). 2 seçenek, kredinin iki katıdır.
-  - Seslendirmeyi kullanıcı onay vermeden **asla** yapma.
-  - Yazıya dökme (kelime zamanları için `eleven_scribe_v1`) ücretsizdir.
+- **⛔ ELEVENLABS KURALI (kullanıcının kalıcı kuralı, her şeyin önünde):**
+  1. Kullanıcı açıkça istemeden **hiçbir** ElevenLabs aracı çağrılmaz: ses, video, görsel, müzik, yazıya dökme, **maliyet tahmini dahil**. Kredi sınırlı (aylık 30.000).
+  2. Kullanıcı isterse bile **iki ayrı onay** alınır:
+     - "ONAY 1: [ne üretilecek] — X kredi. Onaylıyor musunuz?" → cevap beklenir.
+     - Ayrı mesajla "ONAY 2: Emin misiniz? X kredi harcanacak." → cevap beklenir.
+     - İkisi de açık "evet" ise **tek üretim** (`generations_count: 1`).
+  3. Her yeni üretim için Onay 1 + Onay 2 baştan alınır. "Video yap" gibi genel ifadeler onay değildir.
+  4. Seslendirme gerekirse önce **kredisiz yol** önerilir: kullanıcı kendi sesini mp3 olarak gönderir.
 - **İşleme:** Ses ham kalır; yalnızca 60 Hz altı kesilir. Son karışım **-14 LUFS**. Ek gürültü yok, **fon müziği yok**.
 - **Efekt sesleri** (`tyt/sesler/`, `ses_konu.py`):
   - `kalem.wav`: kalemle yazma (-40 dB) ve düz çizgi (-42 dB).
@@ -64,10 +67,11 @@ Bu format, "Konu Anlatımı" oturumundaki **"1 Dakikada Fizik" motorunun** (`tyt
 ## 5. Üretim sırası (kullanıcı kuralı)
 
 1. **Önce fotoğraf** (kareler) gönderilir, onay alınır. Kullanıcı istemeden video çıkarılmaz.
-2. Seslendirme metni yazılır.
-3. Maliyet söylenir, onay alınır, **tek** ses üretilir.
-4. Kelime zamanları alınır (yazıya dökme), video çıkarılır, ses ile görüntünün eşleşmesi kontrol edilir.
-5. **Instagram kapağı:** Videodaki kapak, "Takip Et" kartı olmadan (`kapak_<konu>.png`).
+2. Görüntü, animasyon ve video **seslendirmesiz** bitirilir ve onaylanır (efekt sesleriyle test videosu kredisizdir).
+3. **Seslendirme her zaman EN SON** yapılır ve yalnızca kullanıcı "seslendirme yap" dediğinde başlar. Seslendirme metni bile kullanıcı istemeden yazılmaz ve önerilmez.
+4. Seslendirmede önce kredisiz yol önerilir (kullanıcı kendi sesini mp3 gönderir). ElevenLabs gerekirse yukarıdaki **ONAY 1 + ONAY 2** kuralı uygulanır, tek üretim yapılır.
+5. Kelime zamanları alınır, video sesle birlikte çıkarılır, ses ile görüntünün eşleşmesi kontrol edilir. Yazıya dökme de bir ElevenLabs aracıdır; kullanıcı istemeden çağrılmaz.
+6. **Instagram kapağı:** Videodaki kapak, "Takip Et" kartı olmadan (`kapak_<konu>.png`).
 
 ## 6. Dosyalar ve komutlar (`tyt/video/`)
 
