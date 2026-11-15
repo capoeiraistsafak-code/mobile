@@ -1,6 +1,6 @@
 # TYT Fizik videoları
 
-> **Tuzak sorular formatı (tam paket):** `FORMAT_TUZAK.md`.
+> **Tuzak sorular formatı (tam paket):** `FORMAT_TUZAK.md` · paket sayfası: https://claude.ai/artifact/B1WSBncTnzUDDNxWasJMaz
 >
 > **Format:** "Konu Anlatımı" oturumunun "1 Dakikada Fizik" motoru (`format-referans/`). TYT videoları `video/` klasöründeki kopyasıyla yapılır:
 > `video/konu.html?k=<konu>` · içerik `video/<konu>.js` (meta, sayfalar `P`, giriş `hook`) · kareler/video `node video/rec.js 30 cikti.mp4` · efekt sesleri `python3 video/ses_konu.py`.
