@@ -42,9 +42,23 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
 .h{position:absolute;font:700 62px/1.1 Caveat;color:#8ec5ff;white-space:nowrap;clip-path:inset(0 100% 0 0);padding-right:10px}
 .h em{font-style:normal;color:#F5C400}
 .h .g{color:#4ade80}.h .r{color:#f87171}.h .o{color:#fb923c}
+/* el yazısı matematik: işaretler kalemle çizilmiş (SVG), bilgisayar fontu değil */
 .ks{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1;margin:0 6px;font-size:.85em}
-.ks>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 3px}
-.ks>span:last-child{padding:3px 4px 0}
+.ks>span{padding:0 6px}
+.kb{display:block;width:100%;height:.16em;overflow:visible;margin:2px 0}
+.hs{display:inline-block;height:.62em;vertical-align:.02em;overflow:visible;margin:0 .12em}
+.hs path,.kb path,.sqr path,.sqb path,.cks path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.hs path{stroke-width:9}
+.kb path,.sqb path{stroke-width:3.2px;vector-effect:non-scaling-stroke}
+.hs circle{fill:currentColor}
+.h sup{font-size:.6em;vertical-align:.75em;line-height:0;margin-left:1px}
+.sq{display:inline-flex;align-items:stretch;margin-left:.08em;line-height:1}
+.sqr{width:.55em;height:auto;align-self:stretch;overflow:visible;margin-right:-.03em}
+.sqr path{stroke-width:7}
+.sqin{position:relative;padding:.16em .12em .02em .1em;line-height:1}
+.sqb{position:absolute;left:-.03em;top:0;width:calc(100% + .03em);height:.1em;overflow:visible}
+.cks{width:86px;height:86px;overflow:visible}
+.cks path{stroke-width:11}
 .ck{position:absolute;font:900 76px Inter;transform:scale(0)}
 .pen{position:absolute;left:0;top:0;font-family:"Noto Color Emoji";font-size:52px;line-height:1;transform-origin:61px 54px;transform:rotate(165deg);opacity:0;z-index:6;pointer-events:none;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.22))}
 .lbl{position:absolute;font:900 44px Inter;padding:2px 14px;border-radius:12px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;z-index:2}
@@ -86,7 +100,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
   <div class="lay" id="s2"><div class="band"><b>Kova ters dönünce su neden dökülmez?</b><span>Çembersel Hareket</span></div></div>
   <div class="lay" id="s3"><div class="band"><b>Yavaş döndürürsen ne olur?</b><span>Çembersel Hareket</span></div></div>
   <div class="lay" id="end">
-    <div class="band"><b>KONU BİTTİ</b><span>Sıradaki: Kütle Çekim ve Kepler Yasaları</span></div>
+    <div class="band"><b>KONU BİTTİ</b><span>Sıradaki: Dönerek Öteleme ve Açısal Momentum</span></div>
     <div class="cv-logo" style="position:absolute;left:400px;top:560px;margin:0"></div>
     <div class="cta"><b>Takip et, kaçırma!</b><span>Şafak Hoca · Fizik</span></div>
   </div>
@@ -115,23 +129,35 @@ const HQ = ['Kova', 'ters', 'dönünce', 'su', 'neden', '*DÖKÜLMEZ?'];
 $('hkq').innerHTML = HQ.map(w => `<span class="hkw${w[0] === '*' ? ' vrg' : ''}">${w.replace('*', '')}</span>`).join(' ');
 
 // kalem notları (sahne başından itibaren sn)
-const KS = (a, b) => `<span class="ks"><span>${a}</span><span>${b}</span></span>`;
+// kalemle çizilmiş işaretler
+const SV = (w, inner) => `<svg class="hs" viewBox="0 0 ${w} 100" style="width:${(w / 100 * 0.62).toFixed(3)}em">${inner}</svg>`;
+const P = SV(100, '<path d="M51 14 Q48 50 50 86"/><path d="M14 51 Q50 47 86 50"/>');                 // +
+const E = SV(100, '<path d="M14 36 Q50 32 86 37"/><path d="M14 64 Q50 61 86 65"/>');                 // =
+const D = SV(40, '<circle cx="20" cy="52" r="9"/>');                                                  // · (çarpım)
+const GE = SV(100, '<path d="M18 10 Q52 26 82 40 Q50 54 18 68"/><path d="M18 88 Q50 85 84 89"/>');   // ≥
+const LT = SV(100, '<path d="M82 12 Q48 32 18 50 Q48 66 82 86"/>');                                   // <
+const AR = SV(150, '<path d="M8 52 Q70 47 132 51"/><path d="M104 26 Q120 40 134 51 Q118 61 102 76"/>'); // →
+const AP = SV(100, '<path d="M12 40 Q30 24 50 38 T88 34"/><path d="M12 68 Q30 52 50 66 T88 62"/>');   // ≈
+const BAR = '<svg class="kb" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M1 6 Q28 3 52 5.5 T99 4"/></svg>';
+const KS = (a, b) => `<span class="ks"><span>${a}</span>${BAR}<span>${b}</span></span>`;   // el yazısı kesir
+const KOK = x => `<span class="sq"><svg class="sqr" viewBox="0 0 50 100" preserveAspectRatio="none"><path d="M3 62 L14 54 L27 98 Q36 50 50 2"/></svg><span class="sqin">${x}<svg class="sqb" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q35 3 62 5 T100 4"/></svg></span></span>`;
+const V2 = 'v<sup>2</sup>';
 const NOTES = [
-  { s: 's1', u: 2.0, x: 70, y: 1440, html: '<span class="g">v</span> → her an <em>TEĞET</em>' },
-  { s: 's1', u: 4.6, x: 70, y: 1540, html: '<span class="r">F</span> → her an <em>MERKEZE</em> (merkezcil)' },
-  { s: 's1', u: 9.4, x: 70, y: 1660, html: 'İp kopunca → <em>DÜZ</em> çizgi (eylemsizlik)', ck: [960, 1650, '✓', 11.3] },
-  { s: 's2', u: 7.6, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> + <span class="r">mg</span> = m · ${KS('v²', 'r')}` },
-  { s: 's2', u: 10.0, x: 70, y: 1600, html: `Hızlı dön → ${KS('v²', 'r')} ≥ g → su <em>DÖKÜLMEZ</em>`, ck: [990, 1600, '✓', 12.2] },
-  { s: 's3', u: 4.0, x: 70, y: 1440, html: `Yavaş dön → ${KS('v²', 'r')} &lt; g → su <em>DÖKÜLÜR</em>`, ck: [990, 1440, '✗', 5.9] },
-  { s: 's3', u: 6.4, x: 70, y: 1590, html: 'En az hız: v = √<span style="text-decoration:overline">g · r</span>' },
-  { s: 's3', u: 8.4, x: 70, y: 1700, html: 'r = 1 m → v ≈ 3,2 m/s', ck: [700, 1700, '✓', 10.0] },
+  { s: 's1', u: 2.0, x: 70, y: 1440, html: `<span class="g">v</span> ${AR} her an <em>TEĞET</em>` },
+  { s: 's1', u: 4.6, x: 70, y: 1540, html: `<span class="r">F</span> ${AR} her an <em>MERKEZE</em> (merkezcil)` },
+  { s: 's1', u: 9.4, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> çizgi (eylemsizlik)`, ck: [960, 1650, '✓', 11.3] },
+  { s: 's2', u: 7.6, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> ${P} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
+  { s: 's2', u: 10.0, x: 70, y: 1600, html: `Hızlı dön ${AR} ${KS(V2, 'r')} ${GE} g ${AR} su <em>DÖKÜLMEZ</em>`, ck: [900, 1690, '✓', 12.2] },
+  { s: 's3', u: 4.0, x: 70, y: 1440, html: `Yavaş dön ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [990, 1440, '✗', 5.9] },
+  { s: 's3', u: 6.4, x: 70, y: 1590, html: `En az hız: v ${E} ${KOK(`g ${D} r`)}` },
+  { s: 's3', u: 8.4, x: 70, y: 1700, html: `r ${E} 1 m, g ${E} 10 ${AR} v ${AP} 3,2 ${KS('m', 's')}`, ck: [900, 1700, '✓', 10.0] },
 ];
 NOTES.forEach((n, i) => {
   const d = document.createElement('div'); d.className = 'h'; d.id = 'n' + i; d.innerHTML = n.html;
   d.style.left = n.x + 'px'; d.style.top = n.y + 'px'; $('notes').appendChild(d);
   n.t0 = T[n.s][0] + n.u;
-  n.dur = clamp(d.textContent.length / 15, 1.0, 2.4);
-  if (n.ck) { const c = document.createElement('div'); c.className = 'ck'; c.id = 'c' + i; c.textContent = n.ck[2];
+  n.dur = clamp((d.textContent.length + d.querySelectorAll('svg').length * 1.5) / 15, 1.0, 2.6);
+  if (n.ck) { const c = document.createElement('div'); c.className = 'ck'; c.id = 'c' + i; c.innerHTML = n.ck[2] === '✓' ? '<svg class="cks" viewBox="0 0 100 100"><path d="M8 54 Q22 68 36 90 Q58 42 94 6"/></svg>' : '<svg class="cks" viewBox="0 0 100 100"><path d="M14 12 Q48 48 86 88"/><path d="M86 14 Q50 50 14 86"/></svg>';
     c.style.color = n.ck[2] === '✓' ? '#4ade80' : '#f87171'; c.style.left = n.ck[0] + 'px'; c.style.top = (n.ck[1] - 10) + 'px'; $('notes').appendChild(c);
     n.ckT = T[n.s][0] + n.ck[3]; }
 });
@@ -300,6 +326,7 @@ function render(t) {
       const p0 = orbit(SNAP), d = tang(SNAP), s = (u - SNAP) * W * Rr;
       const p = p0.clone().add(d.clone().multiplyScalar(s)); ball.position.copy(p); ball.visible = s < 9;
       rope.visible = true; const stub = 0.9; rope.position.set(Math.cos(W * SNAP - 0.6) * stub / 2, 0.45, Math.sin(W * SNAP - 0.6) * stub / 2); rope.scale.set(1, stub, 1);
+      rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(Math.cos(W * SNAP - 0.6), 0, Math.sin(W * SNAP - 0.6)));
       trail.visible = true; trail.geometry.setFromPoints([p0.clone().setY(0.03), p.clone().setY(0.03)]); trail.computeLineDistances();
       if (s < 6) { setArrow(vA, p.clone().add(new THREE.Vector3(0, 0.05, 0)), d, 1.7); place('v', p.clone().add(d.clone().multiplyScalar(1.9)), 1, 0, -40); }
     }
@@ -315,19 +342,19 @@ function render(t) {
 
   if (sec === 's2' && u >= 7.2 && u < 12.2) {
     const k = clamp((u - 7.2) / 0.5); const wc = rimPos(th, RR + 0.68);   // suyun merkezi (tepede)
-    setArrow(gA, wc.clone().add(new THREE.Vector3(-0.25, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.3 * k);
-    setArrow(nA, wc.clone().add(new THREE.Vector3(0.35, 0.25, 0.7)), new THREE.Vector3(0, -1, 0), 1.0 * k);
-    setArrow(v2A, wc.clone().add(new THREE.Vector3(0.6, 0.1, 0)), new THREE.Vector3(1, 0, 0), 1.6 * k);
-    place('mg', wc.clone().add(new THREE.Vector3(-0.25, -1.5, 0.7)), k, -50, 0);
-    place('N', wc.clone().add(new THREE.Vector3(0.35, -0.95, 0.7)), k, 50, 0);
-    place('v2', wc.clone().add(new THREE.Vector3(2.4, 0.1, 0)), k, 0, -10);
+    setArrow(gA, wc.clone().add(new THREE.Vector3(0.25, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.3 * k);
+    setArrow(nA, wc.clone().add(new THREE.Vector3(-0.35, 0.25, 0.7)), new THREE.Vector3(0, -1, 0), 1.0 * k);
+    setArrow(v2A, wc.clone().add(new THREE.Vector3(-0.6, 0.1, 0)), new THREE.Vector3(-1, 0, 0), 1.6 * k);   // θ artıyor → tepede hız -x
+    place('mg', wc.clone().add(new THREE.Vector3(0.25, -1.5, 0.7)), k, 55, 0);
+    place('N', wc.clone().add(new THREE.Vector3(-0.35, -0.95, 0.7)), k, -50, 0);
+    place('v2', wc.clone().add(new THREE.Vector3(-2.4, 0.1, 0)), k, 0, -10);
     place('mrk', new THREE.Vector3(0, AX, 0), k, 0, 70);
   }
   if (sec === 's3') {
-    const UR = 2.5;
+    const W3 = 1.6, rW = RR + 0.68, thSep = Math.acos(-W3 * W3 * rW / 9.8), UR = (thSep + 1.36) / W3;   // su kovadan ayrılır
     if (u >= UR) {
       water.visible = false;
-      const thR = sceneTheta('s3', UR), p0 = rimPos(thR, RR + 0.68), w = 1.6 * (RR + 0.68);
+      const thR = thSep, p0 = rimPos(thR, rW), w = W3 * rW;
       const v0 = new THREE.Vector3(Math.cos(thR), Math.sin(thR), 0).multiplyScalar(w);
       const dt = u - UR, g = 9.8;
       const p = new THREE.Vector3(p0.x + v0.x * dt, p0.y + v0.y * dt - 0.5 * g * dt * dt, 0);
