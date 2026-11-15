@@ -46,7 +46,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
 .ks>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 3px}
 .ks>span:last-child{padding:3px 4px 0}
 .ck{position:absolute;font:900 76px Inter;transform:scale(0)}
-.pen{position:absolute;font-family:"Noto Color Emoji";font-size:58px;line-height:1;opacity:0;z-index:6;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.3))}
+.pen{position:absolute;left:0;top:0;font-family:"Noto Color Emoji";font-size:52px;line-height:1;transform-origin:61px 54px;transform:rotate(165deg);opacity:0;z-index:6;pointer-events:none;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.22))}
 .lbl{position:absolute;font:900 44px Inter;padding:2px 14px;border-radius:12px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;z-index:2}
 /* takip kartı */
 .follow{position:absolute;z-index:9;left:60px;right:60px;bottom:205px;height:190px;background:#fff;border-radius:34px;box-shadow:0 18px 50px rgba(0,0,0,.45);display:flex;align-items:center;gap:26px;padding:0 30px;opacity:0;border:4px solid #F5A300}
@@ -64,20 +64,20 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
   <canvas id="gl" width="1080" height="1100"></canvas>
 
   <div class="lay" id="hook">
-    <div class="hk-top"><span class="hk-pill">TYT FİZİK · BONUS</span></div>
+    <div class="hk-top"><span class="hk-pill">AYT FİZİK</span></div>
     <div class="hk-baslik">ÇEMBERSEL HAREKET</div>
     <div class="hk-q" id="hkq"></div>
     <div class="hk-alt" id="hkalt">İpucu: <b>hız</b> ve <b>merkezcil kuvvet</b></div>
   </div>
 
   <div class="lay" id="cover">
-    <div class="cv-1dk"><span>🎁</span>BONUS VİDEO</div>
-    <div class="cv-top">TYT FİZİK</div>
+    <div class="cv-1dk"><span>⏱</span>1 DAKİKADA AYT</div>
+    <div class="cv-top">AYT FİZİK</div>
     <div class="cv-hook">Su neden <em>DÖKÜLMEZ?</em></div>
     <div class="cv-logo"></div>
-    <div class="cv-k">POPÜLER FİZİK</div>
+    <div class="cv-k">3D ANİMASYON</div>
     <div class="cv-t">Çembersel Hareket</div>
-    <div class="cv-s">İp, kova ve merkezcil kuvvet · 3D animasyon</div>
+    <div class="cv-s">İp, kova ve merkezcil kuvvet</div>
     <div class="cv-code">AYT · 12. sınıf · 2026-2027</div>
     <div class="cv-bot">Şafak Hoca · Fizik</div>
   </div>
@@ -86,7 +86,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
   <div class="lay" id="s2"><div class="band"><b>Kova ters dönünce su neden dökülmez?</b><span>Çembersel Hareket</span></div></div>
   <div class="lay" id="s3"><div class="band"><b>Yavaş döndürürsen ne olur?</b><span>Çembersel Hareket</span></div></div>
   <div class="lay" id="end">
-    <div class="band"><b>BONUS BİTTİ</b><span>Sıradaki: Kütle Çekim ve Kepler Yasaları</span></div>
+    <div class="band"><b>KONU BİTTİ</b><span>Sıradaki: Kütle Çekim ve Kepler Yasaları</span></div>
     <div class="cv-logo" style="position:absolute;left:400px;top:560px;margin:0"></div>
     <div class="cta"><b>Takip et, kaçırma!</b><span>Şafak Hoca · Fizik</span></div>
   </div>
@@ -266,7 +266,8 @@ function render(t) {
     e.style.display = vis ? 'block' : 'none';
     e.style.clipPath = `inset(-20px ${(1 - p) * 100}% -20px 0)`;
     if (vis && p > 0 && p < 1) { penOn = true; const pen = $('pen'); pen.style.opacity = 1;
-      pen.style.left = (n.x + p * e.offsetWidth - 8) + 'px'; pen.style.top = (n.y - 30 + Math.sin(p * 40) * 6) + 'px'; }
+      const sx = n.x + p * (e.offsetWidth - 10), sy = n.y + 52 - Math.abs(Math.sin(p * 38)) * 10;
+      pen.style.left = (sx - 61) + 'px'; pen.style.top = (sy - 54) + 'px'; pen.style.transform = 'rotate(165deg)'; }
     if (n.ck) { const c = $('c' + i); c.style.display = vis ? 'block' : 'none'; c.style.transform = `scale(${back(clamp((t - n.ckT) / 0.35))})`; }
   });
   if (!penOn) $('pen').style.opacity = 0;

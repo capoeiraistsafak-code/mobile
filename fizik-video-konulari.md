@@ -48,7 +48,7 @@ Arada: **Bonus videolar** (popüler fizik).
 | A12 | Düzgün Elektrik Alan ve Sığa | ⚪ Bekliyor | 11 |
 | A13 | Manyetizma ve Elektromanyetik İndüklenme | ⚪ Bekliyor | 11 |
 | A14 | Alternatif Akım ve Transformatörler | ⚪ Bekliyor | 11 |
-| A15 | Düzgün Çembersel Hareket | ⚪ Bekliyor | 12 |
+| A15 | Düzgün Çembersel Hareket | 🟡 3D video hazırlanıyor (`3d/cembersel_hareket/`) | 12 |
 | A16 | Dönerek Öteleme ve Açısal Momentum | ⚪ Bekliyor | 12 |
 | A17 | Kütle Çekim ve Kepler Yasaları | ⚪ Bekliyor | 12 |
 | A18 | Basit Harmonik Hareket | ⚪ Bekliyor | 12 |
@@ -64,7 +64,7 @@ Arada: **Bonus videolar** (popüler fizik).
 
 ## 🎁 Bonus Videolar (popüler fizik)
 
-Her bonus video bir müfredat konusuna bağlı. O konunun videosundan sonra yayınlanırsa iki video birbirine izleyici çeker.
+Bonuslar TYT/AYT konusu olmayan popüler fizik videolarıdır (kara delik, çift yarık…). Her biri bir müfredat konusuna bağlanır. O konunun videosundan sonra yayınlanırsa iki video birbirine izleyici çeker.
 
 | # | Konu | Durum | Bağlı konu |
 |---|------|-------|-----------|
