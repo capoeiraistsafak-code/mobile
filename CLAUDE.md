@@ -12,6 +12,7 @@ Kullanıcının ElevenLabs kredisi sınırlıdır (aylık 30.000). Daha önce bi
 5. Seslendirme gerekirse önce kredisiz yol önerilir (kullanıcı kendi sesini mp3 olarak gönderir).
 6. **SESLENDİRME HER ZAMAN EN SON yapılır** ve yalnızca kullanıcı "seslendirme yap" dediğinde başlar. Önce görüntü/animasyon/video seslendirmesiz bitirilir ve onaylanır; seslendirme metni bile kullanıcı istemeden yazılmaz ve önerilmez.
 
+7. **Seslendirme akışı:** Önce seslendirme metni ElevenLabs formatında yazılır (ton etiketleri [curious] [warmly] [excited], BÜYÜK harf vurgu, "…" duraklama, sayılar yazıyla, her paragraf bir sahne) ve kullanıcıya verilir. Kullanıcı metni okur. Ses üretimine ancak kullanıcı isterse ve Onay 1 + Onay 2 verirse geçilir.
 
 # Kurallar
 
