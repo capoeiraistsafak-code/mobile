@@ -1,0 +1,15 @@
+[curious] Lunapark treni döngüde ters dönüyor… ama neden DÜŞMÜYOR?
+
+[warmly] Ben Şafak Hoca. Çembersel hareketi üç boyutlu animasyonla anlatıyorum… haydi başlayalım!
+
+[curious] İpe bağlı bir roketi döndürüyoruz. Hızı her an çembere TEĞET, yani gittiği yöne doğru. [warmly] İp roketi her an merkeze çeker; merkezcil kuvvet ve merkezcil ivme MERKEZE doğrudur. Peki ip koparsa? [excited] Roket kıvrılmaz… teğet boyunca DÜMDÜZ gider. Buna eylemsizlik diyoruz.
+
+[warmly] Şimdi üç araba, üç farklı viraj. Üçünün de hızı aynı: saniyede on metre. [curious] Aynı sürede küçük virajdaki araba daha BÜYÜK açı tarar. Açısal hız, omega eşittir v bölü r. On metrelik virajda omega bir, otuz metrelik virajda üçte bir. [warmly] Merkezcil ivme de v kare bölü r. Viraj daraldıkça ivme BÜYÜR: on, beş, üç virgül üç.
+
+[curious] Suyla dolu kovayı hızla döndürüyoruz. Tepede kova ters… ama su DÖKÜLMÜYOR. [warmly] Tepede ağırlık da, kovanın tepkisi de aşağı, yani merkeze doğru: N artı m g, eşittir m v kare bölü r. [excited] Kova yeterince hızlıysa v kare bölü r, g'den büyük olur… ve su dökülmez!
+
+[curious] Peki yavaş döndürürsek? v kare bölü r, g'den küçük kalır… [warmly] ve su DÖKÜLÜR. En küçük hız, karekök içinde g çarpı r. Yarıçap bir metreyse bu hız, saniyede yaklaşık üç virgül iki metre.
+
+[warmly] Son olarak lunapark treni. Tepede potansiyel enerjisi var: m g h. [curious] Yokuştan inerken bu enerji kinetik enerjiye dönüşür ve tren hızlanır. [warmly] Döngünün dibinde N eksi m g, eşittir m v kare bölü r. Yani N, ağırlıktan büyüktür… bu yüzden kendinizi AĞIR hissedersiniz. Döngüde hız her an teğet, ivme her an merkeze. Tepede hız küçülür, ivme de küçülür. [excited] Sonunda tren yaya çarpar… ve kinetik enerji yayda DEPOLANIR.
+
+[excited] Çembersel hareket bu kadar! Takip etmeyi unutmayın… sıradaki konu: dönerek öteleme.
