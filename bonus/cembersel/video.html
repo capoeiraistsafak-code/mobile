@@ -1,0 +1,346 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="node_modules/three/build/three.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-family:Inter,sans-serif;color:#e5e7eb}
+.f{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#3a4150,#1f232c);overflow:hidden}
+#gl{position:absolute;left:0;width:1080px;height:1100px}
+.lay{position:absolute;inset:0;opacity:0}
+/* giriş (TYT formatı) */
+.hk-top{position:absolute;left:0;right:0;top:70px;text-align:center}
+.hk-pill{display:inline-block;background:#D62828;color:#fff;font:900 40px Inter;padding:10px 26px;border-radius:14px}
+.hk-baslik{position:absolute;left:0;right:0;top:165px;text-align:center;font:900 80px/1.05 Inter;letter-spacing:0;
+  background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.hk-baslik::after{content:"";display:block;width:240px;height:10px;border-radius:5px;margin:16px auto 0;background:linear-gradient(90deg,#fde047,#fb923c,#ef4444)}
+.hk-q{position:absolute;left:50px;right:50px;top:330px;text-align:center;font:900 60px/1.18 Inter;color:#e5e7eb}
+.hkw{display:inline-block;opacity:0}
+.hkw.vrg{color:#1f232c;background:#F5C400;padding:0 12px;border-radius:12px}
+.hk-alt{position:absolute;left:0;right:0;top:1690px;text-align:center;font:700 40px Inter;color:#cbd5e1;opacity:0}
+.hk-alt b{color:#F5C400}
+/* kapak */
+#cover{display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff;background:radial-gradient(circle at 50% 38%,#3a4150,#1f232c);z-index:5}
+.cv-1dk{margin-top:110px;display:flex;align-items:center;gap:16px;font:900 58px Inter;color:#fff;background:#D62828;padding:14px 34px 14px 26px;border-radius:999px;box-shadow:0 10px 30px rgba(214,40,40,.45)}
+.cv-1dk span{font-family:"Noto Color Emoji";font-size:52px}
+.cv-top{margin-top:34px;font:900 92px Inter;color:#F5C400;letter-spacing:1px}
+.cv-hook{margin-top:40px;padding:0 50px;font:900 70px/1.08 Inter;color:#fff;text-shadow:0 6px 24px rgba(0,0,0,.45)}
+.cv-hook em{font-style:normal;color:#1f232c;background:#F5C400;padding:0 12px;border-radius:12px}
+.cv-logo{margin-top:40px;width:280px;height:280px;border-radius:50%;border:14px solid #F5A300;box-shadow:0 0 0 10px rgba(245,163,0,.18),0 20px 60px rgba(0,0,0,.5);background:url(logo.png) center/cover}
+.cv-k{margin-top:50px;font:900 96px Inter;line-height:1;background:#F5A300;color:#1f232c;padding:18px 34px;border-radius:24px;transform:rotate(-2deg)}
+.cv-t{margin-top:50px;font:800 68px Inter;line-height:1.1;padding:0 60px}
+.cv-s{margin-top:22px;font:600 40px Inter;color:#cbd5e1;padding:0 70px;line-height:1.25}
+.cv-code{margin-top:30px;font:700 34px Inter;color:#F5C400;border:3px solid #F5C400;border-radius:14px;padding:8px 22px}
+.cv-bot{position:absolute;bottom:90px;font:700 40px Inter;color:#fff;opacity:.9}
+/* sahne bandı */
+.band{position:absolute;left:40px;right:40px;top:60px;background:#2a303c;border:3px solid #F5A300;border-radius:22px;padding:20px 26px;text-align:center;color:#fff;z-index:3}
+.band b{display:block;font:800 50px/1.15 Inter;color:#F5C400}
+.band span{font:600 32px Inter;color:#e5e7eb}
+.band .tag{display:inline-block;margin-top:12px;background:#D62828;color:#fff;font:800 26px Inter;padding:6px 16px;border-radius:8px}
+/* kalem notları */
+.h{position:absolute;font:700 62px/1.1 Caveat;color:#8ec5ff;white-space:nowrap;clip-path:inset(0 100% 0 0);padding-right:10px}
+.h em{font-style:normal;color:#F5C400}
+.h .g{color:#4ade80}.h .r{color:#f87171}.h .o{color:#fb923c}
+.ks{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1;margin:0 6px;font-size:.85em}
+.ks>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 3px}
+.ks>span:last-child{padding:3px 4px 0}
+.ck{position:absolute;font:900 76px Inter;transform:scale(0)}
+.pen{position:absolute;font-family:"Noto Color Emoji";font-size:58px;line-height:1;opacity:0;z-index:6;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.3))}
+.lbl{position:absolute;font:900 44px Inter;padding:2px 14px;border-radius:12px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;z-index:2}
+/* takip kartı */
+.follow{position:absolute;z-index:9;left:60px;right:60px;bottom:205px;height:190px;background:#fff;border-radius:34px;box-shadow:0 18px 50px rgba(0,0,0,.45);display:flex;align-items:center;gap:26px;padding:0 30px;opacity:0;border:4px solid #F5A300}
+.fl-logo{width:130px;height:130px;flex:none;border-radius:50%;border:6px solid #F5A300;background:url(logo.png) center/cover}
+.fl-txt{flex:1;min-width:0}.fl-txt b{display:block;font:800 46px Inter;color:#2a303c}.fl-txt span{font:600 28px Inter;color:#5b6270}
+.fl-btn{flex:none;background:#0095F6;color:#fff;font:800 38px Inter;padding:22px 34px;border-radius:18px;white-space:nowrap}
+.fl-btn.done{background:#E4E7EC;color:#2a303c}
+.tap{position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.55);border:5px solid rgba(42,48,60,.55);right:100px;top:50px;opacity:0}
+.cta{position:absolute;left:0;right:0;bottom:470px;text-align:center}
+.cta b{display:block;font:800 60px Inter;color:#F5C400}
+.cta span{font:600 38px Inter;color:#cbd5e1}
+.fade{position:absolute;inset:0;background:#1c2029;opacity:0;z-index:20}
+</style></head><body>
+<div class="f" id="f">
+  <canvas id="gl" width="1080" height="1100"></canvas>
+
+  <div class="lay" id="hook">
+    <div class="hk-top"><span class="hk-pill">TYT FİZİK · BONUS</span></div>
+    <div class="hk-baslik">ÇEMBERSEL HAREKET</div>
+    <div class="hk-q" id="hkq"></div>
+    <div class="hk-alt" id="hkalt">İpucu: <b>hız</b> ve <b>merkezcil kuvvet</b></div>
+  </div>
+
+  <div class="lay" id="cover">
+    <div class="cv-1dk"><span>🎁</span>BONUS VİDEO</div>
+    <div class="cv-top">TYT FİZİK</div>
+    <div class="cv-hook">Su neden <em>DÖKÜLMEZ?</em></div>
+    <div class="cv-logo"></div>
+    <div class="cv-k">POPÜLER FİZİK</div>
+    <div class="cv-t">Çembersel Hareket</div>
+    <div class="cv-s">İp, kova ve merkezcil kuvvet · 3D animasyon</div>
+    <div class="cv-code">AYT · 12. sınıf · 2026-2027</div>
+    <div class="cv-bot">Şafak Hoca · Fizik</div>
+  </div>
+
+  <div class="lay" id="s1"><div class="band"><b>İp koparsa top nereye gider?</b><span>Çembersel Hareket</span></div></div>
+  <div class="lay" id="s2"><div class="band"><b>Kova ters dönünce su neden dökülmez?</b><span>Çembersel Hareket</span></div></div>
+  <div class="lay" id="s3"><div class="band"><b>Yavaş döndürürsen ne olur?</b><span>Çembersel Hareket</span></div></div>
+  <div class="lay" id="end">
+    <div class="band"><b>BONUS BİTTİ</b><span>Sıradaki: Kütle Çekim ve Kepler Yasaları</span></div>
+    <div class="cv-logo" style="position:absolute;left:400px;top:560px;margin:0"></div>
+    <div class="cta"><b>Takip et, kaçırma!</b><span>Şafak Hoca · Fizik</span></div>
+  </div>
+
+  <div id="notes"></div>
+  <div id="lbls"></div>
+  <div class="pen" id="pen">✏️</div>
+  <div class="follow" id="follow"><div class="fl-logo"></div><div class="fl-txt"><b>Şafak Hoca</b><span>Fizik · TYT & AYT</span></div><div class="fl-btn" id="flbtn">Takip Et</div><div class="tap" id="tap"></div></div>
+  <div class="fade" id="fade"></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+const back = x => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+
+// ---------------- zaman çizelgesi ----------------
+const T = { hook: [0, 6.5], cover: [6.5, 10.5], s1: [10.5, 23], s2: [23, 37], s3: [37, 48], end: [48, 53.5] };
+const DUR = 53.5;
+const FOLLOW = [[7.0, 8.4, 10.1], [48.8, 50.4, 53.5]];   // çıkış, tıklama, kayboluş
+const SECT = Object.keys(T);
+const secAt = t => SECT.find(k => t >= T[k][0] && t < T[k][1]) || 'end';
+
+// giriş sorusu
+const HQ = ['Kova', 'ters', 'dönünce', 'su', 'neden', '*DÖKÜLMEZ?'];
+$('hkq').innerHTML = HQ.map(w => `<span class="hkw${w[0] === '*' ? ' vrg' : ''}">${w.replace('*', '')}</span>`).join(' ');
+
+// kalem notları (sahne başından itibaren sn)
+const KS = (a, b) => `<span class="ks"><span>${a}</span><span>${b}</span></span>`;
+const NOTES = [
+  { s: 's1', u: 2.0, x: 70, y: 1440, html: '<span class="g">v</span> → her an <em>TEĞET</em>' },
+  { s: 's1', u: 4.6, x: 70, y: 1540, html: '<span class="r">F</span> → her an <em>MERKEZE</em> (merkezcil)' },
+  { s: 's1', u: 9.4, x: 70, y: 1660, html: 'İp kopunca → <em>DÜZ</em> çizgi (eylemsizlik)', ck: [960, 1650, '✓', 11.3] },
+  { s: 's2', u: 7.6, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> + <span class="r">mg</span> = m · ${KS('v²', 'r')}` },
+  { s: 's2', u: 10.0, x: 70, y: 1600, html: `Hızlı dön → ${KS('v²', 'r')} ≥ g → su <em>DÖKÜLMEZ</em>`, ck: [990, 1600, '✓', 12.2] },
+  { s: 's3', u: 4.0, x: 70, y: 1440, html: `Yavaş dön → ${KS('v²', 'r')} &lt; g → su <em>DÖKÜLÜR</em>`, ck: [990, 1440, '✗', 5.9] },
+  { s: 's3', u: 6.4, x: 70, y: 1590, html: 'En az hız: v = √<span style="text-decoration:overline">g · r</span>' },
+  { s: 's3', u: 8.4, x: 70, y: 1700, html: 'r = 1 m → v ≈ 3,2 m/s', ck: [700, 1700, '✓', 10.0] },
+];
+NOTES.forEach((n, i) => {
+  const d = document.createElement('div'); d.className = 'h'; d.id = 'n' + i; d.innerHTML = n.html;
+  d.style.left = n.x + 'px'; d.style.top = n.y + 'px'; $('notes').appendChild(d);
+  n.t0 = T[n.s][0] + n.u;
+  n.dur = clamp(d.textContent.length / 15, 1.0, 2.4);
+  if (n.ck) { const c = document.createElement('div'); c.className = 'ck'; c.id = 'c' + i; c.textContent = n.ck[2];
+    c.style.color = n.ck[2] === '✓' ? '#4ade80' : '#f87171'; c.style.left = n.ck[0] + 'px'; c.style.top = (n.ck[1] - 10) + 'px'; $('notes').appendChild(c);
+    n.ckT = T[n.s][0] + n.ck[3]; }
+});
+
+// ses olayları (mixer için)
+window.EVENTS = { dur: DUR, gecis: [6.5, 10.5, 23, 37, 48], tik: [], kalem: [] };
+FOLLOW.forEach(f => { EVENTS.tik.push(f[0] + 0.1, f[1]); });
+NOTES.forEach(n => { EVENTS.kalem.push([n.t0, n.dur]); if (n.ck) EVENTS.tik.push(n.ckT); });
+
+// ---------------- 3D (Tinkercad tarzı) ----------------
+const R3 = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, alpha: true, preserveDrawingBuffer: true });
+R3.setPixelRatio(1); R3.setSize(1080, 1100, false);
+R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(38, 1080 / 1100, 0.1, 100);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6b7a90, 1.15));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(5, 12, 7); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8 }); scene.add(sun);
+
+const EDGE = new THREE.LineBasicMaterial({ color: 0x1f2937 });
+function mesh(geo, color, opt = {}) {
+  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color, side: opt.side || THREE.FrontSide, transparent: !!opt.op, opacity: opt.op || 1 }));
+  m.castShadow = opt.cast !== false; m.receiveShadow = true;
+  if (opt.edge !== false) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), EDGE));
+  return m;
+}
+// çalışma düzlemi (Tinkercad mavi ızgara)
+const plate = mesh(new THREE.BoxGeometry(12, 0.25, 12), 0xb9d4ee, { cast: false }); plate.position.y = -0.125; scene.add(plate);
+const grid = new THREE.GridHelper(12, 24, 0x6f9bc6, 0x8fb4d8); grid.position.y = 0.006; scene.add(grid);
+
+function arrow(color) {
+  const g = new THREE.Group();
+  const sh = mesh(new THREE.CylinderGeometry(0.07, 0.07, 1, 12), color, { edge: false, cast: false });
+  const hd = mesh(new THREE.ConeGeometry(0.2, 0.42, 16), color, { cast: false });
+  g.add(sh, hd); g.sh = sh; g.hd = hd; g.visible = false; scene.add(g); return g;
+}
+const UP = new THREE.Vector3(0, 1, 0);
+function setArrow(a, from, dir, len) {
+  const d = dir.clone().normalize(); const L = Math.max(len - 0.42, 0.01);
+  a.position.copy(from); a.quaternion.setFromUnitVectors(UP, d);
+  a.sh.scale.set(1, L, 1); a.sh.position.set(0, L / 2, 0); a.hd.position.set(0, L + 0.21, 0); a.visible = true;
+}
+
+// --- Sahne 1: masada ipe bağlı top ---
+const G1 = new THREE.Group(); scene.add(G1);
+const peg = mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.9, 20), 0x9ca3af); peg.position.y = 0.45; G1.add(peg);
+const ball = mesh(new THREE.SphereGeometry(0.38, 28, 18), 0xef4444); G1.add(ball);
+const rope = mesh(new THREE.CylinderGeometry(0.035, 0.035, 1, 8), 0xf8fafc, { edge: false }); G1.add(rope);
+const ringPts = []; for (let i = 0; i <= 96; i++) { const a = i / 96 * Math.PI * 2; ringPts.push(new THREE.Vector3(Math.cos(a) * 2.5, 0.02, Math.sin(a) * 2.5)); }
+const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPts), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.18, gapSize: 0.14 }));
+ring.computeLineDistances(); G1.add(ring);
+const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineDashedMaterial({ color: 0xfacc15, dashSize: 0.22, gapSize: 0.14 }));
+G1.add(trail);
+const vA = arrow(0x22c55e), fA = arrow(0xef4444);
+
+// --- Sahne 2/3 + giriş: dikey çemberde dönen kova ---
+const G2 = new THREE.Group(); scene.add(G2);
+const AX = 3.6, RR = 2.2;
+const base = mesh(new THREE.BoxGeometry(1.6, 0.3, 1.2), 0x64748b); base.position.set(0, 0.15, -0.9); G2.add(base);
+const post = mesh(new THREE.BoxGeometry(0.5, AX, 0.5), 0xf59e0b); post.position.set(0, AX / 2, -0.9); G2.add(post);
+const axle = mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.9, 16), 0x94a3b8); axle.rotation.x = Math.PI / 2; axle.position.set(0, AX, -0.5); G2.add(axle);
+const rotor = new THREE.Group(); rotor.position.set(0, AX, 0); G2.add(rotor);
+const hub = mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.22, 20), 0x334155); hub.rotation.x = Math.PI / 2; rotor.add(hub);
+const arm = mesh(new THREE.BoxGeometry(0.16, RR, 0.16), 0xfacc15); arm.position.y = -RR / 2; rotor.add(arm);
+const bar = mesh(new THREE.BoxGeometry(1.15, 0.12, 0.12), 0xfacc15); bar.position.y = -RR; rotor.add(bar);
+const bucket = new THREE.Group(); bucket.position.y = -RR - 0.45; rotor.add(bucket);
+const bWall = mesh(new THREE.CylinderGeometry(0.56, 0.44, 0.9, 32, 1, true), 0x3b82f6, { side: THREE.DoubleSide }); bucket.add(bWall);
+const bBot = mesh(new THREE.CircleGeometry(0.44, 32), 0x3b82f6, { side: THREE.DoubleSide }); bBot.rotation.x = Math.PI / 2; bBot.position.y = -0.45; bucket.add(bBot);
+const water = mesh(new THREE.CylinderGeometry(0.47, 0.43, 0.42, 32), 0x38bdf8, { op: 0.92 }); water.position.y = -0.23; bucket.add(water);
+const blob = mesh(new THREE.SphereGeometry(0.42, 24, 16), 0x38bdf8, { op: 0.92 }); blob.visible = false; G2.add(blob);
+const puddle = mesh(new THREE.CylinderGeometry(1, 1, 0.04, 40), 0x38bdf8, { op: 0.85, cast: false }); puddle.visible = false; G2.add(puddle);
+const drops = []; for (let i = 0; i < 7; i++) { const d = mesh(new THREE.SphereGeometry(0.11, 12, 8), 0x7dd3fc, { edge: false }); d.visible = false; G2.add(d); drops.push(d); }
+const gA = arrow(0xef4444), nA = arrow(0xfb923c), v2A = arrow(0x22c55e);
+
+// çember üzerindeki noktanın dünya konumu (θ=0 alt, θ=π tepe)
+const rimPos = (th, r) => new THREE.Vector3(Math.sin(th) * r, AX - Math.cos(th) * r, 0);
+
+// ---------------- etiketler ----------------
+const LBL = {};
+function lbl(id, txt, bg, fg = '#fff') { const d = document.createElement('div'); d.className = 'lbl'; d.textContent = txt; d.style.background = bg; d.style.color = fg; $('lbls').appendChild(d); LBL[id] = d; }
+lbl('v', 'v', '#16a34a'); lbl('F', 'F', '#dc2626'); lbl('mg', 'mg', '#dc2626'); lbl('N', 'N', '#ea580c'); lbl('v2', 'v', '#16a34a'); lbl('mrk', 'merkez', '#F5C400', '#1f232c');
+let glTop = 0;
+function place(id, p3, op, dx = 0, dy = 0) {
+  const d = LBL[id]; if (!op) { d.style.opacity = 0; return; }
+  const p = p3.clone().project(cam);
+  d.style.left = ((p.x + 1) / 2 * 1080 + dx) + 'px'; d.style.top = (glTop + (1 - p.y) / 2 * 1100 + dy) + 'px'; d.style.opacity = op;
+}
+
+// ---------------- render(t) ----------------
+function setCam(px, py, pz, lx, ly, lz) { cam.position.set(px, py, pz); cam.lookAt(lx, ly, lz); cam.updateMatrixWorld(); }
+
+function sceneTheta(sec, u) {
+  if (sec === 'hook') return 4.2 * u;
+  if (sec === 's2') {
+    const top = Math.PI * 7;                 // 3. turun tepesi
+    if (u < 4) return 4 * u;
+    if (u < 7) { const k = (u - 4) / 3; return 16 + (top - 16) * (1 - (1 - k) * (1 - k)); }
+    if (u < 12.2) return top;
+    const w = u - 12.2; return top + (w < 2 ? w * w : 4 + 4 * (w - 2));
+  }
+  if (sec === 's3') return -1.36 + 1.6 * u;
+  return 0;
+}
+
+function render(t) {
+  const sec = secAt(t), u = t - T[sec][0];
+  // katmanlar
+  for (const k of ['hook', 'cover', 's1', 's2', 's3', 'end']) $(k).style.opacity = k === sec ? 1 : 0;
+  // geçiş karartması
+  let fd = 0; for (const b of EVENTS.gecis) fd = Math.max(fd, 1 - Math.abs(t - b) / 0.28);
+  $('fade').style.opacity = clamp(fd) * 0.95;
+
+  // giriş: sözcükler
+  HQ.forEach((w, i) => { const e = $('hkq').children[i]; const k = clamp((t - 0.5 - i * 0.32) / 0.3);
+    e.style.opacity = k; e.style.transform = `translateY(${(1 - ease(k)) * 24}px) scale(${w[0] === '*' ? 0.7 + 0.3 * back(k) : 1})`; });
+  $('hkalt').style.opacity = clamp((t - 3.6) / 0.5);
+
+  // takip kartı
+  let fop = 0, done = false, tap = 0;
+  for (const [a, c, z] of FOLLOW) if (t >= a && t < z) {
+    fop = Math.min(clamp((t - a) / 0.35), clamp((z - t) / 0.3)); done = t >= c;
+    tap = clamp(1 - Math.abs(t - c + 0.05) / 0.25);
+    $('follow').style.transform = `translateY(${(1 - back(clamp((t - a) / 0.45))) * 120}px)`;
+  }
+  $('follow').style.opacity = fop; $('flbtn').textContent = done ? 'Takip ediliyor ✓' : 'Takip Et'; $('flbtn').className = 'fl-btn' + (done ? ' done' : '');
+  $('tap').style.opacity = tap; $('tap').style.transform = `scale(${0.6 + 0.6 * tap})`;
+
+  // kalem notları
+  let penOn = false;
+  NOTES.forEach((n, i) => {
+    const e = $('n' + i), vis = secAt(t) === n.s; const p = clamp((t - n.t0) / n.dur);
+    e.style.display = vis ? 'block' : 'none';
+    e.style.clipPath = `inset(-20px ${(1 - p) * 100}% -20px 0)`;
+    if (vis && p > 0 && p < 1) { penOn = true; const pen = $('pen'); pen.style.opacity = 1;
+      pen.style.left = (n.x + p * e.offsetWidth - 8) + 'px'; pen.style.top = (n.y - 30 + Math.sin(p * 40) * 6) + 'px'; }
+    if (n.ck) { const c = $('c' + i); c.style.display = vis ? 'block' : 'none'; c.style.transform = `scale(${back(clamp((t - n.ckT) / 0.35))})`; }
+  });
+  if (!penOn) $('pen').style.opacity = 0;
+
+  // 3D sahne
+  const show3d = sec !== 'cover' && sec !== 'end';
+  $('gl').style.display = show3d ? 'block' : 'none';
+  for (const a of [vA, fA, gA, nA, v2A]) a.visible = false;
+  Object.keys(LBL).forEach(k => place(k, new THREE.Vector3(), 0));
+  if (!show3d) return;
+  glTop = sec === 'hook' ? 540 : 330; $('gl').style.top = glTop + 'px';
+  G1.visible = sec === 's1'; G2.visible = sec !== 's1';
+  ring.visible = trail.visible = false;
+
+  if (sec === 's1') {
+    const W = 1.2, Rr = 2.5, SNAP = 8.0;
+    const orbit = (s) => { const a = W * s - 0.6; return new THREE.Vector3(Math.cos(a) * Rr, 0.45, Math.sin(a) * Rr); };
+    const tang = (s) => { const a = W * s - 0.6; return new THREE.Vector3(-Math.sin(a), 0, Math.cos(a)); };
+    setCam(Math.sin(u * 0.04) * 1.2, 7.4, 8.2, 0, 0, 0.6);
+    ring.visible = true;
+    if (u < SNAP) {
+      const p = orbit(u); ball.position.copy(p);
+      const mid = p.clone().add(new THREE.Vector3(0, 0.45, 0)).multiplyScalar(0.5);
+      rope.visible = true; rope.position.set(p.x / 2, 0.45, p.z / 2); rope.scale.set(1, Rr, 1);
+      rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(p.x, 0, p.z).normalize());
+      const av = clamp((u - 1.6) / 0.4), af = clamp((u - 4.2) / 0.4);
+      if (av > 0) { setArrow(vA, p.clone().add(new THREE.Vector3(0, 0.05, 0)), tang(u), 1.7 * av); place('v', p.clone().add(tang(u).multiplyScalar(1.9)), av, 0, -40); }
+      if (af > 0) { const toC = p.clone().multiplyScalar(-1).setY(0).normalize(); setArrow(fA, p.clone().add(toC.clone().multiplyScalar(0.4)), toC, 1.4 * af); place('F', p.clone().add(toC.multiplyScalar(1.5)), af, 0, -40); }
+    } else {
+      const p0 = orbit(SNAP), d = tang(SNAP), s = (u - SNAP) * W * Rr;
+      const p = p0.clone().add(d.clone().multiplyScalar(s)); ball.position.copy(p); ball.visible = s < 9;
+      rope.visible = true; const stub = 0.9; rope.position.set(Math.cos(W * SNAP - 0.6) * stub / 2, 0.45, Math.sin(W * SNAP - 0.6) * stub / 2); rope.scale.set(1, stub, 1);
+      trail.visible = true; trail.geometry.setFromPoints([p0.clone().setY(0.03), p.clone().setY(0.03)]); trail.computeLineDistances();
+      if (s < 6) { setArrow(vA, p.clone().add(new THREE.Vector3(0, 0.05, 0)), d, 1.7); place('v', p.clone().add(d.clone().multiplyScalar(1.9)), 1, 0, -40); }
+    }
+    R3.render(scene, cam); return;
+  }
+
+  // dikey kova sahneleri
+  const th = sceneTheta(sec, u); rotor.rotation.z = th;
+  water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false);
+  if (sec === 'hook') setCam(5.4, 4.6, 11.2, 0, AX - 0.3, 0);
+  else if (sec === 's3') setCam(3.0 + Math.sin(u * 0.15) * 0.6, 4.6, 14.2, -1.6, AX - 0.6, 0);
+  else setCam(5.6 + Math.sin(u * 0.15) * 0.6, 4.4, 12.4, 0, AX - 0.2, 0);
+
+  if (sec === 's2' && u >= 7.2 && u < 12.2) {
+    const k = clamp((u - 7.2) / 0.5); const wc = rimPos(th, RR + 0.68);   // suyun merkezi (tepede)
+    setArrow(gA, wc.clone().add(new THREE.Vector3(-0.25, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.3 * k);
+    setArrow(nA, wc.clone().add(new THREE.Vector3(0.35, 0.25, 0.7)), new THREE.Vector3(0, -1, 0), 1.0 * k);
+    setArrow(v2A, wc.clone().add(new THREE.Vector3(0.6, 0.1, 0)), new THREE.Vector3(1, 0, 0), 1.6 * k);
+    place('mg', wc.clone().add(new THREE.Vector3(-0.25, -1.5, 0.7)), k, -50, 0);
+    place('N', wc.clone().add(new THREE.Vector3(0.35, -0.95, 0.7)), k, 50, 0);
+    place('v2', wc.clone().add(new THREE.Vector3(2.4, 0.1, 0)), k, 0, -10);
+    place('mrk', new THREE.Vector3(0, AX, 0), k, 0, 70);
+  }
+  if (sec === 's3') {
+    const UR = 2.5;
+    if (u >= UR) {
+      water.visible = false;
+      const thR = sceneTheta('s3', UR), p0 = rimPos(thR, RR + 0.68), w = 1.6 * (RR + 0.68);
+      const v0 = new THREE.Vector3(Math.cos(thR), Math.sin(thR), 0).multiplyScalar(w);
+      const dt = u - UR, g = 9.8;
+      const p = new THREE.Vector3(p0.x + v0.x * dt, p0.y + v0.y * dt - 0.5 * g * dt * dt, 0);
+      if (p.y > 0.3) { blob.visible = true; blob.position.copy(p); const st = 1 + Math.min(dt, 0.6); blob.scale.set(1 / Math.sqrt(st), st, 1 / Math.sqrt(st)); }
+      else {
+        const tl = (p0.y + v0.y * 0 > 0) ? (v0.y + Math.sqrt(v0.y * v0.y + 2 * g * (p0.y - 0.3))) / g : 0;   // yere değme anı
+        const xl = p0.x + v0.x * tl, sp = clamp((dt - tl) / 0.35);
+        puddle.visible = true; puddle.position.set(xl, 0.03, 0.2); puddle.scale.set(0.3 + 0.9 * ease(sp), 1, 0.3 + 0.75 * ease(sp));
+        drops.forEach((d, i) => { const a = i / drops.length * Math.PI * 2, s2 = dt - tl; if (s2 > 0.6) return;
+          d.visible = true; d.position.set(xl + Math.cos(a) * s2 * 2.2, 0.1 + 2.2 * s2 - 4.9 * s2 * s2 * 2, 0.2 + Math.sin(a) * s2 * 1.6); });
+      }
+    }
+  }
+  R3.render(scene, cam);
+}
+window.DUR = DUR; window.render = render;
+</script></body></html>
