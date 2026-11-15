@@ -102,7 +102,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
   <div class="lay" id="sv"><div class="band"><b>Viraj daralınca ne değişir?</b><span>Açısal Hız ve Merkezcil İvme</span></div></div>
   <div class="lay" id="s2"><div class="band"><b>Kova ters dönünce su neden dökülmez?</b><span>Çembersel Hareket</span></div></div>
   <div class="lay" id="s3"><div class="band"><b>Yavaş döndürürsen ne olur?</b><span>Çembersel Hareket</span></div></div>
-  <div class="lay" id="sc"><div class="band"><b>Lunaparkta döngünün dibinde neden ağırlaşırız?</b><span>Çembersel Hareket</span></div></div>
+  <div class="lay" id="sc"><div class="band"><b>Lunapark treni: yokuştan döngüye, döngüden yaya</b><span>Enerji ve Çembersel Hareket</span></div></div>
   <div class="lay" id="end">
     <div class="band"><b>KONU BİTTİ</b><span>Sıradaki: Dönerek Öteleme ve Açısal Momentum</span></div>
     <div class="cv-logo" style="position:absolute;left:400px;top:560px;margin:0"></div>
@@ -121,10 +121,34 @@ const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
 const back = x => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
 
+// ---------------- lunapark: yol ve enerji korunumu (sürtünmesiz) ----------------
+const R_G = 9.8, R_H0 = 5.6, R_TY = 0.6, R_RC = 1.8, R_CY = R_TY + R_RC, R_Z = 0.45, RCX = 0;   // tepe yüksekliği, ray, döngü yarıçapı
+const R_WALL = 7.4, R_SPL = 1.4, R_CONTACT = R_WALL - R_SPL - 0.5;                                // yay duvarı, yay boyu, değme anında vagon merkezi
+const R_hill = x => R_TY + (R_H0 - R_TY) * (1 + Math.cos(Math.PI * (x + 10) / 8)) / 2;           // x: -10 → -2
+const ROLL = { P: [], S: [] };
+{ const P = ROLL.P;
+  for (let i = 0; i <= 200; i++) { const x = -10 + 8 * i / 200; P.push([x, R_hill(x), R_Z]); }
+  for (let i = 1; i <= 40; i++) P.push([-2 + 2 * i / 40, R_TY, R_Z]);
+  ROLL.iLoop = P.length - 1;
+  for (let i = 1; i <= 360; i++) { const ph = i / 360 * Math.PI * 2; P.push([R_RC * Math.sin(ph), R_CY - R_RC * Math.cos(ph), R_Z - 2 * R_Z * i / 360]); }
+  for (let i = 1; i <= 160; i++) P.push([8 * i / 160, R_TY, -R_Z]);
+  let L = 0; ROLL.S.push(0); for (let i = 1; i < P.length; i++) { L += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]); ROLL.S.push(L); }
+  ROLL.sLoop = ROLL.S[ROLL.iLoop]; ROLL.sLoopEnd = ROLL.S[ROLL.iLoop + 360]; ROLL.sContact = ROLL.sLoopEnd + R_CONTACT;
+  const yAt = s => { let a = 0; while (ROLL.S[a + 1] < s) a++; const k = (s - ROLL.S[a]) / (ROLL.S[a + 1] - ROLL.S[a]); return P[a][1] + (P[a + 1][1] - P[a][1]) * k; };
+  // hız: v = √(2g(h0 − y)), küçük ilk itme
+  const SL = 0.55, dt = 1 / 600; let sp = 0.7, tt = 0; ROLL.tab = [[0, sp]];
+  while (sp < ROLL.sContact) { const v = Math.sqrt(2 * R_G * (R_H0 - yAt(sp)) + 0.6 * 0.6); sp += v * dt; tt += dt; ROLL.tab.push([tt / SL, Math.min(sp, ROLL.sContact)]); }
+  ROLL.vContact = Math.sqrt(2 * R_G * (R_H0 - R_TY));
+  const iB = ROLL.tab.findIndex(r => r[1] >= ROLL.sLoop); ROLL.tBottom = ROLL.tab[iB][0]; ROLL.tEnd = ROLL.tab[ROLL.tab.length - 1][0]; }
+const SC = { start: 1.2, frz: 5.6, comp: 0.7, settle: 0.8 };            // sahne içi: tepede bekleme, dipte durma, yay sıkışması
+SC.bottom = SC.start + ROLL.tBottom; SC.resume = SC.bottom + SC.frz; SC.hit = SC.resume + (ROLL.tEnd - ROLL.tBottom); SC.stop = SC.hit + SC.comp; SC.dur = SC.stop + SC.settle + 3.6;
+const sAtSim = tau => { const tb = ROLL.tab; if (tau <= 0) return tb[0][1]; let a = 0, b = tb.length - 1; if (tau >= tb[b][0]) return tb[b][1];
+  while (b - a > 1) { const m = (a + b) >> 1; if (tb[m][0] <= tau) a = m; else b = m; } return tb[a][1]; };
+
 // ---------------- zaman çizelgesi ----------------
-const T = { hook: [0, 6.5], cover: [6.5, 10.5], s1: [10.5, 23], sv: [23, 39], s2: [39, 53], s3: [53, 64], sc: [64, 78], end: [78, 83.5] };
-const DUR = 83.5;
-const FOLLOW = [[7.0, 8.4, 10.1], [78.8, 80.4, 83.5]];   // çıkış, tıklama, kayboluş
+const T = { hook: [0, 6.5], cover: [6.5, 10.5], s1: [10.5, 23], sv: [23, 39], s2: [39, 53], s3: [53, 64], sc: [64, 64 + SC.dur], end: [64 + SC.dur, 64 + SC.dur + 5.5] };
+const DUR = T.end[1];
+const FOLLOW = [[7.0, 8.4, 10.1], [T.end[0] + 0.8, T.end[0] + 2.4, DUR]];   // çıkış, tıklama, kayboluş
 const SECT = Object.keys(T);
 const secAt = t => SECT.find(k => t >= T[k][0] && t < T[k][1]) || 'end';
 
@@ -161,8 +185,12 @@ const NOTES = [
   { s: 's3', u: 4.0, x: 70, y: 1440, html: `Yavaş dön ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [990, 1440, '✗', 5.9] },
   { s: 's3', u: 6.4, x: 70, y: 1590, html: `En az hız: v ${E} ${KOK(`g ${D} r`)}` },
   { s: 's3', u: 8.4, x: 70, y: 1700, html: `r ${E} 1 m, g ${E} 10 ${AR} v ${AP} 3,2 ${KS('m', 's')}`, ck: [900, 1700, '✓', 10.0] },
-  { s: 'sc', u: 3.0, x: 70, y: 1440, html: `Altta: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
-  { s: 'sc', u: 5.6, x: 70, y: 1590, html: `<span class="o">N</span> ${GT} <span class="r">mg</span> ${AR} kendini <em>AĞIR</em> hissedersin`, ck: [930, 1690, '✓', 7.8] },
+  { s: 'sc', u: 0.2, z: SC.bottom + 0.3, x: 70, y: 1440, html: `Tepede: E ${E} m ${D} g ${D} h <em>(potansiyel)</em>` },
+  { s: 'sc', u: SC.bottom - 1.0, z: SC.bottom + 0.3, x: 70, y: 1570, html: `İnerken: m ${D} g ${D} h ${AR} ${KS('1', '2')} m ${D} ${V2} <em>(kinetik)</em>` },
+  { s: 'sc', u: SC.bottom + 0.6, z: SC.resume + 0.4, x: 70, y: 1440, html: `Altta: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
+  { s: 'sc', u: SC.bottom + 3.0, z: SC.resume + 0.4, x: 70, y: 1590, html: `<span class="o">N</span> ${GT} <span class="r">mg</span> ${AR} kendini <em>AĞIR</em> hissedersin`, ck: [930, 1690, '✓', SC.bottom + 4.8] },
+  { s: 'sc', u: SC.stop + 0.2, x: 70, y: 1440, html: `Yaya çarpınca: ${KS('1', '2')} m ${D} ${V2} ${AR} ${KS('1', '2')} k ${D} x<sup>2</sup>` },
+  { s: 'sc', u: SC.stop + 2.0, x: 70, y: 1590, html: `Enerji yayda depolandı ${AR} tren <em>DURDU</em>`, ck: [930, 1690, '✓', SC.stop + 3.4] },
 ];
 NOTES.forEach((n, i) => {
   const d = document.createElement('div'); d.className = 'h'; d.id = 'n' + i; d.innerHTML = n.html;
@@ -231,6 +259,9 @@ ring.computeLineDistances(); G1.add(ring);
 const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineDashedMaterial({ color: 0xfacc15, dashSize: 0.22, gapSize: 0.14 }));
 G1.add(trail);
 const vA = arrow(0x22c55e), fA = arrow(0xef4444);
+// roketin yönü: burun (yerel +y) hız yönünde, pencere (yerel +z) hep yukarıda → kendi ekseni etrafında dönmez
+function aimRocket(dir) { const y = dir.clone().setY(0).normalize(), z = new THREE.Vector3(0, 1, 0), x = new THREE.Vector3().crossVectors(y, z).normalize();
+  ball.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z)); }
 
 // --- Sahne 2/3 + giriş: dikey çemberde dönen kova ---
 const G2 = new THREE.Group(); scene.add(G2);
@@ -269,21 +300,33 @@ LANES.forEach((L, i) => {
 const startLine = mesh(new THREE.BoxGeometry(0.06, 0.02, 3.6), 0xffffff, { cast: false, edge: false }); startLine.position.set(0, 0.03, 2.8); GV.add(startLine);
 const centerPost = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.6, 16), 0xF5C400); centerPost.position.y = 0.3; GV.add(centerPost);
 
-// --- Lunapark sahnesi: döngü ve tek vagon ---
+// --- Lunapark sahnesi: yokuş → döngü → düz yol → yay (yol ve hız ROLL_* ile önceden hesaplandı) ---
 const GC = new THREE.Group(); scene.add(GC);
-const RC = 2.4, CY = 3.0, TY = CY - RC, ENT = 7;        // döngü yarıçapı, merkez yüksekliği, ray yüksekliği, giriş uzunluğu
-const LOOPL = 2 * Math.PI * RC, PATHL = ENT + LOOPL + ENT;
-function coaster(s) {                                      // yol boyunca s → konum, ileri yön, yukarı (merkeze) yön
-  if (s < ENT) return { p: new THREE.Vector3(s - ENT, TY, 0.5), f: new THREE.Vector3(1, 0, 0), u: new THREE.Vector3(0, 1, 0) };
-  if (s < ENT + LOOPL) { const ph = (s - ENT) / RC, dz = -1 / (2 * Math.PI) * RC / RC;
-    return { p: new THREE.Vector3(RC * Math.sin(ph), CY - RC * Math.cos(ph), 0.5 - ph / (2 * Math.PI)),
-             f: new THREE.Vector3(Math.cos(ph), Math.sin(ph), -1 / (2 * Math.PI)).normalize(), u: new THREE.Vector3(-Math.sin(ph), Math.cos(ph), 0) }; }
-  return { p: new THREE.Vector3(s - ENT - LOOPL, TY, -0.5), f: new THREE.Vector3(1, 0, 0), u: new THREE.Vector3(0, 1, 0) };
+function coaster(s) {                                      // yol boyunca s → konum, ileri yön, yukarı (döngüde merkeze) yön
+  s = clamp(s, 0, ROLL.S[ROLL.S.length - 1] - 1e-4);
+  let a = 0, b = ROLL.S.length - 1; while (b - a > 1) { const m = (a + b) >> 1; if (ROLL.S[m] <= s) a = m; else b = m; }
+  const k = (s - ROLL.S[a]) / (ROLL.S[b] - ROLL.S[a]), A = ROLL.P[a], B = ROLL.P[b];
+  const p = new THREE.Vector3(A[0] + (B[0] - A[0]) * k, A[1] + (B[1] - A[1]) * k, A[2] + (B[2] - A[2]) * k);
+  const f = new THREE.Vector3(B[0] - A[0], B[1] - A[1], B[2] - A[2]).normalize();
+  const u = new THREE.Vector3(-f.y, f.x, 0).normalize();
+  return { p, f, u };
 }
-{ for (const off of [-0.3, 0.3]) { const pts = []; for (let i = 0; i <= 400; i++) { const c = coaster(i / 400 * PATHL - 0.001 * (i === 400)); pts.push(c.p.clone().add(new THREE.Vector3(0, 0, off)).add(c.u.clone().multiplyScalar(-0.05))); }
-    const rail = mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, 0.06, 8, false), 0x94a3b8, { edge: false }); GC.add(rail); }
-  for (const x of [-6, -4, -2, 2, 4, 6]) { const z = x < 0 ? 0.5 : -0.5; const po = mesh(new THREE.BoxGeometry(0.18, TY, 0.18), 0xf59e0b); po.position.set(x, TY / 2, z); GC.add(po); }
-  for (const x of [-RC, RC]) { const po = mesh(new THREE.BoxGeometry(0.2, CY, 0.2), 0xf59e0b); po.position.set(x * 1.04, CY / 2, x < 0 ? -0.25 : 0.25); GC.add(po); } }
+{ for (const off of [-0.3, 0.3]) { const pts = ROLL.P.filter((_, i) => i % 3 === 0).map(q => { const c = new THREE.Vector3(q[0], q[1], q[2] + off); return c; });
+    const rail = mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 900, 0.06, 8, false), 0x94a3b8, { edge: false }); GC.add(rail); }
+  // yokuşun ayakları
+  for (let x = -9.6; x <= -2.6; x += 1.4) { const y = R_hill(x); const po = mesh(new THREE.BoxGeometry(0.18, y, 0.18), 0xf59e0b); po.position.set(x, y / 2, R_Z); GC.add(po); }
+  for (const x of [-1.2, 1.2 + RCX]) { const po = mesh(new THREE.BoxGeometry(0.18, R_TY, 0.18), 0xf59e0b); po.position.set(x, R_TY / 2, x < 0 ? R_Z : -R_Z); GC.add(po); }
+  for (const x of [-R_RC * 1.05, R_RC * 1.05]) { const po = mesh(new THREE.BoxGeometry(0.2, R_CY, 0.2), 0xf59e0b); po.position.set(x, R_CY / 2, x < 0 ? -0.2 : 0.2); GC.add(po); }
+  for (const x of [3, 5]) { const po = mesh(new THREE.BoxGeometry(0.18, R_TY, 0.18), 0xf59e0b); po.position.set(x, R_TY / 2, -R_Z); GC.add(po); } }
+// tampon duvarı ve yay
+const wall = mesh(new THREE.BoxGeometry(0.4, 1.5, 1.2), 0x64748b); wall.position.set(R_WALL + 0.2, R_TY + 0.45, -R_Z); GC.add(wall);
+const springG = new THREE.Group(); springG.position.set(R_WALL, R_TY + 0.3, -R_Z); GC.add(springG);
+{ const pts = []; const turns = 7; for (let i = 0; i <= 280; i++) { const a = i / 280 * turns * Math.PI * 2; pts.push(new THREE.Vector3(-R_SPL * i / 280, Math.sin(a) * 0.22, Math.cos(a) * 0.22)); }
+  springG.add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, 0.04, 8, false), 0x22c55e, { edge: false })); }
+const pad = mesh(new THREE.BoxGeometry(0.1, 0.6, 0.6), 0x334155); GC.add(pad);
+// yükseklik çizgisi (h)
+const hLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-10.6, R_H0, R_Z), new THREE.Vector3(-10.6, R_TY, R_Z)]), new THREE.LineDashedMaterial({ color: 0xF5C400, dashSize: 0.2, gapSize: 0.14 }));
+hLine.computeLineDistances(); GC.add(hLine);
 const wagon = new THREE.Group(); GC.add(wagon);
 { const bd = mesh(new THREE.BoxGeometry(1.0, 0.36, 0.64), 0xef4444); bd.position.y = 0.3; wagon.add(bd);
   const bk = mesh(new THREE.BoxGeometry(0.12, 0.42, 0.64), 0xb91c1c); bk.position.set(-0.44, 0.66, 0); wagon.add(bk);
@@ -298,7 +341,7 @@ const rimPos = (th, r) => new THREE.Vector3(Math.sin(th) * r, AX - Math.cos(th) 
 // ---------------- etiketler ----------------
 const LBL = {};
 function lbl(id, txt, bg, fg = '#fff') { const d = document.createElement('div'); d.className = 'lbl'; d.textContent = txt; d.style.background = bg; d.style.color = fg; $('lbls').appendChild(d); LBL[id] = d; }
-lbl('v', 'v', '#16a34a'); lbl('F', 'F', '#dc2626'); lbl('mg', 'mg', '#dc2626'); lbl('N', 'N', '#ea580c'); lbl('v2', 'v', '#16a34a'); lbl('mrk', 'merkez', '#F5C400', '#1f232c'); lbl('cN', 'N', '#ea580c'); lbl('cG', 'mg', '#dc2626'); lbl('cV', 'v', '#16a34a'); lbl('cM', 'merkez', '#F5C400', '#1f232c');
+lbl('v', 'v', '#16a34a'); lbl('F', 'F', '#dc2626'); lbl('mg', 'mg', '#dc2626'); lbl('N', 'N', '#ea580c'); lbl('v2', 'v', '#16a34a'); lbl('mrk', 'merkez', '#F5C400', '#1f232c'); lbl('cN', 'N', '#ea580c'); lbl('cG', 'mg', '#dc2626'); lbl('cV', 'v', '#16a34a'); lbl('cM', 'merkez', '#F5C400', '#1f232c'); lbl('hh', 'h', '#F5C400', '#1f232c'); lbl('kv', 'yay', '#16a34a');
 function chip(id, html, col) { const d = document.createElement('div'); d.className = 'chip'; d.innerHTML = html; d.style.borderColor = col; $('lbls').appendChild(d); LBL[id] = d; }
 LANES.forEach((L, i) => { chip('car' + i, `<div>${OM} ${E} ${L.w}</div><div>a ${E} ${L.a}</div>`, L.hex); chip('r' + i, `r ${E} ${L.R} m`, L.hex); });
 let glTop = 0;
@@ -350,7 +393,7 @@ function render(t) {
   // kalem notları
   let penOn = false;
   NOTES.forEach((n, i) => {
-    const e = $('n' + i), vis = secAt(t) === n.s; const p = clamp((t - n.t0) / n.dur);
+    const e = $('n' + i), vis = secAt(t) === n.s && (n.z == null || t < T[n.s][0] + n.z); const p = clamp((t - n.t0) / n.dur);
     e.style.display = vis ? 'block' : 'none';
     e.style.clipPath = `inset(-20px ${(1 - p) * 100}% -20px 0)`;
     if (vis && p > 0 && p < 1) { penOn = true; const pen = $('pen'); pen.style.opacity = 1;
@@ -367,6 +410,7 @@ function render(t) {
   Object.keys(LBL).forEach(k => place(k, new THREE.Vector3(), 0));
   if (!show3d) return;
   glTop = sec === 'hook' ? 540 : 330; $('gl').style.top = glTop + 'px';
+  const wide = sec === 'sc'; plate.scale.set(wide ? 21 / 12 : 1, 1, 1); plate.position.x = wide ? -1.8 : 0; grid.scale.set(wide ? 21 / 12 : 1, 1, 1); grid.position.x = plate.position.x;
   G1.visible = sec === 's1'; G2.visible = sec === 'hook' || sec === 's2' || sec === 's3'; GV.visible = sec === 'sv'; GC.visible = sec === 'sc';
   ring.visible = trail.visible = false;
 
@@ -377,7 +421,7 @@ function render(t) {
     setCam(Math.sin(u * 0.04) * 1.2, 7.4, 8.2, 0, 0, 0.6);
     ring.visible = true;
     if (u < SNAP) {
-      const p = orbit(u); ball.position.copy(p); ball.quaternion.setFromUnitVectors(UP, tang(u));
+      const p = orbit(u); ball.position.copy(p); aimRocket(tang(u));
       const mid = p.clone().add(new THREE.Vector3(0, 0.45, 0)).multiplyScalar(0.5);
       rope.visible = true; rope.position.set(p.x / 2, 0.45, p.z / 2); rope.scale.set(1, Rr, 1);
       rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(p.x, 0, p.z).normalize());
@@ -386,7 +430,7 @@ function render(t) {
       if (af > 0) { const toC = p.clone().multiplyScalar(-1).setY(0).normalize(); setArrow(fA, p.clone().add(toC.clone().multiplyScalar(0.4)), toC, 1.4 * af); place('F', p.clone().add(toC.multiplyScalar(1.5)), af, 0, -40); }
     } else {
       const p0 = orbit(SNAP), d = tang(SNAP), s = (u - SNAP) * W * Rr;
-      const p = p0.clone().add(d.clone().multiplyScalar(s)); ball.position.copy(p); ball.quaternion.setFromUnitVectors(UP, d); ball.visible = s < 9;
+      const p = p0.clone().add(d.clone().multiplyScalar(s)); ball.position.copy(p); aimRocket(d); ball.visible = s < 9;
       rope.visible = true; const stub = 0.9; rope.position.set(Math.cos(W * SNAP - 0.6) * stub / 2, 0.45, Math.sin(W * SNAP - 0.6) * stub / 2); rope.scale.set(1, stub, 1);
       rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(Math.cos(W * SNAP - 0.6), 0, Math.sin(W * SNAP - 0.6)));
       trail.visible = true; trail.geometry.setFromPoints([p0.clone().setY(0.03), p.clone().setY(0.03)]); trail.computeLineDistances();
@@ -418,25 +462,34 @@ function render(t) {
   }
 
   if (sec === 'sc') {
-    setCam(3.2 + Math.sin(u * 0.08) * 0.8, 3.6, 13.5, -0.6, 2.7, 0);
-    let s;                                                         // vagonun yoldaki yeri
-    if (u < 2.2) { const k = clamp(u / 2.2); s = ENT * (1 - (1 - k) * (1 - k)); }   // girişte yavaşlayıp döngünün dibinde durur
-    else if (u < 8.2) s = ENT;
-    else { const w = u - 8.2; s = ENT + (w < 1.2 ? 2.2 * w * w : 3.17 + 5.3 * (w - 1.2)); }
-    s = Math.min(s, PATHL - 0.01);
+    let s, cx = 0;                                                  // vagonun yoldaki yeri; yay sıkışması
+    if (u < SC.start) s = sAtSim(0);
+    else if (u < SC.bottom) s = sAtSim(u - SC.start);
+    else if (u < SC.resume) s = ROLL.sLoop;                         // döngünün dibinde dur (kuvvetleri göster)
+    else if (u < SC.hit) s = sAtSim(ROLL.tBottom + (u - SC.resume));
+    else {                                                          // yay: x = A·sin(…) ile sıkışır, durur
+      const A = 0.85, tc = u - SC.hit;
+      cx = tc < SC.comp ? A * Math.sin(Math.PI / 2 * tc / SC.comp) : A * (1 - 0.06 * Math.sin(Math.PI * clamp((tc - SC.comp) / SC.settle)));
+      s = ROLL.sContact + cx;
+    }
     const c = coaster(s); wagon.position.copy(c.p);
     const side = new THREE.Vector3().crossVectors(c.f, c.u).normalize(), up = new THREE.Vector3().crossVectors(side, c.f).normalize();
     wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, up, side));
-    if (u >= 2.4 && u < 8.2) {
-      const k = clamp((u - 2.4) / 0.5), base = c.p.clone().add(new THREE.Vector3(0, 0.5, 0.9));
-      setArrow(cN, base.clone().add(new THREE.Vector3(0.15, 0, 0)), new THREE.Vector3(0, 1, 0), 1.6 * k);      // N büyük
-      setArrow(cG, base.clone().add(new THREE.Vector3(-0.25, 0, 0)), new THREE.Vector3(0, -1, 0), 0.8 * k);    // mg küçük
+    springG.scale.set((R_SPL - cx) / R_SPL, 1, 1); pad.position.set(R_WALL - (R_SPL - cx) - 0.05, R_TY + 0.3, -R_Z);
+    const camX = clamp(c.p.x * 0.8, -6.8, 4.4); setCam(camX + 2.2, 3.6, 14.5, camX - 0.2, 2.9, 0);
+    hLine.visible = u < SC.bottom + 0.3;
+    place('hh', new THREE.Vector3(-10.6, (R_H0 + R_TY) / 2, R_Z), clamp((u - 0.2) / 0.4) * (1 - clamp((u - SC.bottom) / 0.3)), -10, 0);
+    if (u >= SC.bottom + 0.1 && u < SC.resume) {
+      const k = clamp((u - SC.bottom - 0.1) / 0.5), base = c.p.clone().add(new THREE.Vector3(0, 0.5, 0.9));
+      setArrow(cN, base.clone().add(new THREE.Vector3(0.15, 0, 0)), new THREE.Vector3(0, 1, 0), 2.2 * k);      // N ≈ 6,6 mg (dipte)
+      setArrow(cG, base.clone().add(new THREE.Vector3(-0.25, 0, 0)), new THREE.Vector3(0, -1, 0), 0.5 * k);    // mg küçük
       setArrow(cV, c.p.clone().add(new THREE.Vector3(0.6, 0.35, 0.9)), new THREE.Vector3(1, 0, 0), 1.3 * k);
-      place('cN', base.clone().add(new THREE.Vector3(0.15, 1.4, 0)), k, 50, 0);
-      place('cG', base.clone().add(new THREE.Vector3(-0.25, -0.6, 0)), k, -55, 0);
+      place('cN', base.clone().add(new THREE.Vector3(0.15, 1.9, 0)), k, 50, 0);
+      place('cG', base.clone().add(new THREE.Vector3(-0.25, -0.35, 0)), k, -55, 0);
       place('cV', c.p.clone().add(new THREE.Vector3(2.1, 0.35, 0.9)), k, 10, 0);
-      place('cM', new THREE.Vector3(0, CY, 0), k, 0, -40);
+      place('cM', new THREE.Vector3(0, R_CY, 0), k, -120, 0);
     }
+    place('kv', new THREE.Vector3(R_WALL - 0.7, R_TY + 0.9, -R_Z), clamp((u - SC.hit + 1.2) / 0.4), 0, -20);
     R3.render(scene, cam); return;
   }
 
