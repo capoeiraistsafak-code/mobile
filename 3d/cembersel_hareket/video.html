@@ -51,6 +51,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
 .hs path{stroke-width:9}
 .kb path,.sqb path{stroke-width:3.2px;vector-effect:non-scaling-stroke}
 .hs circle{fill:currentColor}
+.h sub{font-size:.6em;vertical-align:-.25em;line-height:0}
 .h sup{font-size:.6em;vertical-align:.75em;line-height:0;margin-left:1px}
 .sq{display:inline-flex;align-items:stretch;margin-left:.08em;line-height:1}
 .sqr{width:.55em;height:auto;align-self:stretch;overflow:visible;margin-right:-.03em}
@@ -174,29 +175,29 @@ const GT = SV(100, '<path d="M18 12 Q52 32 82 50 Q52 66 18 86"/>');             
 const OM = SV(110, '<path d="M16 24 Q6 82 30 84 Q50 86 55 50 Q60 86 80 84 Q104 82 94 24"/>');        // ω
 const V2 = 'v<sup>2</sup>';
 const NOTES = [
-  { s: 's1', u: 2.0, x: 70, y: 1440, html: `<span class="g">v</span> ${AR} her an <em>TEĞET</em>` },
-  { s: 's1', u: 4.6, x: 70, y: 1540, html: `<span class="r">F</span> ve <span class="p">a</span> ${AR} her an <em>MERKEZE</em>` },
-  { s: 's1', u: 9.4, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> çizgi (eylemsizlik)`, ck: [960, 1650, '✓', 11.3] },
+  { s: 's1', u: 2.0, x: 70, y: 1440, html: `Hız (<span class="g">v</span>) ${AR} her an <em>TEĞET</em>` },
+  { s: 's1', u: 4.6, x: 70, y: 1540, html: `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) ${AR} <em>MERKEZE</em>` },
+  { s: 's1', u: 9.4, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> gider (eylemsizlik)`, ck: [960, 1650, '✓', 11.3] },
   { s: 'sv', u: 2.0, x: 70, y: 1440, html: `Üç arabanın hızı aynı: v ${E} 10 ${KS('m', 's')}` },
-  { s: 'sv', u: 6.0, x: 70, y: 1565, html: `${OM} ${E} ${KS('v', 'r')} ${AR} r küçük, ${OM} <em>BÜYÜK</em>` },
-  { s: 'sv', u: 10.0, x: 70, y: 1690, html: `a ${E} ${KS(V2, 'r')} ${AR} r küçük, a <em>BÜYÜK</em>`, ck: [930, 1690, '✓', 12.6] },
+  { s: 'sv', u: 6.0, x: 60, y: 1565, fs: 52, html: `Açısal hız: ${OM} ${E} ${KS('v', 'r')} ${AR} r küçülünce ${OM} <em>BÜYÜR</em>` },
+  { s: 'sv', u: 10.0, x: 60, y: 1690, fs: 52, html: `İvme: a ${E} ${KS(V2, 'r')} ${AR} r küçülünce a <em>BÜYÜR</em>`, ck: [960, 1690, '✓', 12.6] },
   { s: 's2', u: 7.6, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> ${P} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
-  { s: 's2', u: 10.0, x: 70, y: 1600, html: `Hızlı dön ${AR} ${KS(V2, 'r')} ${GE} g ${AR} su <em>DÖKÜLMEZ</em>`, ck: [900, 1690, '✓', 12.2] },
-  { s: 's3', u: 4.0, x: 70, y: 1440, html: `Yavaş dön ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [990, 1440, '✗', 5.9] },
-  { s: 's3', u: 6.4, x: 70, y: 1590, html: `En az hız: v ${E} ${KOK(`g ${D} r`)}` },
+  { s: 's2', u: 10.0, x: 70, y: 1600, fs: 54, html: `Hızlı dönerse ${AR} ${KS(V2, 'r')} ${GE} g ${AR} su <em>DÖKÜLMEZ</em>`, ck: [900, 1690, '✓', 12.2] },
+  { s: 's3', u: 4.0, x: 70, y: 1440, fs: 54, html: `Yavaş dönerse ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [950, 1525, '✗', 5.9] },
+  { s: 's3', u: 6.4, x: 70, y: 1590, html: `Tepede en küçük hız: v ${E} ${KOK(`g ${D} r`)}` },
   { s: 's3', u: 8.4, x: 70, y: 1700, html: `r ${E} 1 m, g ${E} 10 ${AR} v ${AP} 3,2 ${KS('m', 's')}`, ck: [900, 1700, '✓', 10.0] },
-  { s: 'sc', u: 0.2, z: SC.bottom + 0.3, x: 70, y: 1440, html: `Tepede: E ${E} m ${D} g ${D} h <em>(potansiyel)</em>` },
+  { s: 'sc', u: 0.2, z: SC.bottom + 0.3, x: 70, y: 1440, html: `Tepede: E<sub>p</sub> ${E} m ${D} g ${D} h <em>(potansiyel enerji)</em>` },
   { s: 'sc', u: SC.bottom - 1.0, z: SC.bottom + 0.3, x: 70, y: 1570, html: `İnerken: m ${D} g ${D} h ${AR} ${KS('1', '2')} m ${D} ${V2} <em>(kinetik)</em>` },
-  { s: 'sc', u: SC.bottom + 0.6, z: SC.resume + 0.4, x: 70, y: 1440, html: `Altta: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
+  { s: 'sc', u: SC.bottom + 0.6, z: SC.resume + 0.4, x: 70, y: 1440, html: `Döngünün dibinde: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
   { s: 'sc', u: SC.bottom + 3.0, z: SC.resume + 0.4, x: 70, y: 1590, html: `<span class="o">N</span> ${GT} <span class="r">mg</span> ${AR} kendini <em>AĞIR</em> hissedersin`, ck: [930, 1690, '✓', SC.bottom + 4.8] },
   { s: 'sc', u: SC.resume + 0.5, z: SC.hit - 0.05, x: 70, y: 1440, html: `Döngüde: <span class="g">v</span> ${AR} <em>TEĞET</em>, <span class="p">a</span> ${AR} <em>MERKEZE</em>` },
-  { s: 'sc', u: SC.resume + 2.8, z: SC.hit - 0.05, x: 70, y: 1570, html: `<span class="p">a</span> ${E} ${KS(V2, 'r')} ${AR} tepede v <em>KÜÇÜK</em>, a <em>KÜÇÜK</em>` },
+  { s: 'sc', u: SC.resume + 2.8, z: SC.hit - 0.05, x: 70, y: 1570, fs: 56, html: `Tepede v küçülür ${AR} <span class="p">a</span> ${E} ${KS(V2, 'r')} <em>KÜÇÜLÜR</em>` },
   { s: 'sc', u: SC.hit + 0.1, x: 70, y: 1440, html: `Yaya çarpınca: ${KS('1', '2')} m ${D} ${V2} ${AR} ${KS('1', '2')} k ${D} x<sup>2</sup>` },
   { s: 'sc', u: SC.stop + 0.4, x: 70, y: 1585, html: `Kinetik enerji yayda <em>DEPOLANIR</em>`, ck: [990, 1590, '✓', SC.stop + 2.6] },
 ];
 NOTES.forEach((n, i) => {
   const d = document.createElement('div'); d.className = 'h'; d.id = 'n' + i; d.innerHTML = n.html;
-  d.style.left = n.x + 'px'; d.style.top = n.y + 'px'; $('notes').appendChild(d);
+  d.style.left = n.x + 'px'; d.style.top = n.y + 'px'; if (n.fs) d.style.fontSize = n.fs + 'px'; $('notes').appendChild(d);
   n.t0 = T[n.s][0] + n.u;
   n.dur = clamp((d.textContent.length + d.querySelectorAll('svg').length * 1.5) / 15, 1.0, 2.6);
   if (n.ck) { const c = document.createElement('div'); c.className = 'ck'; c.id = 'c' + i; c.innerHTML = n.ck[2] === '✓' ? '<svg class="cks" viewBox="0 0 100 100"><path d="M8 54 Q22 68 36 90 Q58 42 94 6"/></svg>' : '<svg class="cks" viewBox="0 0 100 100"><path d="M14 12 Q48 48 86 88"/><path d="M86 14 Q50 50 14 86"/></svg>';
