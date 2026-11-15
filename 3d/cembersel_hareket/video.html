@@ -41,7 +41,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-fam
 /* kalem notları */
 .h{position:absolute;font:700 62px/1.1 Caveat;color:#8ec5ff;white-space:nowrap;clip-path:inset(0 100% 0 0);padding-right:10px}
 .h em{font-style:normal;color:#F5C400}
-.h .g{color:#4ade80}.h .r{color:#f87171}.h .o{color:#fb923c}
+.h .p{color:#c084fc}.h .g{color:#4ade80}.h .r{color:#f87171}.h .o{color:#fb923c}
 /* el yazısı matematik: işaretler kalemle çizilmiş (SVG), bilgisayar fontu değil */
 .ks{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1;margin:0 6px;font-size:.85em}
 .ks>span{padding:0 6px}
@@ -140,8 +140,8 @@ const ROLL = { P: [], S: [] };
   while (sp < ROLL.sContact) { const v = Math.sqrt(2 * R_G * (R_H0 - yAt(sp)) + 0.6 * 0.6); sp += v * dt; tt += dt; ROLL.tab.push([tt / SL, Math.min(sp, ROLL.sContact)]); }
   ROLL.vContact = Math.sqrt(2 * R_G * (R_H0 - R_TY));
   const iB = ROLL.tab.findIndex(r => r[1] >= ROLL.sLoop); ROLL.tBottom = ROLL.tab[iB][0]; ROLL.tEnd = ROLL.tab[ROLL.tab.length - 1][0]; }
-const SC = { start: 1.2, frz: 5.6, comp: 0.9, after: 4.0 };            // sahne içi: tepede bekleme, dipte durma, yay sıkışması
-SC.bottom = SC.start + ROLL.tBottom; SC.resume = SC.bottom + SC.frz; SC.hit = SC.resume + (ROLL.tEnd - ROLL.tBottom); SC.stop = SC.hit + SC.comp; SC.dur = SC.stop + SC.after;
+const SC = { start: 1.2, frz: 5.6, comp: 0.9, after: 4.0, slow: 0.6 };            // sahne içi: tepede bekleme, dipte durma, yay sıkışması
+SC.bottom = SC.start + ROLL.tBottom; SC.resume = SC.bottom + SC.frz; SC.hit = SC.resume + (ROLL.tEnd - ROLL.tBottom) / SC.slow; SC.stop = SC.hit + SC.comp; SC.dur = SC.stop + SC.after;
 const sAtSim = tau => { const tb = ROLL.tab; if (tau <= 0) return tb[0][1]; let a = 0, b = tb.length - 1; if (tau >= tb[b][0]) return tb[b][1];
   while (b - a > 1) { const m = (a + b) >> 1; if (tb[m][0] <= tau) a = m; else b = m; } return tb[a][1]; };
 
@@ -175,7 +175,7 @@ const OM = SV(110, '<path d="M16 24 Q6 82 30 84 Q50 86 55 50 Q60 86 80 84 Q104 8
 const V2 = 'v<sup>2</sup>';
 const NOTES = [
   { s: 's1', u: 2.0, x: 70, y: 1440, html: `<span class="g">v</span> ${AR} her an <em>TEĞET</em>` },
-  { s: 's1', u: 4.6, x: 70, y: 1540, html: `<span class="r">F</span> ${AR} her an <em>MERKEZE</em> (merkezcil)` },
+  { s: 's1', u: 4.6, x: 70, y: 1540, html: `<span class="r">F</span> ve <span class="p">a</span> ${AR} her an <em>MERKEZE</em>` },
   { s: 's1', u: 9.4, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> çizgi (eylemsizlik)`, ck: [960, 1650, '✓', 11.3] },
   { s: 'sv', u: 2.0, x: 70, y: 1440, html: `Üç arabanın hızı aynı: v ${E} 10 ${KS('m', 's')}` },
   { s: 'sv', u: 6.0, x: 70, y: 1565, html: `${OM} ${E} ${KS('v', 'r')} ${AR} r küçük, ${OM} <em>BÜYÜK</em>` },
@@ -189,6 +189,8 @@ const NOTES = [
   { s: 'sc', u: SC.bottom - 1.0, z: SC.bottom + 0.3, x: 70, y: 1570, html: `İnerken: m ${D} g ${D} h ${AR} ${KS('1', '2')} m ${D} ${V2} <em>(kinetik)</em>` },
   { s: 'sc', u: SC.bottom + 0.6, z: SC.resume + 0.4, x: 70, y: 1440, html: `Altta: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
   { s: 'sc', u: SC.bottom + 3.0, z: SC.resume + 0.4, x: 70, y: 1590, html: `<span class="o">N</span> ${GT} <span class="r">mg</span> ${AR} kendini <em>AĞIR</em> hissedersin`, ck: [930, 1690, '✓', SC.bottom + 4.8] },
+  { s: 'sc', u: SC.resume + 0.5, z: SC.hit - 0.05, x: 70, y: 1440, html: `Döngüde: <span class="g">v</span> ${AR} <em>TEĞET</em>, <span class="p">a</span> ${AR} <em>MERKEZE</em>` },
+  { s: 'sc', u: SC.resume + 2.8, z: SC.hit - 0.05, x: 70, y: 1570, html: `<span class="p">a</span> ${E} ${KS(V2, 'r')} ${AR} tepede v <em>KÜÇÜK</em>, a <em>KÜÇÜK</em>` },
   { s: 'sc', u: SC.hit + 0.1, x: 70, y: 1440, html: `Yaya çarpınca: ${KS('1', '2')} m ${D} ${V2} ${AR} ${KS('1', '2')} k ${D} x<sup>2</sup>` },
   { s: 'sc', u: SC.stop + 0.4, x: 70, y: 1585, html: `Kinetik enerji yayda <em>DEPOLANIR</em>`, ck: [990, 1590, '✓', SC.stop + 2.6] },
 ];
@@ -237,9 +239,9 @@ function arrow(color) {
 }
 const UP = new THREE.Vector3(0, 1, 0);
 function setArrow(a, from, dir, len) {
-  const d = dir.clone().normalize(); const L = Math.max(len - 0.42, 0.01);
+  const d = dir.clone().normalize(), hs = Math.min(1, Math.max(len, 0.05) / 0.75), L = Math.max(len - 0.42 * hs, 0.01);
   a.position.copy(from); a.quaternion.setFromUnitVectors(UP, d);
-  a.sh.scale.set(1, L, 1); a.sh.position.set(0, L / 2, 0); a.hd.position.set(0, L + 0.21, 0); a.visible = true;
+  a.sh.scale.set(hs, L, hs); a.sh.position.set(0, L / 2, 0); a.hd.scale.set(hs, hs, hs); a.hd.position.set(0, L + 0.21 * hs, 0); a.visible = true;
 }
 
 // --- Sahne 1: masada ipe bağlı top ---
@@ -258,7 +260,7 @@ const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPts), n
 ring.computeLineDistances(); G1.add(ring);
 const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineDashedMaterial({ color: 0xfacc15, dashSize: 0.22, gapSize: 0.14 }));
 G1.add(trail);
-const vA = arrow(0x22c55e), fA = arrow(0xef4444);
+const vA = arrow(0x22c55e), fA = arrow(0xef4444), aR = arrow(0xa855f7);
 // roketin yönü: burun (yerel +y) hız yönünde, pencere (yerel +z) hep yukarıda → kendi ekseni etrafında dönmez
 function aimRocket(dir) { const y = dir.clone().setY(0).normalize(), z = new THREE.Vector3(0, 1, 0), x = new THREE.Vector3().crossVectors(y, z).normalize();
   ball.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z)); }
@@ -280,7 +282,7 @@ const water = mesh(new THREE.CylinderGeometry(0.47, 0.43, 0.42, 32), 0x38bdf8, {
 const blob = mesh(new THREE.SphereGeometry(0.42, 24, 16), 0x38bdf8, { op: 0.92 }); blob.visible = false; G2.add(blob);
 const puddle = mesh(new THREE.CylinderGeometry(1, 1, 0.04, 40), 0x38bdf8, { op: 0.85, cast: false }); puddle.visible = false; G2.add(puddle);
 const drops = []; for (let i = 0; i < 7; i++) { const d = mesh(new THREE.SphereGeometry(0.11, 12, 8), 0x7dd3fc, { edge: false }); d.visible = false; G2.add(d); drops.push(d); }
-const gA = arrow(0xef4444), nA = arrow(0xfb923c), v2A = arrow(0x22c55e);
+const gA = arrow(0xef4444), nA = arrow(0xfb923c), v2A = arrow(0x22c55e), bV = arrow(0x22c55e), bA = arrow(0xa855f7), tA = arrow(0xa855f7);
 
 // --- Viraj sahnesi: 3 halka yol, 3 araba (aynı v) ---
 const GV = new THREE.Group(); scene.add(GV);
@@ -294,7 +296,7 @@ LANES.forEach((L, i) => {
   const bd = mesh(new THREE.BoxGeometry(0.86, 0.26, 0.46), L.c); bd.position.y = 0.25; car.add(bd);
   const cb = mesh(new THREE.BoxGeometry(0.42, 0.22, 0.4), 0xe5e7eb); cb.position.set(-0.04, 0.48, 0); car.add(cb);
   for (const [x, z] of [[0.27, 0.24], [0.27, -0.24], [-0.27, 0.24], [-0.27, -0.24]]) { const wh = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 16), 0x111827); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.12, z); car.add(wh); }
-  L.vA = arrow(0x22c55e); L.aA = arrow(0xef4444);
+  L.vA = arrow(0x22c55e); L.aA = arrow(0xa855f7);
   L.wedge = mesh(new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 8, 1, 0, 0.1), L.c, { op: 0.45, cast: false, edge: false }); L.wedge.rotation.x = -Math.PI / 2; L.wedge.position.y = 0.025; GV.add(L.wedge);
 });
 const startLine = mesh(new THREE.BoxGeometry(0.06, 0.02, 3.6), 0xffffff, { cast: false, edge: false }); startLine.position.set(0, 0.03, 2.8); GV.add(startLine);
@@ -333,7 +335,7 @@ const wagon = new THREE.Group(); GC.add(wagon);
   const rider = mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.36, 14), 0x3b82f6); rider.position.set(-0.18, 0.66, 0); wagon.add(rider);
   const head = mesh(new THREE.SphereGeometry(0.14, 16, 12), 0xfcd34d); head.position.set(-0.18, 0.96, 0); wagon.add(head);
   for (const [x, z] of [[0.32, 0.3], [0.32, -0.3], [-0.32, 0.3], [-0.32, -0.3]]) { const wh = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 14), 0x111827); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.08, z); wagon.add(wh); } }
-const cN = arrow(0xfb923c), cG = arrow(0xef4444), cV = arrow(0x22c55e);
+const cN = arrow(0xfb923c), cG = arrow(0xef4444), cV = arrow(0x22c55e), cA = arrow(0xa855f7);
 
 // çember üzerindeki noktanın dünya konumu (θ=0 alt, θ=π tepe)
 const rimPos = (th, r) => new THREE.Vector3(Math.sin(th) * r, AX - Math.cos(th) * r, 0);
@@ -341,7 +343,7 @@ const rimPos = (th, r) => new THREE.Vector3(Math.sin(th) * r, AX - Math.cos(th) 
 // ---------------- etiketler ----------------
 const LBL = {};
 function lbl(id, txt, bg, fg = '#fff') { const d = document.createElement('div'); d.className = 'lbl'; d.textContent = txt; d.style.background = bg; d.style.color = fg; $('lbls').appendChild(d); LBL[id] = d; }
-lbl('v', 'v', '#16a34a'); lbl('F', 'F', '#dc2626'); lbl('mg', 'mg', '#dc2626'); lbl('N', 'N', '#ea580c'); lbl('v2', 'v', '#16a34a'); lbl('mrk', 'merkez', '#F5C400', '#1f232c'); lbl('cN', 'N', '#ea580c'); lbl('cG', 'mg', '#dc2626'); lbl('cV', 'v', '#16a34a'); lbl('cM', 'merkez', '#F5C400', '#1f232c'); lbl('hh', 'h', '#F5C400', '#1f232c'); lbl('kv', 'yay', '#16a34a');
+lbl('v', 'v', '#16a34a'); lbl('F', 'F', '#dc2626'); lbl('mg', 'mg', '#dc2626'); lbl('N', 'N', '#ea580c'); lbl('v2', 'v', '#16a34a'); lbl('mrk', 'merkez', '#F5C400', '#1f232c'); lbl('cN', 'N', '#ea580c'); lbl('cG', 'mg', '#dc2626'); lbl('cV', 'v', '#16a34a'); lbl('cM', 'merkez', '#F5C400', '#1f232c'); lbl('hh', 'h', '#F5C400', '#1f232c'); lbl('kv', 'yay', '#16a34a'); lbl('a', 'a', '#9333ea'); lbl('cA', 'a', '#9333ea'); lbl('bv', 'v', '#16a34a'); lbl('ba', 'a', '#9333ea'); lbl('ta', 'a', '#9333ea');
 function chip(id, html, col) { const d = document.createElement('div'); d.className = 'chip'; d.innerHTML = html; d.style.borderColor = col; $('lbls').appendChild(d); LBL[id] = d; }
 LANES.forEach((L, i) => { chip('car' + i, `<div>${OM} ${E} ${L.w}</div><div>a ${E} ${L.a}</div>`, L.hex); chip('r' + i, `r ${E} ${L.R} m`, L.hex); });
 let glTop = 0;
@@ -427,7 +429,8 @@ function render(t) {
       rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(p.x, 0, p.z).normalize());
       const av = clamp((u - 1.6) / 0.4), af = clamp((u - 4.2) / 0.4);
       if (av > 0) { setArrow(vA, p.clone().add(new THREE.Vector3(0, 0.05, 0)).add(tang(u).multiplyScalar(0.85)), tang(u), 1.7 * av); place('v', p.clone().add(tang(u).multiplyScalar(2.75)), av, 0, -40); }
-      if (af > 0) { const toC = p.clone().multiplyScalar(-1).setY(0).normalize(); setArrow(fA, p.clone().add(toC.clone().multiplyScalar(0.4)), toC, 1.4 * af); place('F', p.clone().add(toC.multiplyScalar(1.5)), af, 0, -40); }
+      if (af > 0) { const toC = p.clone().multiplyScalar(-1).setY(0).normalize(); setArrow(fA, p.clone().add(toC.clone().multiplyScalar(0.4)), toC, 1.4 * af); place('F', p.clone().add(toC.clone().multiplyScalar(1.5)), af, 0, -40);
+        setArrow(aR, p.clone().add(toC.clone().multiplyScalar(0.4)).add(new THREE.Vector3(0, 0.45, 0)), toC, 1.1 * af); place('a', p.clone().add(toC.clone().multiplyScalar(1.3)).add(new THREE.Vector3(0, 0.45, 0)), af, 0, -48); }
     } else {
       const p0 = orbit(SNAP), d = tang(SNAP), s = (u - SNAP) * W * Rr;
       const p = p0.clone().add(d.clone().multiplyScalar(s)); ball.position.copy(p); aimRocket(d); ball.visible = s < 9;
@@ -468,7 +471,7 @@ function render(t) {
     else if (u < SC.start) s = sAtSim(0);
     else if (u < SC.bottom) s = sAtSim(u - SC.start);
     else if (u < SC.resume) s = ROLL.sLoop;                         // döngünün dibinde dur (kuvvetleri göster)
-    else if (u < SC.hit) s = sAtSim(ROLL.tBottom + (u - SC.resume));
+    else if (u < SC.hit) s = sAtSim(ROLL.tBottom + (u - SC.resume) * SC.slow);
     else {                                                          // yay: x = A·sin(…) ile sıkışır, durur
       const A = 0.85, tc = u - SC.hit, wS = Math.PI / (2 * SC.comp);   // yay sıkışır
       cx = A * Math.sin(wS * Math.min(tc, SC.comp)); s = ROLL.sContact + cx;   // en çok sıkışma anında kalır: enerji yayda depolandı
@@ -482,15 +485,25 @@ function render(t) {
     hLine.visible = !HK && u < SC.bottom + 0.3;
     if (HK) { R3.render(scene, cam); return; }
     place('hh', new THREE.Vector3(-10.6, (R_H0 + R_TY) / 2, R_Z), clamp((u - 0.2) / 0.4) * (1 - clamp((u - SC.bottom) / 0.3)), -10, 0);
+    const moving = (u >= SC.start && u < SC.bottom) || (u >= SC.resume && u < SC.hit);
+    if (moving) {                                                   // canlı v (enerjiden) ve a = v²/r (yalnız döngüde)
+      const vr = Math.sqrt(Math.max(2 * R_G * (R_H0 - c.p.y), 0)), inLoop = s > ROLL.sLoop && s < ROLL.sLoopEnd;
+      const o = c.p.clone().add(new THREE.Vector3(0, 0, 0.95 - c.p.z)).add(c.u.clone().multiplyScalar(0.45));
+      setArrow(cV, o, c.f, 0.17 * vr); place('cV', o.clone().add(c.f.clone().multiplyScalar(0.17 * vr + 0.35)), clamp((u - SC.start) / 0.3), 0, 0);
+      if (inLoop) { const aa = vr * vr / R_RC; setArrow(cA, o, c.u, 0.027 * aa); place('cA', o.clone().add(c.u.clone().multiplyScalar(0.027 * aa + 0.35)), 1, 0, 0); }
+    }
     if (u >= SC.bottom + 0.1 && u < SC.resume) {
       const k = clamp((u - SC.bottom - 0.1) / 0.5), base = c.p.clone().add(new THREE.Vector3(0, 0.5, 0.9));
+      const aB = 2 * R_G * (R_H0 - R_TY) / R_RC;                   // dipte a = v²/r (yukarı, merkeze)
+      setArrow(cA, base.clone().add(new THREE.Vector3(-0.7, 0, 0)), new THREE.Vector3(0, 1, 0), 0.027 * aB * k);
+      place('cA', base.clone().add(new THREE.Vector3(-0.7, 0.027 * aB + 0.3, 0)), k, -30, 0);
       setArrow(cN, base.clone().add(new THREE.Vector3(0.15, 0, 0)), new THREE.Vector3(0, 1, 0), 2.2 * k);      // N ≈ 6,6 mg (dipte)
       setArrow(cG, base.clone().add(new THREE.Vector3(-0.25, 0, 0)), new THREE.Vector3(0, -1, 0), 0.5 * k);    // mg küçük
       setArrow(cV, c.p.clone().add(new THREE.Vector3(0.6, 0.35, 0.9)), new THREE.Vector3(1, 0, 0), 1.3 * k);
       place('cN', base.clone().add(new THREE.Vector3(0.15, 1.9, 0)), k, 50, 0);
       place('cG', base.clone().add(new THREE.Vector3(-0.25, -0.35, 0)), k, -55, 0);
       place('cV', c.p.clone().add(new THREE.Vector3(2.1, 0.35, 0.9)), k, 10, 0);
-      place('cM', new THREE.Vector3(0, R_CY, 0), k, -120, 0);
+      place('cM', new THREE.Vector3(0, R_CY, 0), k, 120, -30);
     }
     place('kv', new THREE.Vector3(R_WALL - 0.7, R_TY + 0.9, -R_Z), clamp((u - SC.hit + 1.2) / 0.4), 20, -75);
     R3.render(scene, cam); return;
@@ -503,7 +516,14 @@ function render(t) {
   else if (sec === 's3') setCam(3.0 + Math.sin(u * 0.15) * 0.6, 4.6, 14.2, -1.6, AX - 0.6, 0);
   else setCam(5.6 + Math.sin(u * 0.15) * 0.6, 4.4, 12.4, 0, AX - 0.2, 0);
 
-  if (sec === 's2' && u >= 7.2 && u < 12.2) {
+  const frz2 = sec === 's2' && u >= 7.2 && u < 12.2;
+  if ((sec === 's2' || sec === 's3') && !frz2) {                   // kovada canlı v (teğet) ve a (merkeze): v ∝ ω, a ∝ ω²
+    const w = sec === 's2' ? 4 : 1.6, bc = rimPos(th, RR + 0.45).add(new THREE.Vector3(0, 0, 0.8));
+    const vd = new THREE.Vector3(Math.cos(th), Math.sin(th), 0), ad = new THREE.Vector3(-Math.sin(th), Math.cos(th), 0), k = clamp(u / 0.4);
+    setArrow(bV, bc, vd, 0.38 * w * k); setArrow(bA, bc, ad, 0.1 * w * w * k);
+    place('bv', bc.clone().add(vd.clone().multiplyScalar(0.38 * w + 0.35)), k, 0, 0); place('ba', bc.clone().add(ad.clone().multiplyScalar(0.1 * w * w + 0.35)), k, 0, 0);
+  }
+  if (frz2) {
     const k = clamp((u - 7.2) / 0.5); const wc = rimPos(th, RR + 0.68);   // suyun merkezi (tepede)
     setArrow(gA, wc.clone().add(new THREE.Vector3(0.25, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.3 * k);
     setArrow(nA, wc.clone().add(new THREE.Vector3(-0.35, 0.25, 0.7)), new THREE.Vector3(0, -1, 0), 1.0 * k);
@@ -512,6 +532,8 @@ function render(t) {
     place('N', wc.clone().add(new THREE.Vector3(-0.35, -0.95, 0.7)), k, -50, 0);
     place('v2', wc.clone().add(new THREE.Vector3(-2.4, 0.1, 0)), k, 0, -10);
     place('mrk', new THREE.Vector3(0, AX, 0), k, 0, 70);
+    setArrow(tA, wc.clone().add(new THREE.Vector3(0.8, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.6 * k);    // a: merkeze (aşağı)
+    place('ta', wc.clone().add(new THREE.Vector3(0.8, -1.9, 0.7)), k, 30, 0);
   }
   if (sec === 's3') {
     const W3 = 1.6, rW = RR + 0.68, thSep = Math.acos(-W3 * W3 * rW / 9.8), UR = (thSep + 1.36) / W3;   // su kovadan ayrılır
