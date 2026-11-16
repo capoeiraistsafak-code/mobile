@@ -1,15 +1,15 @@
-[curious] Lunapark treni döngüde ters dönüyor… ama neden DÜŞMÜYOR?
+[curious] Arkadaşlar, lunapark treni döngüde ters dönüyor… peki neden DÜŞMÜYOR?
 
-[warmly] Ben Şafak Hoca. Çembersel hareketi üç boyutlu animasyonla anlatıyorum… haydi başlayalım!
+[warmly] Ben Şafak Hoca. Bugün çembersel hareketi üç boyutlu animasyonlarla birlikte inceleyeceğiz. Hazırsanız başlayalım!
 
-[curious] İpe bağlı bir roketi döndürüyoruz. Hız, yani v, her an çembere TEĞET. [warmly] İp roketi merkeze çeker: kuvvet, yani F, ve ivme, yani a, her an MERKEZE doğrudur. Peki ip koparsa? [excited] Roket kıvrılmaz… teğet boyunca DÜZ gider. Buna eylemsizlik diyoruz.
+[warmly] İlk örneğimiz ipe bağlı bir roket. Roketi döndürüyoruz… şimdi dikkat edin. [firmly] Hız, yani v, her an çembere TEĞET. [warmly] Peki roketi çemberde tutan ne? İp! İp roketi sürekli merkeze çeker. Yani kuvvet, F, ve ivme, a, her an MERKEZE doğrudur. Bunu not edin. [curious] Şimdi bir soru: ip koparsa roket ne yapar? [excited] Kıvrılmaz arkadaşlar… teğet boyunca DÜZ gider. İşte buna eylemsizlik diyoruz.
 
-[warmly] Şimdi üç araba, üç farklı viraj. Üç arabanın hızı aynı: saniyede on metre. [curious] Aynı sürede küçük virajdaki araba daha BÜYÜK açı tarar. Açısal hız, omega eşittir v bölü r. Yarıçap küçülünce açısal hız BÜYÜR: on metrede omega bir, otuz metrede üçte bir. [warmly] İvme, a eşittir v kare bölü r. Yarıçap küçülünce ivme de büyür: on, beş, üç virgül üç.
+[warmly] Gelelim açısal hıza. Üç araba, üç farklı viraj. Üç arabanın hızı aynı: saniyede on metre. [curious] Bakın… aynı sürede hangisi daha büyük açı taradı? Evet, küçük virajdaki araba! [firmly] Açısal hız, omega eşittir v bölü r. Yarıçap küçülünce açısal hız BÜYÜR. On metrede omega bir, otuz metrede üçte bir. [warmly] Şimdi ivmeye bakalım: a eşittir v kare bölü r. Yarıçap küçülünce ivme de büyür: on, beş, üç virgül üç. Bu ilişki sınavda çok sorulur, aklınızda olsun.
 
-[curious] Suyla dolu kovayı döndürüyoruz. Tepede kova ters… ama su DÖKÜLMÜYOR. [warmly] Tepede ağırlık da, kovanın tepkisi de aşağı, yani merkeze doğru: N artı m g, eşittir m v kare bölü r. [excited] Kova hızlı dönerse v kare bölü r, g'den büyük olur… ve su dökülmez!
+[curious] Şimdi klasik bir deney: suyla dolu kovayı döndürüyoruz. Kova tepede ters… ama su DÖKÜLMÜYOR. Neden? [warmly] Tepede iki kuvvete bakıyoruz: ağırlık ve kovanın tepkisi. İkisi de aşağı, yani merkeze doğru. O hâlde N artı m g, eşittir m v kare bölü r. [firmly] Kova hızlı dönerse v kare bölü r, g'den büyük olur… [excited] ve su dökülmez!
 
-[curious] Peki kova yavaş dönerse? v kare bölü r, g'den küçük kalır… [warmly] ve su DÖKÜLÜR. Tepede en küçük hız, karekök içinde g çarpı r. Yarıçap bir metre, g on ise bu hız, saniyede yaklaşık üç virgül iki metre.
+[curious] Peki kova yavaş dönerse ne olur? [warmly] Bu sefer v kare bölü r, g'den küçük kalır… ve su DÖKÜLÜR. [firmly] Buradan önemli bir sonuç çıkıyor: tepede en küçük hız, karekök içinde g çarpı r. Örneğin yarıçap bir metre, g on ise bu hız saniyede yaklaşık üç virgül iki metredir.
 
-[warmly] Son olarak lunapark treni. Tepede potansiyel enerjisi var: E p eşittir m g h. [curious] Yokuştan inerken bu enerji kinetik enerjiye dönüşür ve tren hızlanır. [warmly] Döngünün dibinde, N eksi m g, eşittir m v kare bölü r. Yani N, m g'den büyüktür… bu yüzden kendinizi AĞIR hissedersiniz. Döngüde hız her an teğet, ivme her an merkeze. Tepede hız küçülür… ivme de küçülür. [excited] Sonunda tren yaya çarpar… ve kinetik enerji yayda DEPOLANIR.
+[warmly] Son örneğimiz lunapark treni. Tren tepede duruyor ve potansiyel enerjisi var: E p eşittir m g h. [curious] Yokuştan inerken ne oluyor? Bu enerji kinetik enerjiye dönüşüyor ve tren hızlanıyor. [warmly] Şimdi döngünün dibine bakalım. Burada N eksi m g, eşittir m v kare bölü r. Yani N, m g'den büyük… [firmly] işte bu yüzden kendinizi AĞIR hissedersiniz. Döngü boyunca hız her an teğet, ivme her an merkeze doğru. Tepede hız küçülür… ivme de küçülür. [excited] Ve sonunda tren yaya çarpar… kinetik enerji yayda DEPOLANIR.
 
-[excited] Çembersel hareket bu kadar! Takip etmeyi unutmayın…
+[warmly] Evet arkadaşlar, çembersel hareket bu kadar. Takip etmeyi unutmayın… görüşmek üzere!
