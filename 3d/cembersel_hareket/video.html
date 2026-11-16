@@ -2,6 +2,7 @@
 <html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="node_modules/three/build/three.min.js"></script>
+<script src="sync.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1920px;overflow:hidden;background:#1f232c;font-family:Inter,sans-serif;color:#e5e7eb}
@@ -204,6 +205,13 @@ NOTES.forEach((n, i) => {
     c.style.color = n.ck[2] === '✓' ? '#4ade80' : '#f87171'; c.style.left = n.ck[0] + 'px'; c.style.top = (n.ck[1] - 10) + 'px'; $('notes').appendChild(c);
     n.ckT = T[n.s][0] + n.ck[3]; }
 });
+
+// ---------------- sese göre zaman eşleme ----------------
+// sync.js: window.SYNC = { hook: sn, cover: sn, ... } (sahnelerin sesli süreleri). Yoksa video eski sürelerle oynar.
+let TN = null;
+if (window.SYNC) { TN = {}; let a = 0; for (const k of SECT) { const d = Math.max(T[k][1] - T[k][0], window.SYNC[k] || 0); TN[k] = [a, a + d]; a += d; } }
+const n2o = tn => { if (!TN) return tn; const k = SECT.find(k => tn < TN[k][1]) || 'end'; return T[k][0] + (tn - TN[k][0]) * (T[k][1] - T[k][0]) / (TN[k][1] - TN[k][0]); };
+const o2n = to => { if (!TN) return to; const k = SECT.find(k => to < T[k][1]) || 'end'; return TN[k][0] + (to - T[k][0]) * (TN[k][1] - TN[k][0]) / (T[k][1] - T[k][0]); };
 
 // ses olayları (mixer için)
 window.EVENTS = { dur: DUR, gecis: SECT.slice(1).map(k => T[k][0]), tik: [], kalem: [] };
@@ -558,5 +566,10 @@ function render(t) {
   }
   R3.render(scene, cam);
 }
-window.DUR = DUR; window.render = render;
+window.DUR = TN ? TN.end[1] : DUR; window.render = tn => render(n2o(tn));
+if (TN) {                                   // efekt seslerini yeni zaman çizelgesine taşı
+  EVENTS.dur = window.DUR; EVENTS.gecis = SECT.slice(1).map(k => TN[k][0]); EVENTS.tik = EVENTS.tik.map(o2n);
+  EVENTS.kalem = EVENTS.kalem.map(([a, d]) => [o2n(a), o2n(a + d) - o2n(a)]);
+  EVENTS.bolum = SECT.map(k => [k, TN[k][0], TN[k][1]]);
+}
 </script></body></html>
