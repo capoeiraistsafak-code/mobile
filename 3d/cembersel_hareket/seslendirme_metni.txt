@@ -12,4 +12,4 @@
 
 [warmly] Son olarak lunapark treni. Tepede potansiyel enerjisi var: E p eşittir m g h. [curious] Yokuştan inerken bu enerji kinetik enerjiye dönüşür ve tren hızlanır. [warmly] Döngünün dibinde, N eksi m g, eşittir m v kare bölü r. Yani N, m g'den büyüktür… bu yüzden kendinizi AĞIR hissedersiniz. Döngüde hız her an teğet, ivme her an merkeze. Tepede hız küçülür… ivme de küçülür. [excited] Sonunda tren yaya çarpar… ve kinetik enerji yayda DEPOLANIR.
 
-[excited] Çembersel hareket bu kadar! Takip etmeyi unutmayın… sıradaki konu: dönerek öteleme ve açısal momentum.
+[excited] Çembersel hareket bu kadar! Takip etmeyi unutmayın…
