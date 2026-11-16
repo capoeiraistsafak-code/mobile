@@ -8,7 +8,7 @@ p.on('console',m=>{if(m.type()==='error')console.log('JS:',m.text())});p.on('pag
 await p.goto('file://'+path.join(__dirname,'video.html'));await p.waitForLoadState('networkidle');await p.evaluate(()=>document.fonts.ready);await p.waitForFunction(()=>window.DUR);
 require('fs').writeFileSync(path.join(__dirname,'olaylar.json'),JSON.stringify(await p.evaluate(()=>EVENTS)));
 if(only){for(const t of only.split(',')){await p.evaluate(t=>render(+t),t);await p.screenshot({path:`${out}_${String(t).padStart(5,'0')}.png`});}await b.close();return;}
-const dur=await p.evaluate(()=>DUR);const n=Math.round(dur*fps);
+const dur=await p.evaluate(()=>window.DUR);const n=Math.round(dur*fps);
 const ff=spawn('ffmpeg',['-y','-loglevel','error','-f','image2pipe','-framerate',String(fps),'-c:v','mjpeg','-i','-','-c:v','libx264','-preset','medium','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',out],{stdio:['pipe','inherit','inherit']});
 for(let i=0;i<n;i++){await p.evaluate(t=>render(t),i/fps);const buf=await p.screenshot({type:'jpeg',quality:92});if(!ff.stdin.write(buf))await new Promise(r=>ff.stdin.once('drain',r));if(i%300==0)console.log(i,'/',n);}
 ff.stdin.end();await new Promise(r=>ff.on('close',r));await b.close();console.log('frames',n);})();

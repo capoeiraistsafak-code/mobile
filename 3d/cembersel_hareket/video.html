@@ -566,7 +566,7 @@ function render(t) {
   }
   R3.render(scene, cam);
 }
-window.DUR = TN ? TN.end[1] : DUR; window.render = tn => render(n2o(tn));
+const renderEski = render; window.DUR = TN ? TN.end[1] : DUR; window.render = tn => renderEski(n2o(tn));
 if (TN) {                                   // efekt seslerini yeni zaman çizelgesine taşı
   EVENTS.dur = window.DUR; EVENTS.gecis = SECT.slice(1).map(k => TN[k][0]); EVENTS.tik = EVENTS.tik.map(o2n);
   EVENTS.kalem = EVENTS.kalem.map(([a, d]) => [o2n(a), o2n(a + d) - o2n(a)]);
