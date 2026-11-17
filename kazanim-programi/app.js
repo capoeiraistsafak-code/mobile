@@ -65,7 +65,21 @@ function excelIndir(wb, ad) {
   const veri = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
   indir(new Blob([veri], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), ad);
 }
-function indir(blob, ad) {
+// Claude'da yayınlanan sürümde (KT_ARTIFACT) sayfa kendisi dosya indiremez ve yazdıramaz;
+// indirme, görüntüleyicinin onayıyla "downloads" yeteneği üzerinden yapılır.
+const ARTIFACT = !!window.KT_ARTIFACT;
+async function indir(blob, ad) {
+  if (ARTIFACT) {
+    let dl = null;
+    try { dl = window.claude && await window.claude.use('downloads'); } catch (e) { dl = null; }
+    if (!dl) { toast('Dosya indirme bu görünümde kullanılamıyor. Programın bilgisayar sürümünü kullanın.', 5000); return; }
+    try { await dl.save({ filename: ad, data: blob }); toast('Dosya kaydedildi.'); }
+    catch (e) {
+      if (e && e.code === 'declined') return;
+      toast(e && e.code === 'rate_limited' ? 'Bir indirme penceresi zaten açık; biraz sonra tekrar deneyin.' : 'Dosya kaydedilemedi.', 4000);
+    }
+    return;
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = ad;
@@ -566,7 +580,42 @@ function onayla(mesaj, fn) {
 // ---------------------------------------------------------------------------
 // PANEL
 // ---------------------------------------------------------------------------
+function ornekVeriYukle() {
+  const sinif = sinifGetirVeyaOlustur('kurs_lise', '11', 'A');
+  const sinif2 = sinifGetirVeyaOlustur('okul_orta', '8', 'B');
+  [['1101', 'Örnek', 'Öğrenci Bir'], ['1102', 'Örnek', 'Öğrenci İki'], ['1103', 'Örnek', 'Öğrenci Üç'], ['1104', 'Örnek', 'Öğrenci Dört']]
+    .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id }));
+  [['801', 'Deneme', 'Kişi Bir'], ['802', 'Deneme', 'Kişi İki']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id }));
+  const kz = [
+    ['T.9.3.1', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metnin konusunu ve ana fikrini belirler. (örnek)'],
+    ['T.9.3.2', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metindeki yardımcı fikirleri belirler. (örnek)'],
+    ['T.9.3.3', 'Türkçe', 'Okuma', 'Söz Sanatları', 'Metindeki söz sanatlarını tespit ederek işlevlerini açıklar. (örnek)'],
+    ['M.9.1.1.1', 'Matematik', 'Mantık', 'Önermeler', 'Önermeyi ve önermenin doğruluk değerini açıklar. (örnek)'],
+    ['M.9.1.2.1', 'Matematik', 'Kümeler', 'Kümelerde Temel Kavramlar', 'Kümeler ile ilgili temel kavramları açıklar. (örnek)'],
+    ['M.9.2.2.1', 'Matematik', 'Denklemler ve Eşitsizlikler', 'Bölünebilme Kuralları', 'Bölünebilme kurallarıyla ilgili problemler çözer. (örnek)'],
+  ].map(([kod, ders, unite, konu, metin]) => { const k = { id: uid(), kod, ders, seviye: '9', unite, konu, metin }; S.kazanimlar.push(k); return k; });
+  const cevap = 'ABCDEABC';
+  const sorular = [0, 1, 2, 0, 3, 4, 5, 5].map((ki, i) => ({ no: String(i + 1), ders: kz[ki].ders, kazanimId: kz[ki].id, cevap: cevap[i] }));
+  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular };
+  S.sinavlar.push(sinav);
+  const og = sinifOgrencileri(sinif.id);
+  S.sonuclar[sinav.id] = { [og[0].id]: { 3: 'Y' }, [og[1].id]: { 1: 'Y', 4: 'Y', 6: 'Y', 8: 'B' }, [og[2].id]: { 2: 'B', 5: 'Y', 7: 'Y' }, [og[3].id]: {} };
+  S.ornek = true;
+  kaydet();
+  filtre.anSinif = sinif.id; filtre.anOgrenci = og[1].id;
+  toast('Örnek veriler yüklendi. Öğrenci analizi açılıyor.');
+  sekmeAc('analiz');
+}
+function ornekVeriSil() {
+  S = bosDurum(); kaydet(); ciz(); toast('Örnek veriler silindi.');
+}
+
 function cizPanel() {
+  const bos = !S.ogrenciler.length && !S.kazanimlar.length && !S.sinavlar.length;
+  $('#panelOrnek').innerHTML = bos
+    ? `<div class="card"><h2>Hemen denemek ister misiniz?</h2><p class="muted">Örnek bir sınıf, kazanımlar ve sonuçları girilmiş bir deneme sınavı yüklenir. Kendi verilerinizi aktarmadan önce silebilirsiniz.</p>
+       <button class="btn primary" id="btnOrnekYukle">Örnek verilerle dene</button></div>`
+    : S.ornek ? `<div class="ornek-uyari">Şu an örnek veriler yüklü. Kendi verilerinizi aktarmadan önce <button class="btn small" id="btnOrnekSil">Örnek verileri sil</button></div>` : '';
   const sonucSayisi = Object.values(S.sonuclar).reduce((t, x) => t + Object.keys(x).length, 0);
   $('#panelStats').innerHTML = [
     ['Sınıf', S.siniflar.length], ['Öğrenci', S.ogrenciler.length], ['Kazanım', S.kazanimlar.length],
@@ -1037,7 +1086,7 @@ function cizAnaliz() {
     ${kazanimsiz.length ? `<p class="small"><span class="chip orange">${kazanimsiz.length} yanlış/boş soruya kazanım atanmamış</span>
       (${kazanimsiz.slice(0, 12).map(x => `${esc(x.sinav.ad)} #${esc(x.q.no)}`).join(', ')}${kazanimsiz.length > 12 ? '…' : ''}). “Sınavlar” sekmesinden kazanım atayın.</p>` : ''}
     ${liste.length ? `<div class="toolbar"><button class="btn primary" id="btnPlanHazirla">Seçili kazanımlarla ödev / çalışma planı hazırla</button>
-      <button class="btn" id="btnKzListeYazdir">Kazanım listesini yazdır</button></div>` : ''}
+      ${ARTIFACT ? '' : '<button class="btn" id="btnKzListeYazdir">Kazanım listesini yazdır</button>'}</div>` : ''}
   </div>
 
   <div class="card">
@@ -1152,7 +1201,7 @@ function planGoster(planId) {
     ${p.not ? `<p><b>Öğretmen notu:</b> ${esc(p.not)}</p>` : ''}`, [
     { ad: 'Planı sil', danger: true, tikla: () => { S.planlar = S.planlar.filter(x => x.id !== p.id); kaydet(); ciz(); } },
     { ad: 'Excel\'e aktar', tikla: () => { planExcel(p); return false; } },
-    { ad: 'Yazdır', tikla: () => { planYazdir(p); return false; } },
+    ...(ARTIFACT ? [] : [{ ad: 'Yazdır', tikla: () => { planYazdir(p); return false; } }]),
     { ad: 'Kapat', primary: true },
   ]);
 }
@@ -1363,6 +1412,12 @@ function olaylar() {
     for (const p of S.planlar) { const x = p.gorevler.find(y => y.id === g); if (x) { x.tamam = e.target.checked; kaydet(); break; } }
   });
   $('#dlg').addEventListener('close', () => { if (aktifSekme === 'analiz') cizAnaliz(); });
+
+  // Panel
+  $('#panelOrnek').addEventListener('click', e => {
+    if (e.target.id === 'btnOrnekYukle') ornekVeriYukle();
+    else if (e.target.id === 'btnOrnekSil') onayla('Örnek veriler ve şu ana kadar girilen her şey silinsin mi?', ornekVeriSil);
+  });
 
   // Ayarlar
   $('#btnYedekAl').onclick = () => indir(new Blob([JSON.stringify(S)], { type: 'application/json' }), `kazanim_takip_yedek_${bugun()}.json`);

@@ -6,17 +6,38 @@
 <title>Kazanım Takip Programı</title>
 <style>
 :root {
-  --bg: #f4f6fa;
-  --card: #ffffff;
-  --text: #1d2433;
-  --muted: #6b7385;
-  --line: #dfe3ec;
-  --primary: #2f5bd3;
-  --primary-ink: #ffffff;
-  --danger: #c23b3b;
-  --ok: #1f8a4c;
-  --warn: #c98a12;
-  --chip: #eef2fb;
+  --bg: #f4f6fa; --card: #ffffff; --field: #ffffff; --text: #1d2433; --muted: #646d80;
+  --line: #dfe3ec; --line-strong: #b5bfd6; --primary: #2f5bd3; --primary-ink: #ffffff;
+  --danger: #c23b3b; --danger-line: #e9c2c2; --chip: #eef2fb; --chip-line: #c6d2f2;
+  --th: #f7f8fc; --hover: #fafbff; --bar: #1d2a4d; --bar-ink: #c9d3ee; --bar-active: #2f3f6e;
+  --ok-bg: #e2f5ea; --ok-line: #a9dcbf; --ok-ink: #17643a;
+  --bad-bg: #fde8e8; --bad-line: #f0b5b5; --bad-ink: #9c2525;
+  --warn-bg: #fff1d6; --warn-line: #ecd19a; --warn-ink: #8a5a00;
+  --shadow: rgba(0,0,0,.25); --backdrop: rgba(20, 28, 50, .45);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161f; --card: #1a202c; --field: #121722; --text: #e4e8f1; --muted: #9aa3b5;
+    --line: #2c3444; --line-strong: #46516a; --primary: #5b82ea; --primary-ink: #ffffff;
+    --danger: #ef7a7a; --danger-line: #5c2d2d; --chip: #242d40; --chip-line: #3b4a6e;
+    --th: #202736; --hover: #1f2635; --bar: #0d1220; --bar-ink: #aab6d6; --bar-active: #263252;
+    --ok-bg: #173226; --ok-line: #2b5a42; --ok-ink: #8fd9ad;
+    --bad-bg: #3a1c1f; --bad-line: #6a3035; --bad-ink: #f3a3a3;
+    --warn-bg: #352a12; --warn-line: #6a5424; --warn-ink: #f0cd7d;
+    --shadow: rgba(0,0,0,.6); --backdrop: rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161f; --card: #1a202c; --field: #121722; --text: #e4e8f1; --muted: #9aa3b5;
+  --line: #2c3444; --line-strong: #46516a; --primary: #5b82ea; --primary-ink: #ffffff;
+  --danger: #ef7a7a; --danger-line: #5c2d2d; --chip: #242d40; --chip-line: #3b4a6e;
+  --th: #202736; --hover: #1f2635; --bar: #0d1220; --bar-ink: #aab6d6; --bar-active: #263252;
+  --ok-bg: #173226; --ok-line: #2b5a42; --ok-ink: #8fd9ad;
+  --bad-bg: #3a1c1f; --bad-line: #6a3035; --bad-ink: #f3a3a3;
+  --warn-bg: #352a12; --warn-line: #6a5424; --warn-ink: #f0cd7d;
+  --shadow: rgba(0,0,0,.6); --backdrop: rgba(0,0,0,.6);
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
@@ -27,19 +48,19 @@ body {
   font-size: 15px;
 }
 .topbar {
-  position: sticky; top: 0; z-index: 10;
-  background: #1d2a4d; color: #fff;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--bar); color: #fff;
   display: flex; align-items: center; gap: 16px;
-  padding: 8px 16px; flex-wrap: wrap;
+  padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); flex-wrap: wrap;
 }
 .brand { font-weight: 700; font-size: 17px; }
 nav { display: flex; gap: 4px; flex-wrap: wrap; }
 nav button {
-  background: transparent; color: #c9d3ee; border: 0;
+  background: transparent; color: var(--bar-ink); border: 0;
   padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 14px;
 }
-nav button.active, nav button:hover { background: #2f3f6e; color: #fff; }
-main { max-width: 1280px; margin: 0 auto; padding: 16px; }
+nav button.active, nav button:hover { background: var(--bar-active); color: #fff; }
+main { max-width: 1280px; margin: 0 auto; padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1 { font-size: 22px; margin: 4px 0 14px; }
 h2 { font-size: 17px; margin: 0 0 10px; }
 h3 { font-size: 15px; margin: 14px 0 6px; }
@@ -59,16 +80,17 @@ h3 { font-size: 15px; margin: 14px 0 6px; }
 .btn, button.btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 12px; border-radius: 7px; border: 1px solid var(--line);
-  background: #fff; color: var(--text); cursor: pointer; font-size: 14px;
+  background: var(--card); color: var(--text); cursor: pointer; font-size: 14px;
   text-decoration: none; line-height: 1.2;
 }
-.btn:hover { border-color: #b5bfd6; }
+.btn:hover { border-color: var(--line-strong); }
+.btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
 .btn.primary { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
-.btn.danger { color: var(--danger); border-color: #e9c2c2; }
+.btn.danger { color: var(--danger); border-color: var(--danger-line); }
 .btn.small { padding: 4px 8px; font-size: 13px; }
 input, select, textarea {
   font: inherit; padding: 7px 9px; border: 1px solid var(--line);
-  border-radius: 7px; background: #fff; color: var(--text); max-width: 100%;
+  border-radius: 7px; background: var(--field); color: var(--text); max-width: 100%;
 }
 textarea { width: 100%; }
 .filters input { flex: 1 1 200px; }
@@ -77,8 +99,8 @@ textarea { width: 100%; }
 .tablewrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { background: #f7f8fc; font-weight: 600; position: sticky; top: 0; }
-tr:hover td { background: #fafbff; }
+th { background: var(--th); font-weight: 600; position: sticky; top: 0; }
+tr:hover td { background: var(--hover); }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
 .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
 .stat b { display: block; font-size: 24px; }
@@ -88,25 +110,25 @@ tr:hover td { background: #fafbff; }
   display: flex; justify-content: space-between; gap: 8px; align-items: center;
 }
 .list-item:hover { background: var(--chip); }
-.list-item.sel { background: var(--chip); border-color: #c6d2f2; }
+.list-item.sel { background: var(--chip); border-color: var(--chip-line); }
 .group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 10px 0 4px; }
 .chip { display: inline-block; background: var(--chip); border-radius: 999px; padding: 2px 8px; font-size: 12px; white-space: nowrap; }
-.chip.red { background: #fde8e8; color: #9c2525; }
-.chip.orange { background: #fff1d6; color: #8a5a00; }
-.chip.green { background: #e2f5ea; color: #17643a; }
+.chip.red { background: var(--bad-bg); color: var(--bad-ink); }
+.chip.orange { background: var(--warn-bg); color: var(--warn-ink); }
+.chip.green { background: var(--ok-bg); color: var(--ok-ink); }
 
 /* Soru kutuları */
 .q {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 34px; height: 34px; border-radius: 6px; font-weight: 600; font-size: 13px;
-  border: 1px solid var(--line); background: #fff; cursor: pointer; user-select: none;
+  border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; user-select: none;
   flex-direction: column; line-height: 1;
 }
 span.q { min-width: 22px; height: 22px; cursor: default; }
 .q small { font-weight: 400; font-size: 10px; color: var(--muted); }
-.q.D { background: #e2f5ea; border-color: #a9dcbf; color: #17643a; }
-.q.Y { background: #fde8e8; border-color: #f0b5b5; color: #9c2525; }
-.q.B { background: #fff1d6; border-color: #ecd19a; color: #8a5a00; }
+.q.D { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok-ink); }
+.q.Y { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad-ink); }
+.q.B { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
 .qrow { display: flex; flex-wrap: wrap; gap: 4px; }
 .ogr-sonuc { border-bottom: 1px solid var(--line); padding: 10px 0; }
 .ogr-sonuc .ad { font-weight: 600; margin-bottom: 6px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
@@ -125,9 +147,10 @@ span.q { min-width: 22px; height: 22px; cursor: default; }
 
 dialog {
   border: 0; border-radius: 12px; padding: 0; width: min(920px, calc(100vw - 32px));
-  max-height: calc(100vh - 40px); box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  max-height: calc(100vh - 40px); box-shadow: 0 20px 60px var(--shadow);
+  background: var(--card); color: var(--text);
 }
-dialog::backdrop { background: rgba(20, 28, 50, .45); }
+dialog::backdrop { background: var(--backdrop); }
 #dlgForm { padding: 18px; display: flex; flex-direction: column; max-height: calc(100vh - 40px); }
 #dlgIcerik { overflow: auto; flex: 1; }
 .dlg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
@@ -141,12 +164,14 @@ dialog::backdrop { background: rgba(20, 28, 50, .45); }
 
 #toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: #1d2a4d; color: #fff; padding: 10px 16px; border-radius: 8px;
+  background: var(--bar); color: #fff; padding: 10px 16px; border-radius: 8px;
   opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 100; max-width: calc(100vw - 32px);
 }
 #toast.show { opacity: 1; }
 
 .print-only { display: none; }
+.ornek-uyari { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
 @media print {
   body { background: #fff; }
   .topbar, main, #toast, dialog { display: none !important; }
@@ -177,6 +202,7 @@ dialog::backdrop { background: rgba(20, 28, 50, .45); }
   <!-- PANEL -->
   <section id="tab-panel" class="tab active">
     <h1>Panel</h1>
+    <div id="panelOrnek"></div>
     <div class="stats" id="panelStats"></div>
     <div class="card">
       <h2>Nasıl kullanılır?</h2>
@@ -418,7 +444,21 @@ function excelIndir(wb, ad) {
   const veri = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
   indir(new Blob([veri], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), ad);
 }
-function indir(blob, ad) {
+// Claude'da yayınlanan sürümde (KT_ARTIFACT) sayfa kendisi dosya indiremez ve yazdıramaz;
+// indirme, görüntüleyicinin onayıyla "downloads" yeteneği üzerinden yapılır.
+const ARTIFACT = !!window.KT_ARTIFACT;
+async function indir(blob, ad) {
+  if (ARTIFACT) {
+    let dl = null;
+    try { dl = window.claude && await window.claude.use('downloads'); } catch (e) { dl = null; }
+    if (!dl) { toast('Dosya indirme bu görünümde kullanılamıyor. Programın bilgisayar sürümünü kullanın.', 5000); return; }
+    try { await dl.save({ filename: ad, data: blob }); toast('Dosya kaydedildi.'); }
+    catch (e) {
+      if (e && e.code === 'declined') return;
+      toast(e && e.code === 'rate_limited' ? 'Bir indirme penceresi zaten açık; biraz sonra tekrar deneyin.' : 'Dosya kaydedilemedi.', 4000);
+    }
+    return;
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = ad;
@@ -919,7 +959,42 @@ function onayla(mesaj, fn) {
 // ---------------------------------------------------------------------------
 // PANEL
 // ---------------------------------------------------------------------------
+function ornekVeriYukle() {
+  const sinif = sinifGetirVeyaOlustur('kurs_lise', '11', 'A');
+  const sinif2 = sinifGetirVeyaOlustur('okul_orta', '8', 'B');
+  [['1101', 'Örnek', 'Öğrenci Bir'], ['1102', 'Örnek', 'Öğrenci İki'], ['1103', 'Örnek', 'Öğrenci Üç'], ['1104', 'Örnek', 'Öğrenci Dört']]
+    .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id }));
+  [['801', 'Deneme', 'Kişi Bir'], ['802', 'Deneme', 'Kişi İki']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id }));
+  const kz = [
+    ['T.9.3.1', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metnin konusunu ve ana fikrini belirler. (örnek)'],
+    ['T.9.3.2', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metindeki yardımcı fikirleri belirler. (örnek)'],
+    ['T.9.3.3', 'Türkçe', 'Okuma', 'Söz Sanatları', 'Metindeki söz sanatlarını tespit ederek işlevlerini açıklar. (örnek)'],
+    ['M.9.1.1.1', 'Matematik', 'Mantık', 'Önermeler', 'Önermeyi ve önermenin doğruluk değerini açıklar. (örnek)'],
+    ['M.9.1.2.1', 'Matematik', 'Kümeler', 'Kümelerde Temel Kavramlar', 'Kümeler ile ilgili temel kavramları açıklar. (örnek)'],
+    ['M.9.2.2.1', 'Matematik', 'Denklemler ve Eşitsizlikler', 'Bölünebilme Kuralları', 'Bölünebilme kurallarıyla ilgili problemler çözer. (örnek)'],
+  ].map(([kod, ders, unite, konu, metin]) => { const k = { id: uid(), kod, ders, seviye: '9', unite, konu, metin }; S.kazanimlar.push(k); return k; });
+  const cevap = 'ABCDEABC';
+  const sorular = [0, 1, 2, 0, 3, 4, 5, 5].map((ki, i) => ({ no: String(i + 1), ders: kz[ki].ders, kazanimId: kz[ki].id, cevap: cevap[i] }));
+  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular };
+  S.sinavlar.push(sinav);
+  const og = sinifOgrencileri(sinif.id);
+  S.sonuclar[sinav.id] = { [og[0].id]: { 3: 'Y' }, [og[1].id]: { 1: 'Y', 4: 'Y', 6: 'Y', 8: 'B' }, [og[2].id]: { 2: 'B', 5: 'Y', 7: 'Y' }, [og[3].id]: {} };
+  S.ornek = true;
+  kaydet();
+  filtre.anSinif = sinif.id; filtre.anOgrenci = og[1].id;
+  toast('Örnek veriler yüklendi. Öğrenci analizi açılıyor.');
+  sekmeAc('analiz');
+}
+function ornekVeriSil() {
+  S = bosDurum(); kaydet(); ciz(); toast('Örnek veriler silindi.');
+}
+
 function cizPanel() {
+  const bos = !S.ogrenciler.length && !S.kazanimlar.length && !S.sinavlar.length;
+  $('#panelOrnek').innerHTML = bos
+    ? `<div class="card"><h2>Hemen denemek ister misiniz?</h2><p class="muted">Örnek bir sınıf, kazanımlar ve sonuçları girilmiş bir deneme sınavı yüklenir. Kendi verilerinizi aktarmadan önce silebilirsiniz.</p>
+       <button class="btn primary" id="btnOrnekYukle">Örnek verilerle dene</button></div>`
+    : S.ornek ? `<div class="ornek-uyari">Şu an örnek veriler yüklü. Kendi verilerinizi aktarmadan önce <button class="btn small" id="btnOrnekSil">Örnek verileri sil</button></div>` : '';
   const sonucSayisi = Object.values(S.sonuclar).reduce((t, x) => t + Object.keys(x).length, 0);
   $('#panelStats').innerHTML = [
     ['Sınıf', S.siniflar.length], ['Öğrenci', S.ogrenciler.length], ['Kazanım', S.kazanimlar.length],
@@ -1390,7 +1465,7 @@ function cizAnaliz() {
     ${kazanimsiz.length ? `<p class="small"><span class="chip orange">${kazanimsiz.length} yanlış/boş soruya kazanım atanmamış</span>
       (${kazanimsiz.slice(0, 12).map(x => `${esc(x.sinav.ad)} #${esc(x.q.no)}`).join(', ')}${kazanimsiz.length > 12 ? '…' : ''}). “Sınavlar” sekmesinden kazanım atayın.</p>` : ''}
     ${liste.length ? `<div class="toolbar"><button class="btn primary" id="btnPlanHazirla">Seçili kazanımlarla ödev / çalışma planı hazırla</button>
-      <button class="btn" id="btnKzListeYazdir">Kazanım listesini yazdır</button></div>` : ''}
+      ${ARTIFACT ? '' : '<button class="btn" id="btnKzListeYazdir">Kazanım listesini yazdır</button>'}</div>` : ''}
   </div>
 
   <div class="card">
@@ -1505,7 +1580,7 @@ function planGoster(planId) {
     ${p.not ? `<p><b>Öğretmen notu:</b> ${esc(p.not)}</p>` : ''}`, [
     { ad: 'Planı sil', danger: true, tikla: () => { S.planlar = S.planlar.filter(x => x.id !== p.id); kaydet(); ciz(); } },
     { ad: 'Excel\'e aktar', tikla: () => { planExcel(p); return false; } },
-    { ad: 'Yazdır', tikla: () => { planYazdir(p); return false; } },
+    ...(ARTIFACT ? [] : [{ ad: 'Yazdır', tikla: () => { planYazdir(p); return false; } }]),
     { ad: 'Kapat', primary: true },
   ]);
 }
@@ -1716,6 +1791,12 @@ function olaylar() {
     for (const p of S.planlar) { const x = p.gorevler.find(y => y.id === g); if (x) { x.tamam = e.target.checked; kaydet(); break; } }
   });
   $('#dlg').addEventListener('close', () => { if (aktifSekme === 'analiz') cizAnaliz(); });
+
+  // Panel
+  $('#panelOrnek').addEventListener('click', e => {
+    if (e.target.id === 'btnOrnekYukle') ornekVeriYukle();
+    else if (e.target.id === 'btnOrnekSil') onayla('Örnek veriler ve şu ana kadar girilen her şey silinsin mi?', ornekVeriSil);
+  });
 
   // Ayarlar
   $('#btnYedekAl').onclick = () => indir(new Blob([JSON.stringify(S)], { type: 'application/json' }), `kazanim_takip_yedek_${bugun()}.json`);
