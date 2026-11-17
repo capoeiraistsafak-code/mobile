@@ -148,9 +148,9 @@ const sAtSim = tau => { const tb = ROLL.tab; if (tau <= 0) return tb[0][1]; let 
   while (b - a > 1) { const m = (a + b) >> 1; if (tb[m][0] <= tau) a = m; else b = m; } return tb[a][1]; };
 
 // ---------------- zaman çizelgesi ----------------
-const T = { hook: [0, 6.5], cover: [6.5, 10.5], s1: [10.5, 23], sv: [23, 39], s2: [39, 53], s3: [53, 64], sc: [64, 64 + SC.dur], end: [64 + SC.dur, 64 + SC.dur + 5.5] };
+const T = { hook: [0, 6.5], cover: [6.5, 15.85], s1: [15.85, 40.56], sv: [40.56, 69.0], s2: [69.0, 92.47], s3: [92.47, 111.16], sc: [111.16, 111.16 + SC.dur], end: [111.16 + SC.dur, 111.16 + SC.dur + 7.53] };   // süreler seslendirme paragraflarından
 const DUR = T.end[1];
-const FOLLOW = [[7.0, 8.4, 10.1], [T.end[0] + 0.8, T.end[0] + 2.4, DUR]];   // çıkış, tıklama, kayboluş
+const FOLLOW = [[7.0, 8.5, 15.3], [T.end[0] + 0.6, T.end[0] + 5.0, DUR]];   // 'Ben Şafak Hoca' / 'Takip etmeyi unutmayın'   // çıkış, tıklama, kayboluş
 const SECT = Object.keys(T);
 const secAt = t => SECT.find(k => t >= T[k][0] && t < T[k][1]) || 'end';
 
@@ -176,17 +176,17 @@ const GT = SV(100, '<path d="M18 12 Q52 32 82 50 Q52 66 18 86"/>');             
 const OM = SV(110, '<path d="M16 24 Q6 82 30 84 Q50 86 55 50 Q60 86 80 84 Q104 82 94 24"/>');        // ω
 const V2 = 'v<sup>2</sup>';
 const NOTES = [
-  { s: 's1', u: 2.0, x: 70, y: 1440, html: `Hız (<span class="g">v</span>) ${AR} her an <em>TEĞET</em>` },
-  { s: 's1', u: 4.6, x: 70, y: 1540, html: `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) ${AR} <em>MERKEZE</em>` },
-  { s: 's1', u: 9.4, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> gider (eylemsizlik)`, ck: [960, 1650, '✓', 11.3] },
-  { s: 'sv', u: 2.0, x: 70, y: 1440, html: `Üç arabanın hızı aynı: v ${E} 10 ${KS('m', 's')}` },
-  { s: 'sv', u: 6.0, x: 60, y: 1565, fs: 52, html: `Açısal hız: ${OM} ${E} ${KS('v', 'r')} ${AR} r küçülünce ${OM} <em>BÜYÜR</em>` },
-  { s: 'sv', u: 10.0, x: 60, y: 1690, fs: 52, html: `İvme: a ${E} ${KS(V2, 'r')} ${AR} r küçülünce a <em>BÜYÜR</em>`, ck: [960, 1690, '✓', 12.6] },
-  { s: 's2', u: 7.6, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> ${P} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
-  { s: 's2', u: 10.0, x: 70, y: 1600, fs: 54, html: `Hızlı dönerse ${AR} ${KS(V2, 'r')} ${GE} g ${AR} su <em>DÖKÜLMEZ</em>`, ck: [900, 1690, '✓', 12.2] },
-  { s: 's3', u: 4.0, x: 70, y: 1440, fs: 54, html: `Yavaş dönerse ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [950, 1525, '✗', 5.9] },
-  { s: 's3', u: 6.4, x: 70, y: 1590, html: `Tepede en küçük hız: v ${E} ${KOK(`g ${D} r`)}` },
-  { s: 's3', u: 8.4, x: 70, y: 1700, html: `r ${E} 1 m, g ${E} 10 ${AR} v ${AP} 3,2 ${KS('m', 's')}`, ck: [900, 1700, '✓', 10.0] },
+  { s: 's1', u: 5.4, x: 70, y: 1440, html: `Hız (<span class="g">v</span>) ${AR} her an <em>TEĞET</em>` },
+  { s: 's1', u: 12.5, x: 70, y: 1540, html: `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) ${AR} <em>MERKEZE</em>` },
+  { s: 's1', u: 21.0, x: 70, y: 1660, html: `İp kopunca ${AR} <em>DÜZ</em> gider (eylemsizlik)`, ck: [960, 1650, '✓', 22.8] },
+  { s: 'sv', u: 3.9, x: 70, y: 1440, html: `Üç arabanın hızı aynı: v ${E} 10 ${KS('m', 's')}` },
+  { s: 'sv', u: 11.9, x: 60, y: 1565, fs: 52, html: `Açısal hız: ${OM} ${E} ${KS('v', 'r')} ${AR} r küçülünce ${OM} <em>BÜYÜR</em>` },
+  { s: 'sv', u: 20.5, x: 60, y: 1690, fs: 52, html: `İvme: a ${E} ${KS(V2, 'r')} ${AR} r küçülünce a <em>BÜYÜR</em>`, ck: [960, 1690, '✓', 24.1] },
+  { s: 's2', u: 15.0, x: 70, y: 1440, html: `Tepede: <span class="o">N</span> ${P} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
+  { s: 's2', u: 17.8, x: 70, y: 1600, fs: 54, html: `Hızlı dönerse ${AR} ${KS(V2, 'r')} ${GE} g ${AR} su <em>DÖKÜLMEZ</em>`, ck: [900, 1690, '✓', 22.2] },
+  { s: 's3', u: 2.2, x: 70, y: 1440, fs: 54, html: `Yavaş dönerse ${AR} ${KS(V2, 'r')} ${LT} g ${AR} su <em>DÖKÜLÜR</em>`, ck: [950, 1525, '✗', 6.0] },
+  { s: 's3', u: 9.4, x: 70, y: 1590, html: `Tepede en küçük hız: v ${E} ${KOK(`g ${D} r`)}` },
+  { s: 's3', u: 13.0, x: 70, y: 1700, html: `r ${E} 1 m, g ${E} 10 ${AR} v ${AP} 3,2 ${KS('m', 's')}`, ck: [900, 1700, '✓', 16.6] },
   { s: 'sc', u: 0.2, z: SC.bottom + 0.3, x: 70, y: 1440, html: `Tepede: E<sub>p</sub> ${E} m ${D} g ${D} h <em>(potansiyel enerji)</em>` },
   { s: 'sc', u: SC.bottom - 1.0, z: SC.bottom + 0.3, x: 70, y: 1570, html: `İnerken: m ${D} g ${D} h ${AR} ${KS('1', '2')} m ${D} ${V2} <em>(kinetik)</em>` },
   { s: 'sc', u: SC.bottom + 0.6, z: SC.resume + 0.4, x: 70, y: 1440, html: `Döngünün dibinde: <span class="o">N</span> ${MI} <span class="r">mg</span> ${E} m ${D} ${KS(V2, 'r')}` },
@@ -375,13 +375,13 @@ function setCam(px, py, pz, lx, ly, lz) { cam.position.set(px, py, pz); cam.look
 function sceneTheta(sec, u) {
   if (sec === 'hook') return 4.2 * u;
   if (sec === 's2') {
-    const top = Math.PI * 7;                 // 3. turun tepesi
-    if (u < 4) return 4 * u;
-    if (u < 7) { const k = (u - 4) / 3; return 16 + (top - 16) * (1 - (1 - k) * (1 - k)); }
-    if (u < 12.2) return top;
-    const w = u - 12.2; return top + (w < 2 ? w * w : 4 + 4 * (w - 2));
+    const top = Math.PI * 5, T1 = 2.5, T2 = T1 + 2 * (top - 4 * T1) / 4;   // 'Kova tepede ters…' ≈ 5,4 sn
+    if (u < T1) return 4 * u;
+    if (u < T2) { const k = (u - T1) / (T2 - T1); return 4 * T1 + (top - 4 * T1) * (1 - (1 - k) * (1 - k)); }
+    if (u < 22.2) return top;                                              // 've su dökülmez!' sonrası tekrar döner
+    const w = u - 22.2; return top + (w < 2 ? w * w : 4 + 4 * (w - 2));
   }
-  if (sec === 's3') return -1.36 + 1.6 * u;
+  if (sec === 's3') return -6.54 + 1.6 * u;   // su ≈ 5,6 sn'de ayrılır
   return 0;
 }
 
@@ -433,7 +433,7 @@ function render(t) {
   ring.visible = trail.visible = false;
 
   if (sec === 's1') {
-    const W = 1.2, Rr = 2.5, SNAP = (Math.PI + 0.95 + 2 * Math.PI) / W;   // a = π + 0,35: hız ekranın üst ortasına doğru
+    const W = 1.2, Rr = 2.5, SNAP = (Math.PI + 0.95 + 6 * Math.PI) / W;   // ≈ 19,1 sn: 'Kıvrılmaz arkadaşlar…'   // a = π + 0,35: hız ekranın üst ortasına doğru
     const orbit = (s) => { const a = W * s - 0.6; return new THREE.Vector3(Math.cos(a) * Rr, 0.45, Math.sin(a) * Rr); };
     const tang = (s) => { const a = W * s - 0.6; return new THREE.Vector3(-Math.sin(a), 0, Math.cos(a)); };
     setCam(Math.sin(u * 0.04) * 1.2, 7.4, 8.2, 0, 0, 0.6);
@@ -443,7 +443,7 @@ function render(t) {
       const mid = p.clone().add(new THREE.Vector3(0, 0.45, 0)).multiplyScalar(0.5);
       rope.visible = true; rope.position.set(p.x / 2, 0.45, p.z / 2); rope.scale.set(1, Rr, 1);
       rope.quaternion.setFromUnitVectors(UP, new THREE.Vector3(p.x, 0, p.z).normalize());
-      const av = clamp((u - 1.6) / 0.4), af = clamp((u - 4.2) / 0.4);
+      const av = clamp((u - 5.0) / 0.4), af = clamp((u - 12.1) / 0.4);   // 'Hız, yani v…' / 'Yani kuvvet, F…'
       if (av > 0) { setArrow(vA, p.clone().add(new THREE.Vector3(0, 0.05, 0)).add(tang(u).multiplyScalar(0.85)), tang(u), 1.7 * av); place('v', p.clone().add(tang(u).multiplyScalar(2.75)), av, 0, -40); }
       if (af > 0) { const toC = p.clone().multiplyScalar(-1).setY(0).normalize(); setArrow(fA, p.clone().add(toC.clone().multiplyScalar(0.4)), toC, 1.4 * af); place('F', p.clone().add(toC.clone().multiplyScalar(1.5)), af, 0, -40);
         setArrow(aR, p.clone().add(toC.clone().multiplyScalar(0.4)).add(new THREE.Vector3(0, 0.45, 0)), toC, 1.1 * af); place('a', p.clone().add(toC.clone().multiplyScalar(1.3)).add(new THREE.Vector3(0, 0.45, 0)), af, 0, -48); }
@@ -465,17 +465,17 @@ function render(t) {
       const w = VV / L.r, a = A0 + w * u;                            // ω = v / r  →  küçük r'de büyük ω
       const p = new THREE.Vector3(Math.cos(a) * L.r, 0, Math.sin(a) * L.r), hd = new THREE.Vector3(-Math.sin(a), 0, Math.cos(a)), toC = p.clone().multiplyScalar(-1).normalize();
       L.car.position.copy(p); L.car.rotation.y = Math.atan2(-hd.z, hd.x);
-      const k1 = clamp((u - 1.0) / 0.4), k2 = clamp((u - 8.4) / 0.4);
+      const k1 = clamp((u - 1.9) / 0.4), k2 = clamp((u - 18.8) / 0.4);   // 'Üç araba…' / 'Şimdi ivmeye bakalım'
       if (k1 > 0) setArrow(L.vA, p.clone().add(new THREE.Vector3(0, 0.75, 0)), hd, 1.1 * k1);
       if (k2 > 0) setArrow(L.aA, p.clone().add(new THREE.Vector3(0, 0.6, 0)).add(toC.clone().multiplyScalar(0.2)), toC, 1.5 * (VV * VV / L.r) / 1.4 * k2);   // a = v²/r (10 : 5 : 3,3 orantılı)
       // aynı sürede taranan açı (1–5. sn)
-      const sw = w * clamp(u - 1, 0, 4), fadeW = clamp((u - 1) / 0.3) * (1 - clamp((u - 8) / 0.6));
-      L.wedge.visible = sw > 0.02 && fadeW > 0; if (L.wedge.visible) { L.wedge.geometry.dispose(); L.wedge.geometry = new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 48, 1, -(A0 + w * 1 + sw), sw); L.wedge.material.opacity = 0.5 * fadeW; }
+      const sw = w * clamp(u - 6.7, 0, 4), fadeW = clamp((u - 6.7) / 0.3) * (1 - clamp((u - 13.6) / 0.6));   // 'Bakın… aynı sürede…'
+      L.wedge.visible = sw > 0.02 && fadeW > 0; if (L.wedge.visible) { L.wedge.geometry.dispose(); L.wedge.geometry = new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 48, 1, -(A0 + w * 6.7 + sw), sw); L.wedge.material.opacity = 0.5 * fadeW; }
       // etiket: arabanın üstünde, merkezden dışarı doğru
       const sp = p.clone().project(cam), sc = new THREE.Vector3(0, 0, 0).project(cam);
       let dx = sp.x - sc.x, dy = sp.y - sc.y; const n = Math.hypot(dx, dy) || 1;
-      place('car' + i, p.clone().add(new THREE.Vector3(0, 0.6, 0)), clamp((u - 5.6) / 0.4), dx / n * 120, -dy / n * 120 - 30);
-      place('r' + i, new THREE.Vector3(0, 0, -L.r), clamp((u - 0.6) / 0.4) * (1 - clamp((u - 5.4) / 0.4)), 0, 0);
+      place('car' + i, p.clone().add(new THREE.Vector3(0, 0.6, 0)), clamp((u - 11.6) / 0.4), dx / n * 120, -dy / n * 120 - 30);
+      place('r' + i, new THREE.Vector3(0, 0, -L.r), clamp((u - 1.6) / 0.4) * (1 - clamp((u - 11.4) / 0.4)), 0, 0);
     });
     R3.render(scene, cam); return;
   }
@@ -533,7 +533,7 @@ function render(t) {
   else if (sec === 's3') setCam(3.0 + Math.sin(u * 0.15) * 0.6, 4.6, 14.2, -1.6, AX - 0.6, 0);
   else setCam(5.6 + Math.sin(u * 0.15) * 0.6, 4.4, 12.4, 0, AX - 0.2, 0);
 
-  const frz2 = sec === 's2' && u >= 7.2 && u < 12.2;
+  const frz2 = sec === 's2' && u >= 7.8 && u < 22.2;   // 'Tepede iki kuvvete bakıyoruz'
   if ((sec === 's2' || sec === 's3') && !frz2) {                   // kovada canlı v (teğet) ve a (merkeze): v ∝ ω, a ∝ ω²
     const w = sec === 's2' ? 4 : 1.6, bc = rimPos(th, RR + 0.45).add(new THREE.Vector3(0, 0, 0.8));
     const vd = new THREE.Vector3(Math.cos(th), Math.sin(th), 0), ad = new THREE.Vector3(-Math.sin(th), Math.cos(th), 0), k = clamp(u / 0.4);
@@ -541,7 +541,7 @@ function render(t) {
     place('bv', bc.clone().add(vd.clone().multiplyScalar(0.38 * w + 0.35)), k, 0, 0); place('ba', bc.clone().add(ad.clone().multiplyScalar(0.1 * w * w + 0.35)), k, 0, 0);
   }
   if (frz2) {
-    const k = clamp((u - 7.2) / 0.5); const wc = rimPos(th, RR + 0.68);   // suyun merkezi (tepede)
+    const k = clamp((u - 7.8) / 0.5); const wc = rimPos(th, RR + 0.68);   // suyun merkezi (tepede)
     setArrow(gA, wc.clone().add(new THREE.Vector3(0.25, 0, 0.7)), new THREE.Vector3(0, -1, 0), 1.3 * k);
     setArrow(nA, wc.clone().add(new THREE.Vector3(-0.35, 0.25, 0.7)), new THREE.Vector3(0, -1, 0), 1.0 * k);
     setArrow(v2A, wc.clone().add(new THREE.Vector3(-0.6, 0.1, 0)), new THREE.Vector3(-1, 0, 0), 1.6 * k);   // θ artıyor → tepede hız -x
@@ -553,7 +553,7 @@ function render(t) {
     place('ta', wc.clone().add(new THREE.Vector3(0.8, -1.9, 0.7)), k, 30, 0);
   }
   if (sec === 's3') {
-    const W3 = 1.6, rW = RR + 0.68, thSep = Math.acos(-W3 * W3 * rW / 9.8), UR = (thSep + 1.36) / W3;   // su kovadan ayrılır
+    const W3 = 1.6, rW = RR + 0.68, thSep = Math.acos(-W3 * W3 * rW / 9.8), UR = (thSep + 6.54) / W3;   // su kovadan ayrılır
     if (u >= UR) {
       water.visible = false;
       const thR = thSep, p0 = rimPos(thR, rW), w = W3 * rW;
