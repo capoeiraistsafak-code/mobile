@@ -142,7 +142,7 @@ const ROLL = { P: [], S: [] };
   while (sp < ROLL.sContact) { const v = Math.sqrt(2 * R_G * (R_H0 - yAt(sp)) + 0.6 * 0.6); sp += v * dt; tt += dt; ROLL.tab.push([tt / SL, Math.min(sp, ROLL.sContact)]); }
   ROLL.vContact = Math.sqrt(2 * R_G * (R_H0 - R_TY));
   const iB = ROLL.tab.findIndex(r => r[1] >= ROLL.sLoop); ROLL.tBottom = ROLL.tab[iB][0]; ROLL.tEnd = ROLL.tab[ROLL.tab.length - 1][0]; }
-const SC = { start: 1.2, frz: 5.6, comp: 0.9, after: 4.0, slow: 0.6 };            // sahne içi: tepede bekleme, dipte durma, yay sıkışması
+const SC = { start: 3.0, frz: 5.6, comp: 0.9, after: 4.0, slow: 0.6 };            // sahne içi: tepede bekleme, dipte durma, yay sıkışması
 SC.bottom = SC.start + ROLL.tBottom; SC.resume = SC.bottom + SC.frz; SC.hit = SC.resume + (ROLL.tEnd - ROLL.tBottom) / SC.slow; SC.stop = SC.hit + SC.comp; SC.dur = SC.stop + SC.after;
 const sAtSim = tau => { const tb = ROLL.tab; if (tau <= 0) return tb[0][1]; let a = 0, b = tb.length - 1; if (tau >= tb[b][0]) return tb[b][1];
   while (b - a > 1) { const m = (a + b) >> 1; if (tb[m][0] <= tau) a = m; else b = m; } return tb[a][1]; };
@@ -210,8 +210,14 @@ NOTES.forEach((n, i) => {
 // sync.js: window.SYNC = { hook: sn, cover: sn, ... } (sahnelerin sesli süreleri). Yoksa video eski sürelerle oynar.
 let TN = null;
 if (window.SYNC) { TN = {}; let a = 0; for (const k of SECT) { const d = Math.max(T[k][1] - T[k][0], window.SYNC[k] || 0); TN[k] = [a, a + d]; a += d; } }
-const n2o = tn => { if (!TN) return tn; const k = SECT.find(k => tn < TN[k][1]) || 'end'; return T[k][0] + (tn - TN[k][0]) * (T[k][1] - T[k][0]) / (TN[k][1] - TN[k][0]); };
-const o2n = to => { if (!TN) return to; const k = SECT.find(k => to < T[k][1]) || 'end'; return TN[k][0] + (to - T[k][0]) * (TN[k][1] - TN[k][0]) / (T[k][1] - T[k][0]); };
+// window.KNOTS[k] = [[yeni_sn, eski_sn], …]: sahne içinde cümlelere göre parça parça eşleme (yoksa doğrusal)
+const lerpK = (K, x, i, j) => { for (let n = 1; n < K.length; n++) if (x <= K[n][i] || n === K.length - 1) { const f = (x - K[n - 1][i]) / (K[n][i] - K[n - 1][i]); return K[n - 1][j] + f * (K[n][j] - K[n - 1][j]); } };
+const n2o = tn => { if (!TN) return tn; const k = SECT.find(k => tn < TN[k][1]) || 'end', K = (window.KNOTS || {})[k];
+  if (K) return T[k][0] + lerpK(K, tn - TN[k][0], 0, 1);
+  return T[k][0] + (tn - TN[k][0]) * (T[k][1] - T[k][0]) / (TN[k][1] - TN[k][0]); };
+const o2n = to => { if (!TN) return to; const k = SECT.find(k => to < T[k][1]) || 'end', K = (window.KNOTS || {})[k];
+  if (K) return TN[k][0] + lerpK(K, to - T[k][0], 1, 0);
+  return TN[k][0] + (to - T[k][0]) * (TN[k][1] - TN[k][0]) / (T[k][1] - T[k][0]); };
 
 // ses olayları (mixer için)
 window.EVENTS = { dur: DUR, gecis: SECT.slice(1).map(k => T[k][0]), tik: [], kalem: [] };
