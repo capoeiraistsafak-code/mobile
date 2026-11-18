@@ -15,7 +15,18 @@ Veriler o bilgisayardaki tarayıcıda saklanır → **Yedek / Ayarlar** sekmesin
 | `Kazanim/` | K12'den aldığınız kazanım listeleri (Excel). Bir dosyada birden çok ders/sınıf olabilir. |
 | `Sinav/` | Sınavın cevap anahtarı + soru-kazanım eşleşmesi ve öğrenci sonuçları (Excel). |
 
-`ORNEK_` ile başlayan dosyalar biçim örneğidir; kendi dosyalarınızı koyduktan sonra silebilirsiniz.
+## Örnek (öğretici) Excel dosyaları
+
+Klasörlerdeki `Ornek_…` dosyaları ve programdaki **Örnek Excel indir** düğmeleri (Panel'de hepsi bir arada; ayrıca her sekmede ilgili olan) programın doğrudan okuyabildiği hazır şablonlardır. Her dosyanın üstünde Türkçe “nasıl doldurulur” açıklaması vardır; örnek satırları silip kendi bilgilerinizi aynı sütunlara yazmanız yeterli.
+
+| Dosya | İçinde | Nereden aktarılır |
+|---|---|---|
+| `Ogrenci/Ornek_Ogrenci_Listesi_9-A.xlsx` | 9-A sınıfı, 3 öğrenci (Öğrenci No, Adı, Soyadı, Sınıf/Şube, Kurum) | Sınıflar ve Öğrenciler |
+| `Kazanim/Ornek_Kazanim_Listesi_9.xlsx` | 9. sınıf Türkçe ve Matematik (Kazanım Kodu, Ders, Sınıf, Ünite, Konu, Kazanım) | Kazanımlar |
+| `Sinav/Ornek_Cevap_Anahtari.xlsx` | 6 soru (Soru No, Ders, Konu, Kazanım Kodu, Cevap) | Sınavlar → sınav seçin |
+| `Sinav/Ornek_Sinav_Sonuclari.xlsx` | 3 öğrencinin işaretlediği şıklar (Öğrenci No, Ad Soyad, 1…6) | Sonuç Girişi |
+
+Dört dosya birbirine uyumludur: bu sırayla aktarırsanız 9-A sınıfı, kazanımlar, 6 soruluk bir sınav ve sonuçları hazır olur, analiz hemen görünür. Kazanım metinleri örnektir; resmî liste için K12'den aldığınız dosyayı kullanın.
 
 ## İçe aktarılan listeler: kalıcı kayıt, Güncelle ve Sil
 

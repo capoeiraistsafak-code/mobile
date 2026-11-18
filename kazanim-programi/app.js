@@ -818,6 +818,111 @@ function kaynakListesiHtml(tur) {
 }
 
 // ---------------------------------------------------------------------------
+// Öğretici örnek Excel dosyaları
+// Hepsi birbirine uyumludur: 9-A öğrencileri, 9. sınıf kazanımları, bu kazanımlara bağlı
+// 6 soruluk cevap anahtarı ve aynı öğrencilerin sonuçları. Üstteki açıklama satırlarını
+// program okumaz; başlık satırı otomatik bulunur.
+// ---------------------------------------------------------------------------
+const ORNEK_EXCELLER = {
+  ogrenci: {
+    dosya: 'Ornek_Ogrenci_Listesi_9-A.xlsx',
+    sayfa: 'Öğrenciler',
+    baslik: 'ÖĞRENCİ LİSTESİ – ÖRNEK DOSYA',
+    aciklama: [
+      'Nasıl doldurulur: Aşağıdaki örnek öğrencileri silip kendi öğrencilerinizi aynı sütunlara yazın. Her satır bir öğrencidir.',
+      'Sınıf/Şube sütununa 9-A, 10-B, 11-C gibi yazın (9A da olur). Mezun öğrenciler için “Mezun” yazın.',
+      'Kurum sütununa şunlardan birini yazın: Okul Ortaokul, Okul Lise, Kurs Ortaokul, Kurs Lise, Kurs Mezun.',
+      'Başlık satırını (Öğrenci No, Adı, Soyadı…) değiştirmeyin. Aktarmak için: Sınıflar ve Öğrenciler → Bilgisayardan Excel seç.',
+    ],
+    basliklar: ['Öğrenci No', 'Adı', 'Soyadı', 'Sınıf/Şube', 'Kurum'],
+    satirlar: [
+      ['901', 'Elif', 'Yılmaz', '9-A', 'Okul Lise'],
+      ['902', 'Mehmet Ali', 'Kaya', '9-A', 'Okul Lise'],
+      ['903', 'Zeynep', 'Demir', '9-A', 'Okul Lise'],
+    ],
+    genislik: [12, 14, 14, 12, 16],
+  },
+  kazanim: {
+    dosya: 'Ornek_Kazanim_Listesi_9.xlsx',
+    sayfa: 'Kazanımlar',
+    baslik: 'KAZANIM LİSTESİ – ÖRNEK DOSYA',
+    aciklama: [
+      'Nasıl doldurulur: Her satır bir kazanımdır. K12\'den aldığınız kazanım listesini aynı sütunlara koyabilirsiniz; sütun adları biraz farklıysa program aktarırken eşleştirmeyi gösterir.',
+      'Kazanım Kodu, cevap anahtarında soruyu kazanıma bağlamak için kullanılır. Konu sütunu, konu analizinde ve “hangi konudan soru çözmeli” önerisinde görünür.',
+      'Sınıf sütununa yalnızca sayı yazın (5–12) veya “Mezun”. Aşağıdaki satırlar örnektir; resmî kazanım metinleri için K12 listenizi kullanın.',
+      'Aktarmak için: Kazanımlar → Bilgisayardan Excel seç.',
+    ],
+    basliklar: ['Kazanım Kodu', 'Ders', 'Sınıf', 'Ünite', 'Konu', 'Kazanım'],
+    satirlar: [
+      ['T.9.3.1', 'Türkçe', '9', 'Okuma', 'Paragraf', 'Metnin konusunu ve ana fikrini belirler.'],
+      ['T.9.3.2', 'Türkçe', '9', 'Okuma', 'Sözcükte Anlam', 'Sözcüklerin metindeki anlamlarını belirler.'],
+      ['T.9.4.1', 'Türkçe', '9', 'Dil Bilgisi', 'Ses Bilgisi', 'Metindeki ses olaylarını belirler.'],
+      ['M.9.1.1.1', 'Matematik', '9', 'Mantık', 'Önermeler', 'Önermeyi ve önermenin doğruluk değerini açıklar.'],
+      ['M.9.1.2.1', 'Matematik', '9', 'Kümeler', 'Kümelerde Temel Kavramlar', 'Kümelerle ilgili temel kavramları açıklar.'],
+      ['M.9.2.1.1', 'Matematik', '9', 'Denklemler ve Eşitsizlikler', 'Sayı Kümeleri', 'Sayı kümelerini birbiriyle ilişkilendirir.'],
+    ],
+    genislik: [13, 12, 7, 26, 26, 60],
+  },
+  anahtar: {
+    dosya: 'Ornek_Cevap_Anahtari.xlsx',
+    sayfa: 'Cevap Anahtarı',
+    baslik: 'CEVAP ANAHTARI VE SORU–KONU EŞLEŞMESİ – ÖRNEK DOSYA',
+    aciklama: [
+      'Nasıl doldurulur: Her satır sınavdaki bir sorudur. Soru No 1\'den başlayarak sırayla yazılır.',
+      'Konu yazmanız konu analizi için yeterlidir. Kazanım Kodu isteğe bağlıdır; yazarsanız Kazanımlar listesindeki kodla aynı olmalıdır.',
+      'Cevap sütununa doğru şıkkı yazın (A, B, C, D veya E). Sonuçlarda öğrencinin şıkkı bu cevapla karşılaştırılır.',
+      'Aktarmak için: Sınavlar → sınavı seçin (yoksa + Yeni sınav) → Bilgisayardan cevap anahtarı Excel\'i seç.',
+    ],
+    basliklar: ['Soru No', 'Ders', 'Konu', 'Kazanım Kodu', 'Cevap'],
+    satirlar: [
+      ['1', 'Türkçe', 'Paragraf', 'T.9.3.1', 'B'],
+      ['2', 'Türkçe', 'Paragraf', 'T.9.3.1', 'D'],
+      ['3', 'Türkçe', 'Sözcükte Anlam', 'T.9.3.2', 'A'],
+      ['4', 'Matematik', 'Önermeler', 'M.9.1.1.1', 'C'],
+      ['5', 'Matematik', 'Kümelerde Temel Kavramlar', 'M.9.1.2.1', 'E'],
+      ['6', 'Matematik', 'Sayı Kümeleri', 'M.9.2.1.1', 'A'],
+    ],
+    genislik: [9, 12, 26, 14, 8],
+  },
+  sonuc: {
+    dosya: 'Ornek_Sinav_Sonuclari.xlsx',
+    sayfa: 'Sonuçlar',
+    baslik: 'SINAV SONUÇLARI – ÖRNEK DOSYA',
+    aciklama: [
+      'Nasıl doldurulur: Her satır bir öğrencidir. 1, 2, 3… sütunları soru numaralarıdır; öğrencinin işaretlediği şıkkı yazın (A–E).',
+      'Boş bıraktığı soruyu boş bırakın. Şık yerine D (doğru), Y (yanlış) veya B (boş) da yazabilirsiniz.',
+      'Öğrenci No, programdaki öğrenci numarasıyla aynı olmalıdır; numara yoksa Ad Soyad ile eşleştirilir.',
+      'Aktarmak için: Sonuç Girişi → sınavı seçin → Bilgisayardan sonuç Excel\'i seç.',
+    ],
+    basliklar: ['Öğrenci No', 'Ad Soyad', '1', '2', '3', '4', '5', '6'],
+    satirlar: [
+      ['901', 'Elif Yılmaz', 'B', 'D', 'A', 'C', 'E', 'A'],
+      ['902', 'Mehmet Ali Kaya', 'B', 'A', 'A', '', 'E', 'C'],
+      ['903', 'Zeynep Demir', 'C', 'D', 'B', 'C', 'A', ''],
+    ],
+    genislik: [12, 20, 5, 5, 5, 5, 5, 5],
+  },
+};
+/** Örnek dosyanın satırları (açıklamalar + boş satır + başlık + örnek satırlar). */
+function ornekExcelVeri(tur) {
+  const o = ORNEK_EXCELLER[tur];
+  const sutun = o.basliklar.length;
+  const aoa = [[o.baslik], ...o.aciklama.map(a => [a]), [], o.basliklar, ...o.satirlar];
+  // Açıklama satırları tüm sütunlara yayılsın
+  const merges = [0, ...o.aciklama.map((_, i) => i + 1)].map(r => ({ s: { r, c: 0 }, e: { r, c: Math.max(sutun - 1, 5) } }));
+  return { ...o, aoa, merges };
+}
+function ornekExcelIndir(tur) {
+  const v = ornekExcelVeri(tur);
+  const ws = XLSX.utils.aoa_to_sheet(v.aoa);
+  ws['!merges'] = v.merges;
+  ws['!cols'] = v.genislik.map(w => ({ wch: w }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, v.sayfa);
+  excelIndir(wb, v.dosya);
+}
+
+// ---------------------------------------------------------------------------
 // Ortak dialog
 // ---------------------------------------------------------------------------
 function dialogAc(baslik, icerikHtml, butonlar) {
@@ -849,9 +954,9 @@ function onayla(mesaj, fn) {
 function ornekVeriYukle() {
   const sinif = sinifGetirVeyaOlustur('kurs_lise', '11', 'A');
   const sinif2 = sinifGetirVeyaOlustur('okul_orta', '8', 'B');
-  [['1101', 'Örnek', 'Öğrenci Bir'], ['1102', 'Örnek', 'Öğrenci İki'], ['1103', 'Örnek', 'Öğrenci Üç'], ['1104', 'Örnek', 'Öğrenci Dört']]
+  [['1101', 'Ayşe', 'Çelik'], ['1102', 'Mustafa', 'Şahin'], ['1103', 'Fatma Nur', 'Arslan'], ['1104', 'Emre', 'Öztürk']]
     .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id }));
-  [['801', 'Deneme', 'Kişi Bir'], ['802', 'Deneme', 'Kişi İki']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id }));
+  [['801', 'Can', 'Aydın'], ['802', 'Selin', 'Koç']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id }));
   const kz = [
     ['T.9.3.1', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metnin konusunu ve ana fikrini belirler. (örnek)'],
     ['T.9.3.2', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metindeki yardımcı fikirleri belirler. (örnek)'],
@@ -1090,6 +1195,7 @@ function cizSinav() {
       <button class="btn" id="btnSoruEkle">+ Soru ekle</button>
       <button class="btn" id="btnTopluSoru">+ Toplu soru ekle (ders bazında)</button>
       <button class="btn" id="btnTopluKonu">Toplu konu ata</button>
+      <button class="btn" data-ornek="anahtar">Örnek cevap anahtarı Excel'i indir</button>
       <label class="btn">Bilgisayardan cevap anahtarı Excel'i seç<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" class="dosya-input"></label>
       <button class="btn danger" id="btnSinavSil">Sınavı sil</button>
     </div>
@@ -1880,6 +1986,8 @@ function olaylar() {
   seciciBagla('#kzFiles', false, g => kazanimIceAktar(g, false));
   seciciBagla('#kzFolder', true, g => kazanimIceAktar(g, true));
   document.addEventListener('click', e => {
+    const orn = e.target.closest('[data-ornek]');
+    if (orn) { ornekExcelIndir(orn.dataset.ornek); return; }
     const g = e.target.closest('[data-kaynak-guncelle]');
     if (g) { kaynakGuncelle(g.dataset.kaynakGuncelle); return; }
     const sl = e.target.closest('[data-kaynak-sil]');

@@ -38,6 +38,16 @@
         <li><b>Sınıf geneli:</b> “Sınıf Konu Analizi” → sınıfın en zayıf olduğu konular ve her konuda eksik olan öğrenciler.</li>
       </ol>
     </div>
+    <div class="card">
+      <h2>Örnek Excel dosyaları</h2>
+      <p class="muted">Programın okuyabildiği hazır Excel örnekleri. Her dosyanın üstünde nasıl doldurulacağı yazar; örnek satırları silip kendi bilgilerinizi aynı sütunlara girin. Dört dosya birbirine uyumludur: sırayla aktarırsanız 9-A sınıfı, kazanımlar, 6 soruluk bir sınav ve sonuçları hazır olur.</p>
+      <div class="ornek-liste">
+        <div><b>1. Öğrenci listesi</b><span class="muted small">9-A sınıfı, 3 öğrenci: numara, ad, soyad, sınıf, kurum</span><button class="btn" data-ornek="ogrenci">İndir</button></div>
+        <div><b>2. Kazanım listesi</b><span class="muted small">9. sınıf Türkçe ve Matematik: kod, ders, sınıf, ünite, konu, kazanım</span><button class="btn" data-ornek="kazanim">İndir</button></div>
+        <div><b>3. Cevap anahtarı</b><span class="muted small">6 soru: soru no, ders, konu, kazanım kodu, doğru cevap</span><button class="btn" data-ornek="anahtar">İndir</button></div>
+        <div><b>4. Sınav sonuçları</b><span class="muted small">3 öğrencinin her soruda işaretlediği şık</span><button class="btn" data-ornek="sonuc">İndir</button></div>
+      </div>
+    </div>
     <div class="card" id="panelSon"></div>
   </section>
 
@@ -51,6 +61,7 @@
       <label class="btn">Bilgisayardan Excel seç
         <input type="file" id="ogrFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
+      <button class="btn" data-ornek="ogrenci">Örnek öğrenci Excel'i indir</button>
       <button class="btn" id="btnYeniSinif">+ Sınıf ekle</button>
       <button class="btn" id="btnYeniOgrenci">+ Öğrenci ekle</button>
     </div>
@@ -84,6 +95,7 @@
       <label class="btn">Bilgisayardan Excel seç
         <input type="file" id="kzFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
+      <button class="btn" data-ornek="kazanim">Örnek kazanım Excel'i indir</button>
       <button class="btn" id="btnYeniKazanim">+ Kazanım ekle</button>
       <button class="btn danger" id="btnKzSil">Tümünü sil</button>
     </div>
@@ -126,6 +138,7 @@
       <label class="btn">Bilgisayardan sonuç Excel'i seç
         <input type="file" id="snFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
+      <button class="btn" data-ornek="sonuc">Örnek sonuç Excel'i indir</button>
     </div>
     <p class="muted small">Her soru kutusuna dokunun: <span class="q D">D</span> doğru → <span class="q Y">Y</span> yanlış → <span class="q B">B</span> boş. Varsayılan doğrudur; yalnızca çözemediği soruları işaretlemeniz yeterli.</p>
     <div id="sonucAlan"></div>
