@@ -13,6 +13,8 @@ const KURUMLAR = [
   { key: 'kurs_lise', ad: 'Kurs – Lise', seviyeler: ['9', '10', '11', '12'] },
   { key: 'kurs_mezun', ad: 'Kurs – Mezun', seviyeler: ['Mezun'] },
 ];
+// Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20 };
 const KURUM = Object.fromEntries(KURUMLAR.map(k => [k.key, k]));
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
@@ -106,6 +108,7 @@ function bosDurum() {
     sonuclar: {},    // sinavId -> ogrenciId -> {soruNo: 'Y'|'B'}  (yazılmayan = D)
     planlar: [],     // {id, ogrenciId, olusturma, baslik, not, gorevler:[...]}
     dersler: VARSAYILAN_DERSLER.slice(),
+    ayarlar: { ...VARSAYILAN_AYARLAR },
   };
 }
 function idbAc() {
@@ -214,7 +217,7 @@ function sekmeAc(ad) {
 function ciz() {
   ({
     panel: cizPanel, ogrenci: cizOgrenci, kazanim: cizKazanim, sinav: cizSinav,
-    sonuc: cizSonuc, analiz: cizAnaliz, ayar: cizAyar,
+    sonuc: cizSonuc, analiz: cizAnaliz, sinifanaliz: cizSinifAnaliz, ayar: cizAyar,
   })[aktifSekme]();
 }
 
@@ -242,6 +245,7 @@ const ALANLAR_KAZANIM = {
 const ALANLAR_ANAHTAR = {
   no: { ad: 'Soru no', alias: ['soruno', 'soru', 'no', 'sira', 'sorunumarasi'] },
   ders: { ad: 'Ders', alias: ['ders', 'dersadi', 'brans', 'test'] },
+  konu: { ad: 'Konu', alias: ['konu', 'konuadi', 'altkonu', 'unite', 'uniteadi'] },
   kazanim: { ad: 'Kazanım (kod veya metin)', alias: ['kazanimkodu', 'kazanim', 'kod', 'kazanimadi', 'kazanimmetni', 'ogrenmeciktisi'] },
   cevap: { ad: 'Doğru cevap', alias: ['cevap', 'dogrucevap', 'cevapanahtari', 'anahtar', 'dogru'] },
 };
@@ -594,12 +598,26 @@ function ornekVeriYukle() {
     ['M.9.1.2.1', 'Matematik', 'Kümeler', 'Kümelerde Temel Kavramlar', 'Kümeler ile ilgili temel kavramları açıklar. (örnek)'],
     ['M.9.2.2.1', 'Matematik', 'Denklemler ve Eşitsizlikler', 'Bölünebilme Kuralları', 'Bölünebilme kurallarıyla ilgili problemler çözer. (örnek)'],
   ].map(([kod, ders, unite, konu, metin]) => { const k = { id: uid(), kod, ders, seviye: '9', unite, konu, metin }; S.kazanimlar.push(k); return k; });
-  const cevap = 'ABCDEABC';
-  const sorular = [0, 1, 2, 0, 3, 4, 5, 5].map((ki, i) => ({ no: String(i + 1), ders: kz[ki].ders, kazanimId: kz[ki].id, cevap: cevap[i] }));
+  // 20 soruluk örnek deneme: bazı soruların kazanımı var, bazılarına yalnızca konu yazılmış
+  const plan = [[0, 4], [1, 2], [2, 2], [null, 2, 'Türkçe', 'Sözcükte Anlam'], [3, 3], [4, 3], [5, 2], [null, 2, 'Matematik', 'Problemler']];
+  const sorular = [];
+  plan.forEach(([ki, n, ders, konu]) => {
+    for (let i = 0; i < n; i++) {
+      const no = String(sorular.length + 1);
+      sorular.push(ki === null ? { no, ders, konu, kazanimId: '', cevap: 'ABCDE'[sorular.length % 5] }
+        : { no, ders: kz[ki].ders, konu: '', kazanimId: kz[ki].id, cevap: 'ABCDE'[sorular.length % 5] });
+    }
+  });
   const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular };
   S.sinavlar.push(sinav);
   const og = sinifOgrencileri(sinif.id);
-  S.sonuclar[sinav.id] = { [og[0].id]: { 3: 'Y' }, [og[1].id]: { 1: 'Y', 4: 'Y', 6: 'Y', 8: 'B' }, [og[2].id]: { 2: 'B', 5: 'Y', 7: 'Y' }, [og[3].id]: {} };
+  const yb = (y, b = []) => Object.fromEntries([...y.map(n => [n, 'Y']), ...b.map(n => [n, 'B'])]);
+  S.sonuclar[sinav.id] = {
+    [og[0].id]: yb([3, 19], [20]),
+    [og[1].id]: yb([1, 2, 7, 11, 12, 14, 19], [8, 13, 20]),
+    [og[2].id]: yb([5, 9, 15, 17], [10, 16, 18]),
+    [og[3].id]: yb([2, 12, 19, 20]),
+  };
   S.ornek = true;
   kaydet();
   filtre.anSinif = sinif.id; filtre.anOgrenci = og[1].id;
@@ -633,7 +651,7 @@ function cizPanel() {
 // ---------------------------------------------------------------------------
 // ÖĞRENCİLER
 // ---------------------------------------------------------------------------
-const filtre = { kurum: '', seviye: '', sinif: '', ara: '', seciliSinav: null, kzDers: '', kzSeviye: '', kzAra: '', snSinav: '', snSinif: '', anSinif: '', anOgrenci: '' };
+const filtre = { kurum: '', seviye: '', sinif: '', ara: '', seciliSinav: null, kzDers: '', kzSeviye: '', kzAra: '', snSinav: '', snSinif: '', anSinif: '', anOgrenci: '', saSinav: '', saSinif: '' };
 
 function cizOgrenci() {
   const kurumlar = KURUMLAR;
@@ -792,6 +810,7 @@ function cizSinav() {
   if (!s) { $('#sinavDetay').innerHTML = '<p class="muted">Soldan bir sınav seçin veya yeni sınav oluşturun.</p>'; return; }
   const kzSecenekleri = sinavKazanimlari(s);
   const atanmamis = s.sorular.filter(q => !q.kazanimId).length;
+  const konusuz = s.sorular.filter(q => soruKonu(q) === KONU_YOK).length;
   $('#sinavDetay').innerHTML = `
     <div class="form-grid">
       <label>Sınav adı<input id="sAd" value="${esc(s.ad)}"></label>
@@ -802,17 +821,21 @@ function cizSinav() {
     <div class="toolbar" style="margin-top:12px">
       <button class="btn" id="btnSoruEkle">+ Soru ekle</button>
       <button class="btn" id="btnTopluSoru">+ Toplu soru ekle (ders bazında)</button>
+      <button class="btn" id="btnTopluKonu">Toplu konu ata</button>
       <label class="btn">Cevap anahtarı / kazanım Excel'i aktar<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.csv" hidden></label>
       <button class="btn danger" id="btnSinavSil">Sınavı sil</button>
     </div>
-    <p class="small muted">${s.sorular.length} soru${atanmamis ? ` · <span class="chip orange">${atanmamis} soruya kazanım atanmamış</span>` : ''}. Kazanım kutusuna kod veya metin yazarak arayabilirsiniz.</p>
+    <p class="small muted">${s.sorular.length} soru${atanmamis ? ` · <span class="chip orange">${atanmamis} soruya kazanım atanmamış</span>` : ''}${konusuz ? ` · <span class="chip orange">${konusuz} sorunun konusu yok</span>` : ''}.
+      Konu analizi için her sorunun <b>konusu</b> yeterli; kazanım atarsanız konu kazanımdan otomatik gelir. Kazanım kutusuna kod veya metin yazarak arayabilirsiniz.</p>
     <datalist id="kzDL">${kzSecenekleri.map(k => `<option value="${esc(kazanimEtiket(k))}">`).join('')}</datalist>
+    <datalist id="konuDL">${[...new Set([...S.kazanimlar.map(k => k.konu || k.unite), ...S.sinavlar.flatMap(x => x.sorular.map(q => q.konu))].filter(Boolean))].sort(cmpTr).map(k => `<option value="${esc(k)}">`).join('')}</datalist>
     <datalist id="dersDL3">${S.dersler.map(d => opt(d, d)).join('')}</datalist>
     <div class="tablewrap"><table>
-      <tr><th style="width:60px">Soru</th><th style="width:160px">Ders</th><th>Kazanım</th><th style="width:70px">Cevap</th><th></th></tr>
+      <tr><th style="width:60px">Soru</th><th style="width:150px">Ders</th><th style="width:190px">Konu</th><th>Kazanım</th><th style="width:70px">Cevap</th><th></th></tr>
       ${s.sorular.map((q, i) => `<tr>
         <td><input data-q="${i}" data-f="no" value="${esc(q.no)}" style="width:52px"></td>
         <td><input data-q="${i}" data-f="ders" value="${esc(q.ders)}" list="dersDL3" style="width:150px"></td>
+        <td><input data-q="${i}" data-f="konu" value="${esc(q.konu || '')}" list="konuDL" style="width:180px" placeholder="${esc(q.kazanimId ? soruKonu(q) : 'konu adı')}"></td>
         <td><input data-q="${i}" data-f="kazanim" value="${esc(q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : '')}" list="kzDL" style="width:100%" placeholder="kazanım kodu veya metni"></td>
         <td><input data-q="${i}" data-f="cevap" value="${esc(q.cevap)}" style="width:50px"></td>
         <td><button class="btn small" data-q-sil="${i}">✕</button></td></tr>`).join('')}
@@ -861,6 +884,25 @@ function topluSoruDialog(s) {
     },
   ]);
 }
+function topluKonuDialog(s) {
+  dialogAc('Toplu konu ata', `<p class="muted small">Her satıra soru aralığı ve konu yazın. Örnek:<br><code>1-5 Paragraf</code><br><code>6-10 Sözcükte Anlam</code><br><code>41-45 Kümeler</code><br>Tek soru için <code>12 Üçgenler</code> yazabilirsiniz. Yazılan konu, sorunun mevcut konusunun yerine geçer.</p>
+    <textarea id="topluKonu" rows="8"></textarea>`, [
+    { ad: 'Vazgeç' },
+    {
+      ad: 'Uygula', primary: true, tikla: () => {
+        let n = 0;
+        $('#topluKonu').value.split('\n').forEach(satir => {
+          const m = satir.trim().match(/^(\d+)\s*(?:[-–]\s*(\d+))?\s*[:.)]?\s+(.+)$/);
+          if (!m) return;
+          const bas = parseInt(m[1], 10), son = parseInt(m[2] || m[1], 10), konu = m[3].trim();
+          s.sorular.forEach(q => { const no = parseInt(q.no, 10); if (no >= bas && no <= son) { q.konu = konu; n++; } });
+        });
+        kaydet(); cizSinav();
+        toast(`${n} soruya konu atandı.`);
+      },
+    },
+  ]);
+}
 async function anahtarIceAktar(s, file) {
   const sayfalar = await excelOku(file);
   const kaynaklar = sayfalar.map(x => ({ dosya: file.name, yol: file.name, sayfa: x.sayfa, satirlar: x.satirlar }));
@@ -881,6 +923,7 @@ async function anahtarIceAktar(s, file) {
           if (!q) { q = { no, ders: '', kazanimId: '', cevap: '' }; s.sorular.push(q); }
           if (r.ders) q.ders = r.ders;
           if (r.cevap) q.cevap = trUpper(r.cevap);
+          if (r.konu) q.konu = r.konu;
           if (r.kazanim) {
             const k = kazanimBulKodVeyaMetin(r.kazanim, q.ders);
             if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; } else bulunamadi++;
@@ -931,11 +974,44 @@ function cizSonuc() {
         ${r ? `<span class="chip green">${d} D</span><span class="chip red">${y} Y</span><span class="chip orange">${b} B</span>` : '<span class="chip">girilmedi</span>'}
         <button class="btn small" data-sonuc-sil="${o.id}">Sıfırla</button>
         <button class="btn small" data-ogr-analiz="${o.id}">Analiz →</button></div>
+      <div class="hizli">
+        <label>Yanlış sorular<input data-hizli="Y" inputmode="numeric" value="${esc(hizliMetin(r, 'Y'))}" placeholder="ör. 3 7 12"></label>
+        <label>Boş sorular<input data-hizli="B" inputmode="numeric" value="${esc(hizliMetin(r, 'B'))}" placeholder="ör. 5 9"></label>
+      </div>
       ${dersGruplari.map(g => `<div class="ders-grup"><span class="dersad">${esc(g.ders || 'Ders yok')}</span><div class="qrow">
         ${g.sorular.map(q => { const v = r?.[q.no] || 'D'; return `<button type="button" class="q ${v}" data-qno="${esc(q.no)}" title="${esc(kazanimEtiket(kazanimBul(q.kazanimId)))}">${esc(q.no)}<small>${v}</small></button>`; }).join('')}
       </div></div>`).join('')}
     </div>`;
   }).join('');
+}
+function hizliMetin(r, tip) {
+  return r ? Object.keys(r).filter(k => r[k] === tip).sort((a, b) => cmpTr(a, b)).join(' ') : '';
+}
+/** Yanlış / boş soru numaralarını yazarak giriş. */
+function hizliGiris(input) {
+  const s = sinavBul(filtre.snSinav);
+  const kart = input.closest('[data-ogr]');
+  const ogrId = kart.dataset.ogr;
+  const gecerli = new Set(s.sorular.map(q => String(q.no)));
+  const oku = tip => (kart.querySelector(`[data-hizli="${tip}"]`).value.match(/\d+/g) || []).map(x => String(parseInt(x, 10)));
+  const y = oku('Y'), b = oku('B');
+  const hatali = [...y, ...b].filter(n => !gecerli.has(n));
+  const iki = y.filter(n => b.includes(n));
+  if (hatali.length) toast(`Sınavda olmayan soru numarası: ${[...new Set(hatali)].join(', ')}`, 4000);
+  else if (iki.length) toast(`${iki.join(', ')} hem yanlış hem boş yazılmış; boş olarak kaydedildi.`, 4000);
+  const r = {};
+  y.filter(n => gecerli.has(n)).forEach(n => { r[n] = 'Y'; });
+  b.filter(n => gecerli.has(n)).forEach(n => { r[n] = 'B'; });
+  S.sonuclar[s.id] = S.sonuclar[s.id] || {};
+  S.sonuclar[s.id][ogrId] = r;
+  kaydet();
+  // Kartı yenile ve bir sonraki kutuya geç
+  const tip = input.dataset.hizli;
+  cizSonuc();
+  const kartlar = $$('#sonucAlan [data-ogr]');
+  const i = kartlar.findIndex(k => k.dataset.ogr === ogrId);
+  const hedef = tip === 'Y' ? kartlar[i]?.querySelector('[data-hizli="B"]') : kartlar[i + 1]?.querySelector('[data-hizli="Y"]');
+  if (hedef) hedef.focus();
 }
 function soruDurumDegistir(ogrId, qno, el) {
   const s = sinavBul(filtre.snSinav);
@@ -950,6 +1026,8 @@ function soruDurumDegistir(ogrId, qno, el) {
   // özet çiplerini güncelle
   const kart = el.closest('.ogr-sonuc');
   const y = Object.values(r).filter(v => v === 'Y').length, b = Object.values(r).filter(v => v === 'B').length;
+  kart.querySelector('[data-hizli="Y"]').value = hizliMetin(r, 'Y');
+  kart.querySelector('[data-hizli="B"]').value = hizliMetin(r, 'B');
   const ad = kart.querySelector('.ad');
   $$('.chip', ad).forEach(c => c.remove());
   ad.querySelector('[data-sonuc-sil]').insertAdjacentHTML('beforebegin',
@@ -1016,6 +1094,48 @@ async function sonucIceAktar(fileList) {
 // ---------------------------------------------------------------------------
 // ANALİZ VE ÖDEV PLANI
 // ---------------------------------------------------------------------------
+const KONU_YOK = 'Konu belirtilmemiş';
+function soruDers(q) { return (q.ders || kazanimBul(q.kazanimId)?.ders || 'Ders yok').trim(); }
+function soruKonu(q) {
+  const k = kazanimBul(q.kazanimId);
+  return (q.konu || k?.konu || k?.unite || '').trim() || KONU_YOK;
+}
+const konuAnahtar = (ders, konu) => ders + '|' + konu;
+/** Başarı yüzdesine göre durum ve önerilen soru sayısı. */
+function konuDurum(basari) {
+  const a = S.ayarlar;
+  if (basari < a.esikEksik) return { kod: 'eksik', ad: 'Eksik', renk: 'red', soru: a.soruEksik, oneri: `Konu tekrarı yap, ardından ${a.soruEksik} soru çöz.` };
+  if (basari < a.esikIyi) return { kod: 'orta', ad: 'Geliştirilmeli', renk: 'orange', soru: a.soruOrta, oneri: `${a.soruOrta} soru çöz, yanlışlarını kontrol et.` };
+  return { kod: 'iyi', ad: 'İyi', renk: 'green', soru: 0, oneri: 'Bu konuda iyi; ara sıra tekrar yeterli.' };
+}
+/** Öğrencinin seçili sınavlardaki konu bazlı sonucu. */
+function konuAnalizi(ogrId, sinavIdler) {
+  const harita = new Map();
+  for (const sid of sinavIdler) {
+    const s = sinavBul(sid);
+    const r = S.sonuclar[sid]?.[ogrId];
+    if (!s || !r) continue;
+    for (const q of s.sorular) {
+      const ders = soruDers(q), konu = soruKonu(q), key = konuAnahtar(ders, konu);
+      if (!harita.has(key)) harita.set(key, { key, ders, konu, toplam: 0, d: 0, y: 0, b: 0, sorular: [] });
+      const e = harita.get(key);
+      const durum = r[q.no] || 'D';
+      e.toplam++;
+      if (durum === 'Y') e.y++; else if (durum === 'B') e.b++; else e.d++;
+      if (durum !== 'D') e.sorular.push(`${s.ad} #${q.no}`);
+    }
+  }
+  const liste = [...harita.values()].map(e => {
+    const basari = Math.round(100 * e.d / Math.max(1, e.toplam));
+    return { ...e, basari, durum: konuDurum(basari) };
+  });
+  liste.sort((a, b) => cmpTr(a.ders, b.ders) || a.basari - b.basari || cmpTr(a.konu, b.konu));
+  return liste;
+}
+function basariCubugu(yuzde, renk) {
+  return `<span class="bar" title="%${yuzde}"><span class="bar-dolu ${renk}" style="width:${Math.max(2, yuzde)}%"></span></span><span class="bar-yazi">%${yuzde}</span>`;
+}
+
 /** Öğrencinin çözemediği sorulardan kazanım listesi. */
 function eksikKazanimlar(ogrId, sinavIdler) {
   const harita = new Map();
@@ -1038,7 +1158,7 @@ function eksikKazanimlar(ogrId, sinavIdler) {
   const liste = [...harita.values()].sort((a, b) => (b.yanlis + b.bos) - (a.yanlis + a.bos) || cmpTr(a.k.ders, b.k.ders) || cmpTr(a.k.kod, b.k.kod));
   return { liste, kazanimsiz };
 }
-const analizSecim = { sinavlar: null, kazanimlar: null, ogrId: null };
+const analizSecim = { sinavlar: null, kazanimlar: null, konular: null, ogrId: null };
 
 function cizAnaliz() {
   const siniflar = S.siniflar.slice().sort(sinifSirala);
@@ -1051,10 +1171,18 @@ function cizAnaliz() {
   if (!o) { $('#analizAlan').innerHTML = '<p class="muted">Bir öğrenci seçin.</p>'; return; }
 
   const girilmis = S.sinavlar.filter(s => S.sonuclar[s.id]?.[o.id]).sort((a, b) => cmpTr(b.tarih, a.tarih));
-  if (analizSecim.ogrId !== o.id) { analizSecim.ogrId = o.id; analizSecim.sinavlar = null; analizSecim.kazanimlar = null; }
+  if (analizSecim.ogrId !== o.id) { analizSecim.ogrId = o.id; analizSecim.sinavlar = null; analizSecim.kazanimlar = null; analizSecim.konular = null; }
   if (!analizSecim.sinavlar) analizSecim.sinavlar = new Set(girilmis.slice(0, 1).map(s => s.id));
   const { liste, kazanimsiz } = eksikKazanimlar(o.id, [...analizSecim.sinavlar]);
   if (!analizSecim.kazanimlar) analizSecim.kazanimlar = new Set(liste.map(e => e.k.id));
+  const konular = konuAnalizi(o.id, [...analizSecim.sinavlar]);
+  if (!analizSecim.konular) analizSecim.konular = new Set(konular.filter(k => k.durum.kod !== 'iyi').map(k => k.key));
+  const sayac = { eksik: 0, orta: 0, iyi: 0 };
+  konular.forEach(k => { sayac[k.durum.kod]++; });
+  const onerilen = konular.filter(k => k.durum.kod !== 'iyi').sort((a, b) => a.basari - b.basari || cmpTr(a.ders, b.ders));
+  const toplamOneri = onerilen.reduce((t, k) => t + k.durum.soru, 0);
+  const konuDers = {};
+  konular.forEach(k => { (konuDers[k.ders] = konuDers[k.ders] || []).push(k); });
 
   const planlar = S.planlar.filter(p => p.ogrenciId === o.id).sort((a, b) => cmpTr(b.olusturma, a.olusturma));
   const dersGrup = {};
@@ -1072,6 +1200,42 @@ function cizAnaliz() {
         <span class="chip green">${s.sorular.length - y - b} D</span> <span class="chip red">${y} Y</span> <span class="chip orange">${b} B</span></span></label>`;
     }).join('') : '<p class="muted">Bu öğrenci için girilmiş sınav sonucu yok. “Sonuç Girişi” sekmesinden girin.</p>'}
   </div>
+
+  ${konular.length ? `<div class="card">
+    <h2>Soru çözme önerisi</h2>
+    <p class="muted small">Seçili ${analizSecim.sinavlar.size > 1 ? 'sınavlardaki' : 'sınavdaki'} sonuçlara göre ${esc(o.ad)} şu konulardan soru çözmeli (en zayıf konu en üstte):</p>
+    ${onerilen.length ? `<div class="tablewrap"><table class="oneri">
+      <tr><th>Ders</th><th>Konu</th><th>Başarı</th><th>Ne yapmalı?</th><th class="sag">Soru</th></tr>
+      ${onerilen.map(k => `<tr><td>${esc(k.ders)}</td><td><b>${esc(k.konu)}</b></td>
+        <td style="white-space:nowrap"><span class="chip ${k.durum.renk}">%${k.basari}</span></td>
+        <td class="small">${esc(k.durum.oneri)}</td><td class="sag"><b>${k.durum.soru}</b></td></tr>`).join('')}
+      <tr><td colspan="4"><b>Toplam</b></td><td class="sag"><b>${toplamOneri}</b></td></tr>
+    </table></div>
+    <div class="toolbar" style="margin-top:10px"><button class="btn" id="btnOneriExcel">Soru çözme listesini Excel'e aktar</button>
+      ${ARTIFACT ? '' : '<button class="btn" id="btnOneriYazdir">Öğrenciye vermek için yazdır</button>'}</div>`
+    : '<p><span class="chip green">Bütün konularda başarılı</span> Bu sınavlarda eksik konu görünmüyor.</p>'}
+  </div>
+
+  <div class="card">
+    <h2>Konu analizi <span class="muted small">(${konular.length} konu)</span></h2>
+    <div class="toolbar"><span class="chip red">${sayac.eksik} eksik</span><span class="chip orange">${sayac.orta} geliştirilmeli</span><span class="chip green">${sayac.iyi} iyi</span>
+      <span class="muted small">Eksik: başarı %${S.ayarlar.esikEksik}'in altında · İyi: %${S.ayarlar.esikIyi} ve üstü</span></div>
+    ${Object.entries(konuDers).map(([ders, l]) => {
+      const t = l.reduce((a, k) => ({ d: a.d + k.d, n: a.n + k.toplam }), { d: 0, n: 0 });
+      const db = Math.round(100 * t.d / Math.max(1, t.n));
+      return `<div class="group-title">${esc(ders)} · ${t.n} soru · başarı %${db}</div>
+      <div class="tablewrap"><table class="konu-tablo">
+        <tr><th></th><th>Konu</th><th class="sag">Soru</th><th class="sag">D</th><th class="sag">Y</th><th class="sag">B</th><th>Başarı</th><th>Durum</th></tr>
+        ${l.map(k => `<tr><td><input type="checkbox" data-an-konu="${esc(k.key)}" ${analizSecim.konular.has(k.key) ? 'checked' : ''} aria-label="Plana ekle"></td>
+          <td>${esc(k.konu)}${k.sorular.length ? `<div class="kz-meta">Çözemediği: ${k.sorular.map(esc).join(', ')}</div>` : ''}</td>
+          <td class="sag">${k.toplam}</td><td class="sag">${k.d}</td><td class="sag">${k.y}</td><td class="sag">${k.b}</td>
+          <td style="min-width:120px">${basariCubugu(k.basari, k.durum.renk)}</td>
+          <td><span class="chip ${k.durum.renk}">${k.durum.ad}</span></td></tr>`).join('')}
+      </table></div>`;
+    }).join('')}
+    ${konular.some(k => k.konu === KONU_YOK) ? `<p class="small"><span class="chip orange">Bazı soruların konusu yok</span> “Sınavlar” sekmesinden konu veya kazanım atayın.</p>` : ''}
+    <div class="toolbar" style="margin-top:10px"><button class="btn primary" id="btnKonuPlan">İşaretli konularla ödev / çalışma planı hazırla</button></div>
+  </div>` : ''}
 
   <div class="card">
     <h2>Çözemediği sorulara göre kazanımlar <span class="muted small">(${liste.length})</span></h2>
@@ -1100,19 +1264,34 @@ function cizAnaliz() {
   </div>`;
 }
 
-function planDialog(o) {
+function kazanimPlanDialog(o) {
   const { liste } = eksikKazanimlar(o.id, [...analizSecim.sinavlar]);
   const secili = liste.filter(e => analizSecim.kazanimlar.has(e.k.id));
   if (!secili.length) { toast('En az bir kazanım seçin.'); return; }
+  planDialog(o, secili, false);
+}
+function konuPlanDialog(o) {
+  const secili = konuAnalizi(o.id, [...analizSecim.sinavlar])
+    .filter(k => analizSecim.konular.has(k.key))
+    .sort((a, b) => a.basari - b.basari)
+    .map(k => ({
+      k: { id: '', kod: '', ders: k.ders, metin: k.konu, konu: k.konu, unite: '' },
+      yanlis: k.y, bos: k.b, soru: k.durum.soru || S.ayarlar.soruOrta,
+    }));
+  if (!secili.length) { toast('Konu analizinden en az bir konu işaretleyin.'); return; }
+  planDialog(o, secili, true);
+}
+function planDialog(o, secili, konuBazli) {
+  const birim = konuBazli ? 'konu' : 'kazanım';
   const gunOneri = Math.min(30, Math.max(7, Math.ceil(secili.length / 2) + 5));
   dialogAc(`Ödev / çalışma planı – ${adSoyad(o)}`, `
-    <p class="muted small">${secili.length} kazanım seçildi. En çok yanlış/boş yapılan kazanımlar öne alınır.</p>
+    <p class="muted small">${secili.length} ${birim} seçildi. ${konuBazli ? 'En düşük başarılı konular öne alınır; her konunun soru sayısı öneriden gelir (eksik konu ' + S.ayarlar.soruEksik + ', geliştirilmeli ' + S.ayarlar.soruOrta + ' soru).' : 'En çok yanlış/boş yapılan kazanımlar öne alınır.'}</p>
     <div class="plan-ayar">
       <label>Plan başlığı<input id="pBaslik" value="${esc((S.sinavlar.filter(s => analizSecim.sinavlar.has(s.id)).map(s => s.ad).join(', ') || 'Kazanım') + ' – Çalışma planı')}"></label>
       <label>Başlangıç tarihi<input id="pBaslangic" type="date" value="${addDays(bugun(), 1)}"></label>
       <label>Süre (gün)<input id="pGun" type="number" min="1" max="90" value="${gunOneri}"></label>
-      <label>Kazanım başına soru sayısı<input id="pSoru" type="number" min="0" max="200" value="20"></label>
-      <label>Günde en fazla yeni kazanım<input id="pGunluk" type="number" min="1" max="20" value="3"></label>
+      ${konuBazli ? '' : '<label>Kazanım başına soru sayısı<input id="pSoru" type="number" min="0" max="200" value="20"></label>'}
+      <label>Günde en fazla yeni ${birim}<input id="pGunluk" type="number" min="1" max="20" value="${konuBazli ? 2 : 3}"></label>
       <label class="cb"><input type="checkbox" id="pKonu" checked> Konu tekrarı görevi ekle</label>
       <label class="cb"><input type="checkbox" id="pTekrar" checked> 3 gün sonra tekrar testi ekle</label>
       <label class="cb"><input type="checkbox" id="pPazar" checked> Pazar günü dinlenme</label>
@@ -1126,7 +1305,7 @@ function planDialog(o) {
           baslik: $('#pBaslik').value.trim() || 'Çalışma planı',
           baslangic: $('#pBaslangic').value || bugun(),
           gun: Math.max(1, Math.min(90, parseInt($('#pGun').value, 10) || 7)),
-          soru: Math.max(0, parseInt($('#pSoru').value, 10) || 0),
+          soru: konuBazli ? S.ayarlar.soruOrta : Math.max(0, parseInt($('#pSoru')?.value, 10) || 0),
           gunluk: Math.max(1, parseInt($('#pGunluk').value, 10) || 3),
           konu: $('#pKonu').checked, tekrar: $('#pTekrar').checked, pazar: $('#pPazar').checked, genel: $('#pGenel').checked,
           not: $('#pNot').value.trim(),
@@ -1163,21 +1342,22 @@ function planOlustur(o, secili, a) {
     const temel = { ders: k.ders, kod: k.kod, kazanim: k.metin, kazanimId: k.id, tamam: false };
     const parca = [];
     if (a.konu) parca.push(`Konu tekrarı yap: ${k.konu || k.unite || 'konu anlatımını'} oku, kısa özet çıkar.`);
-    if (a.soru) parca.push(`${a.soru} soru çöz.`);
-    parca.push(`Sınavda yanlış/boş bıraktığın ${e.yanlis + e.bos} soruyu tekrar çöz.`);
+    const soru = e.soru ?? a.soru;
+    if (soru) parca.push(`${soru} soru çöz.`);
+    if (e.yanlis + e.bos) parca.push(`Sınavda yanlış/boş bıraktığın ${e.yanlis + e.bos} soruyu tekrar çöz.`);
     gorevler.push({ ...temel, tarih: gunler[gi], tur: 'Çalışma', gorev: parca.join(' ') });
     if (a.tekrar) {
       let ti = gi + 3;
       const sinir = genelGun >= 0 ? genelGun - 1 : gunler.length - 1;
       if (ti > sinir) ti = sinir > gi ? sinir : -1;
-      if (ti >= 0) gorevler.push({ ...temel, tarih: gunler[ti], tur: 'Tekrar', gorev: `Tekrar testi: ${Math.max(5, Math.round(a.soru / 2))} soru çöz, yanlışlarını kontrol et.` });
+      if (ti >= 0) gorevler.push({ ...temel, tarih: gunler[ti], tur: 'Tekrar', gorev: `Tekrar testi: ${Math.max(5, Math.round(soru / 2))} soru çöz, yanlışlarını kontrol et.` });
     }
   });
   if (genelGun >= 0) {
     const dersler = [...new Set(secili.map(e => e.k.ders))];
     dersler.forEach(d => gorevler.push({
-      ders: d, kod: '', kazanim: 'Genel tekrar (bu plandaki tüm kazanımlar)', kazanimId: '', tamam: false,
-      tarih: gunler[genelGun], tur: 'Genel tekrar', gorev: `${d}: plandaki kazanımlardan karışık ${Math.max(10, secili.filter(e => e.k.ders === d).length * 3)} soru çöz; sınavdaki yanlışlarını yeniden gözden geçir.`,
+      ders: d, kod: '', kazanim: 'Genel tekrar (bu plandaki tüm konular)', kazanimId: '', tamam: false,
+      tarih: gunler[genelGun], tur: 'Genel tekrar', gorev: `${d}: plandaki konulardan karışık ${Math.max(10, secili.filter(e => e.k.ders === d).length * 3)} soru çöz; sınavdaki yanlışlarını yeniden gözden geçir.`,
     }));
   }
   const turSira = { 'Çalışma': 0, 'Tekrar': 1, 'Genel tekrar': 2 };
@@ -1240,6 +1420,32 @@ function planYazdir(p) {
     ${p.not ? `<p><b>Öğretmen notu:</b> ${esc(p.not)}</p>` : ''}
     <p style="margin-top:30px">Öğretmen: ____________________ &nbsp;&nbsp;&nbsp; Veli: ____________________</p>`);
 }
+function oneriSatirlari(o) {
+  return konuAnalizi(o.id, [...analizSecim.sinavlar]).filter(k => k.durum.kod !== 'iyi').sort((a, b) => a.basari - b.basari || cmpTr(a.ders, b.ders));
+}
+function oneriExcel(o) {
+  const sinavAdlari = S.sinavlar.filter(s => analizSecim.sinavlar.has(s.id)).map(s => s.ad).join(', ');
+  const satirlar = oneriSatirlari(o).map(k => ({
+    'Ders': k.ders, 'Konu': k.konu, 'Soru': k.toplam, 'Doğru': k.d, 'Yanlış': k.y, 'Boş': k.b, 'Başarı %': k.basari,
+    'Durum': k.durum.ad, 'Ne yapmalı?': k.durum.oneri, 'Önerilen soru': k.durum.soru, 'Çözdüm': '',
+  }));
+  const ws = XLSX.utils.aoa_to_sheet([[`${adSoyad(o)} (${o.no}) – ${sinavAdlari}`], []]);
+  XLSX.utils.sheet_add_json(ws, satirlar, { origin: 'A3' });
+  ws['!cols'] = [{ wch: 16 }, { wch: 30 }, { wch: 6 }, { wch: 6 }, { wch: 6 }, { wch: 5 }, { wch: 9 }, { wch: 14 }, { wch: 44 }, { wch: 13 }, { wch: 8 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Soru çözme listesi');
+  excelIndir(wb, `Soru_Cozme_${dosyaAdi(adSoyad(o))}.xlsx`);
+}
+function oneriYazdir(o) {
+  const l = oneriSatirlari(o);
+  const sinavAdlari = S.sinavlar.filter(s => analizSecim.sinavlar.has(s.id)).map(s => `${s.ad} (${tarihTr(s.tarih)})`).join(', ');
+  yazdir(`<h2>Hangi konudan soru çözmeliyim?</h2>
+    <p><b>Öğrenci:</b> ${esc(adSoyad(o))} (${esc(o.no)}) · <b>Sınıf:</b> ${esc(sinifAdi(sinifBul(o.sinifId)))}<br><b>Sınav:</b> ${esc(sinavAdlari)}</p>
+    <table><tr><th>Ders</th><th>Konu</th><th>Başarı</th><th>Ne yapmalı?</th><th>Soru</th><th>✓</th></tr>
+    ${l.map(k => `<tr><td>${esc(k.ders)}</td><td><b>${esc(k.konu)}</b></td><td>%${k.basari}</td><td>${esc(k.durum.oneri)}</td><td>${k.durum.soru}</td><td><span class="kutu"></span></td></tr>`).join('')}
+    <tr><td colspan="4"><b>Toplam</b></td><td><b>${l.reduce((t, k) => t + k.durum.soru, 0)}</b></td><td></td></tr></table>
+    <p style="margin-top:30px">Öğretmen: ____________________ &nbsp;&nbsp;&nbsp; Veli: ____________________</p>`);
+}
 function kazanimListesiYazdir(o) {
   const { liste } = eksikKazanimlar(o.id, [...analizSecim.sinavlar]);
   const secili = liste.filter(e => analizSecim.kazanimlar.has(e.k.id));
@@ -1252,10 +1458,93 @@ function kazanimListesiYazdir(o) {
 }
 
 // ---------------------------------------------------------------------------
+// SINIF KONU ANALİZİ
+// ---------------------------------------------------------------------------
+function sinifAnaliziHesapla() {
+  const s = sinavBul(filtre.saSinav);
+  if (!s) return null;
+  const sonuc = S.sonuclar[s.id] || {};
+  let ogr = Object.keys(sonuc).map(ogrenciBul).filter(Boolean);
+  if (filtre.saSinif) ogr = ogr.filter(o => o.sinifId === filtre.saSinif);
+  const konular = new Map();
+  for (const o of ogr) {
+    for (const k of konuAnalizi(o.id, [s.id])) {
+      if (!konular.has(k.key)) konular.set(k.key, { key: k.key, ders: k.ders, konu: k.konu, soru: k.toplam, d: 0, n: 0, ogrenciler: [] });
+      const e = konular.get(k.key);
+      e.d += k.d; e.n += k.toplam;
+      e.ogrenciler.push({ o, basari: k.basari, durum: k.durum });
+    }
+  }
+  const liste = [...konular.values()].map(e => {
+    const basari = Math.round(100 * e.d / Math.max(1, e.n));
+    const eksik = e.ogrenciler.filter(x => x.durum.kod === 'eksik').sort((a, b) => a.basari - b.basari);
+    const orta = e.ogrenciler.filter(x => x.durum.kod === 'orta').sort((a, b) => a.basari - b.basari);
+    return { ...e, basari, durum: konuDurum(basari), eksik, orta };
+  }).sort((a, b) => a.basari - b.basari || cmpTr(a.ders, b.ders));
+  return { s, ogr, liste };
+}
+function cizSinifAnaliz() {
+  const sinavlar = S.sinavlar.slice().sort((a, b) => cmpTr(b.tarih, a.tarih));
+  if (!sinavBul(filtre.saSinav)) filtre.saSinav = sinavlar[0]?.id || '';
+  $('#saSinav').innerHTML = sinavlar.map(s => opt(s.id, `${s.ad} (${tarihTr(s.tarih)})`, s.id === filtre.saSinav)).join('') || opt('', 'Sınav yok');
+  const s = sinavBul(filtre.saSinav);
+  const girenSiniflar = s ? [...new Set(Object.keys(S.sonuclar[s.id] || {}).map(id => ogrenciBul(id)?.sinifId).filter(Boolean))].map(sinifBul).filter(Boolean).sort(sinifSirala) : [];
+  if (filtre.saSinif && !girenSiniflar.some(c => c.id === filtre.saSinif)) filtre.saSinif = '';
+  $('#saSinif').innerHTML = opt('', 'Sınava giren tüm sınıflar') + girenSiniflar.map(c => opt(c.id, sinifAdi(c), c.id === filtre.saSinif)).join('');
+  const sonuc = sinifAnaliziHesapla();
+  if (!sonuc) { $('#sinifAnalizAlan').innerHTML = '<p class="muted">Önce bir sınav oluşturup sonuç girin.</p>'; return; }
+  if (!sonuc.ogr.length) { $('#sinifAnalizAlan').innerHTML = '<p class="muted">Bu sınav için girilmiş sonuç yok.</p>'; return; }
+  const { liste, ogr } = sonuc;
+  const zayif = liste.filter(k => k.durum.kod !== 'iyi');
+  $('#sinifAnalizAlan').innerHTML = `
+  <div class="card">
+    <h2>Sınıfın en zayıf konuları</h2>
+    <p class="muted small">${ogr.length} öğrencinin sonucuna göre. Başarı = konudaki doğru sayısı / sorulan soru. Öğrenci adına dokunarak öğrencinin analizini açabilirsiniz.</p>
+    ${zayif.length ? '' : '<p><span class="chip green">Sınıf bütün konularda başarılı</span></p>'}
+    <div class="tablewrap"><table class="konu-tablo">
+      <tr><th>Ders</th><th>Konu</th><th class="sag">Soru</th><th>Sınıf başarısı</th><th>Durum</th><th>Eksik öğrenciler</th></tr>
+      ${liste.map(k => `<tr>
+        <td>${esc(k.ders)}</td><td><b>${esc(k.konu)}</b></td><td class="sag">${k.soru}</td>
+        <td style="min-width:120px">${basariCubugu(k.basari, k.durum.renk)}</td>
+        <td><span class="chip ${k.durum.renk}">${k.durum.ad}</span></td>
+        <td class="small">${k.eksik.length ? `<b>${k.eksik.length} eksik:</b> ` + k.eksik.map(x => `<a href="#" class="ogr-link" data-ogr-analiz="${x.o.id}">${esc(adSoyad(x.o))}</a> <span class="muted">%${x.basari}</span>`).join(', ') : '<span class="muted">—</span>'}
+          ${k.orta.length ? `<div class="muted">Geliştirilmeli: ${k.orta.map(x => esc(adSoyad(x.o))).join(', ')}</div>` : ''}</td>
+      </tr>`).join('')}
+    </table></div>
+    <div class="toolbar" style="margin-top:10px"><button class="btn" id="btnSinifExcel">Sınıf analizini Excel'e aktar</button></div>
+  </div>`;
+}
+function sinifAnalizExcel() {
+  const sonuc = sinifAnaliziHesapla();
+  if (!sonuc) return;
+  const { s, liste, ogr } = sonuc;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(liste.map(k => ({
+    'Ders': k.ders, 'Konu': k.konu, 'Soru': k.soru, 'Sınıf başarısı %': k.basari, 'Durum': k.durum.ad,
+    'Eksik öğrenci sayısı': k.eksik.length, 'Eksik öğrenciler': k.eksik.map(x => `${adSoyad(x.o)} (%${x.basari})`).join(', '),
+    'Geliştirilmeli': k.orta.map(x => adSoyad(x.o)).join(', '),
+  }))), 'Konular');
+  // Öğrenci × konu başarı tablosu
+  const tablo = ogr.map(o => {
+    const satir = { 'No': o.no, 'Öğrenci': adSoyad(o) };
+    const ka = new Map(konuAnalizi(o.id, [s.id]).map(k => [k.key, k.basari]));
+    liste.forEach(k => { satir[`${k.ders} – ${k.konu}`] = ka.has(k.key) ? ka.get(k.key) : ''; });
+    return satir;
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(tablo), 'Öğrenci x Konu %');
+  const sinif = sinifBul(filtre.saSinif);
+  excelIndir(wb, `Sinif_Konu_Analizi_${dosyaAdi(s.ad)}${sinif ? '_' + dosyaAdi(sinifAdi(sinif, true)) : ''}.xlsx`);
+}
+
+// ---------------------------------------------------------------------------
 // AYARLAR / YEDEK
 // ---------------------------------------------------------------------------
 function cizAyar() {
   $('#dersListesi').value = S.dersler.join(', ');
+  $('#aEsikEksik').value = S.ayarlar.esikEksik;
+  $('#aEsikIyi').value = S.ayarlar.esikIyi;
+  $('#aSoruEksik').value = S.ayarlar.soruEksik;
+  $('#aSoruOrta').value = S.ayarlar.soruOrta;
 }
 function tumExcel() {
   const wb = XLSX.utils.book_new();
@@ -1296,9 +1585,11 @@ function olaylar() {
   document.addEventListener('click', e => {
     const an = e.target.closest('[data-ogr-analiz]');
     if (!an) return;
+    e.preventDefault();
     const o = ogrenciBul(an.dataset.ogrAnaliz);
     filtre.anSinif = o.sinifId; filtre.anOgrenci = o.id;
-    if (aktifSekme === 'sonuc' && filtre.snSinav) analizSecim.ogrId = o.id, analizSecim.sinavlar = new Set([filtre.snSinav]), analizSecim.kazanimlar = null;
+    const sinavId = aktifSekme === 'sonuc' ? filtre.snSinav : aktifSekme === 'sinifanaliz' ? filtre.saSinav : '';
+    if (sinavId) Object.assign(analizSecim, { ogrId: o.id, sinavlar: new Set([sinavId]), kazanimlar: null, konular: null });
     sekmeAc('analiz');
   });
 
@@ -1360,6 +1651,7 @@ function olaylar() {
       s.sorular.push({ no: String((parseInt(son?.no, 10) || 0) + 1), ders: son?.ders || '', kazanimId: '', cevap: '' });
       kaydet(); cizSinav();
     } else if (e.target.id === 'btnTopluSoru') topluSoruDialog(s);
+    else if (e.target.id === 'btnTopluKonu') topluKonuDialog(s);
     else if (e.target.id === 'btnSinavSil') onayla(`“${s.ad}” ve girilmiş tüm sonuçları silinsin mi?`, () => {
       S.sinavlar = S.sinavlar.filter(x => x.id !== s.id); delete S.sonuclar[s.id]; filtre.seciliSinav = null; kaydet(); ciz();
     });
@@ -1375,6 +1667,7 @@ function olaylar() {
   $('#snSinav').onchange = e => { filtre.snSinav = e.target.value; cizSonuc(); };
   $('#snSinif').onchange = e => { filtre.snSinif = e.target.value; cizSonuc(); };
   $('#snFiles').addEventListener('change', e => { sonucIceAktar(e.target.files); e.target.value = ''; });
+  $('#sonucAlan').addEventListener('change', e => { if (e.target.dataset.hizli) hizliGiris(e.target); });
   $('#sonucAlan').addEventListener('click', e => {
     const q = e.target.closest('[data-qno]');
     if (q) { soruDurumDegistir(q.closest('[data-ogr]').dataset.ogr, q.dataset.qno, q); return; }
@@ -1393,7 +1686,9 @@ function olaylar() {
     const t = e.target;
     if (t.dataset.anSinav) {
       t.checked ? analizSecim.sinavlar.add(t.dataset.anSinav) : analizSecim.sinavlar.delete(t.dataset.anSinav);
-      analizSecim.kazanimlar = null; cizAnaliz();
+      analizSecim.kazanimlar = null; analizSecim.konular = null; cizAnaliz();
+    } else if (t.dataset.anKonu) {
+      t.checked ? analizSecim.konular.add(t.dataset.anKonu) : analizSecim.konular.delete(t.dataset.anKonu);
     } else if (t.dataset.anKz) {
       t.checked ? analizSecim.kazanimlar.add(t.dataset.anKz) : analizSecim.kazanimlar.delete(t.dataset.anKz);
     }
@@ -1402,7 +1697,10 @@ function olaylar() {
     const o = ogrenciBul(filtre.anOgrenci);
     if (e.target.id === 'kzHepsi') { analizSecim.kazanimlar = null; cizAnaliz(); }
     else if (e.target.id === 'kzHicbiri') { analizSecim.kazanimlar = new Set(); cizAnaliz(); }
-    else if (e.target.id === 'btnPlanHazirla') planDialog(o);
+    else if (e.target.id === 'btnPlanHazirla') kazanimPlanDialog(o);
+    else if (e.target.id === 'btnKonuPlan') konuPlanDialog(o);
+    else if (e.target.id === 'btnOneriExcel') oneriExcel(o);
+    else if (e.target.id === 'btnOneriYazdir') oneriYazdir(o);
     else if (e.target.id === 'btnKzListeYazdir') kazanimListesiYazdir(o);
     else { const p = e.target.closest('[data-plan]'); if (p) planGoster(p.dataset.plan); }
   });
@@ -1432,6 +1730,16 @@ function olaylar() {
     } catch (err) { toast('Yedek dosyası okunamadı.'); }
   });
   $('#btnTumExcel').onclick = tumExcel;
+  $('#btnAyarKaydet').onclick = () => {
+    const sayi = (id, v) => { const n = parseInt($(id).value, 10); return Number.isFinite(n) ? n : v; };
+    const a = { esikEksik: sayi('#aEsikEksik', 50), esikIyi: sayi('#aEsikIyi', 80), soruEksik: sayi('#aSoruEksik', 40), soruOrta: sayi('#aSoruOrta', 20) };
+    if (a.esikEksik >= a.esikIyi) { toast('“Eksik” sınırı “İyi” sınırından küçük olmalı.'); return; }
+    S.ayarlar = a; kaydet(); toast('Ayarlar kaydedildi.');
+  };
+  // Sınıf konu analizi
+  $('#saSinav').onchange = e => { filtre.saSinav = e.target.value; cizSinifAnaliz(); };
+  $('#saSinif').onchange = e => { filtre.saSinif = e.target.value; cizSinifAnaliz(); };
+  $('#sinifAnalizAlan').addEventListener('click', e => { if (e.target.id === 'btnSinifExcel') sinifAnalizExcel(); });
   $('#btnDersKaydet').onclick = () => {
     S.dersler = [...new Set($('#dersListesi').value.split(',').map(x => x.trim()).filter(Boolean))];
     kaydet(); toast('Ders listesi kaydedildi.');
@@ -1447,6 +1755,7 @@ function olaylar() {
 (async function baslat() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
+  S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   olaylar();
   ciz();
 })();

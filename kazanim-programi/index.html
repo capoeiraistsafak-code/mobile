@@ -16,6 +16,7 @@
     <button data-tab="sinav">Sınavlar</button>
     <button data-tab="sonuc">Sonuç Girişi</button>
     <button data-tab="analiz">Öğrenci Analizi ve Ödev</button>
+    <button data-tab="sinifanaliz">Sınıf Konu Analizi</button>
     <button data-tab="ayar">Yedek / Ayarlar</button>
   </nav>
 </header>
@@ -31,9 +32,10 @@
       <ol class="steps">
         <li><b>Öğrencileri içe aktarın:</b> “Sınıflar ve Öğrenciler” → <i>Ogrenci klasöründen içe aktar</i>. K12'den aldığınız öğrenci listelerini (Excel) <code>Ogrenci</code> klasörüne koyun.</li>
         <li><b>Kazanımları içe aktarın:</b> “Kazanımlar” → <i>Kazanim klasöründen içe aktar</i>. K12'den aldığınız kazanım listelerini <code>Kazanim</code> klasörüne koyun.</li>
-        <li><b>Sınav tanımlayın:</b> “Sınavlar” → her soruya ders ve kazanım kodu atayın (veya cevap anahtarını Excel'den aktarın).</li>
-        <li><b>Sonuçları girin:</b> “Sonuç Girişi” → öğrencinin yanlış ve boş bıraktığı soruları işaretleyin (veya sonuç Excel'ini aktarın).</li>
-        <li><b>Analiz ve ödev:</b> “Öğrenci Analizi ve Ödev” → çözemediği sorulardan gelen kazanımları görün, isterseniz ödev / çalışma planı hazırlayın.</li>
+        <li><b>Sınav tanımlayın:</b> “Sınavlar” → soruları ekleyin, her soruya <b>konu</b> (ör. “1-5 Paragraf” şeklinde toplu) ve isterseniz kazanım atayın; ya da cevap anahtarını Excel'den aktarın.</li>
+        <li><b>Sonuçları girin:</b> “Sonuç Girişi” → yanlış ve boş soru numaralarını yazın (ör. <code>3 7 12</code>), soru kutularına dokunun ya da sonuç Excel'ini aktarın.</li>
+        <li><b>Analiz ve ödev:</b> “Öğrenci Analizi ve Ödev” → öğrencinin konu konu başarısını, <b>hangi konudan kaç soru çözmesi gerektiğini</b> ve eksik kazanımlarını görün; isterseniz ödev / çalışma planı hazırlayın.</li>
+        <li><b>Sınıf geneli:</b> “Sınıf Konu Analizi” → sınıfın en zayıf olduğu konular ve her konuda eksik olan öğrenciler.</li>
       </ol>
     </div>
     <div class="card" id="panelSon"></div>
@@ -135,6 +137,16 @@
     <div id="analizAlan"><p class="muted">Bir öğrenci seçin.</p></div>
   </section>
 
+  <!-- SINIF KONU ANALİZİ -->
+  <section id="tab-sinifanaliz" class="tab">
+    <h1>Sınıf Konu Analizi</h1>
+    <div class="filters">
+      <select id="saSinav"></select>
+      <select id="saSinif"></select>
+    </div>
+    <div id="sinifAnalizAlan"></div>
+  </section>
+
   <!-- AYARLAR -->
   <section id="tab-ayar" class="tab">
     <h1>Yedek / Ayarlar</h1>
@@ -148,6 +160,17 @@
         </label>
         <button class="btn" id="btnTumExcel">Tüm verileri Excel'e aktar</button>
       </div>
+    </div>
+    <div class="card">
+      <h2>Konu analizi ve soru önerisi</h2>
+      <p class="muted">Bir konudaki başarı (doğru / soru sayısı) bu sınırlara göre değerlendirilir.</p>
+      <div class="form-grid">
+        <label>“Eksik” sınırı: başarı % bunun altındaysa<input id="aEsikEksik" type="number" min="1" max="99"></label>
+        <label>“İyi” sınırı: başarı % bu ve üstündeyse<input id="aEsikIyi" type="number" min="1" max="100"></label>
+        <label>Eksik konu için önerilen soru<input id="aSoruEksik" type="number" min="0" max="500"></label>
+        <label>Geliştirilmeli konu için önerilen soru<input id="aSoruOrta" type="number" min="0" max="500"></label>
+      </div>
+      <button class="btn" id="btnAyarKaydet" style="margin-top:10px">Kaydet</button>
     </div>
     <div class="card">
       <h2>Dersler</h2>
