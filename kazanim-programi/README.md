@@ -36,6 +36,7 @@ Aktardığınız her Excel dosyası (ör. `11-A.xlsx`) sınıfıyla birlikte **�
 - **Tümünü güncelle:** kayıtlı bütün listeleri tek seferde günceller.
 - **Sil:** listeyi ve ondan gelen öğrencileri (sonuçları ve planlarıyla) siler; ya da yalnızca liste kaydını unutup öğrencileri bırakır. Excel dosyanız bilgisayarınızda olduğu gibi kalır.
 - **Dosya yolu:** Chrome ve Edge'de program dosyanın yerini hatırlar (*dosya yolu kayıtlı*); Güncelle'ye basınca dosya oradan okunur, ilk seferde tarayıcı okuma izni sorar. Diğer tarayıcılarda ve Claude'da yayınlanan sayfada Güncelle'ye basınca güncel dosyayı seçmeniz istenir.
+- **Yeni sınıf / ders otomatik oluşur:** Excel'deki sınıf (ör. 9-B) sistemde yoksa içe aktarırken otomatik oluşturulur; elle sınıf eklemeniz gerekmez. İçe aktarma penceresinde her dosya için öğrencilerin gideceği sınıflar ve hangilerinin **yeni oluşturulacağı** gösterilir, işlem bitince oluşturulan sınıflar listelenir. Kazanımlarda da yeni dersler ve sınıf seviyeleri aynı şekilde oluşturulup gösterilir.
 - Aynı dosyayı yeniden içe aktarmak da o listeyi günceller. Kazanım listeleri de aynı şekilde çalışır.
 - Bir sınıfı ✎ → *Sınıfı sil* ile öğrencileriyle birlikte silebilirsiniz.
 

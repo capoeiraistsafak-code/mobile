@@ -164,6 +164,8 @@ dialog::backdrop { background: var(--backdrop); }
 #toast.show { opacity: 1; }
 
 .print-only { display: none; }
+.onizleme { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; }
+.onizleme .chip { white-space: normal; }
 .ornek-liste { display: grid; gap: 8px; }
 .ornek-liste > div { display: grid; grid-template-columns: 170px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
 @media (max-width: 600px) { .ornek-liste > div { grid-template-columns: 1fr auto; } .ornek-liste > div > span { grid-column: 1 / -1; grid-row: 2; } }
