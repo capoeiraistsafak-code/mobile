@@ -12,8 +12,9 @@ if '--artifact' in sys.argv:
     body = h[h.index('<body>') + 6:h.index('</body>')]
     body = body.replace('<script src="vendor/xlsx.full.min.js"></script>', f'<script src="{CDN}"></script>')
     body = body.replace('<script src="app.js"></script>', '<script>window.KT_ARTIFACT = true;\n' + js + '\n</script>')
+    fontlar = re.findall(r'<link rel="(?:preconnect|stylesheet)" href="https://fonts[^>]*>', h)
     page = ('<title>Kazanım Takip Programı</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
-            '<style>\n' + css + '\nbody::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bar); }\n</style>\n' + body)
+            + '\n'.join(fontlar) + '\n<style>\n' + css + '\n</style>\n' + body)
     open(out, 'w', encoding='utf-8').write(page)
 else:
     x = open('vendor/xlsx.full.min.js', encoding='utf-8').read().replace('</script', '<\\/script')

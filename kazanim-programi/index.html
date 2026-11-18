@@ -4,74 +4,114 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kazanım Takip Programı</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M11%2030%20L9%207%20L27%2019%20Z%22%20fill%3D%22%238e98ad%22/%3E%3Cpath%20d%3D%22M53%2030%20L55%207%20L37%2019%20Z%22%20fill%3D%22%238e98ad%22/%3E%3Cpath%20d%3D%22M14%2025%20L13%2013%20L23%2020%20Z%22%20fill%3D%22%23f4b6c8%22/%3E%3Cpath%20d%3D%22M50%2025%20L51%2013%20L41%2020%20Z%22%20fill%3D%22%23f4b6c8%22/%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2238%22%20rx%3D%2225%22%20ry%3D%2221%22%20fill%3D%22%239ca6ba%22/%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2247%22%20rx%3D%2212%22%20ry%3D%228.5%22%20fill%3D%22%23b9c1d0%22/%3E%3Cellipse%20cx%3D%2214.5%22%20cy%3D%2245%22%20rx%3D%224%22%20ry%3D%222.4%22%20fill%3D%22%23f4b6c8%22%20opacity%3D%22.7%22/%3E%3Cellipse%20cx%3D%2249.5%22%20cy%3D%2245%22%20rx%3D%224%22%20ry%3D%222.4%22%20fill%3D%22%23f4b6c8%22%20opacity%3D%22.7%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2235%22%20r%3D%226.2%22%20fill%3D%22%23f0a23b%22/%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2235%22%20r%3D%226.2%22%20fill%3D%22%23f0a23b%22/%3E%3Cellipse%20cx%3D%2222%22%20cy%3D%2235%22%20rx%3D%222.2%22%20ry%3D%224.6%22%20fill%3D%22%232a2a33%22/%3E%3Cellipse%20cx%3D%2242%22%20cy%3D%2235%22%20rx%3D%222.2%22%20ry%3D%224.6%22%20fill%3D%22%232a2a33%22/%3E%3Ccircle%20cx%3D%2223.6%22%20cy%3D%2232.4%22%20r%3D%221.4%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%2243.6%22%20cy%3D%2232.4%22%20r%3D%221.4%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M29.4%2042.5%20h5.2%20l-2.6%203%20z%22%20fill%3D%22%23e7849d%22/%3E%3Cpath%20d%3D%22M32%2045.5%20q-2.6%203.2%20-5.4%201.2%20M32%2045.5%20q2.6%203.2%205.4%201.2%22%20stroke%3D%22%2359607a%22%20stroke-width%3D%221.4%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M20%2045%20L5%2042%20M20%2047.5%20L6%2049%20M44%2045%20L59%2042%20M44%2047.5%20L58%2049%22%20stroke%3D%22%23e9edf4%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="kedi" viewBox="0 0 64 64"><path d="M11 30 L9 7 L27 19 Z" fill="#8e98ad"/><path d="M53 30 L55 7 L37 19 Z" fill="#8e98ad"/>
+<path d="M14 25 L13 13 L23 20 Z" fill="#f4b6c8"/><path d="M50 25 L51 13 L41 20 Z" fill="#f4b6c8"/>
+<ellipse cx="32" cy="38" rx="25" ry="21" fill="#9ca6ba"/>
+<ellipse cx="32" cy="47" rx="12" ry="8.5" fill="#b9c1d0"/>
+<ellipse cx="14.5" cy="45" rx="4" ry="2.4" fill="#f4b6c8" opacity=".7"/><ellipse cx="49.5" cy="45" rx="4" ry="2.4" fill="#f4b6c8" opacity=".7"/>
+<circle cx="22" cy="35" r="6.2" fill="#f0a23b"/><circle cx="42" cy="35" r="6.2" fill="#f0a23b"/>
+<ellipse cx="22" cy="35" rx="2.2" ry="4.6" fill="#2a2a33"/><ellipse cx="42" cy="35" rx="2.2" ry="4.6" fill="#2a2a33"/>
+<circle cx="23.6" cy="32.4" r="1.4" fill="#fff"/><circle cx="43.6" cy="32.4" r="1.4" fill="#fff"/>
+<path d="M29.4 42.5 h5.2 l-2.6 3 z" fill="#e7849d"/>
+<path d="M32 45.5 q-2.6 3.2 -5.4 1.2 M32 45.5 q2.6 3.2 5.4 1.2" stroke="#59607a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+<path d="M20 45 L5 42 M20 47.5 L6 49 M44 45 L59 42 M44 47.5 L58 49" stroke="#e9edf4" stroke-width="1" stroke-linecap="round"/></symbol>
+</svg>
 <header class="topbar no-print">
-  <div class="brand">Kazanım Takip</div>
+  <div class="brand"><svg class="kedi-logo" aria-hidden="true"><use href="#kedi"/></svg><span>Kazanım Takip</span></div>
   <nav id="tabs">
-    <button data-tab="panel" class="active">Panel</button>
-    <button data-tab="ogrenci">Sınıflar ve Öğrenciler</button>
-    <button data-tab="kazanim">Kazanımlar</button>
-    <button data-tab="sinav">Sınavlar</button>
-    <button data-tab="sonuc">Sonuç Girişi</button>
-    <button data-tab="analiz">Öğrenci Analizi ve Ödev</button>
-    <button data-tab="sinifanaliz">Sınıf Konu Analizi</button>
-    <button data-tab="ayar">Yedek / Ayarlar</button>
+    <button data-tab="panel" class="active"><span aria-hidden="true">🏠</span> Ana Sayfa</button>
+    <button data-tab="ogrenci"><span aria-hidden="true">🎒</span> Öğrenciler</button>
+    <button data-tab="kazanim"><span aria-hidden="true">📚</span> Kazanımlar</button>
+    <button data-tab="sinav"><span aria-hidden="true">📝</span> Sınavlar</button>
+    <button data-tab="sonuc"><span aria-hidden="true">✏️</span> Sonuç Girişi</button>
+    <button data-tab="analiz"><span aria-hidden="true">🔍</span> Öğrenci Analizi</button>
+    <button data-tab="sinifanaliz"><span aria-hidden="true">📊</span> Sınıf Analizi</button>
+    <button data-tab="ayar"><span aria-hidden="true">⚙️</span> Ayarlar</button>
   </nav>
 </header>
 
 <main>
-  <!-- PANEL -->
+  <!-- ANA SAYFA -->
   <section id="tab-panel" class="tab active">
-    <h1>Panel</h1>
-    <div id="panelOrnek"></div>
-    <div class="stats" id="panelStats"></div>
-    <div class="card">
-      <h2>Nasıl kullanılır?</h2>
-      <ol class="steps">
-        <li><b>Öğrencileri içe aktarın:</b> “Sınıflar ve Öğrenciler” → <i>Ogrenci klasöründen içe aktar</i>. K12'den aldığınız öğrenci listelerini (Excel) <code>Ogrenci</code> klasörüne koyun.</li>
-        <li><b>Kazanımları içe aktarın:</b> “Kazanımlar” → <i>Kazanim klasöründen içe aktar</i>. K12'den aldığınız kazanım listelerini <code>Kazanim</code> klasörüne koyun.</li>
-        <li><b>Sınav tanımlayın:</b> “Sınavlar” → soruları ekleyin, her soruya <b>konu</b> (ör. “1-5 Paragraf” şeklinde toplu) ve isterseniz kazanım atayın; ya da cevap anahtarını Excel'den aktarın.</li>
-        <li><b>Sonuçları girin:</b> “Sonuç Girişi” → yanlış ve boş soru numaralarını yazın (ör. <code>3 7 12</code>), soru kutularına dokunun ya da sonuç Excel'ini aktarın.</li>
-        <li><b>Analiz ve ödev:</b> “Öğrenci Analizi ve Ödev” → öğrencinin konu konu başarısını, <b>hangi konudan kaç soru çözmesi gerektiğini</b> ve eksik kazanımlarını görün; isterseniz ödev / çalışma planı hazırlayın.</li>
-        <li><b>Sınıf geneli:</b> “Sınıf Konu Analizi” → sınıfın en zayıf olduğu konular ve her konuda eksik olan öğrenciler.</li>
-      </ol>
-    </div>
-    <div class="card">
-      <h2>Örnek Excel dosyaları</h2>
-      <p class="muted">Programın okuyabildiği hazır Excel örnekleri. Her dosyanın üstünde nasıl doldurulacağı yazar; örnek satırları silip kendi bilgilerinizi aynı sütunlara girin. Dört dosya birbirine uyumludur: sırayla aktarırsanız 9-A sınıfı, kazanımlar, 6 soruluk bir sınav ve sonuçları hazır olur.</p>
-      <div class="ornek-liste">
-        <div><b>1. Öğrenci listesi</b><span class="muted small">9-A sınıfı, 3 öğrenci: numara, ad, soyad, sınıf, kurum</span><button class="btn" data-ornek="ogrenci">İndir</button></div>
-        <div><b>2. Kazanım listesi</b><span class="muted small">9. sınıf Türkçe ve Matematik: kod, ders, sınıf, ünite, konu, kazanım</span><button class="btn" data-ornek="kazanim">İndir</button></div>
-        <div><b>3. Cevap anahtarı</b><span class="muted small">6 soru: soru no, ders, konu, kazanım kodu, doğru cevap</span><button class="btn" data-ornek="anahtar">İndir</button></div>
-        <div><b>4. Sınav sonuçları</b><span class="muted small">3 öğrencinin her soruda işaretlediği şık</span><button class="btn" data-ornek="sonuc">İndir</button></div>
+    <div class="hero">
+      <svg class="kedi-buyuk" aria-hidden="true"><use href="#kedi"/></svg>
+      <div>
+        <h1>Merhaba! Ben Duman <span aria-hidden="true">🐾</span></h1>
+        <p>Öğrencilerin hangi konuda eksiği olduğunu birlikte bulalım. Aşağıdaki 4 adımı sırayla yapman yeterli.</p>
       </div>
     </div>
+    <div id="panelOrnek"></div>
+    <div class="adimlar">
+      <div class="adim">
+        <div class="adim-no">1</div>
+        <h2>Öğrencileri yükle</h2>
+        <p>Öğrenci listesinin olduğu Excel'i seç, gerisini ben hallederim.</p>
+        <div class="adim-btn">
+          <label class="btn primary">📥 Excel seç<input type="file" id="panelOgrFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input"></label>
+          <button class="btn" data-ornek="ogrenci">📄 Örnek Excel</button>
+        </div>
+      </div>
+      <div class="adim">
+        <div class="adim-no">2</div>
+        <h2>Kazanımları yükle</h2>
+        <p>K12'den aldığın kazanım listesini seç.</p>
+        <div class="adim-btn">
+          <label class="btn primary">📥 Excel seç<input type="file" id="panelKzFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input"></label>
+          <button class="btn" data-ornek="kazanim">📄 Örnek Excel</button>
+        </div>
+      </div>
+      <div class="adim">
+        <div class="adim-no">3</div>
+        <h2>Sınavı oluştur</h2>
+        <p>Sınavı ekle, cevap anahtarı Excel'ini yükle.</p>
+        <div class="adim-btn">
+          <button class="btn primary" data-git="sinav">📝 Sınavlara git</button>
+          <button class="btn" data-ornek="anahtar">📄 Örnek Excel</button>
+        </div>
+      </div>
+      <div class="adim">
+        <div class="adim-no">4</div>
+        <h2>Sonuçları gir</h2>
+        <p>Sonuç Excel'ini yükle ya da yanlışları yaz.</p>
+        <div class="adim-btn">
+          <button class="btn primary" data-git="sonuc">✏️ Sonuç girişine git</button>
+          <button class="btn" data-ornek="sonuc">📄 Örnek Excel</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats" id="panelStats"></div>
     <div class="card" id="panelSon"></div>
   </section>
 
   <!-- ÖĞRENCİLER -->
   <section id="tab-ogrenci" class="tab">
-    <h1>Sınıflar ve Öğrenciler</h1>
+    <h1><span aria-hidden="true">🎒</span> Öğrenciler</h1>
     <div class="toolbar">
-      <label class="btn primary">Ogrenci klasöründen içe aktar
-        <input type="file" id="ogrFolder" webkitdirectory directory multiple class="dosya-input">
-      </label>
-      <label class="btn">Bilgisayardan Excel seç
+      <label class="btn primary">📥 Excel'den öğrenci yükle
         <input type="file" id="ogrFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
-      <button class="btn" data-ornek="ogrenci">Örnek öğrenci Excel'i indir</button>
-      <button class="btn" id="btnYeniSinif">+ Sınıf ekle</button>
-      <button class="btn" id="btnYeniOgrenci">+ Öğrenci ekle</button>
+      <label class="btn">📁 Klasörden yükle
+        <input type="file" id="ogrFolder" webkitdirectory directory multiple class="dosya-input">
+      </label>
+      <button class="btn" data-ornek="ogrenci">📄 Örnek Excel</button>
+      <button class="btn" id="btnYeniSinif">➕ Sınıf</button>
+      <button class="btn" id="btnYeniOgrenci">➕ Öğrenci</button>
     </div>
-    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
+    <p class="muted small birak-ipucu">İpucu: Excel dosyasını bu sayfanın üzerine sürükleyip bırakabilirsin.</p>
     <div id="ogrKaynaklar"></div>
     <div class="filters">
-      <select id="fKurum"></select>
-      <select id="fSeviye"></select>
-      <select id="fSinif"></select>
-      <input id="fAra" placeholder="Öğrenci ara (ad, numara)">
+      <select id="fKurum" aria-label="Kurum"></select>
+      <select id="fSeviye" aria-label="Sınıf seviyesi"></select>
+      <select id="fSinif" aria-label="Sınıf"></select>
+      <input id="fAra" placeholder="🔎 Öğrenci ara (ad, numara)">
     </div>
     <div class="grid2">
       <div class="card">
@@ -87,25 +127,25 @@
 
   <!-- KAZANIMLAR -->
   <section id="tab-kazanim" class="tab">
-    <h1>Kazanımlar</h1>
+    <h1><span aria-hidden="true">📚</span> Kazanımlar</h1>
     <div class="toolbar">
-      <label class="btn primary">Kazanim klasöründen içe aktar
-        <input type="file" id="kzFolder" webkitdirectory directory multiple class="dosya-input">
-      </label>
-      <label class="btn">Bilgisayardan Excel seç
+      <label class="btn primary">📥 Excel'den kazanım yükle
         <input type="file" id="kzFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
-      <button class="btn" data-ornek="kazanim">Örnek kazanım Excel'i indir</button>
-      <button class="btn" id="btnYeniKazanim">+ Kazanım ekle</button>
-      <button class="btn danger" id="btnKzSil">Tümünü sil</button>
+      <label class="btn">📁 Klasörden yükle
+        <input type="file" id="kzFolder" webkitdirectory directory multiple class="dosya-input">
+      </label>
+      <button class="btn" data-ornek="kazanim">📄 Örnek Excel</button>
+      <button class="btn" id="btnYeniKazanim">➕ Kazanım</button>
+      <button class="btn danger" id="btnKzSil">🗑️ Tümünü sil</button>
     </div>
-    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
-    <div class="filters">
-      <select id="kzDers"></select>
-      <select id="kzSeviye"></select>
-      <input id="kzAra" placeholder="Kazanım ara (kod, metin, konu)">
-    </div>
+    <p class="muted small birak-ipucu">İpucu: Excel dosyasını bu sayfanın üzerine sürükleyip bırakabilirsin.</p>
     <div id="kzKaynaklar"></div>
+    <div class="filters">
+      <select id="kzDers" aria-label="Ders"></select>
+      <select id="kzSeviye" aria-label="Sınıf seviyesi"></select>
+      <input id="kzAra" placeholder="🔎 Kazanım ara (kod, metin, konu)">
+    </div>
     <div class="card">
       <div class="muted" id="kzSayi"></div>
       <div class="tablewrap"><table id="kzTablo"></table></div>
@@ -114,9 +154,10 @@
 
   <!-- SINAVLAR -->
   <section id="tab-sinav" class="tab">
-    <h1>Sınavlar</h1>
+    <h1><span aria-hidden="true">📝</span> Sınavlar</h1>
     <div class="toolbar">
-      <button class="btn primary" id="btnYeniSinav">+ Yeni sınav</button>
+      <button class="btn primary" id="btnYeniSinav">➕ Yeni sınav</button>
+      <button class="btn" data-ornek="anahtar">📄 Örnek cevap anahtarı</button>
     </div>
     <div class="grid2 wide-right">
       <div class="card">
@@ -124,62 +165,62 @@
         <div id="sinavListe"></div>
       </div>
       <div class="card" id="sinavDetay">
-        <p class="muted">Soldan bir sınav seçin veya yeni sınav oluşturun.</p>
+        <p class="muted">Soldan bir sınav seç ya da yeni sınav oluştur.</p>
       </div>
     </div>
   </section>
 
   <!-- SONUÇ GİRİŞİ -->
   <section id="tab-sonuc" class="tab">
-    <h1>Sonuç Girişi</h1>
+    <h1><span aria-hidden="true">✏️</span> Sonuç Girişi</h1>
     <div class="filters">
-      <select id="snSinav"></select>
-      <select id="snSinif"></select>
-      <label class="btn">Bilgisayardan sonuç Excel'i seç
+      <select id="snSinav" aria-label="Sınav"></select>
+      <select id="snSinif" aria-label="Sınıf"></select>
+      <label class="btn primary">📥 Excel'den sonuç yükle
         <input type="file" id="snFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
-      <button class="btn" data-ornek="sonuc">Örnek sonuç Excel'i indir</button>
+      <button class="btn" data-ornek="sonuc">📄 Örnek Excel</button>
     </div>
-    <p class="muted small">Her soru kutusuna dokunun: <span class="q D">D</span> doğru → <span class="q Y">Y</span> yanlış → <span class="q B">B</span> boş. Varsayılan doğrudur; yalnızca çözemediği soruları işaretlemeniz yeterli.</p>
+    <p class="muted small">Yanlış ve boş soruların numaralarını yaz ya da soru kutularına dokun: <span class="q D">D</span> doğru → <span class="q Y">Y</span> yanlış → <span class="q B">B</span> boş.</p>
     <div id="sonucAlan"></div>
   </section>
 
   <!-- ANALİZ -->
   <section id="tab-analiz" class="tab">
-    <h1>Öğrenci Analizi ve Ödev</h1>
+    <h1><span aria-hidden="true">🔍</span> Öğrenci Analizi</h1>
     <div class="filters">
-      <select id="anSinif"></select>
-      <select id="anOgrenci"></select>
+      <select id="anSinif" aria-label="Sınıf"></select>
+      <select id="anOgrenci" aria-label="Öğrenci"></select>
     </div>
-    <div id="analizAlan"><p class="muted">Bir öğrenci seçin.</p></div>
+    <div id="analizAlan"><p class="muted">Bir öğrenci seç.</p></div>
   </section>
 
   <!-- SINIF KONU ANALİZİ -->
   <section id="tab-sinifanaliz" class="tab">
-    <h1>Sınıf Konu Analizi</h1>
+    <h1><span aria-hidden="true">📊</span> Sınıf Analizi</h1>
     <div class="filters">
-      <select id="saSinav"></select>
-      <select id="saSinif"></select>
+      <select id="saSinav" aria-label="Sınav"></select>
+      <select id="saSinif" aria-label="Sınıf"></select>
     </div>
     <div id="sinifAnalizAlan"></div>
   </section>
 
   <!-- AYARLAR -->
   <section id="tab-ayar" class="tab">
-    <h1>Yedek / Ayarlar</h1>
+    <h1><span aria-hidden="true">⚙️</span> Ayarlar</h1>
     <div class="card">
-      <h2>Yedekleme</h2>
-      <p>Veriler bu tarayıcıda saklanır. Bilgisayar değiştirirken veya düzenli olarak yedek alın.</p>
+      <h2>💾 Yedekleme</h2>
+      <p>Bilgiler bu bilgisayardaki tarayıcıda saklanır. Arada bir yedek almak iyi olur.</p>
       <div class="toolbar">
-        <button class="btn primary" id="btnYedekAl">Yedek al (JSON)</button>
-        <label class="btn">Yedekten geri yükle
+        <button class="btn primary" id="btnYedekAl">💾 Yedek al</button>
+        <label class="btn">♻️ Yedekten geri yükle
           <input type="file" id="yedekDosya" accept=".json,application/json" class="dosya-input">
         </label>
-        <button class="btn" id="btnTumExcel">Tüm verileri Excel'e aktar</button>
+        <button class="btn" id="btnTumExcel">📤 Her şeyi Excel'e aktar</button>
       </div>
     </div>
     <div class="card">
-      <h2>Konu analizi ve soru önerisi</h2>
+      <h2>🎯 Konu analizi ve soru önerisi</h2>
       <p class="muted">Bir konudaki başarı (doğru / soru sayısı) bu sınırlara göre değerlendirilir.</p>
       <div class="form-grid">
         <label>“Eksik” sınırı: başarı % bunun altındaysa<input id="aEsikEksik" type="number" min="1" max="99"></label>
@@ -190,19 +231,19 @@
       <button class="btn" id="btnAyarKaydet" style="margin-top:10px">Kaydet</button>
     </div>
     <div class="card">
-      <h2>Dersler</h2>
-      <p class="muted">Sınav sorusu girerken kullanılan ders listesi. Virgülle ayırın.</p>
-      <textarea id="dersListesi" rows="3"></textarea>
+      <h2>📖 Dersler</h2>
+      <p class="muted">Sınav sorusu girerken çıkan ders listesi. Virgülle ayır.</p>
+      <textarea id="dersListesi" rows="3" aria-label="Ders listesi"></textarea>
       <button class="btn" id="btnDersKaydet">Kaydet</button>
     </div>
     <div class="card">
-      <h2>Tehlikeli bölge</h2>
-      <button class="btn danger" id="btnHepsiniSil">Tüm verileri sil</button>
+      <h2>⚠️ Dikkat</h2>
+      <button class="btn danger" id="btnHepsiniSil">🗑️ Tüm bilgileri sil</button>
     </div>
   </section>
 </main>
 
-<!-- Ortak dialog -->
+<!-- Ortak pencere -->
 <dialog id="dlg">
   <form method="dialog" id="dlgForm">
     <h2 id="dlgBaslik"></h2>
@@ -213,7 +254,8 @@
 
 <!-- Yazdırma alanı -->
 <div id="printArea" class="print-only"></div>
-<div id="toast"></div>
+<div id="sonucKartlar" aria-live="polite"></div>
+<div id="toast" role="status"></div>
 
 <script src="vendor/xlsx.full.min.js"></script>
 <script src="app.js"></script>

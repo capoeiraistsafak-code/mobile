@@ -2,6 +2,15 @@
 
 Öğrenci bazlı kazanım takibi: sınavda çözülemeyen sorulardan öğrencinin eksik kazanımlarını bulur, isterseniz bu kazanımlara göre ödev / çalışma planı hazırlar.
 
+## Tek tıkla Excel yükleme
+
+Excel'i seçtiğinde program sütunları kendisi tanır ve hemen yükler, ayar penceresi açılmaz:
+
+- ✅ **Yeşil kart:** “aktarıldı”, kaç kayıt eklendiği/güncellendiği, hangi sınıfa/derse gittiği ve oluşturulan yeni sınıf/dersler.
+- ❌ **Kırmızı kart:** “aktarılamadı” ve nedeni (ör. “Sınıf bilgisi bulunamadı”). Kartta *Örnek Excel indir* ve, K12 dosyası gibi başlıkları farklı dosyalar için, *Sütunları elle eşleştir* seçenekleri vardır.
+
+En kolay yol: **Örnek Excel**'i indir, örnek satırları silip kendi bilgilerini yaz, sonra yükle. Okul/kurs bilgisi Excel'de yoksa, programdaki sınıfların çoğu hangisiyse o seçilir (hiç sınıf yoksa Okul).
+
 ## Açmak
 
 `index.html` dosyasına çift tıklayın (Chrome veya Edge önerilir). Kurulum ve internet gerekmez; Excel okuma kütüphanesi `vendor/` klasöründe.
