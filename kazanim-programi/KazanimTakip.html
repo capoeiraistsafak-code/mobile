@@ -40,6 +40,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -170,6 +171,13 @@ dialog::backdrop { background: var(--backdrop); }
 #toast.show { opacity: 1; }
 
 .print-only { display: none; }
+/* Dosya kutusu görünmez ama açılabilir (bazı telefon / uygulama tarayıcıları gizli kutuyu açmaz) */
+.btn { position: relative; }
+.dosya-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
+.dosya-input::-webkit-file-upload-button { cursor: pointer; }
+.btn:focus-within { outline: 2px solid var(--primary); outline-offset: 1px; }
+.tab.surukle { outline: 3px dashed var(--primary); outline-offset: 6px; border-radius: 10px; }
+@media (hover: none) { .birak-ipucu { display: none; } }
 .sag { text-align: right; font-variant-numeric: tabular-nums; }
 .bar { display: inline-block; width: 70px; height: 8px; background: var(--chip); border-radius: 999px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
 .bar-dolu { display: block; height: 100%; border-radius: 999px; }
@@ -235,14 +243,15 @@ dialog::backdrop { background: var(--backdrop); }
     <h1>Sınıflar ve Öğrenciler</h1>
     <div class="toolbar">
       <label class="btn primary">Ogrenci klasöründen içe aktar
-        <input type="file" id="ogrFolder" webkitdirectory directory multiple hidden>
+        <input type="file" id="ogrFolder" webkitdirectory directory multiple class="dosya-input">
       </label>
-      <label class="btn">Excel dosyası seç
-        <input type="file" id="ogrFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan Excel seç
+        <input type="file" id="ogrFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
       <button class="btn" id="btnYeniSinif">+ Sınıf ekle</button>
       <button class="btn" id="btnYeniOgrenci">+ Öğrenci ekle</button>
     </div>
+    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
     <div class="filters">
       <select id="fKurum"></select>
       <select id="fSeviye"></select>
@@ -266,14 +275,15 @@ dialog::backdrop { background: var(--backdrop); }
     <h1>Kazanımlar</h1>
     <div class="toolbar">
       <label class="btn primary">Kazanim klasöründen içe aktar
-        <input type="file" id="kzFolder" webkitdirectory directory multiple hidden>
+        <input type="file" id="kzFolder" webkitdirectory directory multiple class="dosya-input">
       </label>
-      <label class="btn">Excel dosyası seç
-        <input type="file" id="kzFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan Excel seç
+        <input type="file" id="kzFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
       <button class="btn" id="btnYeniKazanim">+ Kazanım ekle</button>
       <button class="btn danger" id="btnKzSil">Tümünü sil</button>
     </div>
+    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
     <div class="filters">
       <select id="kzDers"></select>
       <select id="kzSeviye"></select>
@@ -308,8 +318,8 @@ dialog::backdrop { background: var(--backdrop); }
     <div class="filters">
       <select id="snSinav"></select>
       <select id="snSinif"></select>
-      <label class="btn">Sonuç Excel'i aktar
-        <input type="file" id="snFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan sonuç Excel'i seç
+        <input type="file" id="snFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
     </div>
     <p class="muted small">Her soru kutusuna dokunun: <span class="q D">D</span> doğru → <span class="q Y">Y</span> yanlış → <span class="q B">B</span> boş. Varsayılan doğrudur; yalnızca çözemediği soruları işaretlemeniz yeterli.</p>
@@ -345,7 +355,7 @@ dialog::backdrop { background: var(--backdrop); }
       <div class="toolbar">
         <button class="btn primary" id="btnYedekAl">Yedek al (JSON)</button>
         <label class="btn">Yedekten geri yükle
-          <input type="file" id="yedekDosya" accept=".json" hidden>
+          <input type="file" id="yedekDosya" accept=".json,application/json" class="dosya-input">
         </label>
         <button class="btn" id="btnTumExcel">Tüm verileri Excel'e aktar</button>
       </div>
@@ -1235,7 +1245,7 @@ function cizSinav() {
       <button class="btn" id="btnSoruEkle">+ Soru ekle</button>
       <button class="btn" id="btnTopluSoru">+ Toplu soru ekle (ders bazında)</button>
       <button class="btn" id="btnTopluKonu">Toplu konu ata</button>
-      <label class="btn">Cevap anahtarı / kazanım Excel'i aktar<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.csv" hidden></label>
+      <label class="btn">Bilgisayardan cevap anahtarı Excel'i seç<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" class="dosya-input"></label>
       <button class="btn danger" id="btnSinavSil">Sınavı sil</button>
     </div>
     <p class="small muted">${s.sorular.length} soru${atanmamis ? ` · <span class="chip orange">${atanmamis} soruya kazanım atanmamış</span>` : ''}${konusuz ? ` · <span class="chip orange">${konusuz} sorunun konusu yok</span>` : ''}.
@@ -2006,6 +2016,27 @@ function olaylar() {
     sekmeAc('analiz');
   });
 
+  // Sürükle-bırak ile Excel aktarma
+  const birak = (bolum, fn) => {
+    const el = $(bolum);
+    let sayac = 0;
+    el.addEventListener('dragenter', e => { if (e.dataTransfer?.types?.includes('Files')) { e.preventDefault(); sayac++; el.classList.add('surukle'); } });
+    el.addEventListener('dragover', e => { if (e.dataTransfer?.types?.includes('Files')) e.preventDefault(); });
+    el.addEventListener('dragleave', () => { if (--sayac <= 0) { sayac = 0; el.classList.remove('surukle'); } });
+    el.addEventListener('drop', e => {
+      if (!e.dataTransfer?.files?.length) return;
+      e.preventDefault(); sayac = 0; el.classList.remove('surukle');
+      fn(e.dataTransfer.files);
+    });
+  };
+  birak('#tab-ogrenci', f => ogrenciIceAktar(f, false));
+  birak('#tab-kazanim', f => kazanimIceAktar(f, false));
+  birak('#tab-sonuc', f => sonucIceAktar(f));
+  birak('#tab-sinav', f => { const s = sinavBul(filtre.seciliSinav); if (s) anahtarIceAktar(s, f[0]); else toast('Önce soldan bir sınav seçin.'); });
+  // Telefonlarda klasör seçme desteklenmez; o durumda klasör düğmesini gizle
+  const klasorDestek = 'webkitdirectory' in document.createElement('input') && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!klasorDestek) ['#ogrFolder', '#kzFolder'].forEach(id => { $(id).closest('label').hidden = true; });
+
   // Kazanımlar
   $('#kzFolder').addEventListener('change', e => { kazanimIceAktar(e.target.files, true); e.target.value = ''; });
   $('#kzFiles').addEventListener('change', e => { kazanimIceAktar(e.target.files, false); e.target.value = ''; });
@@ -2029,7 +2060,7 @@ function olaylar() {
     else if (t.id === 'sTarih') s.tarih = t.value;
     else if (t.id === 'sKurum') { s.kurum = t.value; if (!KURUM[s.kurum].seviyeler.includes(s.seviye)) s.seviye = ''; }
     else if (t.id === 'sSeviye') s.seviye = t.value;
-    else if (t.id === 'anahtarDosya') { if (t.files[0]) anahtarIceAktar(s, t.files[0]); return; }
+    else if (t.id === 'anahtarDosya') { const f = t.files[0]; t.value = ''; if (f) anahtarIceAktar(s, f); return; }
     else if (t.dataset.q !== undefined) {
       const q = s.sorular[+t.dataset.q];
       const f = t.dataset.f;

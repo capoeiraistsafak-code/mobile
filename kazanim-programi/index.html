@@ -46,14 +46,15 @@
     <h1>Sınıflar ve Öğrenciler</h1>
     <div class="toolbar">
       <label class="btn primary">Ogrenci klasöründen içe aktar
-        <input type="file" id="ogrFolder" webkitdirectory directory multiple hidden>
+        <input type="file" id="ogrFolder" webkitdirectory directory multiple class="dosya-input">
       </label>
-      <label class="btn">Excel dosyası seç
-        <input type="file" id="ogrFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan Excel seç
+        <input type="file" id="ogrFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
       <button class="btn" id="btnYeniSinif">+ Sınıf ekle</button>
       <button class="btn" id="btnYeniOgrenci">+ Öğrenci ekle</button>
     </div>
+    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
     <div class="filters">
       <select id="fKurum"></select>
       <select id="fSeviye"></select>
@@ -77,14 +78,15 @@
     <h1>Kazanımlar</h1>
     <div class="toolbar">
       <label class="btn primary">Kazanim klasöründen içe aktar
-        <input type="file" id="kzFolder" webkitdirectory directory multiple hidden>
+        <input type="file" id="kzFolder" webkitdirectory directory multiple class="dosya-input">
       </label>
-      <label class="btn">Excel dosyası seç
-        <input type="file" id="kzFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan Excel seç
+        <input type="file" id="kzFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
       <button class="btn" id="btnYeniKazanim">+ Kazanım ekle</button>
       <button class="btn danger" id="btnKzSil">Tümünü sil</button>
     </div>
+    <p class="muted small birak-ipucu">Excel dosyalarını bu sayfanın üzerine sürükleyip bırakarak da aktarabilirsiniz.</p>
     <div class="filters">
       <select id="kzDers"></select>
       <select id="kzSeviye"></select>
@@ -119,8 +121,8 @@
     <div class="filters">
       <select id="snSinav"></select>
       <select id="snSinif"></select>
-      <label class="btn">Sonuç Excel'i aktar
-        <input type="file" id="snFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      <label class="btn">Bilgisayardan sonuç Excel'i seç
+        <input type="file" id="snFiles" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" multiple class="dosya-input">
       </label>
     </div>
     <p class="muted small">Her soru kutusuna dokunun: <span class="q D">D</span> doğru → <span class="q Y">Y</span> yanlış → <span class="q B">B</span> boş. Varsayılan doğrudur; yalnızca çözemediği soruları işaretlemeniz yeterli.</p>
@@ -156,7 +158,7 @@
       <div class="toolbar">
         <button class="btn primary" id="btnYedekAl">Yedek al (JSON)</button>
         <label class="btn">Yedekten geri yükle
-          <input type="file" id="yedekDosya" accept=".json" hidden>
+          <input type="file" id="yedekDosya" accept=".json,application/json" class="dosya-input">
         </label>
         <button class="btn" id="btnTumExcel">Tüm verileri Excel'e aktar</button>
       </div>

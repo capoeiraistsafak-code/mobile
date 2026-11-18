@@ -822,7 +822,7 @@ function cizSinav() {
       <button class="btn" id="btnSoruEkle">+ Soru ekle</button>
       <button class="btn" id="btnTopluSoru">+ Toplu soru ekle (ders bazında)</button>
       <button class="btn" id="btnTopluKonu">Toplu konu ata</button>
-      <label class="btn">Cevap anahtarı / kazanım Excel'i aktar<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.csv" hidden></label>
+      <label class="btn">Bilgisayardan cevap anahtarı Excel'i seç<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" class="dosya-input"></label>
       <button class="btn danger" id="btnSinavSil">Sınavı sil</button>
     </div>
     <p class="small muted">${s.sorular.length} soru${atanmamis ? ` · <span class="chip orange">${atanmamis} soruya kazanım atanmamış</span>` : ''}${konusuz ? ` · <span class="chip orange">${konusuz} sorunun konusu yok</span>` : ''}.
@@ -1593,6 +1593,27 @@ function olaylar() {
     sekmeAc('analiz');
   });
 
+  // Sürükle-bırak ile Excel aktarma
+  const birak = (bolum, fn) => {
+    const el = $(bolum);
+    let sayac = 0;
+    el.addEventListener('dragenter', e => { if (e.dataTransfer?.types?.includes('Files')) { e.preventDefault(); sayac++; el.classList.add('surukle'); } });
+    el.addEventListener('dragover', e => { if (e.dataTransfer?.types?.includes('Files')) e.preventDefault(); });
+    el.addEventListener('dragleave', () => { if (--sayac <= 0) { sayac = 0; el.classList.remove('surukle'); } });
+    el.addEventListener('drop', e => {
+      if (!e.dataTransfer?.files?.length) return;
+      e.preventDefault(); sayac = 0; el.classList.remove('surukle');
+      fn(e.dataTransfer.files);
+    });
+  };
+  birak('#tab-ogrenci', f => ogrenciIceAktar(f, false));
+  birak('#tab-kazanim', f => kazanimIceAktar(f, false));
+  birak('#tab-sonuc', f => sonucIceAktar(f));
+  birak('#tab-sinav', f => { const s = sinavBul(filtre.seciliSinav); if (s) anahtarIceAktar(s, f[0]); else toast('Önce soldan bir sınav seçin.'); });
+  // Telefonlarda klasör seçme desteklenmez; o durumda klasör düğmesini gizle
+  const klasorDestek = 'webkitdirectory' in document.createElement('input') && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!klasorDestek) ['#ogrFolder', '#kzFolder'].forEach(id => { $(id).closest('label').hidden = true; });
+
   // Kazanımlar
   $('#kzFolder').addEventListener('change', e => { kazanimIceAktar(e.target.files, true); e.target.value = ''; });
   $('#kzFiles').addEventListener('change', e => { kazanimIceAktar(e.target.files, false); e.target.value = ''; });
@@ -1616,7 +1637,7 @@ function olaylar() {
     else if (t.id === 'sTarih') s.tarih = t.value;
     else if (t.id === 'sKurum') { s.kurum = t.value; if (!KURUM[s.kurum].seviyeler.includes(s.seviye)) s.seviye = ''; }
     else if (t.id === 'sSeviye') s.seviye = t.value;
-    else if (t.id === 'anahtarDosya') { if (t.files[0]) anahtarIceAktar(s, t.files[0]); return; }
+    else if (t.id === 'anahtarDosya') { const f = t.files[0]; t.value = ''; if (f) anahtarIceAktar(s, f); return; }
     else if (t.dataset.q !== undefined) {
       const q = s.sorular[+t.dataset.q];
       const f = t.dataset.f;

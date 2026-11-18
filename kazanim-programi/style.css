@@ -33,6 +33,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -163,6 +164,13 @@ dialog::backdrop { background: var(--backdrop); }
 #toast.show { opacity: 1; }
 
 .print-only { display: none; }
+/* Dosya kutusu görünmez ama açılabilir (bazı telefon / uygulama tarayıcıları gizli kutuyu açmaz) */
+.btn { position: relative; }
+.dosya-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
+.dosya-input::-webkit-file-upload-button { cursor: pointer; }
+.btn:focus-within { outline: 2px solid var(--primary); outline-offset: 1px; }
+.tab.surukle { outline: 3px dashed var(--primary); outline-offset: 6px; border-radius: 10px; }
+@media (hover: none) { .birak-ipucu { display: none; } }
 .sag { text-align: right; font-variant-numeric: tabular-nums; }
 .bar { display: inline-block; width: 70px; height: 8px; background: var(--chip); border-radius: 999px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
 .bar-dolu { display: block; height: 100%; border-radius: 999px; }
