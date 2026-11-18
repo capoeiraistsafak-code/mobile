@@ -164,6 +164,8 @@ dialog::backdrop { background: var(--backdrop); }
 #toast.show { opacity: 1; }
 
 .print-only { display: none; }
+.kaynak-baslik { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.kaynak-baslik h2 { margin: 0; }
 /* Dosya kutusu görünmez ama açılabilir (bazı telefon / uygulama tarayıcıları gizli kutuyu açmaz) */
 .btn { position: relative; }
 .dosya-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }

@@ -17,6 +17,17 @@ Veriler o bilgisayardaki tarayıcıda saklanır → **Yedek / Ayarlar** sekmesin
 
 `ORNEK_` ile başlayan dosyalar biçim örneğidir; kendi dosyalarınızı koyduktan sonra silebilirsiniz.
 
+## İçe aktarılan listeler: kalıcı kayıt, Güncelle ve Sil
+
+Aktardığınız her Excel dosyası (ör. `11-A.xlsx`) sınıfıyla birlikte **İçe aktarılan listeler** bölümüne kaydedilir. Programı kapatıp açsanız da öğrenciler ve liste kaydı kalır.
+
+- **Güncelle:** Excel'de değişiklik yaptıktan sonra basın. Aynı dosya yeniden okunur: yeni öğrenciler eklenir, değişen ad/sınıf bilgileri düzeltilir, dosyadan çıkan öğrenciler için “silinsin mi?” diye sorulur. Sütunların yeri değişse de başlık adından bulunur.
+- **Tümünü güncelle:** kayıtlı bütün listeleri tek seferde günceller.
+- **Sil:** listeyi ve ondan gelen öğrencileri (sonuçları ve planlarıyla) siler; ya da yalnızca liste kaydını unutup öğrencileri bırakır. Excel dosyanız bilgisayarınızda olduğu gibi kalır.
+- **Dosya yolu:** Chrome ve Edge'de program dosyanın yerini hatırlar (*dosya yolu kayıtlı*); Güncelle'ye basınca dosya oradan okunur, ilk seferde tarayıcı okuma izni sorar. Diğer tarayıcılarda ve Claude'da yayınlanan sayfada Güncelle'ye basınca güncel dosyayı seçmeniz istenir.
+- Aynı dosyayı yeniden içe aktarmak da o listeyi günceller. Kazanım listeleri de aynı şekilde çalışır.
+- Bir sınıfı ✎ → *Sınıfı sil* ile öğrencileriyle birlikte silebilirsiniz.
+
 ## Kurum türleri ve sınıflar
 
 - Okul – Ortaokul (5–8), Okul – Lise (9–12)
