@@ -1936,7 +1936,10 @@ async function sonucIceAktarIc(fileList) {
     const enCok = Object.entries(sayac).sort((a, b) => b[1] - a[1])[0];
     if (enCok) filtre.snSinif = enCok[0];
     const kart = { ok: true, baslik: `${k.dosya} aktarıldı`, detay: `${r.n} öğrencinin sonucu girildi: ${s.ad}.` };
-    if (r.bulunamadi.length) kart.not = `Programda bulunamayan ${r.bulunamadi.length} öğrenci atlandı: ${r.bulunamadi.slice(0, 5).join(', ')}${r.bulunamadi.length > 5 ? '…' : ''}`;
+    const notlar = [];
+    if (r.bulunamadi.length) notlar.push(`Programda bulunamayan ${r.bulunamadi.length} öğrenci atlandı: ${r.bulunamadi.slice(0, 5).join(', ')}${r.bulunamadi.length > 5 ? '…' : ''}`);
+    if (r.anahtarsiz) notlar.push(`Dikkat: bazı soruların cevap anahtarı yok; bu sorulardaki şıklar yanlış sayıldı. Önce Sınavlar sekmesinden cevap anahtarını yükleyip sonuçları yeniden yükleyin.`);
+    if (notlar.length) kart.not = notlar.join(' ');
     kartlar.push(kart);
   }
   kaydet(); ciz();
@@ -2733,26 +2736,35 @@ function soruDurumDegistir(ogrId, qno, el) {
 }
 /** Sonuç sayfasını sınava uygular: soru numaralı sütunlar ya da tek "cevaplar" sütunu. */
 function sonucParcaUygula(s, p) {
-  let n = 0;
+  let n = 0, anahtarsiz = 0;
   const bulunamadi = [];
   const soruSutun = {};
   p.basliklar.forEach((h, ci) => {
-    const m = String(h).trim().match(/^(?:s(?:oru)?\.?\s*)?(\d{1,3})\.?$/i);
+    const m = String(h).trim().match(/^(?:s(?:oru)?\s*[.\-_]?\s*)?(\d{1,3})\.?(?:\s*\.?\s*soru)?$/i);
     if (m && s.sorular.some(q => String(q.no) === String(parseInt(m[1], 10)))) soruSutun[parseInt(m[1], 10)] = ci;
   });
   const veri = p.satirlar.slice(p.bi + 1).filter(r => r.some(c => c));
   veri.forEach((satir, ri) => {
     const k = p.kayitlar[ri];
     let o = null;
-    const uygunOgr = x => !!x.ornek === !!s.ornek;
-    if (k.no) o = S.ogrenciler.find(x => uygunOgr(x) && x.no === k.no.trim());
-    if (!o && k.adsoyad) o = S.ogrenciler.find(x => uygunOgr(x) && norm(adSoyad(x)) === norm(k.adsoyad));
+    // Önce sınavla aynı türdeki (kendi / örnek) öğrencilere, bulunamazsa bütün öğrencilere bakılır.
+    // Numarada baştaki sıfırlar ve boşluklar önemsizdir (Excel "0101"i "101" yapabilir).
+    const ayni = S.ogrenciler.filter(x => !!x.ornek === !!s.ornek);
+    const noNorm = v => String(v ?? '').replace(/\s+/g, '').replace(/^0+(?=\d)/, '');
+    const ara = havuz => {
+      let x = null;
+      if (k.no) x = havuz.find(y => y.no === String(k.no).trim()) || havuz.find(y => noNorm(y.no) && noNorm(y.no) === noNorm(k.no));
+      if (!x && k.adsoyad) x = havuz.find(y => norm(adSoyad(y)) === norm(k.adsoyad));
+      return x;
+    };
+    o = ara(ayni) || ara(S.ogrenciler);
     if (!o) { if (k.no || k.adsoyad) bulunamadi.push(k.adsoyad || k.no); return; }
     const r = {};
     const degerlendir = (q, v) => {
       v = trUpper(String(v ?? '').trim());
       if (['', '-', '*', 'BOŞ', 'BOS'].includes(v)) { r[q.no] = 'B'; return; }
       if (q.cevap && /^[A-E]$/.test(v)) { if (v !== trUpper(q.cevap)) r[q.no] = 'Y'; return; }
+      if (!q.cevap && /^[A-E]$/.test(v)) anahtarsiz++;
       if (['D', '1', '+', 'DOĞRU', 'DOGRU', '✓'].includes(v)) return;
       if (v === 'B') { r[q.no] = 'B'; return; }
       r[q.no] = 'Y'; // Y, 0, YANLIŞ veya anahtarsız şık
@@ -2767,7 +2779,7 @@ function sonucParcaUygula(s, p) {
     S.sonuclar[s.id][o.id] = r;
     n++;
   });
-  return { n, bulunamadi, soruSutunu: Object.keys(soruSutun).length };
+  return { n, bulunamadi, anahtarsiz, soruSutunu: Object.keys(soruSutun).length };
 }
 const ALANLAR_SONUC = {
   no: ALANLAR_OGRENCI.no,
