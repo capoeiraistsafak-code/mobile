@@ -6,16 +6,19 @@
 // ---------------------------------------------------------------------------
 // Sabitler
 // ---------------------------------------------------------------------------
-const KURUMLAR = [
-  { key: 'okul_orta', ad: 'Okul – Ortaokul', seviyeler: ['5', '6', '7', '8'] },
-  { key: 'okul_lise', ad: 'Okul – Lise', seviyeler: ['9', '10', '11', '12'] },
-  { key: 'kurs_orta', ad: 'Kurs – Ortaokul', seviyeler: ['5', '6', '7', '8'] },
-  { key: 'kurs_lise', ad: 'Kurs – Lise', seviyeler: ['9', '10', '11', '12'] },
-  { key: 'kurs_mezun', ad: 'Kurs – Mezun', seviyeler: ['Mezun'] },
+// Kurumlar ve sınıf seviyeleri Ayarlar'dan değiştirilebilir; bunlar yalnızca ilk kurulumdaki varsayılanlardır.
+const VARSAYILAN_SEVIYELER = ['5', '6', '7', '8', '9', '10', '11', '12', 'Mezun'];
+const VARSAYILAN_KURUMLAR = [
+  { key: 'okul_orta', ad: 'Okul – Ortaokul', tip: 'okul', seviyeler: ['5', '6', '7', '8'] },
+  { key: 'okul_lise', ad: 'Okul – Lise', tip: 'okul', seviyeler: ['9', '10', '11', '12'] },
+  { key: 'kurs_orta', ad: 'Kurs – Ortaokul', tip: 'kurs', seviyeler: ['5', '6', '7', '8'] },
+  { key: 'kurs_lise', ad: 'Kurs – Lise', tip: 'kurs', seviyeler: ['9', '10', '11', '12'] },
+  { key: 'kurs_mezun', ad: 'Kurs – Mezun', tip: 'kurs', seviyeler: ['Mezun'] },
 ];
+let KURUMLAR = [];   // = S.kurumlar (kurumlariYukle ile)
+let KURUM = {};
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
 const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true, animasyonAralik: 5 };
-const KURUM = Object.fromEntries(KURUMLAR.map(k => [k.key, k]));
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
   'İngilizce', 'Sosyal Bilgiler', 'Türk Dili ve Edebiyatı', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya',
@@ -112,8 +115,35 @@ function bosDurum() {
     kaynaklar: [],   // içe aktarılan Excel listeleri {id, tur, dosya, yol, sayfa, esIsim, ayar, guncelleme, yolKayitli}
     dersler: VARSAYILAN_DERSLER.slice(),
     ayarlar: { ...VARSAYILAN_AYARLAR },
+    seviyeler: VARSAYILAN_SEVIYELER.slice(),
+    kurumlar: VARSAYILAN_KURUMLAR.map(k => ({ ...k, seviyeler: k.seviyeler.slice() })),
   };
 }
+/** S.kurumlar / S.seviyeler'i doğrular ve hızlı erişim tablolarını kurar (S her değiştiğinde çağrılır). */
+function kurumlariYukle() {
+  if (!Array.isArray(S.seviyeler) || !S.seviyeler.length) S.seviyeler = VARSAYILAN_SEVIYELER.slice();
+  S.seviyeler = [...new Set(S.seviyeler.map(v => String(v).trim()).filter(Boolean))];
+  seviyeleriSirala();
+  if (!Array.isArray(S.kurumlar) || !S.kurumlar.length) S.kurumlar = VARSAYILAN_KURUMLAR.map(k => ({ ...k, seviyeler: k.seviyeler.slice() }));
+  S.kurumlar.forEach(k => {
+    if (!k.tip) k.tip = String(k.key).startsWith('kurs') ? 'kurs' : 'okul';
+    k.seviyeler = (k.seviyeler || []).map(String).filter(v => S.seviyeler.includes(v));
+  });
+  KURUMLAR = S.kurumlar;
+  KURUM = Object.fromEntries(KURUMLAR.map(k => [k.key, k]));
+}
+/** Seviyeler: sayılar küçükten büyüğe, sonra adlı seviyeler (ör. Hazırlık, Mezun) eklendiği sırayla. */
+function seviyeleriSirala() {
+  const sayi = S.seviyeler.filter(v => /^\d+$/.test(v)).sort((a, b) => a - b);
+  S.seviyeler = [...sayi, ...S.seviyeler.filter(v => !/^\d+$/.test(v))];
+}
+const seviyeAdi = v => /^\d+$/.test(String(v)) ? `${v}. Sınıf` : String(v);
+const kurumAl = key => KURUM[key] || KURUMLAR[0];
+const kurumTipi = key => KURUM[key]?.tip || (String(key).startsWith('kurs') ? 'kurs' : 'okul');
+/** Okul/kurs belirtilmemişse: mevcut sınıfların çoğunun türündeki ilk kurum. */
+function varsayilanKurum() { const tip = varsayilanTip(); return (KURUMLAR.find(k => k.tip === tip) || KURUMLAR[0]).key; }
+/** Belirli seviyeyi kapsayan (tercihen o türdeki) kurum. */
+function seviyeliKurum(seviye, tip) { return (KURUMLAR.find(k => k.tip === tip && k.seviyeler.includes(seviye)) || KURUMLAR.find(k => k.seviyeler.includes(seviye)) || KURUMLAR[0]).key; }
 function idbAc() {
   return new Promise((res, rej) => {
     const r = indexedDB.open(DB_NAME, 1);
@@ -168,7 +198,7 @@ const kazanimBul = id => S.kazanimlar.find(k => k.id === id);
 const adSoyad = o => `${o.ad || ''} ${o.soyad || ''}`.trim();
 function sinifAdi(s, kisa = false) {
   if (!s) return '—';
-  const sev = s.seviye === 'Mezun' ? 'Mezun' : `${s.seviye}. Sınıf`;
+  const sev = seviyeAdi(s.seviye);
   const sube = s.sube ? ` / ${s.sube}` : '';
   const ornek = s.ornek ? ' (örnek)' : '';
   return kisa ? `${sev}${sube}${ornek}` : `${KURUM[s.kurum]?.ad || s.kurum} · ${sev}${sube}${ornek}`;
@@ -310,33 +340,49 @@ function otomatikEsle(basliklar, alanlar) {
 /** Dosya yolundan kurum türü tahmini: "Ogrenci/Kurs Lise/11-A.xlsx" gibi. */
 function kurumTahmin(metin) {
   const n = norm(metin);
-  if (n.includes('mezun')) return 'kurs_mezun';
-  const tur = n.includes('ortaokul') ? 'orta' : n.includes('lise') ? 'lise' : null;
-  if (!tur) return null;
-  if (n.includes('kurs') || n.includes('dershane') || n.includes('etut')) return 'kurs_' + tur;
-  if (n.replace(/ortaokul/g, '').includes('okul')) return 'okul_' + tur;
-  return null;
+  if (!n) return null;
+  // 1) Ayarlardaki kurum adlarıyla eşleştir (en uzun ad önce): "Kurs Lise", "Etüt Merkezi"...
+  const adlar = KURUMLAR.slice().sort((a, b) => norm(b.ad).length - norm(a.ad).length);
+  const tam = adlar.find(k => norm(k.ad) && n.includes(norm(k.ad)));
+  if (tam) return tam.key;
+  // 2) Serbest yazım: tür (okul/kurs) + kademe (ortaokul/lise/mezun)
+  const tip = (n.includes('kurs') || n.includes('dershane') || n.includes('etut')) ? 'kurs' : (n.replace(/ortaokul/g, '').includes('okul') ? 'okul' : null);
+  const kademe = n.includes('mezun') ? ['Mezun'] : n.includes('ortaokul') ? ['5', '6', '7', '8'] : n.includes('lise') ? ['9', '10', '11', '12'] : null;
+  if (!kademe || (!tip && kademe[0] !== 'Mezun')) return null;
+  const aday = KURUMLAR.find(k => (!tip || k.tip === tip) && kademe.some(v => k.seviyeler.includes(v)));
+  return aday ? aday.key : null;
 }
 /** "10-A", "10/A", "10 A", "11. Sınıf / B Şubesi", "Mezun", "8A" ... */
+/** "10-A", "10/A", "11. Sınıf / B", "Mezun", "Hazırlık-A"... (seviyeler Ayarlar'daki listeden) */
 function sinifCoz(metin) {
   const m0 = String(metin || '').trim();
   if (!m0) return null;
-  if (norm(m0).includes('mezun')) {
-    const sb = m0.replace(/mezun/i, '').replace(/[^A-Za-zÇĞİÖŞÜçğıöşü0-9]/g, ' ').trim();
-    return { seviye: 'Mezun', sube: sb.split(/\s+/)[0] || '' };
+  const n = norm(m0);
+  // Adlı seviyeler (Mezun, Hazırlık...): en uzun ad önce
+  const adli = (S?.seviyeler || VARSAYILAN_SEVIYELER).filter(v => !/^\d+$/.test(v)).sort((a, b) => norm(b).length - norm(a).length);
+  for (const v of adli) {
+    if (norm(v) && n.includes(norm(v))) {
+      const parca = m0.split(/[\s\-\/_.]+/).filter(Boolean);
+      const son = parca[parca.length - 1] || '';
+      // Şube: seviye adının kendi kelimesi olmayan son kısa parça (ör. "Hazırlık-A" → A)
+      const adKelimeleri = v.split(/\s+/).map(norm);
+      const sube = parca.length > 1 && son.length <= 4 && !adKelimeleri.includes(norm(son)) ? trUpper(son) : '';
+      return { seviye: v, sube };
+    }
   }
   const m = m0.match(/(\d{1,2})\s*\.?\s*(?:s[ıi]n[ıi]f[ıi]?)?\s*[-\/\s_.]*\s*([A-Za-zÇĞİÖŞÜçğıöşü0-9]{0,6})/i);
   if (!m) return null;
-  const sev = parseInt(m[1], 10);
-  if (sev < 5 || sev > 12) return null;
+  const sev = String(parseInt(m[1], 10));
+  if (!(S?.seviyeler || VARSAYILAN_SEVIYELER).includes(sev)) return null;
   let sube = (m[2] || '').replace(/^(?:şube|sube)/i, '');
   if (/^s[ıi]n[ıi]f/i.test(sube)) sube = '';
-  return { seviye: String(sev), sube: trUpper(sube) };
+  return { seviye: sev, sube: trUpper(sube) };
 }
 function seviyeCoz(v) {
   const n = norm(v);
   if (!n) return '';
-  if (n.includes('mezun')) return 'Mezun';
+  const adli = (S?.seviyeler || VARSAYILAN_SEVIYELER).filter(x => !/^\d+$/.test(x)).find(x => norm(x) && n.includes(norm(x)));
+  if (adli) return adli;
   const m = String(v).match(/\d{1,2}/);
   return m ? String(parseInt(m[0], 10)) : '';
 }
@@ -523,6 +569,17 @@ function kaynakSatirlari(k, satirlar) {
   return satirlar.slice(bi + 1).filter(r => r.some(c => c))
     .map(r => Object.fromEntries(Object.entries(es).map(([a, ci]) => [a, (r[ci] || '').trim()])));
 }
+/** Sınıf Excel'i yeniden yüklendi: eski liste gider, yenisi gelir.
+ *  Bu Excel'de geçen sınıflarda, yeni Excel'de olmayan öğrenciler (ve bu listeden gelip artık yer almayanlar) çıkarılır. */
+function sinifListesiniYenile(dokunulan, kaynakId) {
+  const siniflar = new Set(S.ogrenciler.filter(o => dokunulan.has(o.id)).map(o => o.sinifId));
+  const cikan = S.ogrenciler.filter(o => !o.ornek && !dokunulan.has(o.id) && (siniflar.has(o.sinifId) || o.kaynakId === kaynakId));
+  if (cikan.length) ogrencileriSil(cikan.map(o => o.id));
+  // Öğrencisi kalmayan eski liste kayıtlarını temizle
+  S.kaynaklar.filter(k => k.tur === 'ogrenci' && !S.ogrenciler.some(o => o.kaynakId === k.id)).forEach(k => { taniticiSil(k.id); });
+  S.kaynaklar = S.kaynaklar.filter(k => k.tur !== 'ogrenci' || S.ogrenciler.some(o => o.kaynakId === k.id));
+  return cikan.length;
+}
 function ogrencileriSil(ids) {
   const set = new Set(ids);
   const etkilenenSinif = new Set(S.ogrenciler.filter(o => set.has(o.id)).map(o => o.sinifId));
@@ -557,22 +614,26 @@ function cikanlariSor(tur, liste, ozet, ekHtml = '') {
 // ---------------------------------------------------------------------------
 /** Bir öğrenci satırının hangi sınıfa gideceğini bulur (Excel sütunları → dosya adı → pencerede seçilen). */
 function sinifCozumle(r, ayar) {
-  let kurum = (r.kurum && kurumTahmin(r.kurum)) || ayar.vk || ayar.genelKurum;
+  let kurum = (r.kurum && kurumTahmin(r.kurum)) || (KURUM[ayar.vk] ? ayar.vk : '');
+  const acikKurum = !!kurum;
+  if (!kurum) kurum = KURUM[ayar.genelKurum] ? ayar.genelKurum : varsayilanKurum();
   let seviye = '', sube = '';
   if (r.sinif) { const c = sinifCoz(r.sinif); if (c) { seviye = c.seviye; sube = c.sube; } }
   if (r.seviye) seviye = seviyeCoz(r.seviye) || seviye;
   if (r.sube) sube = trUpper(r.sube.replace(/şube(si)?/i, '').trim());
-  if (!seviye) seviye = ayar.vs;
-  if (!sube) sube = ayar.vsb;
-  if (seviye === 'Mezun') kurum = 'kurs_mezun';
-  if (!seviye) seviye = KURUM[kurum].seviyeler[0];
-  // Seviye kurumla uyumsuzsa kurumu düzelt (ör. 10. sınıf + ortaokul)
-  if (!KURUM[kurum].seviyeler.includes(seviye)) {
-    const tip = kurum.startsWith('okul') ? 'okul' : 'kurs';
-    const alt = KURUMLAR.find(k => k.key.startsWith(tip) && k.seviyeler.includes(seviye));
-    if (alt) kurum = alt.key;
+  if (!S.seviyeler.includes(seviye)) seviye = '';
+  if (!seviye && S.seviyeler.includes(ayar.vs)) seviye = ayar.vs;
+  if (!sube) sube = ayar.vsb || '';
+  if (!seviye) seviye = kurumAl(kurum).seviyeler[0] || S.seviyeler[0];
+  sube = trUpper(String(sube || '').trim());
+  // Kurum bu seviyeyi kapsamıyorsa (ör. 10. sınıf + ortaokul, Mezun + okul) aynı türde kapsayan kuruma geç
+  if (!kurumAl(kurum).seviyeler.includes(seviye)) kurum = seviyeliKurum(seviye, kurumTipi(kurum));
+  // Kurum yazılmamışsa ve aynı seviye-şubede tek bir sınıf varsa o sınıf kullanılır (yeni sınıf açılmaz)
+  if (!acikKurum) {
+    const ayni = S.siniflar.filter(c => !c.ornek && String(c.seviye) === String(seviye) && trUpper(c.sube) === sube);
+    if (ayni.length === 1) kurum = ayni[0].kurum;
   }
-  return { kurum, seviye: String(seviye), sube: trUpper(String(sube || '').trim()) };
+  return { kurum, seviye: String(seviye), sube };
 }
 const sinifVarMi = c => S.siniflar.find(x => !x.ornek && x.kurum === c.kurum && x.seviye === c.seviye && trUpper(x.sube) === c.sube);
 /** Öğrenci satırlarını uygular. ayar: {vk, genelKurum, vs, vsb, cakisma} */
@@ -589,7 +650,7 @@ function ogrenciSatirlariUygula(kayitlar, ayar, kaynakId) {
     const { kurum, seviye, sube } = sinifCozumle(r, ayar);
     const sinif = sinifGetirVeyaOlustur(kurum, seviye, sube);
     const no = (r.no || '').trim();
-    const ayniTip = o => sinifBul(o.sinifId)?.kurum.split('_')[0] === kurum.split('_')[0];
+    const ayniTip = o => kurumTipi(sinifBul(o.sinifId)?.kurum) === kurumTipi(kurum);
     const mevcut = no
       ? S.ogrenciler.find(o => !o.ornek && o.no === no && ayniTip(o) && !sonuc.dokunulan.has(o.id))
       : S.ogrenciler.find(o => !o.ornek && norm(adSoyad(o)) === norm(ad + ' ' + soyad) && o.sinifId === sinif.id && !sonuc.dokunulan.has(o.id));
@@ -628,13 +689,13 @@ async function ogrenciIceAktarElle(girdiler, klasor) {
         <label>Kurum türü (Excel'de yoksa)
           <select data-vk="${p.i}">${opt('', '— üstteki genel seçim —')}${KURUMLAR.map(k => opt(k.key, k.ad, k.key === kTahmin)).join('')}</select></label>
         <label>Sınıf seviyesi (Excel'de yoksa)
-          <select data-vs="${p.i}">${opt('', '— Excel\'den oku —')}${seviyeler.map(s => opt(s, s === 'Mezun' ? 'Mezun' : s + '. Sınıf', s === sTahmin.seviye)).join('')}</select></label>
+          <select data-vs="${p.i}">${opt('', '— Excel\'den oku —')}${seviyeler.map(s => opt(s, seviyeAdi(s), s === sTahmin.seviye)).join('')}</select></label>
         <label>Şube (Excel'de yoksa)
           <input data-vsb="${p.i}" value="${esc(sTahmin.sube || '')}" placeholder="ör. A"></label>
       </div>`;
     },
     ekAlanlarHtml: `<div class="form-grid" style="margin-bottom:10px">
-        <label>Genel kurum türü (dosyada belirtilmemişse)${kurumSec('genelKurum', 'kurs_lise')}</label>
+        <label>Genel kurum türü (dosyada belirtilmemişse)${kurumSec('genelKurum', varsayilanKurum())}</label>
         <label>Aynı numaralı öğrenci varsa
           <select name="cakisma">${opt('guncelle', 'Bilgilerini ve sınıfını güncelle', true)}${opt('atla', 'Atla (dokunma)')}</select></label>
       </div>`,
@@ -663,12 +724,12 @@ async function ogrenciIceAktarElle(girdiler, klasor) {
         const k = kaynakKaydiAl('ogrenci', p, ayar);
         const r = ogrenciSatirlariUygula(p.kayitlar, ayar, k.id);
         Object.keys(toplam).forEach(x => { toplam[x] += r[x]; });
-        cikanlar.push(...S.ogrenciler.filter(o => o.kaynakId === k.id && !r.dokunulan.has(o.id)));
+        toplam.cikarildi = (toplam.cikarildi || 0) + sinifListesiniYenile(r.dokunulan, k.id);
         kaynakTaniticisiniSakla(k, p.handle).then(() => { kaydet(); ciz(); });
       }
       kaydet(); ciz();
       const yeniSiniflar = S.siniflar.filter(c => !oncekiSiniflar.has(c.id)).sort(sinifSirala);
-      cikanlariSor('ogrenci', cikanlar, ozetMetni(toplam, 'öğrenci') + ' Liste kaydedildi; “İçe aktarılan listeler” bölümünden güncelleyebilir veya silebilirsiniz.',
+      cikanlariSor('ogrenci', cikanlar, ozetMetni(toplam, 'öğrenci') + (toplam.cikarildi ? ` ${toplam.cikarildi} öğrenci yeni listede olmadığı için çıkarıldı.` : '') + ' Liste kaydedildi; “İçe aktarılan listeler” bölümünden güncelleyebilir veya silebilirsiniz.',
         yeniSiniflar.length ? `<p><b>Sistemde olmayan ${yeniSiniflar.length} sınıf otomatik oluşturuldu:</b></p><ul>${yeniSiniflar.map(c => `<li>${esc(sinifAdi(c))} · ${S.ogrenciler.filter(o => o.sinifId === c.id).length} öğrenci</li>`).join('')}</ul>` : '');
     },
   });
@@ -719,7 +780,7 @@ function kazanimSatirlariUygula(kayitlar, ayar, kaynakId) {
 async function kazanimIceAktarElle(girdiler, klasor) {
   const kaynaklar = await dosyalariOku(girdiler, klasor ? 'kazanim' : null);
   if (!kaynaklar.length) return;
-  const seviyeler = ['5', '6', '7', '8', '9', '10', '11', '12', 'Mezun'];
+  const seviyeler = S.seviyeler;
   iceAktarPenceresi({
     baslik: 'Kazanım listesi içe aktar',
     alanlar: ALANLAR_KAZANIM,
@@ -732,7 +793,7 @@ async function kazanimIceAktarElle(girdiler, klasor) {
       return `${eski ? '<p class="small"><span class="chip">Bu dosya daha önce aktarılmış; liste güncellenecek.</span></p>' : ''}<div class="map">
         <label>Ders (Excel'de yoksa)<input data-vd="${p.i}" value="${esc(d)}" list="dersDL"></label>
         <label>Sınıf seviyesi (Excel'de yoksa)
-          <select data-vs="${p.i}">${opt('', '—')}${seviyeler.map(s => opt(s, s === 'Mezun' ? 'Mezun' : s + '. Sınıf', s === sv)).join('')}</select></label>
+          <select data-vs="${p.i}">${opt('', '—')}${seviyeler.map(s => opt(s, seviyeAdi(s), s === sv)).join('')}</select></label>
       </div>`;
     },
     ekAlanlarHtml: `<datalist id="dersDL">${S.dersler.map(d => opt(d, d)).join('')}</datalist>`,
@@ -751,7 +812,7 @@ async function kazanimIceAktarElle(girdiler, klasor) {
         const dersVar = S.kazanimlar.some(k => norm(k.ders) === norm(g.ders));
         const grupVar = S.kazanimlar.some(k => norm(k.ders) === norm(g.ders) && k.seviye === g.seviye);
         const not = !dersVar ? ' · <b>yeni ders oluşturulacak</b>' : !grupVar ? ' · <b>yeni sınıf seviyesi</b>' : '';
-        return `<span class="chip ${not ? 'green' : ''}">${esc(g.ders)}${g.seviye ? ' · ' + esc(g.seviye === 'Mezun' ? 'Mezun' : g.seviye + '. sınıf') : ''} · ${g.n} kazanım${not}</span>`;
+        return `<span class="chip ${not ? 'green' : ''}">${esc(g.ders)}${g.seviye ? ' · ' + esc(seviyeAdi(g.seviye)) : ''} · ${g.n} kazanım${not}</span>`;
       }).join(' ');
     },
     uygula: secilenler => {
@@ -769,7 +830,7 @@ async function kazanimIceAktarElle(girdiler, klasor) {
       }
       kaydet(); ciz();
       const yeniDersler = [...new Set(S.kazanimlar.filter(k => !oncekiDersler.has(norm(k.ders))).map(k => k.ders))].sort(cmpTr);
-      const yeniGruplar = [...new Set(S.kazanimlar.filter(k => oncekiDersler.has(norm(k.ders)) && k.seviye && !oncekiGruplar.has(norm(k.ders) + '|' + k.seviye)).map(k => `${k.ders} · ${k.seviye === 'Mezun' ? 'Mezun' : k.seviye + '. sınıf'}`))].sort(cmpTr);
+      const yeniGruplar = [...new Set(S.kazanimlar.filter(k => oncekiDersler.has(norm(k.ders)) && k.seviye && !oncekiGruplar.has(norm(k.ders) + '|' + k.seviye)).map(k => `${k.ders} · ${seviyeAdi(k.seviye)}`))].sort(cmpTr);
       cikanlariSor('kazanim', cikanlar, ozetMetni(toplam, 'kazanım') + ' Liste kaydedildi; “İçe aktarılan listeler” bölümünden güncelleyebilir veya silebilirsiniz.',
         (yeniDersler.length ? `<p><b>Sistemde olmayan ${yeniDersler.length} ders otomatik oluşturuldu:</b> ${yeniDersler.map(esc).join(', ')}</p>` : '')
         + (yeniGruplar.length ? `<p><b>Mevcut derslere yeni sınıf seviyesi eklendi:</b> ${yeniGruplar.map(esc).join(', ')}</p>` : ''));
@@ -795,7 +856,7 @@ function otomatikParca(k, alanlar) {
 /** Okul mu kurs mu belirtilmemişse: mevcut sınıfların çoğu hangisiyse o, hiç yoksa okul. */
 function varsayilanTip() {
   const kendi = S.siniflar.filter(c => !c.ornek);
-  const kurs = kendi.filter(c => c.kurum.startsWith('kurs')).length;
+  const kurs = kendi.filter(c => kurumTipi(c.kurum) === 'kurs').length;
   return kurs > kendi.length - kurs ? 'kurs' : 'okul';
 }
 function otoAyar(tur, p) {
@@ -803,9 +864,10 @@ function otoAyar(tur, p) {
   if (eski) return { ...eski.ayar };
   if (tur === 'ogrenci') {
     const sT = sinifCoz(dosyaAdiTemiz(p.dosya)) || (!genelSayfa(p.sayfa) && sinifCoz(p.sayfa)) || {};
-    return { vk: kurumTahmin(p.yol + ' ' + p.sayfa) || '', genelKurum: varsayilanTip() + '_lise', vs: sT.seviye || '', vsb: sT.sube || '', cakisma: 'guncelle' };
+    return { vk: kurumTahmin(p.yol + ' ' + p.sayfa) || '', genelKurum: varsayilanKurum(), vs: sT.seviye || '', vsb: sT.sube || '', cakisma: 'guncelle' };
   }
-  const sv = (dosyaAdiTemiz(p.dosya).match(/(?:^|\D)(1[0-2]|[5-9])(?:\D|$)/) || [])[1] || '';
+  const svAday = (dosyaAdiTemiz(p.dosya).match(/(?:^|\D)(\d{1,2})(?:\D|$)/) || [])[1] || '';
+  const sv = S.seviyeler.includes(svAday) ? svAday : '';
   return { vd: dersTahmin(p.yol + ' ' + (genelSayfa(p.sayfa) ? '' : p.sayfa)), vs: sv };
 }
 /** Otomatik aktarmaya engel bir sorun varsa açıklamasını döndürür. */
@@ -820,6 +882,17 @@ function otoHata(tur, p, ayar) {
   if (!p.kayitlar.some(r => r.metin || r.kod)) return 'Dosyada kazanım satırı yok.';
   if (p.es.ders === undefined && !ayar.vd) return 'Ders bulunamadı. “Ders” sütunu ekleyin ya da dosyanın adına dersi yazın (ör. Matematik_9.xlsx).';
   return '';
+}
+// Aynı anda tek veri işlemi (Excel yükleme, liste güncelleme, yedekten dönüş): ikinci basış beklemeye alınmaz, uyarılır
+let islemSuruyor = false;
+function tekIslem(fn) {
+  return async (...args) => {
+    if (islemSuruyor) { toast('Önceki işlem bitmeden yenisi başlatılamaz, birkaç saniye bekle 🐾', 3000); return; }
+    islemSuruyor = true;
+    try { return await fn(...args); }
+    catch (e) { console.error(e); sonucGoster([{ ok: false, baslik: 'İşlem tamamlanamadı', detay: 'Beklenmedik bir hata oldu; bilgilerin değişmedi. Tekrar dener misin?' }]); }
+    finally { islemSuruyor = false; }
+  };
 }
 async function hizliAktar(tur, girdiler, klasor) {
   const ogr = tur === 'ogrenci';
@@ -840,20 +913,22 @@ async function hizliAktar(tur, girdiler, klasor) {
       kartlar.push({ ok: false, baslik: `${sayfalar[0].dosya} aktarılamadı`, detay: denemeler[0].hata, ornek: tur, elle: girdi ? () => elle([girdi], false) : null });
       continue;
     }
-    const top = { eklendi: 0, guncellendi: 0 };
+    const top = { eklendi: 0, guncellendi: 0, cikarildi: 0 };
     for (const { p, ayar } of iyiler) {
       const k = kaynakKaydiAl(tur, p, ayar);
       const r = ogr ? ogrenciSatirlariUygula(p.kayitlar, ayar, k.id) : kazanimSatirlariUygula(p.kayitlar, ayar, k.id);
       top.eklendi += r.eklendi; top.guncellendi += r.guncellendi;
-      cikanlar.push(...(ogr ? S.ogrenciler.filter(o => o.kaynakId === k.id && !r.dokunulan.has(o.id)) : S.kazanimlar.filter(z => z.kaynakId === k.id && !r.dokunulan.has(z.id))));
+      if (ogr) top.cikarildi += sinifListesiniYenile(r.dokunulan, k.id);   // eski liste gider, yenisi gelir
+      else cikanlar.push(...S.kazanimlar.filter(z => z.kaynakId === k.id && !r.dokunulan.has(z.id)));
       kaynakTaniticisiniSakla(k, p.handle).then(() => { kaydet(); ciz(); });
     }
     const birim = ogr ? 'öğrenci' : 'kazanım';
-    const ozet = [top.eklendi && `${top.eklendi} ${birim} eklendi`, top.guncellendi && `${top.guncellendi} ${birim} güncellendi`].filter(Boolean).join(', ') || 'Değişiklik yok';
+    const ozet = [top.eklendi && `${top.eklendi} ${birim} eklendi`, top.guncellendi && `${top.guncellendi} ${birim} güncellendi`, top.cikarildi && `${top.cikarildi} ${birim} yeni listede olmadığı için çıkarıldı`].filter(Boolean).join(', ') || 'Değişiklik yok';
     let hedef = '';
     if (ogr) {
       const ids = new Set(S.ogrenciler.filter(o => iyiler.some(d => kaynakBul(o.kaynakId)?.yol === d.p.yol)).map(o => o.sinifId));
       hedef = [...ids].map(sinifBul).filter(Boolean).sort(sinifSirala).map(c => sinifAdi(c)).join(', ');
+      if (top.guncellendi || top.cikarildi) hedef += ' (liste yenilendi)';
     } else {
       hedef = [...new Set(S.kazanimlar.filter(z => iyiler.some(d => kaynakBul(z.kaynakId)?.yol === d.p.yol)).map(z => z.ders))].sort(cmpTr).join(', ');
     }
@@ -868,10 +943,11 @@ async function hizliAktar(tur, girdiler, klasor) {
   sonucGoster(kartlar);
   if (cikanlar.length) cikanlariSor(tur, cikanlar, 'Excel dosyası güncellendi.');
 }
-async function ogrenciIceAktar(girdiler, klasor) { return hizliAktar('ogrenci', girdiler, klasor); }
-async function kazanimIceAktar(girdiler, klasor) { return hizliAktar('kazanim', girdiler, klasor); }
+const ogrenciIceAktar = tekIslem((girdiler, klasor) => hizliAktar('ogrenci', girdiler, klasor));
+const kazanimIceAktar = tekIslem((girdiler, klasor) => hizliAktar('kazanim', girdiler, klasor));
 
-async function anahtarIceAktar(s, file) {
+const anahtarIceAktar = tekIslem(anahtarIceAktarIc);
+async function anahtarIceAktarIc(s, file) {
   let sayfalar;
   try { sayfalar = await excelOku(file); } catch (e) { sonucGoster([{ ok: false, baslik: `${file.name} açılamadı`, detay: 'Dosya bozuk olabilir ya da Excel dosyası değil.', ornek: 'anahtar' }]); return; }
   const parcalar = sayfalar.map(x => otomatikParca({ dosya: file.name, yol: file.name, sayfa: x.sayfa, satirlar: x.satirlar }, ALANLAR_ANAHTAR));
@@ -886,7 +962,8 @@ async function anahtarIceAktar(s, file) {
   if (r.bulunamadi) kart.not = `${r.bulunamadi} sorunun kazanım kodu Kazanımlar listesinde yok; o sorularda yalnızca konu kullanılacak.`;
   sonucGoster([kart]);
 }
-async function sonucIceAktar(fileList) {
+const sonucIceAktar = tekIslem(sonucIceAktarIc);
+async function sonucIceAktarIc(fileList) {
   const s = sinavBul(filtre.snSinav);
   if (!s) { sonucGoster([{ ok: false, baslik: 'Önce sınav seçin', detay: 'Sonuçlar hangi sınava ait? Yukarıdan sınavı seçip tekrar deneyin.' }]); return; }
   const kaynaklar = await dosyalariOku(fileList);
@@ -1002,18 +1079,18 @@ async function kaynakGuncelle(id, sessiz = false) {
   const r = k.tur === 'ogrenci' ? ogrenciSatirlariUygula(kayitlar, k.ayar, k.id) : kazanimSatirlariUygula(kayitlar, k.ayar, k.id);
   k.guncelleme = new Date().toISOString();
   if (girdi.handle && girdi.handle !== h) { await kaynakTaniticisiniSakla(k, girdi.handle); k.dosya = girdi.file.name; }
-  const cikanlar = k.tur === 'ogrenci'
-    ? S.ogrenciler.filter(o => o.kaynakId === k.id && !r.dokunulan.has(o.id))
-    : S.kazanimlar.filter(z => z.kaynakId === k.id && !r.dokunulan.has(z.id));
+  if (k.tur === 'ogrenci') r.cikarildi = sinifListesiniYenile(r.dokunulan, k.id);   // eski liste gider, yenisi gelir
+  const cikanlar = k.tur === 'ogrenci' ? [] : S.kazanimlar.filter(z => z.kaynakId === k.id && !r.dokunulan.has(z.id));
   kaydet(); ciz();
   const yeniSiniflar = S.siniflar.filter(c => !oncekiSiniflar.has(c.id)).sort(sinifSirala);
   const yeniDersler = [...new Set(S.kazanimlar.filter(z => !oncekiDersler.has(norm(z.ders))).map(z => z.ders))].sort(cmpTr);
   const ekHtml = (yeniSiniflar.length ? `<p><b>Sistemde olmayan ${yeniSiniflar.length} sınıf otomatik oluşturuldu:</b> ${yeniSiniflar.map(c => esc(sinifAdi(c))).join(', ')}</p>` : '')
     + (yeniDersler.length ? `<p><b>Sistemde olmayan ${yeniDersler.length} ders otomatik oluşturuldu:</b> ${yeniDersler.map(esc).join(', ')}</p>` : '');
-  if (!sessiz) cikanlariSor(k.tur, cikanlar, `“${k.dosya}” güncellendi: ` + ozetMetni(r, k.tur === 'ogrenci' ? 'öğrenci' : 'kazanım'), ekHtml);
+  if (!sessiz) cikanlariSor(k.tur, cikanlar, `“${k.dosya}” güncellendi: ` + ozetMetni(r, k.tur === 'ogrenci' ? 'öğrenci' : 'kazanım') + (r.cikarildi ? ` ${r.cikarildi} öğrenci yeni listede olmadığı için çıkarıldı.` : ''), ekHtml);
   return { ...r, cikanlar };
 }
-async function tumunuGuncelle(tur) {
+const tumunuGuncelle = tekIslem(tumunuGuncelleIc);
+async function tumunuGuncelleIc(tur) {
   const liste = S.kaynaklar.filter(k => k.tur === tur);
   let n = 0, atlanan = 0;
   const cikanlar = [];
@@ -1214,8 +1291,8 @@ function onayla(mesaj, fn) {
 function ornekVeriYukle() {
   if (S.ornek) ornekVeriSil(true);
   // Örnek kayıtlar "ornek: true" ile işaretlenir; kendi verilerinle karışmaz, ayrıca silinebilir
-  const sinif = { id: uid(), kurum: 'kurs_lise', seviye: '11', sube: 'A', ornek: true, elle: true };
-  const sinif2 = { id: uid(), kurum: 'okul_orta', seviye: '8', sube: 'B', ornek: true, elle: true };
+  const sinif = { id: uid(), kurum: seviyeliKurum('11', 'kurs'), seviye: '11', sube: 'A', ornek: true, elle: true };
+  const sinif2 = { id: uid(), kurum: seviyeliKurum('8', 'okul'), seviye: '8', sube: 'B', ornek: true, elle: true };
   S.siniflar.push(sinif, sinif2);
   [['1101', 'Ayşe', 'Çelik'], ['1102', 'Mustafa', 'Şahin'], ['1103', 'Fatma Nur', 'Arslan'], ['1104', 'Emre', 'Öztürk']]
     .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id, ornek: true }));
@@ -1238,7 +1315,7 @@ function ornekVeriYukle() {
         : { no, ders: kz[ki].ders, konu: '', kazanimId: kz[ki].id, cevap: 'ABCDE'[sorular.length % 5] });
     }
   });
-  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular, ornek: true };
+  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: sinif.kurum, seviye: '11', sorular, ornek: true };
   S.sinavlar.push(sinav);
   const og = sinifOgrencileri(sinif.id);
   const yb = (y, b = []) => Object.fromEntries([...y.map(n => [n, 'Y']), ...b.map(n => [n, 'B'])]);
@@ -1282,7 +1359,7 @@ function cizPanel() {
     const og = S.ogrenciler.filter(o => sn.some(s => s.id === o.sinifId)).length;
     return `<tr><td>${esc(k.ad)}</td><td>${sn.length}</td><td>${og}</td></tr>`;
   }).join('');
-  $('#panelSon').innerHTML = `<h2>🏫 Kurumlara göre</h2>
+  $('#panelSon').innerHTML = `<div class="kaynak-baslik"><h2>🏫 Kurumlara göre</h2><button type="button" class="btn small" data-kurum-duzenle>✏️ Kurumları düzenle</button></div>
     <div class="tablewrap"><table><tr><th>Kurum türü</th><th>Sınıf</th><th>Öğrenci</th></tr>${kurumOzet}</table></div>`;
 }
 
@@ -1294,9 +1371,9 @@ const filtre = { kurum: '', seviye: '', sinif: '', ara: '', seciliSinav: null, k
 function cizOgrenci() {
   const kurumlar = KURUMLAR;
   $('#fKurum').innerHTML = opt('', 'Tüm kurumlar') + kurumlar.map(k => opt(k.key, k.ad, filtre.kurum === k.key)).join('');
-  const seviyeler = filtre.kurum ? KURUM[filtre.kurum].seviyeler : [...new Set(KURUMLAR.flatMap(k => k.seviyeler))];
+  const seviyeler = filtre.kurum && KURUM[filtre.kurum] ? KURUM[filtre.kurum].seviyeler : S.seviyeler;
   if (!seviyeler.includes(filtre.seviye)) filtre.seviye = '';
-  $('#fSeviye').innerHTML = opt('', 'Tüm seviyeler') + seviyeler.map(s => opt(s, s === 'Mezun' ? 'Mezun' : s + '. Sınıf', filtre.seviye === s)).join('');
+  $('#fSeviye').innerHTML = opt('', 'Tüm seviyeler') + seviyeler.map(s => opt(s, seviyeAdi(s), filtre.seviye === s)).join('');
   const siniflar = S.siniflar.filter(s => (!filtre.kurum || s.kurum === filtre.kurum) && (!filtre.seviye || s.seviye === filtre.seviye)).sort(sinifSirala);
   if (filtre.sinif && !siniflar.some(s => s.id === filtre.sinif)) filtre.sinif = '';
   $('#fSinif').innerHTML = opt('', 'Tüm sınıflar') + siniflar.map(s => opt(s.id, sinifAdi(s, !!filtre.kurum), filtre.sinif === s.id)).join('');
@@ -1336,10 +1413,10 @@ function cizOgrenci() {
 }
 
 function sinifDialog(sinif) {
-  const s = sinif || { kurum: filtre.kurum || 'kurs_lise', seviye: '', sube: '' };
-  const seviyeSecenek = k => KURUM[k].seviyeler.map(v => opt(v, v === 'Mezun' ? 'Mezun' : v + '. Sınıf', v === s.seviye)).join('');
+  const s = sinif || { kurum: KURUM[filtre.kurum] ? filtre.kurum : varsayilanKurum(), seviye: '', sube: '' };
+  const seviyeSecenek = k => kurumAl(k).seviyeler.map(v => opt(v, seviyeAdi(v), v === s.seviye)).join('');
   dialogAc(sinif ? 'Sınıfı düzenle' : 'Yeni sınıf', `<div class="form-grid">
-      <label>Kurum türü<select id="dKurum">${KURUMLAR.map(k => opt(k.key, k.ad, k.key === s.kurum)).join('')}</select></label>
+      <label>Kurum türü<select id="dKurum">${KURUMLAR.map(k => opt(k.key, k.ad, k.key === kurumAl(s.kurum).key)).join('')}</select></label>
       <label>Sınıf seviyesi<select id="dSeviye">${seviyeSecenek(s.kurum)}</select></label>
       <label>Şube / grup adı<input id="dSube" value="${esc(s.sube)}" placeholder="ör. A, Sayısal-1"></label>
     </div>`, [
@@ -1404,7 +1481,7 @@ function cizKazanim() {
   const dersler = [...new Set(S.kazanimlar.map(k => k.ders))].sort(cmpTr);
   $('#kzDers').innerHTML = opt('', 'Tüm dersler') + dersler.map(d => opt(d, d, filtre.kzDers === d)).join('');
   const seviyeler = [...new Set(S.kazanimlar.map(k => k.seviye).filter(Boolean))].sort(cmpTr);
-  $('#kzSeviye').innerHTML = opt('', 'Tüm seviyeler') + seviyeler.map(s => opt(s, s === 'Mezun' ? 'Mezun' : s + '. Sınıf', filtre.kzSeviye === s)).join('');
+  $('#kzSeviye').innerHTML = opt('', 'Tüm seviyeler') + seviyeler.map(s => opt(s, seviyeAdi(s), filtre.kzSeviye === s)).join('');
   const ara = norm(filtre.kzAra);
   const liste = S.kazanimlar.filter(k => (!filtre.kzDers || k.ders === filtre.kzDers) && (!filtre.kzSeviye || k.seviye === filtre.kzSeviye)
     && (!ara || norm(k.kod + k.metin + k.konu + k.unite).includes(ara)))
@@ -1459,8 +1536,8 @@ function cizSinav() {
     <div class="form-grid">
       <label>Sınav adı<input id="sAd" value="${esc(s.ad)}"></label>
       <label>Tarih<input id="sTarih" type="date" value="${esc(s.tarih)}"></label>
-      <label>Kurum türü<select id="sKurum">${KURUMLAR.map(k => opt(k.key, k.ad, k.key === s.kurum)).join('')}</select></label>
-      <label>Sınıf seviyesi<select id="sSeviye">${opt('', 'Karışık')}${KURUM[s.kurum].seviyeler.map(v => opt(v, v === 'Mezun' ? 'Mezun' : v + '. Sınıf', v === s.seviye)).join('')}</select></label>
+      <label>Kurum türü<select id="sKurum">${KURUMLAR.map(k => opt(k.key, k.ad, k.key === kurumAl(s.kurum).key)).join('')}</select></label>
+      <label>Sınıf seviyesi<select id="sSeviye">${opt('', 'Karışık')}${kurumAl(s.kurum).seviyeler.map(v => opt(v, seviyeAdi(v), v === s.seviye)).join('')}</select></label>
     </div>
     <div class="toolbar" style="margin-top:12px">
       <label class="btn primary">📥 Excel'den cevap anahtarı yükle<input type="file" id="anahtarDosya" accept=".xlsx,.xls,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" class="dosya-input"></label>
@@ -1488,20 +1565,13 @@ function cizSinav() {
 function sinavKazanimlari(s) {
   // Sınav seviyesine uygun kazanımları öne al; mezun sınavlarında tüm lise kazanımları
   let l = S.kazanimlar.filter(k => !!k.ornek === !!s.ornek);
-  if (s.seviye && s.seviye !== 'Mezun') {
-    const uygun = l.filter(k => !k.seviye || k.seviye === s.seviye);
-    if (uygun.length) l = uygun;
-  } else if (s.kurum.endsWith('lise') || s.kurum === 'kurs_mezun') {
-    const uygun = l.filter(k => !k.seviye || ['9', '10', '11', '12', 'Mezun'].includes(k.seviye));
-    if (uygun.length) l = uygun;
-  } else if (s.kurum.endsWith('orta')) {
-    const uygun = l.filter(k => !k.seviye || ['5', '6', '7', '8'].includes(k.seviye));
-    if (uygun.length) l = uygun;
-  }
+  const sv = s.seviye ? [s.seviye] : kurumAl(s.kurum).seviyeler;
+  const uygun = l.filter(k => !k.seviye || sv.includes(k.seviye));
+  if (uygun.length) l = uygun;
   return l.slice().sort((a, b) => cmpTr(a.ders, b.ders) || cmpTr(a.kod, b.kod));
 }
 function yeniSinav() {
-  const kurum = filtre.kurum || (varsayilanTip() + '_lise');
+  const kurum = KURUM[filtre.kurum] ? filtre.kurum : varsayilanKurum();
   const s = { id: uid(), ad: 'Yeni deneme sınavı', tarih: bugun(), kurum, seviye: '', sorular: [] };
   S.sinavlar.push(s);
   filtre.seciliSinav = s.id;
@@ -1904,7 +1974,7 @@ function cizAnaliz() {
     ${Object.entries(dersGrup).map(([ders, l]) => `<div class="group-title">${esc(ders)} · ${l.length} kazanım</div>` + l.map(e => `
       <label class="kz-row"><input type="checkbox" data-an-kz="${e.k.id}" ${analizSecim.kazanimlar.has(e.k.id) ? 'checked' : ''}>
         <span class="kz-body"><span class="kz-kod">${esc(e.k.kod || '')}</span> ${esc(e.k.metin)}
-          <div class="kz-meta">${[e.k.seviye && (e.k.seviye + '. sınıf'), e.k.unite, e.k.konu].filter(Boolean).map(esc).join(' · ')}</div>
+          <div class="kz-meta">${[e.k.seviye && seviyeAdi(e.k.seviye), e.k.unite, e.k.konu].filter(Boolean).map(esc).join(' · ')}</div>
           <div class="kz-meta">${e.yanlis ? `<span class="chip red">${e.yanlis} yanlış</span> ` : ''}${e.bos ? `<span class="chip orange">${e.bos} boş</span> ` : ''}
           Sorular: ${e.sorular.map(q => `${esc(q.sinav)} #${esc(q.no)}`).join(', ')}</div></span></label>`).join('')).join('')}
     ${!liste.length && girilmis.length ? '<p class="muted">Seçili sınavlarda kazanımı belirli yanlış/boş soru yok.</p>' : ''}
@@ -2200,8 +2270,102 @@ function sinifAnalizExcel() {
 // ---------------------------------------------------------------------------
 // AYARLAR / YEDEK
 // ---------------------------------------------------------------------------
+function kurumAyarCiz() {
+  const kl = $('#kurumListe');
+  if (!kl) return;
+  kl.innerHTML = `<div class="tablewrap"><table><tr><th>Kurum</th><th>Tür</th><th>Seviyeler</th><th class="sag">Sınıf</th><th class="sag">Öğrenci</th><th></th></tr>
+    ${KURUMLAR.map(k => {
+      const sn = S.siniflar.filter(c => c.kurum === k.key && !c.ornek);
+      const og = S.ogrenciler.filter(o => !o.ornek && sn.some(c => c.id === o.sinifId)).length;
+      return `<tr><td><b>${esc(k.ad)}</b></td><td>${k.tip === 'kurs' ? 'Kurs' : 'Okul'}</td>
+        <td class="small">${k.seviyeler.map(seviyeAdi).map(esc).join(', ') || '<span class="chip orange">seviye yok</span>'}</td>
+        <td class="sag">${sn.length}</td><td class="sag">${og}</td>
+        <td style="white-space:nowrap"><button type="button" class="btn small" data-kurum-duz="${k.key}">✏️ Düzenle</button>
+          <button type="button" class="btn small danger" data-kurum-sil="${k.key}">🗑️ Sil</button></td></tr>`;
+    }).join('')}</table></div>`;
+  const sl = $('#seviyeListe');
+  if (sl) sl.innerHTML = S.seviyeler.map(v => {
+    const n = S.siniflar.filter(c => c.seviye === v).length;
+    return `<span class="seviye-chip">${esc(seviyeAdi(v))}${n ? ` <span class="muted small">(${n} sınıf)</span>` : ''}<button type="button" class="sk-kapat" data-seviye-sil="${esc(v)}" aria-label="${esc(seviyeAdi(v))} seviyesini sil">×</button></span>`;
+  }).join('');
+}
+/** Kurum ekle / düzenle penceresi. */
+function kurumDialog(k) {
+  const yeni = !k;
+  const v = k || { ad: '', tip: 'okul', seviyeler: [] };
+  dialogAc(yeni ? '🏫 Kurum ekle' : '🏫 Kurumu düzenle', `<div class="form-grid">
+      <label>Kurum adı<input id="kAd" value="${esc(v.ad)}" placeholder="ör. Etüt Merkezi – Lise" maxlength="60"></label>
+      <label>Türü<select id="kTip">${opt('okul', 'Okul', v.tip === 'okul')}${opt('kurs', 'Kurs / dershane', v.tip === 'kurs')}</select></label>
+    </div>
+    <p class="muted small" style="margin:12px 0 6px">Bu kurumda hangi sınıf seviyeleri var?</p>
+    <div class="seviye-sec">${S.seviyeler.map(s => `<label class="cb"><input type="checkbox" value="${esc(s)}" ${v.seviyeler.includes(s) ? 'checked' : ''}> ${esc(seviyeAdi(s))}</label>`).join('')}</div>
+    <p class="muted small">Listede olmayan bir seviye için önce Ayarlar → “Sınıf seviyeleri”nden ekle.</p>`, [
+    { ad: 'Vazgeç' },
+    { ad: yeni ? 'Ekle' : 'Kaydet', primary: true, tikla: () => {
+      const ad = $('#kAd').value.trim().replace(/\s+/g, ' ');
+      const tip = $('#kTip').value;
+      const seviyeler = $$('.seviye-sec input:checked').map(x => x.value);
+      if (!ad) { toast('Kurum adını yaz.'); return false; }
+      if (KURUMLAR.some(x => x !== k && norm(x.ad) === norm(ad))) { toast('Bu adda bir kurum zaten var.'); return false; }
+      if (!seviyeler.length) { toast('En az bir seviye seç.'); return false; }
+      if (!yeni) {
+        const kullanilan = [...new Set(S.siniflar.filter(c => c.kurum === k.key && !seviyeler.includes(c.seviye)).map(c => c.seviye))];
+        if (kullanilan.length) { toast(`Bu kurumda ${kullanilan.map(seviyeAdi).join(', ')} sınıfları var; o seviyeleri kaldıramazsın.`, 4500); return false; }
+        Object.assign(k, { ad, tip, seviyeler });
+      } else {
+        S.kurumlar.push({ key: `${tip}_${uid()}`, ad, tip, seviyeler });
+      }
+      kurumlariYukle(); kaydet(); ciz();
+      toast(yeni ? `“${ad}” eklendi.` : `“${ad}” kaydedildi.`);
+    } },
+  ]);
+}
+function kurumSil(key) {
+  const k = KURUM[key];
+  if (!k) return;
+  if (KURUMLAR.length <= 1) { toast('En az bir kurum kalmalı.'); return; }
+  const sn = S.siniflar.filter(c => c.kurum === key);
+  const ogr = S.ogrenciler.filter(o => sn.some(c => c.id === o.sinifId));
+  const sinavlar = S.sinavlar.filter(x => x.kurum === key);
+  const mesaj = `“${k.ad}” silinsin mi?` + (sn.length ? ` Bu kurumdaki ${sn.length} sınıf ve ${ogr.length} öğrenci (sınav sonuçları ve ödev planlarıyla) da silinir.` : '')
+    + (sinavlar.length ? ` ${sinavlar.length} sınav başka bir kuruma taşınır.` : '');
+  onayla(mesaj, () => {
+    ogrencileriSil(ogr.map(o => o.id));
+    S.siniflar = S.siniflar.filter(c => c.kurum !== key);
+    S.kurumlar = S.kurumlar.filter(x => x.key !== key);
+    kurumlariYukle();
+    sinavlar.forEach(x => { x.kurum = (KURUMLAR.find(y => !x.seviye || y.seviyeler.includes(x.seviye)) || KURUMLAR[0]).key; if (!kurumAl(x.kurum).seviyeler.includes(x.seviye)) x.seviye = ''; });
+    if (filtre.kurum === key) filtre.kurum = '';
+    kaydet(); ciz(); toast('Kurum silindi.');
+  });
+}
+function seviyeEkle() {
+  const inp = $('#yeniSeviye');
+  let v = inp.value.trim().replace(/\s+/g, ' ');
+  if (/^\d+\.?\s*(sınıf|sinif)?$/i.test(v)) v = String(parseInt(v, 10));   // "4. Sınıf" → 4
+  if (!v) { toast('Seviye adını yaz (ör. 4 ya da Hazırlık).'); return; }
+  if (v.length > 20) { toast('Seviye adı en fazla 20 harf olabilir.'); return; }
+  if (S.seviyeler.some(x => norm(x) === norm(v))) { toast('Bu seviye zaten var.'); return; }
+  S.seviyeler.push(v); kurumlariYukle(); kaydet(); inp.value = ''; ciz();
+  toast(`“${seviyeAdi(v)}” eklendi. Kullanmak için bir kurumu düzenleyip bu seviyeyi işaretle.`, 4500);
+}
+function seviyeSil(v) {
+  const n = S.siniflar.filter(c => c.seviye === v).length;
+  if (n) { toast(`${seviyeAdi(v)} seviyesinde ${n} sınıf var; önce o sınıfları sil ya da taşı.`, 4500); return; }
+  const bosKalan = KURUMLAR.filter(k => k.seviyeler.length === 1 && k.seviyeler[0] === v);
+  if (bosKalan.length) { toast(`“${bosKalan[0].ad}” kurumunun başka seviyesi yok; önce o kurumu düzenle ya da sil.`, 4500); return; }
+  if (S.seviyeler.length <= 1) { toast('En az bir seviye kalmalı.'); return; }
+  onayla(`“${seviyeAdi(v)}” seviyesi silinsin mi?`, () => {
+    S.seviyeler = S.seviyeler.filter(x => x !== v);
+    S.kurumlar.forEach(k => { k.seviyeler = k.seviyeler.filter(x => x !== v); });
+    S.sinavlar.forEach(x => { if (x.seviye === v) x.seviye = ''; });
+    if (filtre.seviye === v) filtre.seviye = '';
+    kurumlariYukle(); kaydet(); ciz(); toast('Seviye silindi.');
+  });
+}
 function cizAyar() {
   miniAyarCiz();
+  kurumAyarCiz();
   $('#dersListesi').value = S.dersler.join(', ');
   $('#aEsikEksik').value = S.ayarlar.esikEksik;
   $('#aEsikIyi').value = S.ayarlar.esikIyi;
@@ -2279,7 +2443,7 @@ function olaylar() {
     const orn = e.target.closest('[data-ornek]');
     if (orn) { ornekExcelIndir(orn.dataset.ornek); return; }
     const g = e.target.closest('[data-kaynak-guncelle]');
-    if (g) { kaynakGuncelle(g.dataset.kaynakGuncelle); return; }
+    if (g) { tekIslem(kaynakGuncelle)(g.dataset.kaynakGuncelle); return; }
     const sl = e.target.closest('[data-kaynak-sil]');
     if (sl) { kaynakSilDialog(sl.dataset.kaynakSil); return; }
     const t = e.target.closest('[data-kaynak-tumu]');
@@ -2331,7 +2495,7 @@ function olaylar() {
     const t = e.target;
     if (t.id === 'sAd') s.ad = t.value.trim() || 'Sınav';
     else if (t.id === 'sTarih') s.tarih = t.value;
-    else if (t.id === 'sKurum') { s.kurum = t.value; if (!KURUM[s.kurum].seviyeler.includes(s.seviye)) s.seviye = ''; }
+    else if (t.id === 'sKurum') { s.kurum = t.value; if (!kurumAl(s.kurum).seviyeler.includes(s.seviye)) s.seviye = ''; }
     else if (t.id === 'sSeviye') s.seviye = t.value;
     else if (t.id === 'anahtarDosya') { const f = t.files[0]; t.value = ''; if (f) anahtarIceAktar(s, f); return; }
     else if (t.dataset.q !== undefined) {
@@ -2437,13 +2601,14 @@ function olaylar() {
   // Ayarlar
   $('#btnYedekAl').onclick = () => indir(new Blob([JSON.stringify(S)], { type: 'application/json' }), `kazanim_takip_yedek_${bugun()}.json`);
   $('#yedekDosya').addEventListener('change', async e => {
+    if (islemSuruyor) { toast('Önceki işlem bitmeden yenisi başlatılamaz, birkaç saniye bekle 🐾', 3000); e.target.value = ''; return; }
     const f = e.target.files[0];
     e.target.value = '';
     if (!f) return;
     try {
       const v = JSON.parse(await f.text());
       if (!v || !Array.isArray(v.ogrenciler) || !Array.isArray(v.kazanimlar)) throw new Error('biçim');
-      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { S = { ...bosDurum(), ...v }; kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
+      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { S = { ...bosDurum(), ...v }; S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(v.ayarlar || {}) }; kurumlariYukle(); kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
     } catch (err) { toast('Yedek dosyası okunamadı.'); }
   });
   $('#btnTumExcel').onclick = tumExcel;
@@ -2461,8 +2626,26 @@ function olaylar() {
     S.dersler = [...new Set($('#dersListesi').value.split(',').map(x => x.trim()).filter(Boolean))];
     kaydet(); toast('Ders listesi kaydedildi.');
   };
+  $('#btnKurumEkle').onclick = () => kurumDialog(null);
+  $('#btnSeviyeEkle').onclick = seviyeEkle;
+  $('#yeniSeviye').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); seviyeEkle(); } });
+  document.addEventListener('click', e => {
+    const d = e.target.closest('[data-kurum-duz]'); if (d) { kurumDialog(KURUM[d.dataset.kurumDuz]); return; }
+    const sl = e.target.closest('[data-kurum-sil]'); if (sl) { kurumSil(sl.dataset.kurumSil); return; }
+    const sv = e.target.closest('[data-seviye-sil]'); if (sv) { seviyeSil(sv.dataset.seviyeSil); return; }
+    if (e.target.closest('[data-kurum-duzenle]')) { sekmeAc('ayar'); setTimeout(() => $('#kurumKart').scrollIntoView({ block: 'start', behavior: azHareket() ? 'auto' : 'smooth' }), 50); }
+  });
+  $('#btnFabrika').onclick = () => onayla('Program ilk indirildiği hâline dönsün mü? Tüm öğrenciler, kazanımlar, sınavlar, sonuçlar, ödev planları, yüklenen liste kayıtları ve ayarlar silinir. Önce yedek almanı öneririm.', async () => {
+    miniDurdur();
+    S = bosDurum(); kurumlariYukle();
+    try { localStorage.removeItem(DB_NAME); } catch (e) { /* yok say */ }
+    try { await idbIslem('readwrite', st => st.clear()); } catch (e) { /* yok say */ }
+    await kaydetHemen();
+    toast('Fabrika ayarlarına dönüldü.');
+    setTimeout(() => location.reload(), 700);
+  });
   $('#btnHepsiniSil').onclick = () => onayla('TÜM veriler (öğrenciler, kazanımlar, sınavlar, sonuçlar, planlar) silinsin mi? Önce yedek almanız önerilir.', () => {
-    S = bosDurum(); kaydet(); ciz(); toast('Tüm veriler silindi.');
+    S = bosDurum(); kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
   });
 }
 
@@ -3283,6 +3466,7 @@ function miniOlaylari() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
+  kurumlariYukle();
   olaylar();
   ogreticiOlaylari();
   miniOlaylari();

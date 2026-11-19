@@ -28,6 +28,11 @@ En kolay yol: **Örnek Excel**'i indir, örnek satırları silip kendi bilgileri
 `index.html` dosyasına çift tıklayın (Chrome veya Edge önerilir). Kurulum ve internet gerekmez; Excel okuma kütüphanesi `vendor/` klasöründe.
 Veriler o bilgisayardaki tarayıcıda saklanır → **Yedek / Ayarlar** sekmesinden düzenli yedek alın.
 
+## Güvenlik ve ayarlar
+
+- Excel yükleme, liste güncelleme ve yedekten dönüş aynı anda iki kez çalışmaz: biri sürerken ikinci basış “önceki işlem bitmeden yenisi başlatılamaz” uyarısı verir, veri karışmaz.
+- Ayarlar → **Fabrika ayarlarına dön**: programı ilk indirildiği hâline getirir (tüm bilgiler ve ayarlar silinir, onay sorulur).
+
 ## Klasörler
 
 | Klasör | İçinde |
@@ -61,10 +66,18 @@ Aktardığınız her Excel dosyası (ör. `11-A.xlsx`) sınıfıyla birlikte **�
 - **Sil:** listeyi ve ondan gelen öğrencileri (sonuçları ve planlarıyla) siler; ya da yalnızca liste kaydını unutup öğrencileri bırakır. Excel dosyanız bilgisayarınızda olduğu gibi kalır.
 - **Dosya yolu:** Chrome ve Edge'de program dosyanın yerini hatırlar (*dosya yolu kayıtlı*); Güncelle'ye basınca dosya oradan okunur, ilk seferde tarayıcı okuma izni sorar. Diğer tarayıcılarda ve Claude'da yayınlanan sayfada Güncelle'ye basınca güncel dosyayı seçmeniz istenir.
 - **Yeni sınıf / ders otomatik oluşur:** Excel'deki sınıf (ör. 9-B) sistemde yoksa içe aktarırken otomatik oluşturulur; elle sınıf eklemeniz gerekmez. İçe aktarma penceresinde her dosya için öğrencilerin gideceği sınıflar ve hangilerinin **yeni oluşturulacağı** gösterilir, işlem bitince oluşturulan sınıflar listelenir. Kazanımlarda da yeni dersler ve sınıf seviyeleri aynı şekilde oluşturulup gösterilir.
-- Aynı dosyayı yeniden içe aktarmak da o listeyi günceller. Kazanım listeleri de aynı şekilde çalışır.
+- **Sınıf listesini yeniden yüklemek listeyi yeniler:** Bir sınıfın Excel'ini (dosya adı farklı olsa bile) tekrar yüklediğinde yeni sınıf açılmaz; o sınıfın eski listesi gider, yenisi gelir. Excel'deki öğrenciler eklenir/güncellenir (numarası aynı olanın sınav sonuçları korunur), yeni listede olmayanlar sınıftan çıkarılır. Kazanım listeleri de aynı şekilde çalışır.
 - Bir sınıfı ✎ → *Sınıfı sil* ile öğrencileriyle birlikte silebilirsiniz.
 
 ## Kurum türleri ve sınıflar
+
+Kurumlar ve sınıf seviyeleri **Ayarlar**'dan değiştirilebilir:
+
+- Ayarlar → **Kurumlar**: kurum ekle (ad, okul/kurs, hangi seviyeleri kapsadığı), düzenle, sil. Excel'deki “Kurum” sütununa buradaki adı yazarsan öğrenciler o kuruma gider. Ana sayfadaki “Kurumlara göre” tablosundaki **Kurumları düzenle** düğmesi buraya getirir.
+- Ayarlar → **Sınıf seviyeleri**: “4”, “Hazırlık” gibi seviye ekle; sınıfı olmayan seviyeyi sil. Excel'de “Hazırlık-A” gibi yazılan sınıflar tanınır.
+- Bir sınıfı olan seviye kurumdan ya da listeden kaldırılamaz; kurum silinirse sınıfları ve öğrencileri de silinir (onay sorulur).
+
+Aşağıdaki varsayılan kurumlarla başlar:
 
 - Okul – Ortaokul (5–8), Okul – Lise (9–12)
 - Kurs – Ortaokul (5–8), Kurs – Lise (9–12), Kurs – Mezun
@@ -80,3 +93,7 @@ Her sınıfa şube/grup adı verilebilir (ör. 10-A, 12 Sayısal-1). Sınıf bil
 5. **Öğrenci Analizi ve Ödev** → **Soru çözme önerisi**: öğrencinin hangi konudan kaç soru çözmesi gerektiği (en zayıf konu en üstte; Excel'e aktarılabilir, yazdırılabilir). **Konu analizi**: her konuda soru / doğru / yanlış / boş ve başarı yüzdesi; durum *Eksik* (%50 altı), *Geliştirilmeli* veya *İyi* (%80 ve üstü). Sınırlar ve önerilen soru sayıları “Yedek / Ayarlar”dan değiştirilebilir.
 6. **Sınıf Konu Analizi** → bir sınavda sınıfın en zayıf konuları ve her konuda eksik kalan öğrenciler; Excel'e öğrenci × konu başarı tablosu olarak aktarılabilir.
 7. **Kazanım ve ödev planı** (Öğrenci Analizi sekmesinde) → öğrencinin çözemediği sorulardan gelen kazanımlar ders ders listelenir (kaç yanlış/boş, hangi sorular). İstediğiniz kazanımları seçip **ödev / çalışma planı hazırla**: başlangıç tarihi, gün sayısı, kazanım başına soru sayısı, tekrar testi, Pazar tatili, son gün genel tekrar. Plan yazdırılabilir, Excel'e aktarılabilir, görevler tamamlandıkça işaretlenebilir.
+
+---
+
+© 2026 Şafak Ulusoy. All rights reserved. This software, its design and its content are the intellectual property of Şafak Ulusoy. Unauthorized copying, distribution or modification is prohibited.

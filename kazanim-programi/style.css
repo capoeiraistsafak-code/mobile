@@ -332,6 +332,13 @@ dialog::backdrop { background: var(--backdrop); }
 }
 
 .print-only { display: none; }
+.seviye-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.seviye-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--chip); border: 2px solid var(--chip-line); border-radius: 999px; padding: 4px 6px 4px 12px; font-weight: 800; font-size: 14px; }
+.seviye-chip .sk-kapat { font-size: 18px; }
+.seviye-sec { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.seviye-sec .cb { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--text); }
+/* Telif yazısı (yalnızca Ayarlar'ın en altında): sade, sarı zemin, çerçeveli, yuvarlak köşe, siyah yazı */
+.telif { margin: 24px auto 4px; max-width: 760px; padding: 10px 16px; background: #fff6c7; border: 1.5px solid #e6c84f; border-radius: 12px; color: #111; font-size: 12.5px; line-height: 1.5; text-align: center; }
 /* Pembe pati simgesi (kulak içi ve pati yastıklarıyla aynı renk) */
 .pati-ikon { width: 1em; height: 1em; vertical-align: -.12em; fill: #e2b9c4; stroke: #c98fa2; stroke-width: .9; flex: none; }
 .btn .pati-ikon { width: 1.15em; height: 1.15em; }

@@ -275,10 +275,29 @@
       <textarea id="dersListesi" rows="3" aria-label="Ders listesi"></textarea>
       <button class="btn" id="btnDersKaydet">Kaydet</button>
     </div>
+    <div class="card" id="kurumKart">
+      <div class="kaynak-baslik"><h2>🏫 Kurumlar</h2><button type="button" class="btn small primary" id="btnKurumEkle">➕ Kurum ekle</button></div>
+      <p class="muted">Okul, kurs ya da başka kurumlarını buradan ekle, düzenle ya da sil. Excel'de “Kurum” sütununa buradaki adı yazarsan öğrenciler o kuruma gider.</p>
+      <div id="kurumListe"></div>
+    </div>
+    <div class="card">
+      <h2>🎚️ Sınıf seviyeleri</h2>
+      <p class="muted">Filtrelerde ve sınıf seçerken çıkan seviyeler. Ör. “4” ya da “Hazırlık” ekleyebilirsin; kullanılmayan seviyeyi × ile silebilirsin.</p>
+      <div class="seviye-liste" id="seviyeListe"></div>
+      <div class="toolbar" style="margin-top:10px">
+        <input id="yeniSeviye" placeholder="Yeni seviye (ör. 4 ya da Hazırlık)" maxlength="20" aria-label="Yeni seviye">
+        <button type="button" class="btn" id="btnSeviyeEkle">➕ Seviye ekle</button>
+      </div>
+    </div>
     <div class="card">
       <h2>⚠️ Dikkat</h2>
-      <button class="btn danger" id="btnHepsiniSil">🗑️ Tüm bilgileri sil</button>
+      <div class="toolbar">
+        <button class="btn danger" id="btnHepsiniSil">🗑️ Tüm bilgileri sil</button>
+        <button class="btn danger" id="btnFabrika">🏭 Fabrika ayarlarına dön</button>
+      </div>
+      <p class="muted small">“Fabrika ayarlarına dön” programı ilk indirildiği hâline getirir: bütün bilgiler ve ayarlar silinir.</p>
     </div>
+    <p class="telif">© 2026 Şafak Ulusoy. All rights reserved. This software, its design and its content are the intellectual property of Şafak Ulusoy. Unauthorized copying, distribution or modification is prohibited.</p>
   </section>
 </main>
 
