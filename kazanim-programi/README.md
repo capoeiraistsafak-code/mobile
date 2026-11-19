@@ -8,7 +8,7 @@ Ana Sayfa'daki **“Üzüm, bana bu programı kullanmayı öğretir misin?”** 
 
 ## Üzüm'ün mini animasyonları
 
-Ayarlar → **Üzüm'ün mini animasyonları**: açma/kapama düğmesi (varsayılan açık) ve yanında **Ne sıklıkla?** seçimi: her 1 / 5 / 15 / 30 dakikada ya da her 1 / 2 / 3 / 5 saatte bir (varsayılan 5 dakika). Animasyonlar rastgele gelir ama aynı animasyon hiçbir zaman arka arkaya iki kez gelmez. Ana Sayfa'da kedinin altındaki **🧶 Üzüm'le oyna** düğmesi beklemeden hemen bir animasyon oynatır (animasyonlar kapalıyken de çalışır). Seçilen sıklıkta 10 animasyondan biri (ip yumağı, kelebek, fare, lazer, balık, kutu, cee, uyku, kalpler, üzüm salkımı) 3–6 saniye oynar; tıklamalara engel olmaz. Hepsi aynı yerden tek tek izlenebilir.
+Ayarlar → **Üzüm'ün mini animasyonları**: açma/kapama düğmesi (varsayılan açık) ve yanında **Ne sıklıkla?** seçimi: her 1 / 5 / 15 / 30 dakikada ya da her 1 / 2 / 3 / 5 saatte bir (varsayılan 5 dakika). Animasyonlar rastgele gelir ama aynı animasyon hiçbir zaman arka arkaya iki kez gelmez. Ana Sayfa'da kedinin altındaki **🧶 Üzüm'le oyna** düğmesi beklemeden hemen bir animasyon oynatır (animasyonlar kapalıyken de çalışır). Seçilen sıklıkta 10 animasyondan biri (ip yumağı, kelebek, fare, lazer, balık, kutu, cee, uyku, kalpler, üzüm salkımı) yaklaşık 10–15 saniye oynar. Üzüm gerçek kedi hızında hareket eder; ekranın farklı yerlerinde koşar, popo sallayıp atlar, yuvarlanır, pati atar. Her animasyonun 3–4 farklı giriş/çıkış yolu vardır, her seferinde rastgele biri seçilir. Tıklamalara engel olmaz. Hepsi aynı yerden tek tek izlenebilir.
 
 ## Örnek veriler ayrı durur
 

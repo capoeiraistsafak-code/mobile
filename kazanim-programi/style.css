@@ -341,7 +341,21 @@ dialog::backdrop { background: var(--backdrop); }
 #miniSahne { position: fixed; inset: 0; z-index: 380; pointer-events: none; overflow: hidden; }
 .mini-nesne { position: absolute; left: 0; top: 0; will-change: transform, opacity; }
 .mini-nesne.arkada { z-index: -1; }
+.kutu-pencere { width: 72px; height: 76px; overflow: hidden; }
+.kutu-pencere .kafa-ic { will-change: transform; }
 .mini-kedi { position: absolute; z-index: 1; transform-origin: 0 0; }
+/* Mini oyun hareketleri: yürürken daha yavaş adım, pati atma, popo sallama, uyuma */
+.uzum-kedi.kosuyor.yuruyor .ar1, .uzum-kedi.kosuyor.yuruyor .on2, .uzum-kedi.kosuyor.yuruyor .ar2, .uzum-kedi.kosuyor.yuruyor .on1, .uzum-kedi.kosuyor.yuruyor .govde { animation-duration: .45s; }
+.mini-kedi.pati-at .on2 { animation: patiAt .48s ease-out; }
+@keyframes patiAt { 0% { transform: rotate(0); } 35% { transform: rotate(-105deg); } 55% { transform: rotate(-80deg); } 100% { transform: rotate(0); } }
+.mini-kedi.pati-at .pati-iz { opacity: 1; }
+.mini-kedi.pati-at .pati-yan { opacity: 0; }
+.mini-kedi.hazirlan .govde { transform-origin: 30px 80px; animation: popo .14s ease-in-out infinite alternate; }
+@keyframes popo { from { transform: rotate(-3deg) translateY(2px); } to { transform: rotate(3deg) translateY(2px); } }
+.mini-kedi.uyu .govde { transform-origin: 68px 96px; animation: uyuNefes 1.8s ease-in-out infinite; }
+.mini-kedi.uyu .bacak { transform: scaleY(.55); }
+.mini-kedi.uyu .kuyruk { animation-duration: 3s; }
+@keyframes uyuNefes { 0%, 100% { transform: translateY(10px) scale(1, .96); } 50% { transform: translateY(10px) scale(1.02, .99); } }
 .kelebek .kanat { transform-box: view-box; transform-origin: 17px 14px; animation: kanat .16s ease-in-out infinite alternate; }
 @keyframes kanat { to { transform: scaleX(.35); } }
 .suzul svg { animation: suzul 1s ease-in-out infinite alternate; }

@@ -352,7 +352,21 @@ dialog::backdrop { background: var(--backdrop); }
 #miniSahne { position: fixed; inset: 0; z-index: 380; pointer-events: none; overflow: hidden; }
 .mini-nesne { position: absolute; left: 0; top: 0; will-change: transform, opacity; }
 .mini-nesne.arkada { z-index: -1; }
+.kutu-pencere { width: 72px; height: 76px; overflow: hidden; }
+.kutu-pencere .kafa-ic { will-change: transform; }
 .mini-kedi { position: absolute; z-index: 1; transform-origin: 0 0; }
+/* Mini oyun hareketleri: yürürken daha yavaş adım, pati atma, popo sallama, uyuma */
+.uzum-kedi.kosuyor.yuruyor .ar1, .uzum-kedi.kosuyor.yuruyor .on2, .uzum-kedi.kosuyor.yuruyor .ar2, .uzum-kedi.kosuyor.yuruyor .on1, .uzum-kedi.kosuyor.yuruyor .govde { animation-duration: .45s; }
+.mini-kedi.pati-at .on2 { animation: patiAt .48s ease-out; }
+@keyframes patiAt { 0% { transform: rotate(0); } 35% { transform: rotate(-105deg); } 55% { transform: rotate(-80deg); } 100% { transform: rotate(0); } }
+.mini-kedi.pati-at .pati-iz { opacity: 1; }
+.mini-kedi.pati-at .pati-yan { opacity: 0; }
+.mini-kedi.hazirlan .govde { transform-origin: 30px 80px; animation: popo .14s ease-in-out infinite alternate; }
+@keyframes popo { from { transform: rotate(-3deg) translateY(2px); } to { transform: rotate(3deg) translateY(2px); } }
+.mini-kedi.uyu .govde { transform-origin: 68px 96px; animation: uyuNefes 1.8s ease-in-out infinite; }
+.mini-kedi.uyu .bacak { transform: scaleY(.55); }
+.mini-kedi.uyu .kuyruk { animation-duration: 3s; }
+@keyframes uyuNefes { 0%, 100% { transform: translateY(10px) scale(1, .96); } 50% { transform: translateY(10px) scale(1.02, .99); } }
 .kelebek .kanat { transform-box: view-box; transform-origin: 17px 14px; animation: kanat .16s ease-in-out infinite alternate; }
 @keyframes kanat { to { transform: scaleX(.35); } }
 .suzul svg { animation: suzul 1s ease-in-out infinite alternate; }
@@ -704,7 +718,7 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
           <select id="aAnimAralik"></select>
         </label>
       </div>
-      <p class="muted">Açıkken Üzüm seçtiğin sıklıkta 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
+      <p class="muted">Açıkken Üzüm seçtiğin sıklıkta 10–15 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
       <p class="small muted" id="miniTur"></p>
       <div class="mini-liste" id="miniListe"></div>
     </div>
@@ -3547,9 +3561,10 @@ function nesne(html, cls = '') {
 const S_KEDI = 0.72, KW = 150 * S_KEDI, KH = 112 * S_KEDI;
 /** Küçük, koşan Üzüm. sol=true: sola bakar. */
 function miniKedi(sol = false) {
-  const d = nesne(`<div class="uzum-ic">${UZUM_KOSAN}</div>`, 'uzum-kedi mini-kedi kosuyor');
-  d.yon = sol => { d.firstChild.style.transform = sol ? 'scaleX(-1)' : 'none'; };
+  const d = nesne(`<div class="uzum-ic">${UZUM_KOSAN}</div>`, 'uzum-kedi mini-kedi');
+  d.yon = sol => { d.sol = sol; d.firstChild.style.transform = sol ? 'scaleX(-1)' : 'none'; };
   d.yon(sol);
+  d.x = 0; d.y = 0;
   return d;
 }
 const T = (x, y, ek = '') => ({ transform: `translate(${x}px, ${y}px)${ek}` });
@@ -3565,138 +3580,320 @@ function miniBalon(metin, x, y, ms = 1100) {
 }
 const ekran = () => ({ w: window.innerWidth, h: window.innerHeight });
 
-// 1) İp yumağı: sağ üst köşeden girer, sol alt köşeden çıkar
+// ---- Gerçek kedi hızında hareket yardımcıları ----------------------------------------
+const HIZ_KOS = 300, HIZ_YURU = 135, UST_SINIR = 76;          // piksel/saniye; üst menünün altı
+const rnd = (a, b) => a + Math.random() * (b - a);
+const sec = l => l[Math.floor(Math.random() * l.length)];
+const sureHiz = (d, hiz, en = 2400) => Math.min(en, Math.max(350, d / hiz * 1000));
+/** Ekranın içinde, kedinin tamamen görüneceği rastgele bir nokta (kedinin sol üstü). */
+function icNokta(xa = 0, xb = 1) {
+  const { w, h } = ekran();
+  const x0 = 30, x1 = Math.max(x0 + 10, w - KW - 30);
+  return [rnd(x0 + (x1 - x0) * xa, x0 + (x1 - x0) * xb), rnd(UST_SINIR + 10, Math.max(UST_SINIR + 20, h - KH - 14))];
+}
+/** Ekran dışında giriş/çıkış noktaları. */
+function kenar(ad) {
+  const { w, h } = ekran();
+  return {
+    solUst: [-KW - 30, UST_SINIR + 20], sagUst: [w + 30, UST_SINIR + 20],
+    solOrta: [-KW - 30, h * .45], sagOrta: [w + 30, h * .45],
+    solAlt: [-KW - 30, h - KH - 14], sagAlt: [w + 30, h - KH - 14],
+  }[ad];
+}
+// Kedi dönüşümü: konum + kendi merkezinde dönme + küçültme
+const kTr = (x, y, r = 0) => `translate(${x}px, ${y}px) translate(${KW / 2}px, ${KH / 2}px) rotate(${r}deg) translate(${-KW / 2}px, ${-KH / 2}px) scale(${S_KEDI})`;
+function kKoy(k, x, y) { k.x = x; k.y = y; k.style.transform = kTr(x, y); }
+/** Koşar (ya da yürür); yönünü kendi çevirir. */
+async function mKos(k, x, y, hiz = HIZ_KOS, easing = 'ease-in-out') {
+  const d = Math.hypot(x - k.x, y - k.y);
+  if (d < 3) return;
+  if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
+  k.classList.add('kosuyor');
+  k.classList.toggle('yuruyor', hiz < 150);
+  const a = k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr(x, y) }], { duration: sureHiz(d, hiz), easing, fill: 'both' });
+  k.x = x; k.y = y;
+  await a.finished;
+  k.classList.remove('kosuyor', 'yuruyor');
+}
+/** Kavisli zıplama. */
+async function mZipla(k, x, y, yuk = 60, ms = 620) {
+  if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
+  const egim = k.sol ? 14 : -14;
+  const a = k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr((k.x + x) / 2, Math.min(k.y, y) - yuk, egim), offset: .45 }, { transform: kTr(x, y, -egim / 2), offset: .85 }, { transform: kTr(x, y) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
+  k.x = x; k.y = y;
+  await a.finished;
+}
+/** Yerde yuvarlanır (bir tam tur). */
+async function mYuvarlan(k, dx, ms = 1150) {
+  const x = k.x + dx;
+  const a = k.animate([{ transform: kTr(k.x, k.y, 0) }, { transform: kTr(k.x + dx / 2, k.y + 6, dx < 0 ? -180 : 180), offset: .5 }, { transform: kTr(x, k.y, dx < 0 ? -360 : 360) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
+  k.x = x;
+  await a.finished;
+  k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr(k.x, k.y) }], { duration: 1, fill: 'both' });
+}
+async function mPati(k) { k.classList.add('pati-at'); await beklet(480); k.classList.remove('pati-at'); }
+async function mHazirlan(k, ms = 750) { k.classList.add('hazirlan'); await beklet(ms); k.classList.remove('hazirlan'); }
+/** Kedinin patisi nesneye değecek şekilde yanına koşar. */
+function yanNokta(k, o, ow = 36, oh = 36) {
+  const solda = (k.x + KW / 2) < (o.x + ow / 2);
+  const x = solda ? o.x - KW * .8 : o.x + ow - KW * .2;
+  const { h } = ekran();
+  const y = Math.min(Math.max(o.y + oh / 2 - KH * .72, UST_SINIR - 10), h - KH - 6);
+  return [x, y];
+}
+async function yanina(k, o, ow, oh, hiz = HIZ_KOS) { const [x, y] = yanNokta(k, o, ow, oh); await mKos(k, x, y, hiz); k.yon(x > o.x); }
+// Nesne hareketi (yuvarlanan top, uçan kelebek, kaçan fare...)
+function oKoy(o, x, y, r = 0) { o.x = x; o.y = y; o.r = r; o.sx = o.sx || 1; o.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg) scaleX(${o.sx})`; }
+async function oGit(o, x, y, hiz, { easing = 'ease-out', don = true, ark = 0, yaricap = 18, yonlu = false } = {}) {
+  const d = Math.hypot(x - o.x, y - o.y);
+  const r2 = don ? o.r + (x - o.x) / yaricap * 57.3 : o.r;
+  if (yonlu && Math.abs(x - o.x) > 3) o.sx = x < o.x ? -1 : 1;
+  const tr = (xx, yy, rr) => `translate(${xx}px, ${yy}px) rotate(${rr}deg) scaleX(${o.sx || 1})`;
+  const kf = [{ transform: tr(o.x, o.y, o.r) }];
+  if (ark) kf.push({ transform: tr((o.x + x) / 2, Math.min(o.y, y) - ark, (o.r + r2) / 2), offset: .5 });
+  kf.push({ transform: tr(x, y, r2) });
+  const a = o.animate(kf, { duration: sureHiz(d, hiz, 3000), easing, fill: 'both' });
+  o.x = x; o.y = y; o.r = r2;
+  await a.finished;
+}
+async function oKaybol(o) { await o.animate([{ opacity: 1 }, { opacity: 0, transform: `translate(${o.x}px, ${o.y}px) scale(.2)` }], { duration: 260, fill: 'both' }).finished; }
+const kBalon = (k, metin, ms = 1300) => miniBalon(metin, k.x + (k.sol ? KW * .05 : KW * .5), k.y - 26, ms);
+/** Nesneyi ekranın öbür yarısında bir noktaya gönderir. */
+function karsiNokta(o, ow = 36, oh = 36) {
+  const { w, h } = ekran();
+  const x = o.x < w / 2 ? rnd(w * .55, w - ow - 40) : rnd(40, w * .45 - ow);
+  return [x, rnd(UST_SINIR + 40, h - oh - 20)];
+}
+
+// 1) İp yumağı: girer, Üzüm yakalar, yuvarlanır, pati atar; yumak 3 kez yer değiştirip ekrandan çıkar
 async function animIpYumagi() {
-  const { w, h } = ekran();
-  const y = nesne(MINI_SVG.yumak), k = miniKedi(true);
-  const yol = [[w + 20, 60], [w * .62, h * .38], [w * .35, h * .62], [-80, h - 60]];
-  await Promise.all([
-    oynat(y, yol.map(([x, yy], i) => T(x, yy, ` rotate(${-i * 330}deg)`)), 4200, 'ease-in'),
-    oynat(k, yol.map(([x, yy]) => TK(x + 46, yy - KH + 34)), 4300, 'ease-in', 650),
-  ]);
-}
-// 2) Kelebek: zıplaya zıplaya peşinden koşar
-async function animKelebek() {
-  const { w, h } = ekran();
-  const kb = nesne(MINI_SVG.kelebek, 'kelebek'), k = miniKedi(false);
-  const n = 9, taban = h - KH - 12;
-  const kel = Array.from({ length: n }, (_, i) => T(-40 + (w + 80) * i / (n - 1), h - 175 + Math.sin(i * 1.3) * 45));
-  const kedi = Array.from({ length: n }, (_, i) => TK(-KW - 30 + (w + KW + 60) * i / (n - 1), taban - (i % 2 ? 26 : 0)));
-  await Promise.all([oynat(kb, kel, 4800, 'ease-in-out'), oynat(k, kedi, 5000, 'linear', 450)]);
-}
-// 3) Oyuncak fare: hızla kaçar, Üzüm kovalar
-async function animFare() {
-  const { w, h } = ekran();
-  const f = nesne(MINI_SVG.fare), k = miniKedi(true);
-  await Promise.all([
-    oynat(f, [T(w + 20, h - 34, ' scaleX(-1)'), T(-70, h - 34, ' scaleX(-1)')], 2700, 'ease-in'),
-    oynat(k, [TK(w + 40, h - KH - 8), TK(-KW - 60, h - KH - 8)], 3100, 'ease-in', 450),
-  ]);
-}
-// 4) Lazer noktası: oradan oraya, Üzüm her seferinde döner
-async function animLazer() {
-  const { w, h } = ekran();
-  const nokta = nesne('<div class="lazer"></div>'), k = miniKedi(false);
-  const y = h - 30, kY = h - KH - 8;
-  let kx = -KW - 20;
-  k.style.transform = TK(kx, kY).transform;
-  const hedefler = [.72, .28, .58, .16].map(o => o * w);
-  nokta.style.transform = T(hedefler[0], y).transform;
-  for (const hx of hedefler) {
-    await oynat(nokta, [T(hx, y, ' scale(.4)'), T(hx, y, ' scale(1)')], 220);
-    const nx = hx - KW * .8;
-    k.yon(nx < kx);
-    await oynat(k, [TK(kx, kY), TK(nx, kY)], 650, 'ease-out');
-    kx = nx;
+  const [g, c] = sec([['sagUst', 'solAlt'], ['solAlt', 'sagUst'], ['sagAlt', 'solUst'], ['solUst', 'sagOrta']]).map(kenar);
+  const top = nesne(MINI_SVG.yumak), k = miniKedi();
+  oKoy(top, g[0] < 0 ? -40 : g[0] + 10, g[1] + KH * .5);
+  kKoy(k, g[0], g[1]);
+  const [ax, ay] = icNokta(.25, .75);
+  const girisTop = oGit(top, ax, ay + KH * .5, 340);
+  await beklet(350);
+  await girisTop;
+  for (let tur = 0; tur < 3; tur++) {
+    await yanina(k, top);
+    if (tur === 0) {
+      await mHazirlan(k);
+      await mZipla(k, k.x + (k.sol ? -18 : 18), k.y, 40, 520);
+      const dx = k.sol ? -70 : 70;
+      await Promise.all([mYuvarlan(k, dx), oGit(top, top.x + dx, top.y, 70, { easing: 'ease-in-out' })]);
+      await beklet(150);
+      k.yon(top.x < k.x);
+    } else {
+      await beklet(150);
+    }
+    const [nx, ny] = tur < 2 ? karsiNokta(top) : [c[0] < 0 ? -60 : c[0] + 20, c[1] + KH * .5];
+    await mPati(k);
+    if (tur < 2) await oGit(top, nx, ny, 430);
+    else await Promise.all([oGit(top, nx, ny, 430, { easing: 'ease-in' }), beklet(250).then(() => mKos(k, c[0], c[1]))]);
   }
-  oynat(nokta, [{ opacity: 1 }, { opacity: 0 }], 200);
-  k.yon(false);
-  await oynat(k, [TK(kx, kY), TK(w + 30, kY)], 1100, 'ease-in');
 }
-// 5) Balık: zıplayıp yakalar
+// 2) Lazer: ekranın farklı yerlerine tutulur; Üzüm her seferinde peşinden koşar, bazen üstüne atlar
+async function animLazer() {
+  const [g, c] = sec([['sagAlt', 'solUst'], ['solAlt', 'sagUst'], ['sagUst', 'solAlt'], ['solOrta', 'sagOrta']]).map(kenar);
+  const { w, h } = ekran();
+  const nokta = nesne('<div class="lazer"></div>'), k = miniKedi();
+  kKoy(k, g[0], g[1]);
+  oKoy(nokta, rnd(w * .3, w * .7), rnd(UST_SINIR + 40, h - 40), 0);
+  await nokta.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250, fill: 'both' }).finished;
+  for (let i = 0; i < 4; i++) {
+    if (i > 0) {
+      const [px, py] = karsiNokta(nokta, 12, 12);
+      await oGit(nokta, px, py, 1100, { don: false, easing: 'ease-in-out' });
+    }
+    await yanina(k, nokta, 12, 12, 340);
+    if (i % 2 === 1) { await mHazirlan(k, 450); await mZipla(k, k.x + (k.sol ? -26 : 26), k.y, 34, 480); }
+    else await beklet(120);
+    await mPati(k);
+  }
+  await oGit(nokta, c[0] < 0 ? -30 : c[0], c[1] + KH * .6, 900, { don: false, easing: 'ease-in' });
+  await mKos(k, c[0], c[1], 340);
+}
+// 3) Kelebek: konduğu yere sinsice yaklaşır, atlar; kelebek kaçar; üçüncüsünde uçup gider
+async function animKelebek() {
+  const [g, c] = sec([['solAlt', 'sagUst'], ['sagAlt', 'solUst'], ['solOrta', 'sagAlt'], ['sagUst', 'solOrta']]).map(kenar);
+  const kb = nesne(MINI_SVG.kelebek, 'kelebek'), k = miniKedi();
+  oKoy(kb, g[0] < 0 ? -40 : g[0], g[1] - 30);
+  kKoy(k, g[0], g[1]);
+  for (let i = 0; i < 2; i++) {
+    const [bx, by] = icNokta(i % 2 ? .5 : .05, i % 2 ? .95 : .5);
+    const kon = { x: bx + KW * .45, y: by + KH * .2 };
+    await Promise.all([oGit(kb, kon.x, kon.y, 220, { don: false, ark: 50, easing: 'ease-in-out' }), beklet(400).then(() => yanina(k, kon, 34, 28, HIZ_YURU))]);
+    await mHazirlan(k, 750);
+    const kac = karsiNokta(kb, 34, 28);
+    await Promise.all([mZipla(k, k.x + (k.sol ? -30 : 30), k.y - 6, 70, 600), beklet(200).then(() => oGit(kb, kac[0], kac[1] - 60, 420, { don: false, ark: 80 }))]);
+    kb.x = kac[0]; kb.y = kac[1] - 60;
+  }
+  const cikis = oGit(kb, c[0] < 0 ? -50 : c[0], UST_SINIR - 60, 300, { don: false, ark: 40, easing: 'ease-in' });
+  await kBalon(k, 'Hıh! 😼', 1000);
+  await Promise.all([cikis, mKos(k, c[0], c[1])]);
+}
+// 4) Oyuncak fare: zikzak kaçar, Üzüm kovalar, yakalayıp pati ile fırlatır, fare kaçıp gider
+async function animFare() {
+  const [g, c] = sec([['sagAlt', 'solAlt'], ['solAlt', 'sagOrta'], ['sagOrta', 'solUst'], ['solUst', 'sagAlt']]).map(kenar);
+  const f = nesne(MINI_SVG.fare), k = miniKedi();
+  oKoy(f, g[0] < 0 ? -50 : g[0], g[1] + KH * .6);
+  kKoy(k, g[0], g[1]);
+  for (let i = 0; i < 3; i++) {
+    const [fx, fy] = karsiNokta(f, 42, 24);
+    await Promise.all([oGit(f, fx, fy, 480, { don: false, yonlu: true, easing: 'ease-in-out' }), beklet(250).then(() => yanina(k, { x: fx, y: fy }, 42, 24, 380))]);
+    if (i === 1) {
+      await mHazirlan(k, 600);
+      await mZipla(k, k.x + (k.sol ? -20 : 20), k.y, 45, 520);
+      await kBalon(k, 'Yakaladım!', 1000);
+    }
+    await mPati(k);
+    if (i < 2) await oGit(f, f.x + (k.sol ? -90 : 90), f.y + rnd(-30, 30), 300, { don: true, yaricap: 10 });
+  }
+  await Promise.all([oGit(f, c[0] < 0 ? -60 : c[0] + 20, c[1] + KH * .6, 480, { don: false, yonlu: true, easing: 'ease-in' }), beklet(300).then(() => mKos(k, c[0], c[1], 380))]);
+}
+// 5) Balık: süzülen balığa iki kez zıplar; ilkinde balık kaçar, ikincisinde "Ham!"
 async function animBalik() {
-  const { w, h } = ekran();
-  const fx = w * .5, fy = h - 205;
-  const b = nesne(MINI_SVG.balik, 'suzul'), k = miniKedi(false);
-  b.style.transform = T(fx, fy).transform;
-  oynat(b, [{ opacity: 0 }, { opacity: 1 }], 300);
-  const kY = h - KH - 8, kx = fx - KW * .55;
-  await oynat(k, [TK(-KW - 20, kY), TK(kx, kY)], 1400, 'ease-out');
-  const tepe = fy - KH * .25;
-  const ziplama = oynat(k, [TK(kx, kY), TK(kx + 10, tepe), TK(kx + 20, kY)], 750, 'ease-in-out');
-  await beklet(360);
-  oynat(b, [{ opacity: 1, transform: `translate(${fx}px, ${fy}px) scale(1)` }, { opacity: 0, transform: `translate(${fx}px, ${fy}px) scale(.2)` }], 200);
-  miniBalon('Ham! 🐟', fx + 30, fy - 30, 1200);
-  await ziplama;
-  await oynat(k, [TK(kx + 20, kY), TK(w + 30, kY)], 1300, 'ease-in');
+  const [g, c] = sec([['solAlt', 'sagAlt'], ['sagAlt', 'solUst'], ['solOrta', 'sagOrta'], ['sagUst', 'solAlt']]).map(kenar);
+  const { h } = ekran();
+  const b = nesne(MINI_SVG.balik, 'suzul'), k = miniKedi();
+  kKoy(k, g[0], g[1]);
+  const [bx] = icNokta(.2, .8);
+  oKoy(b, bx, Math.max(UST_SINIR + 30, h * .4), 0);
+  b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, fill: 'both' });
+  for (let i = 0; i < 2; i++) {
+    const altX = b.x - KW * .35, altY = Math.min(b.y + 90, h - KH - 14);
+    await mKos(k, altX, altY, i ? HIZ_KOS : HIZ_YURU);
+    k.yon(b.x < k.x + KW / 2 - 20);
+    await mHazirlan(k, 800);
+    const zip = mZipla(k, k.x + (k.sol ? -10 : 10), altY, altY - b.y + 10, 760);
+    if (i === 0) {
+      await beklet(260);
+      const [nx] = karsiNokta(b, 44, 26);
+      await oGit(b, nx, Math.max(UST_SINIR + 30, b.y + rnd(-40, 40)), 220, { don: false, ark: 50 });
+      await zip;
+      await kBalon(k, 'Hıh!', 800);
+    } else {
+      await beklet(330);
+      oKaybol(b);
+      await zip;
+      await kBalon(k, 'Ham! 🐟', 1300);
+    }
+  }
+  await mYuvarlan(k, k.sol ? -60 : 60);
+  await mKos(k, c[0], c[1]);
 }
-// 6) Karton kutu: içine girer, kutu sallanır, kafasını çıkarır
+// 6) Karton kutu: etrafında koşar, içine atlar, kafasını çıkarır, sonra fırlayıp çıkar
 async function animKutu() {
+  const [g, c] = sec([['solAlt', 'sagAlt'], ['sagAlt', 'solAlt'], ['solUst', 'sagAlt'], ['sagUst', 'solAlt']]).map(kenar);
   const { w, h } = ekran();
-  const bx = w - 190, by = h - 74;
-  const kutu = nesne(MINI_SVG.kutu), k = miniKedi(false);
-  await oynat(kutu, [T(bx, h + 10), T(bx, by)], 400, 'ease-out');
+  const bx = sec([w * .2, w * .45, w * .7]), by = h - 74;
+  const kutu = nesne(MINI_SVG.kutu), k = miniKedi();
+  oKoy(kutu, bx, h + 10);
+  kKoy(k, g[0], g[1]);
+  await oGit(kutu, bx, by, 300, { don: false });
   const kY = h - KH - 8;
-  await oynat(k, [TK(-KW - 20, kY), TK(bx - 10, kY)], 1900, 'ease-in-out');
-  await oynat(k, [{ ...TK(bx - 10, kY), opacity: 1 }, { transform: `translate(${bx + 20}px, ${by - 10}px) scale(.3)`, opacity: 0 }], 260, 'ease-in');
-  await oynat(kutu, [T(bx, by, ' rotate(0)'), T(bx, by, ' rotate(-6deg)'), T(bx, by, ' rotate(6deg)'), T(bx, by, ' rotate(-4deg)'), T(bx, by, ' rotate(0)')], 650);
-  const kafa = nesne(MINI_SVG.kafa, 'arkada');
-  await oynat(kafa, [T(bx + 12, by + 20), T(bx + 12, by - 46)], 380, 'ease-out');
-  miniBalon('Miyav!', bx + 70, by - 70, 1000);
-  await oynat(kafa, [T(bx + 12, by - 46, ' rotate(0)'), T(bx + 12, by - 46, ' rotate(-8deg)'), T(bx + 12, by - 46, ' rotate(8deg)'), T(bx + 12, by - 46, ' rotate(0)')], 900);
-  await oynat(kafa, [T(bx + 12, by - 46), T(bx + 12, by + 20)], 300, 'ease-in');
-  await oynat(kutu, [T(bx, by), T(bx, h + 10)], 400, 'ease-in');
+  await mKos(k, bx + (g[0] < bx ? -KW - 20 : 120), kY);
+  await beklet(400);
+  await mHazirlan(k, 700);
+  await mZipla(k, bx + 45 - KW / 2, by - KH * .55, 70, 650);
+  await k.animate([{ transform: kTr(k.x, k.y), opacity: 1 }, { transform: kTr(k.x, k.y + 40), opacity: 0 }], { duration: 250, fill: 'both' }).finished;
+  const salla = () => kutu.animate([0, -6, 6, -4, 0].map(r => ({ transform: `translate(${bx}px, ${by}px) rotate(${r}deg)` })), { duration: 650 }).finished;
+  await salla();
+  // Kafa, kutunun ağzının üstünde kesilen bir pencerenin içinde yükselir; kutunun altından görünmez
+  const kafaX = bx + 12;
+  const pencere = nesne(`<div class="kafa-ic">${MINI_SVG.kafa}</div>`, 'arkada kutu-pencere');
+  pencere.style.transform = `translate(${kafaX}px, ${by - 50}px)`;
+  const kafa = pencere.firstChild;
+  await oynat(kafa, [T(0, 76), T(0, 4)], 450, 'ease-out');
+  await miniBalon('Miyav!', kafaX + 60, by - 74, 1200);
+  await oynat(kafa, [T(0, 4), T(0, 76)], 350, 'ease-in');
+  await salla(); await salla();
+  pencere.remove();
+  kKoy(k, bx + 45 - KW / 2, by - KH * .55);
+  k.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, fill: 'both' });
+  await mZipla(k, bx + 45 - KW / 2 + (c[0] < bx ? -110 : 110), kY, 80, 700);
+  await Promise.all([mKos(k, c[0], c[1]), oGit(kutu, bx, h + 10, 200, { don: false, easing: 'ease-in' })]);
 }
-// 7) Cee: aşağıdan kafasını çıkarır
+// 7) Cee: ekranın farklı kenarlarından üç kez kafasını çıkarır
 async function animCee() {
   const { w, h } = ekran();
-  const x = w * (.2 + Math.random() * .6), kafa = nesne(MINI_SVG.kafa);
-  await oynat(kafa, [T(x, h + 4), T(x, h - 30)], 450, 'ease-out');          // önce gözlerine kadar
-  await beklet(450);
-  await oynat(kafa, [T(x, h - 30), T(x, h - 62)], 350, 'ease-out');          // sonra "Cee!"
-  miniBalon('Cee! 👀', x + 62, h - 104, 1500);
-  await oynat(kafa, [T(x, h - 62, ' rotate(0)'), T(x, h - 62, ' rotate(-10deg)'), T(x, h - 62, ' rotate(10deg)'), T(x, h - 62, ' rotate(-6deg)'), T(x, h - 62, ' rotate(0)')], 1600);
-  await oynat(kafa, [T(x, h - 62), T(x, h + 4)], 500, 'ease-in');
+  const sira = [0, 1, 2].sort(() => Math.random() - .5);
+  for (const i of sira) {
+    const kafa = nesne(MINI_SVG.kafa);
+    let gizli, acik, balonX, balonY;
+    if (i === 0) { const x = rnd(w * .15, w * .8); gizli = T(x, h + 4); acik = T(x, h - 62); balonX = x + 62; balonY = h - 104; }
+    else if (i === 1) { const y = rnd(UST_SINIR + 40, h - 140); gizli = T(-76, y, ' rotate(90deg)'); acik = T(-14, y, ' rotate(90deg)'); balonX = 64; balonY = y - 10; }
+    else { const y = rnd(UST_SINIR + 40, h - 140); gizli = T(w + 4, y, ' rotate(-90deg)'); acik = T(w - 58, y, ' rotate(-90deg)'); balonX = w - 150; balonY = y - 10; }
+    await oynat(kafa, [gizli, acik], 650, 'ease-out');
+    miniBalon('Cee! 👀', balonX, balonY, 1300);
+    const t = acik.transform;
+    await oynat(kafa, [{ transform: t }, { transform: t + ' rotate(-9deg)' }, { transform: t + ' rotate(9deg)' }, { transform: t }], 1300);
+    await oynat(kafa, [acik, gizli], 500, 'ease-in');
+    kafa.remove();
+    await beklet(500);
+  }
 }
-// 8) Uyku: köşeden uykulu bakar, Z harfleri yükselir
+// 8) Uyku: yavaşça gelir, bir köşede kıvrılıp uyur, Z'ler yükselir, uyanıp gerinir, gider
 async function animUyku() {
-  const { h } = ekran();
-  const x = 22, kafa = nesne(MINI_SVG.kafa, 'uykulu');
-  await oynat(kafa, [T(x, h + 4), T(x, h - 58)], 600, 'ease-out');
-  const zler = [0, 1, 2].map(i => {
-    const z = nesne(`<span class="zzz" style="font-size:${16 + i * 6}px">Z</span>`);
-    return oynat(z, [{ opacity: 0, transform: `translate(${x + 62}px, ${h - 70}px)` }, { opacity: 1, offset: .25 }, { opacity: 0, transform: `translate(${x + 92 + i * 6}px, ${h - 160}px)` }], 1700, 'ease-out', i * 450);
+  const [g, c] = sec([['solAlt', 'sagAlt'], ['sagAlt', 'solOrta'], ['solOrta', 'sagUst'], ['sagUst', 'solAlt']]).map(kenar);
+  const { w, h } = ekran();
+  const k = miniKedi();
+  kKoy(k, g[0], g[1]);
+  const yer = [sec([40, w * .5 - KW / 2, w - KW - 40]), h - KH - 10];
+  await mKos(k, yer[0], yer[1], HIZ_YURU);
+  k.classList.add('uyu');
+  await beklet(500);
+  const zler = [0, 1, 2, 3, 4].map(i => {
+    const z = nesne(`<span class="zzz" style="font-size:${15 + (i % 3) * 6}px">Z</span>`);
+    const x0 = k.x + (k.sol ? KW * .1 : KW * .7), y0 = k.y + 10;
+    return oynat(z, [{ opacity: 0, transform: `translate(${x0}px, ${y0}px)` }, { opacity: 1, offset: .25 }, { opacity: 0, transform: `translate(${x0 + 40}px, ${y0 - 110}px)` }], 1800, 'ease-out', i * 650);
   });
   await Promise.all(zler);
-  await oynat(kafa, [T(x, h - 58), T(x, h + 4)], 500, 'ease-in');
+  k.classList.remove('uyu');
+  await kBalon(k, 'Miyav? 😺', 1000);
+  await k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr(k.x, k.y) + ' scale(1.12, .92)', offset: .5 }, { transform: kTr(k.x, k.y) }], { duration: 800, fill: 'both' }).finished;
+  await mKos(k, c[0], c[1], HIZ_YURU + 30);
 }
-// 9) Kalpler: durur, başından kalpler uçuşur
+// 9) Kalpler: bir yerde durup kalpler saçar, yuvarlanır, başka yerde yine kalpler, el sallayıp gider
 async function animKalpler() {
-  const { w, h } = ekran();
-  const k = miniKedi(true), kY = h - KH - 8, kx = w * .6;
-  await oynat(k, [TK(w + 20, kY), TK(kx, kY)], 1400, 'ease-out');
-  k.classList.remove('kosuyor');
-  const kalpler = Array.from({ length: 6 }, (_, i) => {
-    const kp = nesne(MINI_SVG.kalp), sx = kx + 20 + Math.random() * 40;
-    return oynat(kp, [{ opacity: 0, transform: `translate(${sx}px, ${kY + 10}px) scale(.5)` }, { opacity: 1, offset: .2 }, { opacity: 0, transform: `translate(${sx + (Math.random() * 50 - 25)}px, ${kY - 110}px) scale(1.2)` }], 1500, 'ease-out', i * 220);
-  });
-  await Promise.all(kalpler);
-  k.classList.add('kosuyor'); k.yon(false);
-  await oynat(k, [TK(kx, kY), TK(w + 30, kY)], 1100, 'ease-in');
+  const [g, c] = sec([['sagAlt', 'solAlt'], ['solAlt', 'sagUst'], ['sagOrta', 'solOrta'], ['solUst', 'sagAlt']]).map(kenar);
+  const k = miniKedi();
+  kKoy(k, g[0], g[1]);
+  const kalpSac = (n = 6) => Promise.all(Array.from({ length: n }, (_, i) => {
+    const kp = nesne(MINI_SVG.kalp), sx = k.x + KW * .35 + rnd(-20, 30);
+    return oynat(kp, [{ opacity: 0, transform: `translate(${sx}px, ${k.y + 10}px) scale(.5)` }, { opacity: 1, offset: .2 }, { opacity: 0, transform: `translate(${sx + rnd(-40, 40)}px, ${k.y - 110}px) scale(1.2)` }], 1600, 'ease-out', i * 230);
+  }));
+  const [ax, ay] = icNokta(.1, .5), [bx, by] = icNokta(.5, .9);
+  const ilk = g[0] < 0 ? [ax, ay] : [bx, by], ikinci = g[0] < 0 ? [bx, by] : [ax, ay];
+  await mKos(k, ...ilk, HIZ_YURU + 40);
+  await kalpSac();
+  await mYuvarlan(k, k.sol ? -70 : 70);
+  await mKos(k, ...ikinci);
+  await kalpSac(5);
+  await mPati(k);
+  await mKos(k, c[0], c[1]);
 }
-// 10) Üzüm salkımı: zıplayan salkımı yakalar
+// 10) Üzüm salkımı: zıplayarak gelir; Üzüm iki kez pati atar, salkım sekerek kaçar; sonunda yakalar
 async function animUzum() {
-  const { w, h } = ekran();
-  const u = nesne(MINI_SVG.uzum), k = miniKedi(true);
-  const mx = w * .48, zemin = h - 46;
-  const zipla = [0, .2, .4, .6, .8, 1].map((t, i) => T(-40 + (mx + 40) * t, zemin - (i % 2 ? 60 : 0), ` rotate(${t * 360}deg)`));
-  const kY = h - KH - 8;
-  await Promise.all([oynat(u, zipla, 2000, 'linear'), oynat(k, [TK(w + 20, kY), TK(mx + 10, kY)], 2000, 'ease-out')]);
-  oynat(u, [{ opacity: 1, transform: `translate(${mx}px, ${zemin}px) scale(1)` }, { opacity: 0, transform: `translate(${mx}px, ${zemin}px) scale(.2)` }], 220);
-  k.classList.remove('kosuyor');
-  await miniBalon('Miyav! 🍇', mx + 20, kY - 30, 1100);
-  k.classList.add('kosuyor');
-  await oynat(k, [TK(mx + 10, kY), TK(-KW - 40, kY)], 1300, 'ease-in');
+  const [g, c] = sec([['solAlt', 'sagAlt'], ['sagUst', 'solAlt'], ['solOrta', 'sagUst'], ['sagAlt', 'solOrta']]).map(kenar);
+  const u = nesne(MINI_SVG.uzum), k = miniKedi();
+  oKoy(u, g[0] < 0 ? -40 : g[0], g[1] + KH * .4);
+  kKoy(k, c[0], c[1]);   // Üzüm öbür taraftan gelir
+  const [ax, ay] = icNokta(.3, .7);
+  await Promise.all([oGit(u, ax, ay + KH * .4, 220, { ark: 70, yaricap: 16 }), beklet(300).then(() => yanina(k, { x: ax, y: ay + KH * .4 }, 32, 40))]);
+  for (let i = 0; i < 2; i++) {
+    await yanina(k, u, 32, 40);
+    await mPati(k);
+    const [nx, ny] = karsiNokta(u, 32, 40);
+    await Promise.all([oGit(u, nx, ny, 320, { ark: 90, yaricap: 16 }), beklet(300).then(() => yanina(k, { x: nx, y: ny }, 32, 40))]);
+  }
+  await yanina(k, u, 32, 40);
+  await mHazirlan(k, 700);
+  await mZipla(k, k.x + (k.sol ? -24 : 24), k.y, 50, 560);
+  oKaybol(u);
+  await kBalon(k, 'Miyav! 🍇', 1300);
+  await mKos(k, g[0], g[1]);
 }
 const MINI_ANIMLER = [
   { ad: 'İp yumağının peşinde', ikon: '🧶', fn: animIpYumagi },
