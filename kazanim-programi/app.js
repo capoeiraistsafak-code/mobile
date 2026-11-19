@@ -1060,7 +1060,7 @@ function sonucGoster(kartlar) {
 }
 function kutla() {
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const renkler = ['#8b6cf0', '#ff8fb8', '#5cc8a8', '#ffc857', '#7ec8ff'];
+  const renkler = ['#f08a70', '#ff8fb8', '#5cc8a8', '#ffc857', '#7ec8ff'];
   const kap = document.createElement('div');
   kap.className = 'konfeti';
   for (let i = 0; i < 28; i++) {

@@ -11,47 +11,47 @@
 <style>
 /* Kazanım Takip — pastel, yumuşak, oyuncu bir arayüz. Maskot: gri British Shorthair "Üzüm". */
 :root {
-  --bg: #f6f2fc;
-  --bg-desen: #efe8fa;
+  --bg: #fff6f2;
+  --bg-desen: #fce8e0;
   --card: #ffffff;
   --field: #ffffff;
-  --text: #2e2a40;
-  --muted: #6f6888;
-  --line: #e6def3;
-  --line-strong: #cbbde6;
-  --primary: #7c5ce6;
+  --text: #3b2c2a;
+  --muted: #86726d;
+  --line: #f5e1d9;
+  --line-strong: #ecc3b5;
+  --primary: #d9634f;
   --primary-ink: #ffffff;
-  --primary-soft: #efe9ff;
+  --primary-soft: #ffece6;
   --pink: #ff7eb0;
   --pink-soft: #ffe8f1;
   --mint: #3fb894;
   --sun: #ffc24b;
   --danger: #d9435a;
   --danger-line: #f4c3cc;
-  --chip: #f1ecfb;
-  --chip-line: #d6c9f2;
-  --th: #f8f5fd;
-  --hover: #faf7ff;
-  --bar-1: #ece4ff;
-  --bar-2: #ffe4ef;
-  --bar-ink: #4a3f6b;
+  --chip: #fff0ea;
+  --chip-line: #f5cbbd;
+  --th: #fff8f5;
+  --hover: #fffaf8;
+  --bar-1: #ffe6dc;
+  --bar-2: #ffe3ec;
+  --bar-ink: #6b4038;
   --ok-bg: #e1f6ee; --ok-line: #a6e0cb; --ok-ink: #17714f;
   --bad-bg: #ffe6ea; --bad-line: #f6b8c3; --bad-ink: #a52a3f;
   --warn-bg: #fff3d9; --warn-line: #f2d59a; --warn-ink: #8a5b00;
-  --shadow: rgba(76, 52, 140, .10);
-  --shadow-strong: rgba(76, 52, 140, .22);
-  --backdrop: rgba(40, 28, 70, .40);
+  --shadow: rgba(170, 90, 70, .10);
+  --shadow-strong: rgba(170, 90, 70, .22);
+  --backdrop: rgba(70, 40, 30, .40);
   --font-govde: "Nunito", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
   --font-baslik: "Baloo 2", "Nunito", "Segoe UI", system-ui, sans-serif;
   --r-kart: 18px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1b1826; --bg-desen: #211d2f; --card: #262236; --field: #1f1c2c; --text: #eeeaf8; --muted: #a9a2c2;
-    --line: #3a3452; --line-strong: #544a75; --primary: #a68bff; --primary-ink: #1b1826; --primary-soft: #312a4d;
+    --bg: #1f1816; --bg-desen: #271e1b; --card: #2b2220; --field: #231c1a; --text: #f6ebe7; --muted: #bba59e;
+    --line: #47382f; --line-strong: #6a5145; --primary: #ff9a85; --primary-ink: #1f1816; --primary-soft: #43302a;
     --pink: #ff97c0; --pink-soft: #3d2535; --mint: #5fd3ad; --sun: #ffcf6e;
-    --danger: #ff7d90; --danger-line: #5d2a35; --chip: #2f2a45; --chip-line: #4a4068;
-    --th: #2b2740; --hover: #2c2840; --bar-1: #2a2442; --bar-2: #3a2537; --bar-ink: #e9e3ff;
+    --danger: #ff7d90; --danger-line: #5d2a35; --chip: #3a2b26; --chip-line: #5e463c;
+    --th: #33282a; --hover: #34292a; --bar-1: #3d2a24; --bar-2: #3a2530; --bar-ink: #fbe6df;
     --ok-bg: #173329; --ok-line: #2a5c48; --ok-ink: #8fe0c0;
     --bad-bg: #3d1d25; --bad-line: #6b3040; --bad-ink: #ffa9b7;
     --warn-bg: #3a2e14; --warn-line: #6b5524; --warn-ink: #f5d382;
@@ -60,11 +60,11 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #1b1826; --bg-desen: #211d2f; --card: #262236; --field: #1f1c2c; --text: #eeeaf8; --muted: #a9a2c2;
-  --line: #3a3452; --line-strong: #544a75; --primary: #a68bff; --primary-ink: #1b1826; --primary-soft: #312a4d;
+  --bg: #1f1816; --bg-desen: #271e1b; --card: #2b2220; --field: #231c1a; --text: #f6ebe7; --muted: #bba59e;
+  --line: #47382f; --line-strong: #6a5145; --primary: #ff9a85; --primary-ink: #1f1816; --primary-soft: #43302a;
   --pink: #ff97c0; --pink-soft: #3d2535; --mint: #5fd3ad; --sun: #ffcf6e;
-  --danger: #ff7d90; --danger-line: #5d2a35; --chip: #2f2a45; --chip-line: #4a4068;
-  --th: #2b2740; --hover: #2c2840; --bar-1: #2a2442; --bar-2: #3a2537; --bar-ink: #e9e3ff;
+  --danger: #ff7d90; --danger-line: #5d2a35; --chip: #3a2b26; --chip-line: #5e463c;
+  --th: #33282a; --hover: #34292a; --bar-1: #3d2a24; --bar-2: #3a2530; --bar-ink: #fbe6df;
   --ok-bg: #173329; --ok-line: #2a5c48; --ok-ink: #8fe0c0;
   --bad-bg: #3d1d25; --bad-line: #6b3040; --bad-ink: #ffa9b7;
   --warn-bg: #3a2e14; --warn-line: #6b5524; --warn-ink: #f5d382;
@@ -380,7 +380,7 @@ dialog::backdrop { background: var(--backdrop); }
 @keyframes suzul { to { transform: translateY(-8px) rotate(-6deg); } }
 .lazer { width: 12px; height: 12px; border-radius: 50%; background: #ff2d4b; box-shadow: 0 0 0 4px rgba(255, 45, 75, .25), 0 0 14px 4px rgba(255, 45, 75, .55); }
 .mini-balon { background: #fff; color: #2e2a40; border: 2.5px solid #2e2a40; border-radius: 16px; padding: 4px 12px; font: 800 15px var(--font-govde); white-space: nowrap; box-shadow: 3px 3px 0 rgba(46, 42, 64, .15); }
-.zzz { font: 800 18px var(--font-baslik); color: #7c5ce6; text-shadow: 0 1px 0 #fff; }
+.zzz { font: 800 18px var(--font-baslik); color: #d9634f; text-shadow: 0 1px 0 #fff; }
 .uykulu svg { filter: saturate(.85); }
 /* Açma/kapama düğmesi (toggle) */
 .toggle { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 800; margin: 4px 0 8px; }
@@ -457,9 +457,9 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
   animation: bulut .3s cubic-bezier(.2, 1.5, .4, 1);
 }
 .uzum-balon p { margin: 0 0 10px; font-size: 16px; }
-.uzum-adim { font: 800 11px var(--font-govde); letter-spacing: .08em; color: #8b7fb0; margin-bottom: 4px; }
+.uzum-adim { font: 800 11px var(--font-govde); letter-spacing: .08em; color: #a07a70; margin-bottom: 4px; }
 .uzum-dugmeler { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
-.uzum-balon .btn { --line: #e6def3; --line-strong: #cbbde6; --card: #fff; --text: #2e2a40; --primary: #7c5ce6; --primary-ink: #fff; }
+.uzum-balon .btn { --line: #f5e1d9; --line-strong: #ecc3b5; --card: #fff; --text: #3b2c2a; --primary: #d9634f; --primary-ink: #fff; }
 .uzum-nokta {
   position: fixed; z-index: 425; background: #fff; border: 3px solid #2e2a40; border-radius: 50%;
   transform: translate(-50%, -50%); pointer-events: none;
@@ -1980,7 +1980,7 @@ function sonucGoster(kartlar) {
 }
 function kutla() {
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const renkler = ['#8b6cf0', '#ff8fb8', '#5cc8a8', '#ffc857', '#7ec8ff'];
+  const renkler = ['#f08a70', '#ff8fb8', '#5cc8a8', '#ffc857', '#7ec8ff'];
   const kap = document.createElement('div');
   kap.className = 'konfeti';
   for (let i = 0; i < 28; i++) {
