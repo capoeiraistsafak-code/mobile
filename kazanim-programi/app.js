@@ -3083,7 +3083,7 @@ function oynat(el, kareler, ms, easing = 'linear', delay = 0) {
   return el.animate(kareler, { duration: ms, easing, delay, fill: 'both' }).finished;
 }
 function miniBalon(metin, x, y, ms = 1100) {
-  const b = nesne(`<div class="mini-balon">${esc(metin)}</div>`);
+  const b = nesne(`<div class="mini-balon">${patili(metin)}</div>`);
   b.style.transform = `translate(${x}px, ${y}px)`;
   return oynat(b, [{ opacity: 0, transform: `translate(${x}px, ${y + 8}px) scale(.6)` }, { opacity: 1, transform: `translate(${x}px, ${y}px) scale(1)`, offset: .2 }, { opacity: 1, transform: `translate(${x}px, ${y}px)`, offset: .8 }, { opacity: 0, transform: `translate(${x}px, ${y - 10}px)` }], ms);
 }
