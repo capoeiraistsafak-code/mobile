@@ -332,6 +332,7 @@ dialog::backdrop { background: var(--backdrop); }
 }
 
 .print-only { display: none; }
+.fabrika-hata { background: var(--bad-bg); color: var(--bad-ink); border: 2px solid var(--bad-line); border-radius: 12px; padding: 8px 12px; font-weight: 700; }
 .seviye-liste { display: flex; flex-wrap: wrap; gap: 8px; }
 .seviye-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--chip); border: 2px solid var(--chip-line); border-radius: 999px; padding: 4px 6px 4px 12px; font-weight: 800; font-size: 14px; }
 .seviye-chip .sk-kapat { font-size: 18px; }

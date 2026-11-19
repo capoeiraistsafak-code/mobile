@@ -2363,6 +2363,153 @@ function seviyeSil(v) {
     kurumlariYukle(); kaydet(); ciz(); toast('Seviye silindi.');
   });
 }
+// ---------------------------------------------------------------------------
+// FABRİKA AYARLARI PAKETİ (FabrikaAyarlari.zip)
+// İçinde: fabrika.json (tüm varsayılan ayarlar), Ogretici/ (4 örnek Excel + rehber), BENI_OKU.txt.
+// "Fabrika ayarlarına dön": paket seçilir, içindeki ayarlar okunur, her şey sıfırlanıp o ayarlarla başlar.
+// ---------------------------------------------------------------------------
+const FABRIKA_TUR = 'kazanim-takip-fabrika';
+const FABRIKA_BENIOKU = `FABRİKA AYARLARI PAKETİ 🐾
+==========================
+
+Bu sıkıştırılmış klasör, Kazanım Takip programının fabrika ayarlarını saklar.
+İçini açmana ya da değiştirmene gerek yok.
+
+İçinde:
+  fabrika.json  -> Programın ilk ayarları: kurumlar, sınıf seviyeleri, dersler,
+                   eksik/iyi sınırları, önerilen soru sayıları, animasyon ayarları.
+  Ogretici/     -> 4 örnek Excel ve "Beni Oku" rehberi. Örnekleri sildiysen
+                   buradan yeniden çıkarabilirsin.
+
+Nasıl kullanılır?
+  Programda Ayarlar -> "Fabrika ayarlarına dön" -> "FabrikaAyarlari.zip'i seç".
+  Program bu paketteki ayarları okur, bütün bilgileri silip o ayarlarla yeniden başlar.
+
+Paketi kaybedersen: Ayarlar -> "Fabrika paketini indir" ile aynısını yeniden indirebilirsin.
+
+© 2026 Şafak Ulusoy. All rights reserved.
+`;
+const OGRETICI_BENIOKU = `ÜZÜM'ÜN ÖĞRETİCİ KLASÖRÜ 🐾
+===========================
+
+Bu klasördeki dosyalar sadece ÖRNEKTİR. Programı öğrenmek ve Excel'i nasıl
+dolduracağını görmek için buradalar.
+
+  1. Ornek_Ogrenci_Listesi_9-A.xlsx  -> Öğrenciler sayfasından yüklenir
+  2. Ornek_Kazanim_Listesi_9.xlsx    -> Kazanımlar sayfasından yüklenir
+  3. Ornek_Cevap_Anahtari.xlsx       -> Sınavlar sayfasında, sınavı seçince yüklenir
+  4. Ornek_Sinav_Sonuclari.xlsx      -> Sonuç Girişi sayfasından yüklenir
+
+Örnek dosyanın bir KOPYASINI alıp kendi bilgilerinle doldur, sonra programda
+ilgili sayfadaki "Excel'den ... yükle" düğmesine bas.
+`;
+/** Programın kendi varsayılanlarından fabrika paketini (zip) oluşturur. */
+function fabrikaPaketiOlustur() {
+  const CFB = XLSX.CFB;
+  const zip = CFB.utils.cfb_new();
+  const yazi = t => new TextEncoder().encode(t);
+  const ayarlar = {
+    tur: FABRIKA_TUR, surum: 1, olusturma: bugun(),
+    aciklama: 'Kazanım Takip fabrika ayarları. Ayarlar → Fabrika ayarlarına dön ile kullanılır.',
+    ayarlar: { ...VARSAYILAN_AYARLAR },
+    kurumlar: VARSAYILAN_KURUMLAR.map(k => ({ ...k, seviyeler: k.seviyeler.slice() })),
+    seviyeler: VARSAYILAN_SEVIYELER.slice(),
+    dersler: VARSAYILAN_DERSLER.slice(),
+  };
+  CFB.utils.cfb_add(zip, 'fabrika.json', yazi(JSON.stringify(ayarlar, null, 2)));
+  CFB.utils.cfb_add(zip, 'BENI_OKU.txt', yazi(FABRIKA_BENIOKU));
+  CFB.utils.cfb_add(zip, 'Ogretici/BENI_OKU.txt', yazi(OGRETICI_BENIOKU));
+  for (const t of Object.keys(ORNEK_EXCELLER)) {
+    const v = ornekExcelVeri(t);
+    const ws = XLSX.utils.aoa_to_sheet(v.aoa);
+    ws['!merges'] = v.merges; ws['!cols'] = v.genislik.map(w => ({ wch: w }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, v.sayfa);
+    CFB.utils.cfb_add(zip, 'Ogretici/' + v.dosya, new Uint8Array(XLSX.write(wb, { bookType: 'xlsx', type: 'array' })));
+  }
+  return CFB.write(zip, { type: 'array', fileType: 'zip' });
+}
+function fabrikaPaketiIndir() {
+  const veri = fabrikaPaketiOlustur();
+  indir(new Blob([new Uint8Array(veri)], { type: 'application/zip' }), 'FabrikaAyarlari.zip');
+}
+/** Seçilen paketi okur ve doğrular. Hata varsa açıklamasıyla birlikte fırlatır. */
+async function fabrikaPaketiOku(file) {
+  if (!/\.zip$/i.test(file.name)) throw new Error('Seçtiğin dosya .zip değil. “FabrikaAyarlari.zip” dosyasını seç.');
+  let zip;
+  try { zip = XLSX.CFB.read(new Uint8Array(await file.arrayBuffer()), { type: 'array' }); }
+  catch (e) { throw new Error('Paket açılamadı; dosya bozuk olabilir.'); }
+  const i = zip.FullPaths.findIndex(p => /(^|\/)fabrika\.json$/i.test(p));
+  if (i < 0) throw new Error('Bu paketin içinde “fabrika.json” yok; doğru dosyayı seçtiğinden emin ol.');
+  let paket;
+  try { paket = JSON.parse(new TextDecoder().decode(zip.FileIndex[i].content)); }
+  catch (e) { throw new Error('“fabrika.json” okunamadı; dosya bozuk olabilir.'); }
+  if (!paket || paket.tur !== FABRIKA_TUR) throw new Error('Bu, Kazanım Takip fabrika paketi değil.');
+  const seviyeler = Array.isArray(paket.seviyeler) ? paket.seviyeler.map(v => String(v).trim()).filter(Boolean) : [];
+  const kurumlar = Array.isArray(paket.kurumlar) ? paket.kurumlar.filter(k => k && typeof k.key === 'string' && typeof k.ad === 'string' && Array.isArray(k.seviyeler)) : [];
+  if (!seviyeler.length || !kurumlar.length) throw new Error('Paketteki kurum ya da seviye listesi eksik.');
+  const ornekSayisi = zip.FullPaths.filter(p => /Ogretici\/.+\.xlsx$/i.test(p)).length;
+  return { paket: { ...paket, seviyeler, kurumlar }, ornekSayisi };
+}
+/** Her şeyi siler; paket verilmişse onun ayarlarıyla, yoksa programın kendi varsayılanlarıyla başlar. */
+async function fabrikayaDon(paket) {
+  miniDurdur();
+  if (ogretici.aktif) ogreticiBitir(true);
+  S = bosDurum();
+  if (paket) {
+    S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(paket.ayarlar || {}) };
+    S.seviyeler = paket.seviyeler.slice();
+    S.kurumlar = paket.kurumlar.map(k => ({ key: k.key, ad: k.ad, tip: k.tip === 'kurs' ? 'kurs' : 'okul', seviyeler: k.seviyeler.map(String) }));
+    if (Array.isArray(paket.dersler) && paket.dersler.length) S.dersler = paket.dersler.map(String);
+  }
+  kurumlariYukle();
+  try { localStorage.removeItem(DB_NAME); } catch (e) { /* yok say */ }
+  try { await idbIslem('readwrite', st => st.clear()); } catch (e) { /* yok say */ }
+  await kaydetHemen();
+  try { sessionStorage.setItem('kt-fabrika', paket ? 'paket' : 'ic'); } catch (e) { /* yok say */ }
+  toast('Fabrika ayarlarına dönüldü.');
+  setTimeout(() => location.reload(), 600);
+}
+function fabrikaDialog() {
+  dialogAc('🏭 Fabrika ayarlarına dön', `
+    <p>Program, program klasöründeki <b>FabrikaAyarlari.zip</b> paketinden ayarlarını okuyup <b>her şeyi sıfırlar</b>:
+      bütün öğrenciler, kazanımlar, sınavlar, sonuçlar, ödev planları ve ayarlar silinir, program paketteki ilk ayarlarla yeniden başlar.</p>
+    <p class="muted small">Önce “💾 Yedek al” yapmanı öneririm. Excel dosyaların bilgisayarında olduğu gibi kalır.</p>
+    <div class="toolbar">
+      <label class="btn primary">📦 FabrikaAyarlari.zip'i seç
+        <input type="file" id="fabrikaDosya" accept=".zip,application/zip" class="dosya-input"></label>
+    </div>
+    <p class="fabrika-hata" id="fabrikaHata" role="alert" hidden></p>
+    <p class="muted small">Paket elinde yoksa “Paketsiz sıfırla” ile programın kendi içindeki ilk ayarlarla da sıfırlayabilirsin.
+      Paketi kaybettiysen Ayarlar'daki “📥 Fabrika paketini indir” ile aynısını yeniden indirebilirsin.</p>`, [
+    { ad: 'Vazgeç' },
+    { ad: 'Paketsiz sıfırla', danger: true, tikla: () => { setTimeout(() => onayla('Paket olmadan, programın kendi ilk ayarlarıyla her şey sıfırlansın mı?', () => fabrikayaDon(null)), 0); } },
+  ]);
+}
+async function fabrikaDosyasiSecildi(input) {
+  const f = input.files[0];
+  input.value = '';
+  if (!f) return;
+  try {
+    const { paket, ornekSayisi } = await fabrikaPaketiOku(f);
+    $('#dlg').close();
+    onayla(`Paket okundu ✓ (${paket.kurumlar.length} kurum, ${paket.seviyeler.length} seviye, ${ornekSayisi} örnek Excel). Bu ayarlarla her şey sıfırlansın mı? Bütün bilgiler silinir.`, () => fabrikayaDon(paket));
+  } catch (e) {
+    // Pencere açık kalır; uyarı pencerenin içinde görünür, doğru dosya hemen seçilebilir
+    const h = $('#fabrikaHata');
+    if (h && $('#dlg').open) { h.textContent = `✕ ${f.name} kullanılamadı: ${e.message}`; h.hidden = false; }
+    else sonucGoster([{ ok: false, baslik: `${f.name} kullanılamadı`, detay: e.message }]);
+  }
+}
+/** Sıfırlamadan sonra açılışta sonucu göster. */
+function fabrikaSonrasi() {
+  let iz = null;
+  try { iz = sessionStorage.getItem('kt-fabrika'); sessionStorage.removeItem('kt-fabrika'); } catch (e) { /* yok say */ }
+  if (!iz) return;
+  sonucGoster([{ ok: true, baslik: 'Fabrika ayarlarına dönüldü',
+    detay: iz === 'paket' ? 'Ayarlar FabrikaAyarlari.zip paketinden okundu; program ilk hâliyle başladı.' : 'Program kendi ilk ayarlarıyla başladı.',
+    not: 'Örnek Excel\'ler Ana Sayfa\'daki “Örnek Excel” düğmelerinde ve paketin içindeki Ogretici klasöründe.' }]);
+}
 function cizAyar() {
   miniAyarCiz();
   kurumAyarCiz();
@@ -2635,15 +2782,9 @@ function olaylar() {
     const sv = e.target.closest('[data-seviye-sil]'); if (sv) { seviyeSil(sv.dataset.seviyeSil); return; }
     if (e.target.closest('[data-kurum-duzenle]')) { sekmeAc('ayar'); setTimeout(() => $('#kurumKart').scrollIntoView({ block: 'start', behavior: azHareket() ? 'auto' : 'smooth' }), 50); }
   });
-  $('#btnFabrika').onclick = () => onayla('Program ilk indirildiği hâline dönsün mü? Tüm öğrenciler, kazanımlar, sınavlar, sonuçlar, ödev planları, yüklenen liste kayıtları ve ayarlar silinir. Önce yedek almanı öneririm.', async () => {
-    miniDurdur();
-    S = bosDurum(); kurumlariYukle();
-    try { localStorage.removeItem(DB_NAME); } catch (e) { /* yok say */ }
-    try { await idbIslem('readwrite', st => st.clear()); } catch (e) { /* yok say */ }
-    await kaydetHemen();
-    toast('Fabrika ayarlarına dönüldü.');
-    setTimeout(() => location.reload(), 700);
-  });
+  $('#btnFabrika').onclick = fabrikaDialog;
+  $('#btnFabrikaPaketi').onclick = fabrikaPaketiIndir;
+  $('#dlgIcerik').addEventListener('change', e => { if (e.target.id === 'fabrikaDosya') fabrikaDosyasiSecildi(e.target); });
   $('#btnHepsiniSil').onclick = () => onayla('TÜM veriler (öğrenciler, kazanımlar, sınavlar, sonuçlar, planlar) silinsin mi? Önce yedek almanız önerilir.', () => {
     S = bosDurum(); kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
   });
@@ -3473,4 +3614,5 @@ function miniOlaylari() {
   ciz();
   miniAyarCiz();
   miniPlanla();
+  fabrikaSonrasi();
 })();
