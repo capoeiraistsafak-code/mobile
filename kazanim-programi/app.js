@@ -21,7 +21,7 @@ derinDondur(VARSAYILAN_SEVIYELER); derinDondur(VARSAYILAN_KURUMLAR);
 let KURUMLAR = [];   // = S.kurumlar (kurumlariYukle ile)
 let KURUM = {};
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true, animasyonAralik: 5 };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
   'İngilizce', 'Sosyal Bilgiler', 'Türk Dili ve Edebiyatı', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya',
@@ -3375,6 +3375,88 @@ async function animUzum() {
   await kBalon(k, 'Miyav! 🍇', 1300);
   await mKos(k, g[0], g[1]);
 }
+
+// 11) ÖZEL OYUN — Fare yakalama: Üzüm belirlenen süre boyunca ekrandaki fare imlecini kovalar.
+// Koşa koşa yaklaşır, bazen avlanmadan önce poposunu sallar, sonra ön ayakları öne, arka ayakları
+// geriye uzanmış hâlde imlecin üstüne sıçrar. Süre bitince ekrandan çıkar.
+const fareImlec = { x: null, y: null };
+window.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { fareImlec.x = e.clientX; fareImlec.y = e.clientY; } }, { passive: true });
+const OZEL_SURE_EN_AZ = 3, OZEL_SURE_EN_COK = 60;
+const ozelSure = () => { const n = parseInt(S.ayarlar.ozelSure, 10); return Number.isFinite(n) ? Math.min(OZEL_SURE_EN_COK, Math.max(OZEL_SURE_EN_AZ, n)) : 10; };
+const IMLEC_SVG = `<svg width="22" height="30" viewBox="0 0 22 30"><path d="M2 2 L2 24 L8 18.5 L12 28 L16 26.2 L12 17 L20 17 Z" fill="#fff" stroke="#2e2a40" stroke-width="2" stroke-linejoin="round"/></svg>`;
+// Ön patilerin kedinin sol üst köşesine göre yeri (piksel)
+const onPatiX = sol => (sol ? .35 : .65) * KW, ON_PATI_Y = KH * .93;
+async function mAvlan(k, ms) { k.classList.add('avlan'); await beklet(ms); k.classList.remove('avlan'); }
+/** Avına sıçrar: havada ön ayaklar öne, arka ayaklar geriye uzanır; yere konunca çömelir. */
+async function mSicra(k, x, y) {
+  if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
+  const d = Math.hypot(x - k.x, y - k.y);
+  const ms = Math.min(720, Math.max(440, 360 + d * 1.1)), yuk = Math.min(80, 30 + d * .25);
+  const egim = k.sol ? 16 : -16;
+  k.classList.add('sicra');
+  const a = k.animate([
+    { transform: kTr(k.x, k.y) },
+    { transform: kTr(k.x + (x - k.x) * .45, Math.min(k.y, y) - yuk, egim), offset: .45 },
+    { transform: kTr(x, y, -egim * .6), offset: .88 },
+    { transform: kTr(x, y) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
+  k.x = x; k.y = y;
+  await beklet(ms * .86);
+  k.classList.remove('sicra'); k.classList.add('kondu');
+  await a.finished;
+  await beklet(260);
+  k.classList.remove('kondu');
+}
+async function animFareYakala() {
+  const { w, h } = ekran();
+  const g = kenar(sec(['solUst', 'sagUst', 'solAlt', 'sagAlt', 'solOrta', 'sagOrta']));
+  const k = miniKedi(g[0] > 0);
+  kKoy(k, g[0], g[1]);
+  // Fare hiç kullanılmadıysa (dokunmatik ekran) ekranda dolaşan bir imleç simgesi gösterilir
+  let sahte = null, bitti = false;
+  if (fareImlec.x === null) {
+    sahte = nesne(IMLEC_SVG, 'sahte-imlec');
+    oKoy(sahte, rnd(w * .3, w * .7), rnd(UST_SINIR + 60, h - 80), 0);
+    (async () => {
+      while (!bitti && sahte.isConnected) {
+        await beklet(rnd(250, 700));
+        if (bitti || !sahte.isConnected) break;
+        await oGit(sahte, rnd(40, w - 60), rnd(UST_SINIR + 40, h - 60), rnd(220, 420), { don: false, easing: 'ease-in-out' }).catch(() => {});
+      }
+    })();
+  }
+  const hedef = () => sahte ? [sahte.x + 2, sahte.y + 2] : [fareImlec.x, fareImlec.y];
+  const konum = ([hx, hy], sol) => [
+    Math.min(Math.max(hx - onPatiX(sol), -KW * .3), w - KW * .7),
+    Math.min(Math.max(hy - ON_PATI_Y, UST_SINIR - 10), h - KH - 4)];
+  const sure = ozelSure() * 1000, t0 = performance.now();
+  const kalan = () => sure - (performance.now() - t0);
+  let yakalama = 0;
+  while (kalan() > 0) {
+    const hd = hedef(), sol = hd[0] < k.x + KW / 2;
+    const [lx, ly] = konum(hd, sol);
+    const d = Math.hypot(lx - k.x, ly - k.y);
+    if (d > 190) {
+      // Koşa koşa yaklaşır; imleç kaçarsa her kısa koşudan sonra yönünü yeniden ayarlar
+      const adim = Math.min(d - 140, 230), ux = (lx - k.x) / d, uy = (ly - k.y) / d;
+      await mKos(k, k.x + ux * adim, k.y + uy * adim, HIZ_KOS + 80, 'linear');
+      continue;
+    }
+    k.yon(sol);
+    if (Math.random() < .5) await mAvlan(k, rnd(900, 1500));   // avlanmadan önce popo sallama
+    else await mHazirlan(k, 260);
+    const hd2 = hedef(), sol2 = hd2[0] < k.x + KW / 2, [sx, sy] = konum(hd2, sol2);
+    if (Math.hypot(sx - k.x, sy - k.y) > 300) continue;           // imleç uzaklaştı: yeniden koş
+    await mSicra(k, sx, sy);
+    yakalama++;
+    if (yakalama === 1 || Math.random() < .3) await kBalon(k, sec(['Yakaladım! 🐾', 'Hap! 😼', 'Miyav!']), 900);
+    else await beklet(rnd(200, 450));
+  }
+  bitti = true;
+  if (sahte) oKaybol(sahte);
+  // Süre bitti: en yakın yan kenardan koşarak çıkar
+  const cik = kenar((k.x + KW / 2) < w / 2 ? 'solOrta' : 'sagOrta');
+  await mKos(k, cik[0], Math.min(Math.max(k.y, UST_SINIR), h - KH - 10), HIZ_KOS + 60);
+}
 const MINI_ANIMLER = [
   { ad: 'İp yumağının peşinde', ikon: '🧶', fn: animIpYumagi },
   { ad: 'Kelebek kovalamaca', ikon: '🦋', fn: animKelebek },
@@ -3386,7 +3468,18 @@ const MINI_ANIMLER = [
   { ad: 'Uykulu Üzüm', ikon: '💤', fn: animUyku },
   { ad: 'Kalpler', ikon: '❤️', fn: animKalpler },
   { ad: 'Üzüm salkımı', ikon: '🍇', fn: animUzum },
+  { ad: 'Fare yakalama (özel oyun)', ikon: '🖱️', fn: animFareYakala, ozel: true },
 ];
+const OZEL_OYUN = MINI_ANIMLER.findIndex(a => a.ozel);
+/** Ayarlarda açık olan oyunlar: 10 oyun bir düğmeyle, özel oyun ayrı düğmeyle açılıp kapanır. */
+function acikAnimler() {
+  const l = MINI_ANIMLER.map((a, i) => i).filter(i => animAcik(i));
+  return l;
+}
+function animAcik(i) { return MINI_ANIMLER[i].ozel ? !!S.ayarlar.ozelOyun : !!S.ayarlar.animasyon; }
+const herhangiAcik = () => !!(S.ayarlar.animasyon || S.ayarlar.ozelOyun);
+/** Kuralların uygulandığı havuz: açık oyunlar (hiçbiri açık değilse, 'Üzüm'le oyna' için hepsi). */
+function animHavuz() { const l = acikAnimler(); return l.length ? l : MINI_ANIMLER.map((a, i) => i); }
 // Animasyon turu: her animasyon bir turda en fazla 3 kez gelir, hiçbiri arka arkaya iki kez gelmez;
 // 10 animasyonun hepsi en az 1 kez gösterilince tur başa sarar. Tur durumu kaydedilir.
 const TUR_EN_FAZLA = 3;
@@ -3401,9 +3494,12 @@ function animTuru() {
 /** Kurallara göre rastgele bir animasyon seçer. */
 function miniRastgele() {
   const t = animTuru();
-  const adaylar = t.sayac.map((c, i) => i).filter(i => t.sayac[i] < TUR_EN_FAZLA && i !== t.son);
-  // (Kurallar gereği aday her zaman vardır; yine de güvenlik için yalnız "arka arkaya olmasın" kuralına düş)
-  const havuz = adaylar.length ? adaylar : t.sayac.map((c, i) => i).filter(i => i !== t.son);
+  const tum = animHavuz();
+  const adaylar = tum.filter(i => t.sayac[i] < TUR_EN_FAZLA && i !== t.son);
+  // Kurallar gereği aday hep vardır; yine de güvenlik için önce "arka arkaya olmasın" kuralına,
+  // tek oyun açıksa (arka arkaya gelmesi kaçınılmaz) o oyuna düşülür
+  const ikinci = tum.filter(i => i !== t.son);
+  const havuz = adaylar.length ? adaylar : ikinci.length ? ikinci : tum;
   return havuz[Math.floor(Math.random() * havuz.length)];
 }
 /** Oynayan animasyonu tura işler; hepsi en az 1 kez gösterildiyse yeni tur başlar. */
@@ -3411,7 +3507,7 @@ function turaIsle(i) {
   const t = animTuru();
   t.sayac[i] = (t.sayac[i] || 0) + 1;
   t.son = i;
-  if (t.sayac.every(c => c >= 1)) { t.sayac = t.sayac.map(() => 0); t.tur = (t.tur || 1) + 1; }
+  if (animHavuz().every(j => t.sayac[j] >= 1)) { t.sayac = t.sayac.map(() => 0); t.tur = (t.tur || 1) + 1; }
   S.sonAnim = i;
 }
 async function miniOynat(i) {
@@ -3438,11 +3534,11 @@ const miniAralikDk = () => MINI_ARALIKLAR.some(([d]) => d === S.ayarlar.animasyo
 /** Seçilen sıklıkta bir sonraki animasyonu planlar (sayaç her çağrıda baştan başlar). */
 function miniPlanla() {
   clearTimeout(mini.zaman);
-  if (!S.ayarlar.animasyon) return;
+  if (!herhangiAcik()) return;
   mini.zaman = setTimeout(miniOtomatik, miniAralikDk() * 60000);
 }
 async function miniOtomatik() {
-  if (!S.ayarlar.animasyon) return;
+  if (!herhangiAcik()) return;
   // O an uygun değilse (öğretici, açık pencere, arka plandaki sekme) tüm aralığı beklemeden 30 sn sonra tekrar dene
   if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { clearTimeout(mini.zaman); mini.zaman = setTimeout(miniOtomatik, 30000); return; }
   await miniOynat(miniRastgele());
@@ -3452,13 +3548,18 @@ async function miniOtomatik() {
 function miniTurGoster() {
   const el = $('#miniTur');
   if (!el) return;
-  const gorulen = animTuru().sayac.filter(c => c >= 1).length;
-  el.textContent = `Görülen animasyonlar: ${gorulen} / ${MINI_ANIMLER.length}`;
+  const t = animTuru(), havuz = animHavuz();
+  const gorulen = havuz.filter(i => t.sayac[i] >= 1).length;
+  el.textContent = `Görülen animasyonlar: ${gorulen} / ${havuz.length}`;
 }
 function miniAyarCiz() {
   miniTurGoster();
   const t = $('#aAnimasyon');
   if (t) t.checked = !!S.ayarlar.animasyon;
+  const o = $('#aOzelOyun');
+  if (o) o.checked = !!S.ayarlar.ozelOyun;
+  const os = $('#aOzelSure');
+  if (os) os.value = String(ozelSure());
   const a = $('#aAnimAralik');
   if (a) { if (!a.options.length) a.innerHTML = MINI_ARALIKLAR.map(([d, ad]) => opt(d, ad)).join(''); a.value = String(miniAralikDk()); }
   const l = $('#miniListe');
@@ -3468,14 +3569,40 @@ function miniOlaylari() {
   $('#aAnimasyon').addEventListener('change', e => {
     S.ayarlar.animasyon = e.target.checked;
     kaydetHemen();
+    miniTurGoster();
     if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(miniRastgele()).then(() => miniPlanla()); }
-    else { miniDurdur(); toast('Mini animasyonlar kapatıldı.'); }
+    else {
+      if (mini.calisiyor && mini.son !== OZEL_OYUN) miniDurdur();
+      miniPlanla();
+      toast(S.ayarlar.ozelOyun ? '10 mini animasyon kapatıldı. Özel oyun açık kalıyor.' : 'Mini animasyonlar kapatıldı.');
+    }
+  });
+  // Özel oyun (Fare yakalama): yalnızca kendi düğmesiyle açılır/kapanır, diğer 10 oyunu etkilemez
+  $('#aOzelOyun').addEventListener('change', e => {
+    S.ayarlar.ozelOyun = e.target.checked;
+    kaydetHemen();
+    miniTurGoster();
+    if (e.target.checked) {
+      toast('Özel oyun açıldı: Üzüm fareni kovalayacak 🖱️');
+      if (animTuru().son !== OZEL_OYUN) miniOynat(OZEL_OYUN).then(() => miniPlanla()); else miniPlanla();
+    } else {
+      if (mini.calisiyor && mini.son === OZEL_OYUN) miniDurdur();
+      miniPlanla();
+      toast('Özel oyun kapatıldı. Diğer oyunlar aynen devam ediyor.');
+    }
+  });
+  $('#aOzelSure').addEventListener('change', e => {
+    const n = parseInt(e.target.value, 10);
+    S.ayarlar.ozelSure = Number.isFinite(n) ? Math.min(OZEL_SURE_EN_COK, Math.max(OZEL_SURE_EN_AZ, n)) : 10;
+    e.target.value = String(S.ayarlar.ozelSure);
+    kaydetHemen();
+    toast(`Fare yakalama oyunu ${S.ayarlar.ozelSure} saniye sürecek.`);
   });
   $('#aAnimAralik').addEventListener('change', e => {
     S.ayarlar.animasyonAralik = parseInt(e.target.value, 10);
     kaydetHemen();
     const ad = MINI_ARALIKLAR.find(([d]) => d === S.ayarlar.animasyonAralik)[1].toLocaleLowerCase('tr-TR');
-    if (S.ayarlar.animasyon) { miniPlanla(); toast(`Üzüm artık ${ad} oynayacak 🐾`); }
+    if (herhangiAcik()) { miniPlanla(); toast(`Üzüm artık ${ad} oynayacak 🐾`); }
     else toast(`Sıklık kaydedildi: ${ad}. Animasyonları açınca bu sıklıkta oynar.`);
   });
   // Ana sayfadaki "Üzüm'le oyna": beklemeden rastgele bir animasyon; otomatik sayaç baştan başlar

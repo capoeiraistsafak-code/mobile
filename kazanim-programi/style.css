@@ -486,3 +486,29 @@ body.kilitli { overflow: hidden; }
 .sifre-mesaj.iyi { color: var(--ok-ink); background: var(--ok-bg); border: 1px solid var(--ok-line); }
 .sifre-mesaj.kotu { color: var(--bad-ink); background: var(--bad-bg); border: 1px solid var(--bad-line); }
 .kilit-kart .btn { justify-content: center; }
+
+/* Özel oyun: Fare yakalama */
+.ozel-oyun { border: 2px dashed var(--chip-line); border-radius: 14px; padding: 10px 14px; margin: 6px 0 12px; background: var(--primary-soft); }
+.ozel-oyun p { margin: 4px 0 0; }
+.aralik input[type=number] { width: 72px; text-align: center; }
+.sahte-imlec { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .3)); }
+/* Avlanmadan önce: önü alçalır, popo havada sağa sola sallanır, arka ayaklar yerinde tepinir */
+.mini-kedi.avlan .govde { transform-origin: 96px 92px; animation: avPopo .15s ease-in-out infinite alternate; }
+@keyframes avPopo { from { transform: translate(-2.5px, 7px) rotate(5deg); } to { transform: translate(2.5px, 7px) rotate(10deg); } }
+.mini-kedi.avlan .on1 { transform-origin: 90px 104px; transform: scaleY(.7); }
+.mini-kedi.avlan .on2 { transform-origin: 100px 104px; transform: scaleY(.7); }
+.mini-kedi.avlan .ar1 { animation: tepin .15s ease-in-out infinite alternate; }
+.mini-kedi.avlan .ar2 { animation: tepin .15s ease-in-out infinite alternate-reverse; }
+@keyframes tepin { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+.mini-kedi.avlan .kuyruk { animation-duration: .3s; }
+/* Sıçrayış: ön ayaklar öne, arka ayaklar geriye uzanır, gövde gerilir */
+.mini-kedi.sicra .bacak { transition-duration: .12s; animation: none; }
+.mini-kedi.sicra .on1 { transform: rotate(-82deg); }
+.mini-kedi.sicra .on2 { transform: rotate(-96deg); }
+.mini-kedi.sicra .ar1 { transform: rotate(68deg); }
+.mini-kedi.sicra .ar2 { transform: rotate(80deg); }
+.mini-kedi.sicra .govde { transform: scaleX(1.06); }
+.mini-kedi.sicra .kuyruk { animation: none; transform: rotate(-18deg); }
+/* Yere konunca: imlecin üstüne çömelir */
+.mini-kedi.kondu .govde { transform: translateY(4px) scaleY(.96); transition: transform .12s; }
+.mini-kedi.kondu .on1, .mini-kedi.kondu .on2 { transform-origin: 95px 104px; transform: scaleY(.82); }
