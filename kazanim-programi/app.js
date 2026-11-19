@@ -2938,19 +2938,26 @@ const MINI_ANIMLER = [
   { ad: 'Kalpler', ikon: '❤️', fn: animKalpler },
   { ad: 'Üzüm salkımı', ikon: '🍇', fn: animUzum },
 ];
+/** Rastgele bir animasyon seçer; bir önceki oynayan asla hemen arkasından tekrar seçilmez. */
+function miniRastgele() {
+  const son = Number.isInteger(S.sonAnim) ? S.sonAnim : -1;
+  const adaylar = MINI_ANIMLER.map((_, i) => i).filter(i => i !== son);
+  return adaylar[Math.floor(Math.random() * adaylar.length)];
+}
 async function miniOynat(i) {
-  if (mini.calisiyor || ogretici.aktif) return;
+  if (mini.calisiyor || ogretici.aktif) return false;
   mini.calisiyor = true; mini.son = i;
+  S.sonAnim = i; kaydet();   // program kapanıp açılsa da son oynayan hatırlanır
   try { await MINI_ANIMLER[i].fn(); }
   catch (e) { /* durduruldu */ }
   finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+  return true;
 }
 function miniDurdur() {
   clearTimeout(mini.zaman);
   if (mini.sahne) { mini.sahne.getAnimations({ subtree: true }).forEach(a => a.cancel()); mini.sahne.innerHTML = ''; }
   mini.calisiyor = false;
 }
-/** Ara sıra rastgele bir animasyon (ilk: 8 sn sonra, sonra 1–2,5 dakikada bir). */
 // Seçilebilen sıklıklar (dakika)
 const MINI_ARALIKLAR = [
   [1, 'Her 1 dakikada bir'], [5, 'Her 5 dakikada bir'], [15, 'Her 15 dakikada bir'], [30, 'Her 30 dakikada bir'],
@@ -2967,9 +2974,7 @@ async function miniOtomatik() {
   if (!S.ayarlar.animasyon) return;
   // O an uygun değilse (öğretici, açık pencere, arka plandaki sekme) tüm aralığı beklemeden 30 sn sonra tekrar dene
   if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { clearTimeout(mini.zaman); mini.zaman = setTimeout(miniOtomatik, 30000); return; }
-  let i;
-  do { i = Math.floor(Math.random() * MINI_ANIMLER.length); } while (i === mini.son && MINI_ANIMLER.length > 1);
-  await miniOynat(i);
+  await miniOynat(miniRastgele());
   miniPlanla();
 }
 function miniAyarCiz() {
@@ -2984,7 +2989,7 @@ function miniOlaylari() {
   $('#aAnimasyon').addEventListener('change', e => {
     S.ayarlar.animasyon = e.target.checked;
     kaydetHemen();
-    if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(Math.floor(Math.random() * MINI_ANIMLER.length)).then(() => miniPlanla()); }
+    if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(miniRastgele()).then(() => miniPlanla()); }
     else { miniDurdur(); toast('Mini animasyonlar kapatıldı.'); }
   });
   $('#aAnimAralik').addEventListener('change', e => {
@@ -2993,6 +2998,12 @@ function miniOlaylari() {
     const ad = MINI_ARALIKLAR.find(([d]) => d === S.ayarlar.animasyonAralik)[1].toLocaleLowerCase('tr-TR');
     if (S.ayarlar.animasyon) { miniPlanla(); toast(`Üzüm artık ${ad} oynayacak 🐾`); }
     else toast(`Sıklık kaydedildi: ${ad}. Animasyonları açınca bu sıklıkta oynar.`);
+  });
+  // Ana sayfadaki "Üzüm'le oyna": beklemeden rastgele bir animasyon; otomatik sayaç baştan başlar
+  $('#btnUzumOyna').addEventListener('click', async () => {
+    if (mini.calisiyor) { toast('Üzüm şu an zaten oynuyor 🐾'); return; }
+    await miniOynat(miniRastgele());
+    miniPlanla();
   });
   $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
 }

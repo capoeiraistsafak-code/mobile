@@ -185,6 +185,7 @@ tr:hover td { background: var(--hover); }
 .hero h1 { margin: 0 0 4px; }
 .hero p { margin: 0; color: var(--muted); font-weight: 600; max-width: 60ch; }
 .hero > div { flex: 1 1 240px; min-width: 0; }
+.kedi-kose { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; }
 .kedi-buyuk { width: 96px; height: 96px; flex: none; animation: sallan 4s ease-in-out infinite; transform-origin: 50% 90%; }
 @keyframes sallan { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-4deg); } }
 .adimlar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
@@ -455,6 +456,7 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
   #printArea th { position: static; }
   #printArea .kutu { width: 18px; height: 18px; border: 1px solid #555; display: inline-block; }
 }
+.hero > .kedi-kose { flex: none; }
 
 </style>
 </head>
@@ -509,7 +511,10 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
   <!-- ANA SAYFA -->
   <section id="tab-panel" class="tab active">
     <div class="hero">
-      <svg class="kedi-buyuk" aria-hidden="true"><use href="#kedi"/></svg>
+      <div class="kedi-kose">
+        <svg class="kedi-buyuk" aria-hidden="true"><use href="#kedi"/></svg>
+        <button type="button" class="btn small" id="btnUzumOyna" title="Üzüm hemen bir oyun oynasın">🧶 Üzüm'le oyna</button>
+      </div>
       <div>
         <h1>Merhaba! Ben Üzüm <svg class="pati-ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.6 0-6.3-1.9-6.3-4.6 0-2.9 3-5.6 6.3-5.6s6.3 2.7 6.3 5.6c0 2.7-2.7 4.6-6.3 4.6z"/><ellipse cx="4.6" cy="10.4" rx="2.3" ry="2.9" transform="rotate(-18 4.6 10.4)"/><ellipse cx="9.2" cy="5.6" rx="2.4" ry="3" transform="rotate(-6 9.2 5.6)"/><ellipse cx="14.8" cy="5.6" rx="2.4" ry="3" transform="rotate(6 14.8 5.6)"/><ellipse cx="19.4" cy="10.4" rx="2.3" ry="2.9" transform="rotate(18 19.4 10.4)"/></svg></h1>
         <p>Öğrencilerin hangi konuda eksiği olduğunu birlikte bulalım. Aşağıdaki 4 adımı sırayla yapman yeterli.</p>
@@ -3704,19 +3709,26 @@ const MINI_ANIMLER = [
   { ad: 'Kalpler', ikon: '❤️', fn: animKalpler },
   { ad: 'Üzüm salkımı', ikon: '🍇', fn: animUzum },
 ];
+/** Rastgele bir animasyon seçer; bir önceki oynayan asla hemen arkasından tekrar seçilmez. */
+function miniRastgele() {
+  const son = Number.isInteger(S.sonAnim) ? S.sonAnim : -1;
+  const adaylar = MINI_ANIMLER.map((_, i) => i).filter(i => i !== son);
+  return adaylar[Math.floor(Math.random() * adaylar.length)];
+}
 async function miniOynat(i) {
-  if (mini.calisiyor || ogretici.aktif) return;
+  if (mini.calisiyor || ogretici.aktif) return false;
   mini.calisiyor = true; mini.son = i;
+  S.sonAnim = i; kaydet();   // program kapanıp açılsa da son oynayan hatırlanır
   try { await MINI_ANIMLER[i].fn(); }
   catch (e) { /* durduruldu */ }
   finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+  return true;
 }
 function miniDurdur() {
   clearTimeout(mini.zaman);
   if (mini.sahne) { mini.sahne.getAnimations({ subtree: true }).forEach(a => a.cancel()); mini.sahne.innerHTML = ''; }
   mini.calisiyor = false;
 }
-/** Ara sıra rastgele bir animasyon (ilk: 8 sn sonra, sonra 1–2,5 dakikada bir). */
 // Seçilebilen sıklıklar (dakika)
 const MINI_ARALIKLAR = [
   [1, 'Her 1 dakikada bir'], [5, 'Her 5 dakikada bir'], [15, 'Her 15 dakikada bir'], [30, 'Her 30 dakikada bir'],
@@ -3733,9 +3745,7 @@ async function miniOtomatik() {
   if (!S.ayarlar.animasyon) return;
   // O an uygun değilse (öğretici, açık pencere, arka plandaki sekme) tüm aralığı beklemeden 30 sn sonra tekrar dene
   if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { clearTimeout(mini.zaman); mini.zaman = setTimeout(miniOtomatik, 30000); return; }
-  let i;
-  do { i = Math.floor(Math.random() * MINI_ANIMLER.length); } while (i === mini.son && MINI_ANIMLER.length > 1);
-  await miniOynat(i);
+  await miniOynat(miniRastgele());
   miniPlanla();
 }
 function miniAyarCiz() {
@@ -3750,7 +3760,7 @@ function miniOlaylari() {
   $('#aAnimasyon').addEventListener('change', e => {
     S.ayarlar.animasyon = e.target.checked;
     kaydetHemen();
-    if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(Math.floor(Math.random() * MINI_ANIMLER.length)).then(() => miniPlanla()); }
+    if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(miniRastgele()).then(() => miniPlanla()); }
     else { miniDurdur(); toast('Mini animasyonlar kapatıldı.'); }
   });
   $('#aAnimAralik').addEventListener('change', e => {
@@ -3759,6 +3769,12 @@ function miniOlaylari() {
     const ad = MINI_ARALIKLAR.find(([d]) => d === S.ayarlar.animasyonAralik)[1].toLocaleLowerCase('tr-TR');
     if (S.ayarlar.animasyon) { miniPlanla(); toast(`Üzüm artık ${ad} oynayacak 🐾`); }
     else toast(`Sıklık kaydedildi: ${ad}. Animasyonları açınca bu sıklıkta oynar.`);
+  });
+  // Ana sayfadaki "Üzüm'le oyna": beklemeden rastgele bir animasyon; otomatik sayaç baştan başlar
+  $('#btnUzumOyna').addEventListener('click', async () => {
+    if (mini.calisiyor) { toast('Üzüm şu an zaten oynuyor 🐾'); return; }
+    await miniOynat(miniRastgele());
+    miniPlanla();
   });
   $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
 }
