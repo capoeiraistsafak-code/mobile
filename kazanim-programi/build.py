@@ -9,7 +9,7 @@ js = open('app.js', encoding='utf-8').read()
 CDN = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
 if '--artifact' in sys.argv:
     out = sys.argv[sys.argv.index('--artifact') + 1]
-    body = h[h.index('<body>') + 6:h.index('</body>')]
+    body = h[h.index('>', h.index('<body')) + 1:h.index('</body>')]
     body = body.replace('<script src="vendor/xlsx.full.min.js"></script>', f'<script src="{CDN}"></script>')
     body = body.replace('<script src="app.js"></script>', '<script>window.KT_ARTIFACT = true;\n' + js + '\n</script>')
     fontlar = re.findall(r'<link rel="(?:preconnect|stylesheet)" href="https://fonts[^>]*>', h)

@@ -467,3 +467,22 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
   #printArea .kutu { width: 18px; height: 18px; border: 1px solid #555; display: inline-block; }
 }
 .hero > .kedi-kose { flex: none; }
+
+/* Şifre kilidi */
+.kilit { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 16px;
+  background: var(--bg); background-image: radial-gradient(var(--bg-desen) 1.5px, transparent 1.5px); background-size: 18px 18px; }
+body.kilitli { overflow: hidden; }
+.kilit-kart { width: min(360px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+  box-shadow: 0 12px 40px var(--shadow-strong); padding: 26px 24px; display: grid; gap: 12px; text-align: center; }
+.kilit-kart h1 { margin: 0; font-family: var(--font-baslik); color: var(--primary); }
+.kilit-kart p { margin: 0; }
+.kilit-kedi { width: 110px; height: 110px; margin: 0 auto; }
+.kilit-kart input { text-align: center; font-size: 1.1rem; }
+.kilit-hata { color: var(--bad-ink); background: var(--bad-bg); border: 1px solid var(--bad-line); border-radius: 12px; padding: 6px 10px; font-weight: 700; }
+.kilit-kart.salla { animation: kilitSalla .4s; }
+@keyframes kilitSalla { 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+@media (prefers-reduced-motion: reduce) { .kilit-kart.salla { animation: none; } }
+.sifre-mesaj { margin: 10px 0 0; border-radius: 12px; padding: 8px 12px; font-weight: 700; }
+.sifre-mesaj.iyi { color: var(--ok-ink); background: var(--ok-bg); border: 1px solid var(--ok-line); }
+.sifre-mesaj.kotu { color: var(--bad-ink); background: var(--bad-bg); border: 1px solid var(--bad-line); }
+.kilit-kart .btn { justify-content: center; }

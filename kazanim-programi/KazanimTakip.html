@@ -479,9 +479,28 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
 }
 .hero > .kedi-kose { flex: none; }
 
+/* Şifre kilidi */
+.kilit { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 16px;
+  background: var(--bg); background-image: radial-gradient(var(--bg-desen) 1.5px, transparent 1.5px); background-size: 18px 18px; }
+body.kilitli { overflow: hidden; }
+.kilit-kart { width: min(360px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+  box-shadow: 0 12px 40px var(--shadow-strong); padding: 26px 24px; display: grid; gap: 12px; text-align: center; }
+.kilit-kart h1 { margin: 0; font-family: var(--font-baslik); color: var(--primary); }
+.kilit-kart p { margin: 0; }
+.kilit-kedi { width: 110px; height: 110px; margin: 0 auto; }
+.kilit-kart input { text-align: center; font-size: 1.1rem; }
+.kilit-hata { color: var(--bad-ink); background: var(--bad-bg); border: 1px solid var(--bad-line); border-radius: 12px; padding: 6px 10px; font-weight: 700; }
+.kilit-kart.salla { animation: kilitSalla .4s; }
+@keyframes kilitSalla { 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+@media (prefers-reduced-motion: reduce) { .kilit-kart.salla { animation: none; } }
+.sifre-mesaj { margin: 10px 0 0; border-radius: 12px; padding: 8px 12px; font-weight: 700; }
+.sifre-mesaj.iyi { color: var(--ok-ink); background: var(--ok-bg); border: 1px solid var(--ok-line); }
+.sifre-mesaj.kotu { color: var(--bad-ink); background: var(--bad-bg); border: 1px solid var(--bad-line); }
+.kilit-kart .btn { justify-content: center; }
+
 </style>
 </head>
-<body>
+<body class="kilitli">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs><radialGradient id="uh-kafa" cx="50%" cy="38%" r="62%"><stop offset="0" stop-color="#bcc4d2"/><stop offset=".55" stop-color="#9aa4b6"/><stop offset="1" stop-color="#7a8497"/></radialGradient>
 <radialGradient id="uh-yanak" cx="50%" cy="35%" r="65%"><stop offset="0" stop-color="#c6cdd9"/><stop offset="1" stop-color="#97a1b3"/></radialGradient>
@@ -514,6 +533,16 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
 <path d="M17 56.4 Q32 61.5 47 56.4" stroke="#7c5ce6" stroke-width="2.6" fill="none" stroke-linecap="round"/>
 <g><circle cx="30.6" cy="60" r="1.6" fill="#8e5bd6"/><circle cx="33.4" cy="60" r="1.6" fill="#8e5bd6"/><circle cx="32" cy="62.3" r="1.6" fill="#7a46c2"/><path d="M32 58.4 q.8 -1.4 2 -1.4" stroke="#4f9a4a" stroke-width=".8" fill="none" stroke-linecap="round"/></g></symbol>
 </svg>
+<div class="kilit" id="kilit" role="dialog" aria-modal="true" aria-labelledby="kilitBaslik">
+  <form class="kilit-kart" id="kilitForm" autocomplete="off">
+    <svg class="kilit-kedi" aria-hidden="true"><use href="#kedi"/></svg>
+    <h1 id="kilitBaslik">Kazanım Takip</h1>
+    <p class="muted">Merhaba! Programı açmak için şifreni yaz.</p>
+    <input type="password" id="kilitSifre" placeholder="Şifre" aria-label="Şifre" autofocus>
+    <p class="kilit-hata" id="kilitHata" role="alert" hidden>Şifre yanlış. Lütfen tekrar dene.</p>
+    <button type="submit" class="btn primary">🔓 Giriş yap</button>
+  </form>
+</div>
 <header class="topbar no-print">
   <button type="button" class="brand" id="btnLogoOgretici" title="Üzüm sana programı göstersin"><svg class="kedi-logo" aria-hidden="true"><use href="#kedi"/></svg><span>Kazanım Takip</span></button>
   <nav id="tabs">
@@ -759,6 +788,17 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
         <input id="yeniSeviye" placeholder="Yeni seviye (ör. 4 ya da Hazırlık)" maxlength="20" aria-label="Yeni seviye">
         <button type="button" class="btn" id="btnSeviyeEkle">➕ Seviye ekle</button>
       </div>
+    </div>
+    <div class="card">
+      <h2>🔒 Şifre</h2>
+      <p class="muted">Program her açıldığında bu şifreyi sorar. Yeni şifre en az 4 karakter olmalı.</p>
+      <form class="form-grid" id="sifreForm" autocomplete="off">
+        <label>Şu anki şifre<input type="password" id="sifreEski"></label>
+        <label>Yeni şifre<input type="password" id="sifreYeni"></label>
+        <label>Yeni şifre (tekrar)<input type="password" id="sifreTekrar"></label>
+      </form>
+      <button type="submit" form="sifreForm" class="btn primary" style="margin-top:10px">🔑 Şifreyi değiştir</button>
+      <p class="sifre-mesaj" id="sifreMesaj" role="status" hidden></p>
     </div>
     <div class="card">
       <h2>⚠️ Dikkat</h2>
@@ -3453,7 +3493,7 @@ function olaylar() {
     try {
       const v = JSON.parse(await f.text());
       if (!v || !Array.isArray(v.ogrenciler) || !Array.isArray(v.kazanimlar)) throw new Error('biçim');
-      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { S = { ...bosDurum(), ...v }; S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(v.ayarlar || {}) }; kurumlariYukle(); kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
+      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { const sifre = S.sifre; S = { ...bosDurum(), ...v }; if (sifre) S.sifre = sifre; else delete S.sifre; S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(v.ayarlar || {}) }; kurumlariYukle(); kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
     } catch (err) { toast('Yedek dosyası okunamadı.'); }
   });
   $('#btnTumExcel').onclick = tumExcel;
@@ -3482,7 +3522,7 @@ function olaylar() {
   });
   $('#btnFabrika').onclick = fabrikaDialog;
   $('#btnHepsiniSil').onclick = () => onayla('TÜM veriler (öğrenciler, kazanımlar, sınavlar, sonuçlar, planlar) silinsin mi? Önce yedek almanız önerilir.', () => {
-    S = bosDurum(); kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
+    const sifre = S.sifre; S = bosDurum(); if (sifre) S.sifre = sifre; kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
   });
 }
 
@@ -4299,14 +4339,61 @@ function miniOlaylari() {
   $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
 }
 
+// ---------------------------------------------------------------------------
+// Şifre (açılışta sorulur; varsayılan "uzum", Ayarlar'dan değiştirilir)
+// ---------------------------------------------------------------------------
+const VARSAYILAN_SIFRE = 'uzum';
+/** Şifre düz yazı olarak değil, özet (hash) olarak saklanır. */
+function sifreOzet(t) {
+  t = 'kazanim-takip|' + t;
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < t.length; i++) {
+    const c = t.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+function sifreDogruMu(t) { return sifreOzet(t) === (S.sifre || sifreOzet(VARSAYILAN_SIFRE)); }
+/** Kilit ekranı: doğru şifre girilince açılır. */
+function kilitAc() {
+  return new Promise(coz => {
+    const k = $('#kilit'), f = $('#kilitForm'), g = $('#kilitSifre'), h = $('#kilitHata');
+    if (!k) return coz();
+    g.focus();
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      if (sifreDogruMu(g.value)) { g.value = ''; k.hidden = true; document.body.classList.remove('kilitli'); coz(); }
+      else { h.hidden = false; g.value = ''; g.focus(); f.classList.remove('salla'); void f.offsetWidth; f.classList.add('salla'); }
+    });
+  });
+}
+function sifreOlaylari() {
+  const m = $('#sifreMesaj');
+  const yaz = (iyi, t) => { m.hidden = false; m.className = 'sifre-mesaj ' + (iyi ? 'iyi' : 'kotu'); m.textContent = (iyi ? '✓ ' : '✕ ') + t; };
+  $('#sifreForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const eski = $('#sifreEski').value, yeni = $('#sifreYeni').value, tekrar = $('#sifreTekrar').value;
+    if (!sifreDogruMu(eski)) return yaz(false, 'Şu anki şifre yanlış.');
+    if (yeni.length < 4) return yaz(false, 'Yeni şifre en az 4 karakter olmalı.');
+    if (yeni !== tekrar) return yaz(false, 'Yeni şifreler birbiriyle aynı değil.');
+    S.sifre = sifreOzet(yeni); kaydetHemen();
+    $('#sifreForm').reset();
+    yaz(true, 'Şifre değiştirildi. Program bir dahaki açılışta yeni şifreyi soracak.');
+  });
+}
+
 (async function baslat() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   kurumlariYukle();
+  await kilitAc();
   olaylar();
   ogreticiOlaylari();
   miniOlaylari();
+  sifreOlaylari();
   ciz();
   miniAyarCiz();
   miniPlanla();

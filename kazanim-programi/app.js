@@ -2641,7 +2641,7 @@ function olaylar() {
     try {
       const v = JSON.parse(await f.text());
       if (!v || !Array.isArray(v.ogrenciler) || !Array.isArray(v.kazanimlar)) throw new Error('biçim');
-      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { S = { ...bosDurum(), ...v }; S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(v.ayarlar || {}) }; kurumlariYukle(); kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
+      onayla('Mevcut tüm veriler yedektekiyle değiştirilsin mi?', () => { const sifre = S.sifre; S = { ...bosDurum(), ...v }; if (sifre) S.sifre = sifre; else delete S.sifre; S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(v.ayarlar || {}) }; kurumlariYukle(); kaydet(); ciz(); toast('Yedek geri yüklendi.'); });
     } catch (err) { toast('Yedek dosyası okunamadı.'); }
   });
   $('#btnTumExcel').onclick = tumExcel;
@@ -2670,7 +2670,7 @@ function olaylar() {
   });
   $('#btnFabrika').onclick = fabrikaDialog;
   $('#btnHepsiniSil').onclick = () => onayla('TÜM veriler (öğrenciler, kazanımlar, sınavlar, sonuçlar, planlar) silinsin mi? Önce yedek almanız önerilir.', () => {
-    S = bosDurum(); kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
+    const sifre = S.sifre; S = bosDurum(); if (sifre) S.sifre = sifre; kurumlariYukle(); kaydet(); ciz(); toast('Tüm veriler silindi.');
   });
 }
 
@@ -3487,14 +3487,61 @@ function miniOlaylari() {
   $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
 }
 
+// ---------------------------------------------------------------------------
+// Şifre (açılışta sorulur; varsayılan "uzum", Ayarlar'dan değiştirilir)
+// ---------------------------------------------------------------------------
+const VARSAYILAN_SIFRE = 'uzum';
+/** Şifre düz yazı olarak değil, özet (hash) olarak saklanır. */
+function sifreOzet(t) {
+  t = 'kazanim-takip|' + t;
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < t.length; i++) {
+    const c = t.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+function sifreDogruMu(t) { return sifreOzet(t) === (S.sifre || sifreOzet(VARSAYILAN_SIFRE)); }
+/** Kilit ekranı: doğru şifre girilince açılır. */
+function kilitAc() {
+  return new Promise(coz => {
+    const k = $('#kilit'), f = $('#kilitForm'), g = $('#kilitSifre'), h = $('#kilitHata');
+    if (!k) return coz();
+    g.focus();
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      if (sifreDogruMu(g.value)) { g.value = ''; k.hidden = true; document.body.classList.remove('kilitli'); coz(); }
+      else { h.hidden = false; g.value = ''; g.focus(); f.classList.remove('salla'); void f.offsetWidth; f.classList.add('salla'); }
+    });
+  });
+}
+function sifreOlaylari() {
+  const m = $('#sifreMesaj');
+  const yaz = (iyi, t) => { m.hidden = false; m.className = 'sifre-mesaj ' + (iyi ? 'iyi' : 'kotu'); m.textContent = (iyi ? '✓ ' : '✕ ') + t; };
+  $('#sifreForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const eski = $('#sifreEski').value, yeni = $('#sifreYeni').value, tekrar = $('#sifreTekrar').value;
+    if (!sifreDogruMu(eski)) return yaz(false, 'Şu anki şifre yanlış.');
+    if (yeni.length < 4) return yaz(false, 'Yeni şifre en az 4 karakter olmalı.');
+    if (yeni !== tekrar) return yaz(false, 'Yeni şifreler birbiriyle aynı değil.');
+    S.sifre = sifreOzet(yeni); kaydetHemen();
+    $('#sifreForm').reset();
+    yaz(true, 'Şifre değiştirildi. Program bir dahaki açılışta yeni şifreyi soracak.');
+  });
+}
+
 (async function baslat() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   kurumlariYukle();
+  await kilitAc();
   olaylar();
   ogreticiOlaylari();
   miniOlaylari();
+  sifreOlaylari();
   ciz();
   miniAyarCiz();
   miniPlanla();
