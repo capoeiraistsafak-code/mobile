@@ -405,6 +405,7 @@ function iceAktarPenceresi({ baslik, alanlar, kaynaklar, ekAlanlarHtml, kaynakVa
   const html = `
     ${ekAlanlarHtml || ''}
     <p class="muted small">${parcalar.length} sayfa okundu. Sütun eşleştirmelerini kontrol edin; yanlış olanları düzeltin.</p>
+    ${parcalar.length > 1 ? hepsiDugmeleri('[data-p-aktif]') : ''}
     ${parcalar.map(p => {
       const veri = p.satirlar.slice(p.bi + 1).filter(r => r.some(c => c));
       const sutunSec = (alan) => `<select data-p="${p.i}" data-alan="${alan}">
@@ -1285,6 +1286,22 @@ function dialogAc(baslik, icerikHtml, butonlar) {
   });
   dlg.showModal();
 }
+/** "Hepsini seç / Hepsini boşalt" düğmeleri. secici: işaretlenecek kutular; bulundukları kart ya da pencere içinde aranır. */
+function hepsiDugmeleri(secici, ek = '') {
+  return `<div class="toolbar secim-tb"${ek}><button type="button" class="btn small" data-hepsi="${esc(secici)}" data-deger="1">☑️ Hepsini seç</button>`
+    + `<button type="button" class="btn small" data-hepsi="${esc(secici)}" data-deger="0">⬜ Hepsini boşalt</button></div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-hepsi]');
+  if (!b) return;
+  const alan = b.closest('dialog, .card, .import-alan') || document;
+  const deger = b.dataset.deger === '1';
+  alan.querySelectorAll(b.dataset.hepsi).forEach(k => {
+    if (k.disabled || k.checked === deger) return;
+    k.checked = deger;
+    k.dispatchEvent(new Event('change', { bubbles: true }));   // kaydeden olaylar aynen çalışır
+  });
+});
 function onayla(mesaj, fn) {
   dialogAc('Onay', `<p>${esc(mesaj)}</p>`, [{ ad: 'Vazgeç' }, { ad: 'Evet', danger: true, tikla: fn }]);
 }
@@ -1894,6 +1911,8 @@ function eksikKazanimlar(ogrId, sinavIdler) {
   return { liste, kazanimsiz };
 }
 const analizSecim = { sinavlar: null, kazanimlar: null, konular: null, ogrId: null };
+const analizHepsi = grup => `<div class="toolbar secim-tb"><button type="button" class="btn small" data-an-hepsi="${grup}" data-deger="1">☑️ Hepsini seç</button>`
+  + `<button type="button" class="btn small" data-an-hepsi="${grup}" data-deger="0">⬜ Hepsini boşalt</button></div>`;
 
 function cizAnaliz() {
   const siniflar = S.siniflar.slice().sort(sinifSirala);
@@ -1927,6 +1946,7 @@ function cizAnaliz() {
   <div class="card">
     <h2>${esc(adSoyad(o))} <span class="muted small">${esc(o.no)} · ${esc(sinifAdi(sinifBul(o.sinifId)))}</span></h2>
     <h3>📝 Sınavlar</h3>
+    ${girilmis.length > 1 ? analizHepsi('sinav') : ''}
     ${girilmis.length ? girilmis.map(s => {
       const r = S.sonuclar[s.id][o.id];
       const y = Object.values(r).filter(v => v === 'Y').length, b = Object.values(r).filter(v => v === 'B').length;
@@ -1955,6 +1975,7 @@ function cizAnaliz() {
     <h2>📈 Konu analizi <span class="muted small">(${konular.length} konu)</span></h2>
     <div class="toolbar"><span class="chip red">${sayac.eksik} eksik</span><span class="chip orange">${sayac.orta} geliştirilmeli</span><span class="chip green">${sayac.iyi} iyi</span>
       <span class="muted small">Eksik: başarı %${S.ayarlar.esikEksik}'in altında · İyi: %${S.ayarlar.esikIyi} ve üstü</span></div>
+    ${analizHepsi('konu')}
     ${Object.entries(konuDers).map(([ders, l]) => {
       const t = l.reduce((a, k) => ({ d: a.d + k.d, n: a.n + k.toplam }), { d: 0, n: 0 });
       const db = Math.round(100 * t.d / Math.max(1, t.n));
@@ -1974,7 +1995,7 @@ function cizAnaliz() {
 
   <div class="card">
     <h2>🧩 Çözemediği sorulara göre kazanımlar <span class="muted small">(${liste.length})</span></h2>
-    ${liste.length ? `<div class="toolbar"><button class="btn small" id="kzHepsi">Tümünü seç</button><button class="btn small" id="kzHicbiri">Hiçbirini seçme</button></div>` : ''}
+    ${liste.length ? analizHepsi('kz') : ''}
     ${Object.entries(dersGrup).map(([ders, l]) => `<div class="group-title">${esc(ders)} · ${l.length} kazanım</div>` + l.map(e => `
       <label class="kz-row"><input type="checkbox" data-an-kz="${e.k.id}" ${analizSecim.kazanimlar.has(e.k.id) ? 'checked' : ''}>
         <span class="kz-body"><span class="kz-kod">${esc(e.k.kod || '')}</span> ${esc(e.k.metin)}
@@ -2112,6 +2133,7 @@ function planGoster(planId) {
       <td class="small"><b>${esc(g.kod)}</b> ${esc(g.kazanim)}</td>
       <td class="small"><span class="chip ${g.tur === 'Tekrar' ? 'orange' : g.tur === 'Genel tekrar' ? 'green' : ''}">${esc(g.tur)}</span> ${esc(g.gorev)}</td></tr>`).join('');
   dialogAc(p.baslik, `<p class="muted small">${esc(adSoyad(o))} · ${esc(sinifAdi(sinifBul(o?.sinifId)))} · ${p.gorevler.length} görev. Tamamlanan görevleri işaretleyebilirsiniz.</p>
+    ${hepsiDugmeleri('[data-gorev]')}
     <div class="tablewrap"><table><tr><th>✓</th><th>Tarih</th><th>Ders</th><th>Kazanım</th><th>Görev</th></tr>${satirlar}</table></div>
     ${p.not ? `<p><b>Öğretmen notu:</b> ${esc(p.not)}</p>` : ''}`, [
     { ad: 'Planı sil', danger: true, tikla: () => { S.planlar = S.planlar.filter(x => x.id !== p.id); kaydet(); ciz(); } },
@@ -2302,6 +2324,7 @@ function kurumDialog(k) {
       <label>Türü<select id="kTip">${opt('okul', 'Okul', v.tip === 'okul')}${opt('kurs', 'Kurs / dershane', v.tip === 'kurs')}</select></label>
     </div>
     <p class="muted small" style="margin:12px 0 6px">Bu kurumda hangi sınıf seviyeleri var?</p>
+    ${hepsiDugmeleri('.seviye-sec input[type=checkbox]')}
     <div class="seviye-sec">${S.seviyeler.map(s => `<label class="cb"><input type="checkbox" value="${esc(s)}" ${v.seviyeler.includes(s) ? 'checked' : ''}> ${esc(seviyeAdi(s))}</label>`).join('')}</div>
     <p class="muted small">Listede olmayan bir seviye için önce Ayarlar → “Sınıf seviyeleri”nden ekle.</p>`, [
     { ad: 'Vazgeç' },
@@ -2609,8 +2632,15 @@ function olaylar() {
   });
   $('#analizAlan').addEventListener('click', e => {
     const o = ogrenciBul(filtre.anOgrenci);
-    if (e.target.id === 'kzHepsi') { analizSecim.kazanimlar = null; cizAnaliz(); }
-    else if (e.target.id === 'kzHicbiri') { analizSecim.kazanimlar = new Set(); cizAnaliz(); }
+    const hb = e.target.closest('[data-an-hepsi]');
+    if (hb) {
+      const hep = hb.dataset.deger === '1', g = hb.dataset.anHepsi;
+      const idler = sec => [...$('#analizAlan').querySelectorAll(sec)].map(x => x.dataset[sec === '[data-an-sinav]' ? 'anSinav' : sec === '[data-an-konu]' ? 'anKonu' : 'anKz']);
+      if (g === 'sinav') { analizSecim.sinavlar = new Set(hep ? idler('[data-an-sinav]') : []); analizSecim.kazanimlar = null; analizSecim.konular = null; }
+      else if (g === 'konu') analizSecim.konular = new Set(hep ? idler('[data-an-konu]') : []);
+      else analizSecim.kazanimlar = new Set(hep ? idler('[data-an-kz]') : []);
+      const y = window.scrollY; cizAnaliz(); window.scrollTo(0, y);
+    }
     else if (e.target.id === 'btnPlanHazirla') kazanimPlanDialog(o);
     else if (e.target.id === 'btnKonuPlan') konuPlanDialog(o);
     else if (e.target.id === 'btnOneriExcel') oneriExcel(o);

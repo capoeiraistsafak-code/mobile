@@ -512,3 +512,4 @@ body.kilitli { overflow: hidden; }
 /* Yere konunca: imlecin üstüne çömelir */
 .mini-kedi.kondu .govde { transform: translateY(4px) scaleY(.96); transition: transform .12s; }
 .mini-kedi.kondu .on1, .mini-kedi.kondu .on2 { transform-origin: 95px 104px; transform: scaleY(.82); }
+.secim-tb { margin: 4px 0 8px; gap: 6px; }
