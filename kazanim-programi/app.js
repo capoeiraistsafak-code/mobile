@@ -2470,7 +2470,7 @@ function olaylar() {
 // ÖĞRETİCİ: Üzüm koşarak gelir, patisiyle gösterir, manga bulutunda anlatır
 // ---------------------------------------------------------------------------
 // Yandan görünen, koşabilen Üzüm (sağa bakıyor). viewBox 150×112.
-// Gri-mavi British Shorthair; boynunda mor tasma ve üzüm salkımı. Pati ucu: sağa (137, 68), yukarı (124, 37).
+// Gri-mavi British Shorthair; boynunda mor tasma ve üzüm salkımı. Pati ucu: sağa (125, 68), yukarı (140, 44); yüzün yanından uzanır.
 const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hidden="true">
   <defs><radialGradient id="uk-govde" cx="45%" cy="30%" r="70%"><stop offset="0" stop-color="#b9c1cf"/><stop offset=".6" stop-color="#99a3b5"/><stop offset="1" stop-color="#7b8598"/></radialGradient>
 <radialGradient id="uk-kafa" cx="55%" cy="35%" r="62%"><stop offset="0" stop-color="#bec6d3"/><stop offset=".6" stop-color="#9ca6b8"/><stop offset="1" stop-color="#7d8799"/></radialGradient>
@@ -2478,42 +2478,44 @@ const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hid
 <linearGradient id="uk-bacak-arka" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#778193"/><stop offset="1" stop-color="#848ea0"/></linearGradient>
 <linearGradient id="uk-kuyruk" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8b95a8"/><stop offset="1" stop-color="#9ea8ba"/></linearGradient>
 <radialGradient id="uk-goz" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ffd47a"/><stop offset=".55" stop-color="#f29a2e"/><stop offset="1" stop-color="#b8601a"/></radialGradient></defs>
-  <path class="kuyruk" d="M32 64 C 16 62, 8 50, 12 34 C 13.5 28, 19 27, 20 33 C 18 44, 22 54, 34 58 Z" fill="url(#uk-kuyruk)"/>
-<g class="bacak ar1"><ellipse cx="45" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M36 74 C35.5 84, 38.5 89, 39.8 98 L51.4 98 C52.6 89, 54.6 84, 54 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="46.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
-<g class="bacak on1"><ellipse cx="102" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M93 74 C92.5 84, 95.5 89, 96.8 98 L108.4 98 C109.6 89, 111.6 84, 111 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="103.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
-<g class="bacak ar2"><ellipse cx="59" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M50 74 C49.5 84, 52.5 89, 53.8 98 L65.4 98 C66.6 89, 68.6 84, 68 74 Z" fill="url(#uk-bacak)"/><ellipse cx="60.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M61.6 98.4 v2.6 M64.4 98.2 v2.4 M58.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/></g>
+  <path class="kuyruk" d="M31 63 C 15 61, 7 49, 11 33 C 12.5 27, 18.5 26, 19.5 32 C 17.5 43, 21 52, 33 56 Z" fill="url(#uk-kuyruk)"/>
+<g class="bacak ar1"><ellipse cx="38" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M29 74 C28.5 84, 31.5 89, 32.8 98 L44.4 98 C45.6 89, 47.6 84, 47 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="39.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
+<g class="bacak on1"><ellipse cx="90" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M81 74 C80.5 84, 83.5 89, 84.8 98 L96.4 98 C97.6 89, 99.6 84, 99 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="91.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
+<g class="bacak ar2"><ellipse cx="50" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M41 74 C40.5 84, 43.5 89, 44.8 98 L56.4 98 C57.6 89, 59.6 84, 59 74 Z" fill="url(#uk-bacak)"/><ellipse cx="51.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M52.6 98.4 v2.6 M55.4 98.2 v2.4 M49.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/></g>
 <g class="govde">
-  <ellipse cx="70" cy="67" rx="44" ry="23.5" fill="url(#uk-govde)"/>
-  <ellipse cx="90" cy="75" rx="19" ry="12" fill="#b4bccb" opacity=".85"/>
-  <path d="M36 54 q4 -3 8 -1 M44 49 q4 -3 8 -1 M56 46 q4 -3 8 -1 M30 66 q-2 3 -1 6" stroke="#8790a3" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".7"/>
-  <path d="M84 84 l-2 3.4 M90 85 l-1 3.6 M96 84 l0 3.4" stroke="#c9cfda" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="68" cy="66" rx="41" ry="21.5" fill="url(#uk-govde)"/>
+  <ellipse cx="47" cy="70" rx="18" ry="15" fill="#a3adbe" opacity=".55"/>
+  <ellipse cx="94" cy="73" rx="15" ry="11" fill="#b4bccb" opacity=".85"/>
+  <path d="M40 51 q4 -3 8 -1 M52 48 q4 -3 8 -1 M64 47 q4 -3 8 -1" stroke="#8790a3" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".6"/>
+  <path d="M88 81 l-1.5 3.4 M94 82 l-.6 3.6 M100 81 l.4 3.4" stroke="#c9cfda" stroke-width="1.2" stroke-linecap="round"/>
   <g class="kafa">
-    <path d="M70 32 C 66 20, 68 10, 72 8 C 76 7, 82 13, 85 19 Z" fill="#8790a3"/>
-    <path d="M118 33 C 122 22, 121 12, 117 9.5 C 113 8, 106 13.5, 102 18.5 Z" fill="#96a0b2"/>
-    <path d="M114.5 27 C 116.5 20, 116 14, 114.5 13 C 112.5 12.4, 108.5 16, 106 19.5 Z" fill="#d7b4bf" opacity=".85"/>
-    <ellipse cx="94" cy="42" rx="27" ry="24" fill="url(#uk-kafa)"/>
-    <ellipse cx="108" cy="52" rx="13" ry="10" fill="#c3cad6"/>
-    <ellipse cx="79" cy="52" rx="10" ry="8" fill="#a9b2c2"/>
-    <path d="M84 21 q6 -2.4 12 0" stroke="#8790a3" stroke-width="1" fill="none" stroke-linecap="round" opacity=".7"/>
-    <circle cx="86" cy="40" r="5.8" fill="#4b3c32"/><circle cx="86" cy="40" r="5.1" fill="url(#uk-goz)"/>
-    <ellipse cx="86.6" cy="40.4" rx="2.6" ry="3.8" fill="#1e1a1b"/><circle cx="85" cy="38" r="1.5" fill="#fff"/>
-    <circle cx="104" cy="40" r="7" fill="#4b3c32"/><circle cx="104" cy="40" r="6.3" fill="url(#uk-goz)"/>
-    <ellipse class="goz" cx="104.8" cy="40.5" rx="3.2" ry="4.7" fill="#1e1a1b"/><circle cx="102.4" cy="37.6" r="1.9" fill="#fff"/><circle cx="106.6" cy="43" r=".8" fill="#fff"/>
-    <ellipse cx="112" cy="50" rx="3.4" ry="1.9" fill="#f2a9be" opacity=".35"/>
-    <path d="M103.4 48.6 Q106.2 47.4 108.8 48.6 Q107.8 51 106.1 51.5 Q104.4 51 103.4 48.6 Z" fill="#6c7487"/>
-    <path d="M106.1 51.5 v1.4 M106.1 52.9 q-1.7 1.8 -3.5 .6 M106.1 52.9 q1.7 1.8 3.5 .6" stroke="#5a6174" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <g stroke="#f4f6fa" stroke-width=".6" stroke-linecap="round" fill="none" opacity=".9"><path d="M112 52 Q122 50 131 51"/><path d="M112 54 Q121 55 129 58"/><path d="M98 52 Q90 51 84 53"/></g>
-    <path d="M74 62 Q92 70 112 61" stroke="#7c5ce6" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <circle cx="96.4" cy="68.6" r="1.8" fill="#8e5bd6"/><circle cx="99.6" cy="68.6" r="1.8" fill="#8e5bd6"/><circle cx="98" cy="71.2" r="1.8" fill="#7a46c2"/>
-    <path d="M98 66.8 q.8 -1.6 2.2 -1.6" stroke="#4f9a4a" stroke-width=".9" fill="none" stroke-linecap="round"/>
+    <path d="M84 30 C 80 19, 82 10, 86 8.5 C 90 7.5, 96 13, 99 18.5 Z" fill="#8790a3"/>
+    <path d="M126 31 C 130 21, 129 11.5, 125 9.5 C 121 8, 114.5 13, 110.5 18 Z" fill="#96a0b2"/>
+    <path d="M122.5 25.5 C 124.5 19, 124 13.5, 122.5 12.6 C 120.5 12, 117 15.5, 114.5 18.8 Z" fill="#d7b4bf" opacity=".85"/>
+    <ellipse cx="104" cy="42" rx="25" ry="23" fill="url(#uk-kafa)"/>
+    <ellipse cx="88" cy="51" rx="9" ry="8" fill="#a9b2c2"/>
+    <ellipse cx="118" cy="51" rx="10" ry="8.5" fill="#c3cad6"/>
+    <path d="M100 22 q6 -2.2 12 0" stroke="#8790a3" stroke-width="1" fill="none" stroke-linecap="round" opacity=".7"/>
+    <circle cx="98" cy="39" r="5.6" fill="#4b3c32"/><circle cx="98" cy="39" r="4.9" fill="url(#uk-goz)"/>
+    <ellipse cx="98.6" cy="39.4" rx="2.4" ry="3.6" fill="#1e1a1b"/><circle cx="97" cy="37.2" r="1.4" fill="#fff"/>
+    <circle cx="115" cy="39" r="6.6" fill="#4b3c32"/><circle cx="115" cy="39" r="5.9" fill="url(#uk-goz)"/>
+    <ellipse class="goz" cx="115.7" cy="39.5" rx="3" ry="4.4" fill="#1e1a1b"/><circle cx="113.4" cy="36.8" r="1.8" fill="#fff"/><circle cx="117.4" cy="41.8" r=".8" fill="#fff"/>
+    <ellipse cx="106.5" cy="52" rx="5" ry="3.8" fill="#ccd2dd"/><ellipse cx="114.5" cy="52" rx="5" ry="3.8" fill="#ccd2dd"/>
+    <ellipse cx="122" cy="48" rx="3.2" ry="1.8" fill="#f2a9be" opacity=".35"/>
+    <path d="M107.8 47 Q110.4 45.9 113 47 Q112 49.3 110.4 49.8 Q108.8 49.3 107.8 47 Z" fill="#6c7487"/>
+    <path d="M110.4 49.8 v1.5 M110.4 51.3 q-1.6 1.8 -3.4 .6 M110.4 51.3 q1.6 1.8 3.4 .6" stroke="#5a6174" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <g stroke="#f4f6fa" stroke-width=".6" stroke-linecap="round" fill="none" opacity=".9"><path d="M118 52 Q128 50 137 51"/><path d="M118 54 Q127 55 135 58"/><path d="M103 52 Q96 51 90 53"/></g>
+    <path d="M85 60 Q104 68 123 59" stroke="#7c5ce6" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="104.4" cy="66.6" r="1.8" fill="#8e5bd6"/><circle cx="107.6" cy="66.6" r="1.8" fill="#8e5bd6"/><circle cx="106" cy="69.2" r="1.8" fill="#7a46c2"/>
+    <path d="M106 64.8 q.8 -1.6 2.2 -1.6" stroke="#4f9a4a" stroke-width=".9" fill="none" stroke-linecap="round"/>
   </g>
 </g>
-<g class="bacak on2"><ellipse cx="112" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M103 74 C102.5 84, 105.5 89, 106.8 98 L118.4 98 C119.6 89, 121.6 84, 121 74 Z" fill="url(#uk-bacak)"/><ellipse cx="113.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M114.6 98.4 v2.6 M117.4 98.2 v2.4 M111.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/><ellipse class="pati-iz" cx="113.5" cy="101" rx="3.8" ry="2.2" fill="#6c7487"/></g>
+<g class="bacak on2"><ellipse cx="100" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M91 74 C90.5 84, 93.5 89, 94.8 98 L106.4 98 C107.6 89, 109.6 84, 109 74 Z" fill="url(#uk-bacak)"/><ellipse cx="101.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M102.6 98.4 v2.6 M105.4 98.2 v2.4 M99.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/><ellipse class="pati-iz" cx="101.5" cy="101" rx="3.8" ry="2.2" fill="#6c7487"/></g>
 </svg>`;
 const KEDI_W = 150, KEDI_H = 112;
-const PATI_SAG = { x: 137, y: 68, aci: 100 };  // sağa (hafif yukarı) işaret
-const PATI_UST = { x: 124, y: 37, aci: 160, uzat: 1.5 };  // yukarı işaret (manga gibi uzayan pati)
-const BAS_X = 94, BAS_Y = 18;                  // bulutun bağlandığı kafa tepesi
+const PATI_SAG = { x: 125, y: 68, aci: 100 };  // sağa (hafif yukarı) işaret
+const PATI_UST = { x: 140, y: 44, aci: 125, uzat: 1.9 };  // yukarı işaret (manga gibi uzayan pati)
+const BAS_X = 104, BAS_Y = 19;                 // bulutun bağlandığı kafa tepesi
 
 // Öğretici adımları. hedef: CSS seçici; sekme: önce açılacak sekme; tikla: kullanıcı hedefe tıklayınca otomatik geç.
 const OGRETICI_ADIMLAR = [
