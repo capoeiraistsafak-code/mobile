@@ -2968,7 +2968,8 @@ function turaIsle(i) {
 async function miniOynat(i) {
   if (mini.calisiyor || ogretici.aktif) return false;
   mini.calisiyor = true; mini.son = i;
-  turaIsle(i); kaydet();   // program kapanıp açılsa da tur kaldığı yerden devam eder (gizli kural, ekranda gösterilmez)
+  turaIsle(i); kaydet();   // program kapanıp açılsa da tur kaldığı yerden devam eder
+  miniTurGoster();          // yalnızca Ayarlar'daki küçük sayaç
   try { await MINI_ANIMLER[i].fn(); }
   catch (e) { /* durduruldu */ }
   finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
@@ -2998,7 +2999,15 @@ async function miniOtomatik() {
   await miniOynat(miniRastgele());
   miniPlanla();
 }
+/** Ayarlar'daki sayaç: bu turda kaç farklı animasyon görüldü (ör. 4 / 10). Başka yerde gösterilmez. */
+function miniTurGoster() {
+  const el = $('#miniTur');
+  if (!el) return;
+  const gorulen = animTuru().sayac.filter(c => c >= 1).length;
+  el.textContent = `Görülen animasyonlar: ${gorulen} / ${MINI_ANIMLER.length}`;
+}
 function miniAyarCiz() {
+  miniTurGoster();
   const t = $('#aAnimasyon');
   if (t) t.checked = !!S.ayarlar.animasyon;
   const a = $('#aAnimAralik');
