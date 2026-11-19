@@ -2684,7 +2684,7 @@ async function ogreticiAdim(i) {
     <div class="uzum-dugmeler">
       ${i > 0 && !son ? '<button type="button" class="btn small" data-og="geri">← Geri</button>' : ''}
       ${son ? '' : '<button type="button" class="btn small" data-og="bitir">Bitir</button>'}
-      <button type="button" class="btn small primary" data-og="ileri">${son ? 'Teşekkürler Üzüm! 💜' : a.tikla ? 'Benim yerime tıkla ➜' : 'Devam ➜'}</button>
+      <button type="button" class="btn small primary" data-og="ileri">${son ? 'Teşekkürler Üzüm! ❤️' : a.tikla ? 'Benim yerime tıkla ➜' : 'Devam ➜'}</button>
     </div>`;
   balonYerlestir();
   b.querySelector('[data-og=ileri]').focus({ preventScroll: true });
