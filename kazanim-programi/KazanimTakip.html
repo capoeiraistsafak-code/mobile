@@ -3933,13 +3933,24 @@ async function mKos(k, x, y, hiz = HIZ_KOS, easing = 'ease-in-out', sure = 0) {
   await a.finished;
   k.classList.remove('kosuyor', 'yuruyor');
 }
-/** Kavisli zıplama. */
+/** Bütün zıplamalar aynı sıçrayıştır: havada ön ayaklar öne, arka ayaklar geriye uzanır, gövde gerilir;
+ *  yere konunca kısa bir an çömelir. */
 async function mZipla(k, x, y, yuk = 60, ms = 620) {
   if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
-  const egim = k.sol ? 14 : -14;
-  const a = k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr((k.x + x) / 2, Math.min(k.y, y) - yuk, egim), offset: .45 }, { transform: kTr(x, y, -egim / 2), offset: .85 }, { transform: kTr(x, y) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
+  const egim = k.sol ? 16 : -16;
+  k.classList.remove('kosuyor', 'yuruyor', 'hazirlan', 'avlan');
+  k.classList.add('sicra');
+  const a = k.animate([
+    { transform: kTr(k.x, k.y) },
+    { transform: kTr(k.x + (x - k.x) * .45, Math.min(k.y, y) - yuk, egim), offset: .45 },
+    { transform: kTr(x, y, -egim * .6), offset: .88 },
+    { transform: kTr(x, y) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
   k.x = x; k.y = y;
+  await beklet(ms * .86);
+  k.classList.remove('sicra'); k.classList.add('kondu');
   await a.finished;
+  await beklet(220);
+  k.classList.remove('kondu');
 }
 /** Yerde yuvarlanır (bir tam tur). */
 async function mYuvarlan(k, dx, ms = 1150) {
@@ -4000,6 +4011,28 @@ function uzakKenar(o, k, ow = 36, oh = 36) {
   const sag = (o.x + ow / 2) >= (k.x + KW / 2);
   return { nesne: [sag ? w + 20 : -ow - 20, o.y], kedi: [sag ? w + 30 : -KW - 30, o.y + oh / 2 - KH * .72] };
 }
+/** Çıkış kovalamacası: oyuncak önde düz bir çizgide ekrandan çıkar; Üzüm biraz sonra arkasından koşar.
+ *  Süreler, oyuncak ekranda göründüğü sürece kedinin burnu onun gerisinde kalacak şekilde hesaplanır. */
+async function cikisKovala(k, o, ow = 36, oh = 36, hiz = 480, secenek = {}) {
+  const { w } = ekran();
+  const c = uzakKenar(o, k, ow, oh);
+  const sag = c.nesne[0] > o.x;
+  k.yon(!sag);
+  const oYol = Math.max(1, Math.abs(c.nesne[0] - o.x));
+  const oSure = Math.max(400, oYol / hiz * 1000);
+  // Oyuncağın ekrandan tamamen çıktığı an
+  const oKayip = Math.abs((sag ? w : -ow) - o.x) / oYol * oSure;
+  const gecikme = 280;
+  // Kedinin burnu (öndeki ucu) ekran kenarına, oyuncak kaybolduktan en az 250 ms sonra ulaşsın.
+  // İkisi de sabit hızla gittiği için kedi yol boyunca hiç oyuncağın önüne geçmez.
+  const burun = sag ? k.x + KW * .9 : k.x + KW * .1;
+  const burunYol = Math.max(1, Math.abs((sag ? w : 0) - burun));
+  const kYol = Math.abs(c.kedi[0] - k.x);
+  const kSure = Math.max(kYol / (HIZ_KOS + 40) * 1000, (oKayip + 250 - gecikme) * kYol / burunYol);
+  const kac = oGit(o, c.nesne[0], c.nesne[1], hiz, { easing: 'linear', ...secenek, sure: oSure });
+  await beklet(gecikme);
+  await Promise.all([kac, mKos(k, c.kedi[0], c.kedi[1], HIZ_KOS, 'linear', kSure)]);
+}
 /** Kovalamaca: kaçan önce yola çıkar; kedi biraz sonra ARKASINDAN koşar ve hep ondan sonra varır. */
 async function kovala(k, o, hedef, hiz, ow = 36, oh = 36, secenek = {}, kediHedef = null) {
   const [x, y] = hedef;
@@ -4014,7 +4047,7 @@ async function kovala(k, o, hedef, hiz, ow = 36, oh = 36, secenek = {}, kediHede
 }
 // Nesne hareketi (yuvarlanan top, uçan kelebek, kaçan fare...)
 function oKoy(o, x, y, r = 0) { o.x = x; o.y = y; o.r = r; o.sx = o.sx || 1; o.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg) scaleX(${o.sx})`; }
-async function oGit(o, x, y, hiz, { easing = 'ease-out', don = true, ark = 0, yaricap = 18, yonlu = false } = {}) {
+async function oGit(o, x, y, hiz, { easing = 'ease-out', don = true, ark = 0, yaricap = 18, yonlu = false, sure = 0 } = {}) {
   const d = Math.hypot(x - o.x, y - o.y);
   const r2 = don ? o.r + (x - o.x) / yaricap * 57.3 : o.r;
   if (yonlu && Math.abs(x - o.x) > 3) o.sx = x < o.x ? -1 : 1;
@@ -4022,7 +4055,7 @@ async function oGit(o, x, y, hiz, { easing = 'ease-out', don = true, ark = 0, ya
   const kf = [{ transform: tr(o.x, o.y, o.r) }];
   if (ark) kf.push({ transform: tr((o.x + x) / 2, Math.min(o.y, y) - ark, (o.r + r2) / 2), offset: .5 });
   kf.push({ transform: tr(x, y, r2) });
-  const a = o.animate(kf, { duration: sureHiz(d, hiz, 3000), easing, fill: 'both' });
+  const a = o.animate(kf, { duration: sure || sureHiz(d, hiz, 3000), easing, fill: 'both' });
   o.x = x; o.y = y; o.r = r2;
   await a.finished;
 }
@@ -4058,7 +4091,7 @@ async function animIpYumagi() {
     }
     await mPati(k);
     if (tur < 2) await kovala(k, top, ileri(top, k), 430);
-    else { const c = uzakKenar(top, k); await kovala(k, top, c.nesne, 430, 36, 36, { easing: 'ease-in' }, c.kedi); }
+    else await cikisKovala(k, top, 36, 36, 430);
   }
 }
 // 2) Lazer: ekranın farklı yerlerine tutulur; Üzüm her seferinde peşinden koşar, bazen üstüne atlar
@@ -4121,8 +4154,7 @@ async function animFare() {
       await mPati(k);
     }
   }
-  const c = uzakKenar(f, k, 42, 24);
-  await kovala(k, f, c.nesne, 520, 42, 24, { don: false, yonlu: true, easing: 'ease-in' }, c.kedi);
+  await cikisKovala(k, f, 42, 24, 520, { don: false, yonlu: true });
 }
 // 5) Balık: süzülen balığa iki kez zıplar; ilkinde balık kaçar, ikincisinde "Ham!"
 async function animBalik() {
@@ -4280,22 +4312,8 @@ const onPatiX = sol => (sol ? .35 : .65) * KW, ON_PATI_Y = KH * .93;
 async function mAvlan(k, ms) { k.classList.add('avlan'); await beklet(ms); k.classList.remove('avlan'); }
 /** Avına sıçrar: havada ön ayaklar öne, arka ayaklar geriye uzanır; yere konunca çömelir. */
 async function mSicra(k, x, y) {
-  if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
   const d = Math.hypot(x - k.x, y - k.y);
-  const ms = Math.min(720, Math.max(440, 360 + d * 1.1)), yuk = Math.min(80, 30 + d * .25);
-  const egim = k.sol ? 16 : -16;
-  k.classList.add('sicra');
-  const a = k.animate([
-    { transform: kTr(k.x, k.y) },
-    { transform: kTr(k.x + (x - k.x) * .45, Math.min(k.y, y) - yuk, egim), offset: .45 },
-    { transform: kTr(x, y, -egim * .6), offset: .88 },
-    { transform: kTr(x, y) }], { duration: ms, easing: 'ease-in-out', fill: 'both' });
-  k.x = x; k.y = y;
-  await beklet(ms * .86);
-  k.classList.remove('sicra'); k.classList.add('kondu');
-  await a.finished;
-  await beklet(260);
-  k.classList.remove('kondu');
+  await mZipla(k, x, y, Math.min(80, 30 + d * .25), Math.min(720, Math.max(440, 360 + d * 1.1)));
 }
 async function animFareYakala() {
   const { w, h } = ekran();
