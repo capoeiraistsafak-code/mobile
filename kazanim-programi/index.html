@@ -283,12 +283,22 @@
     </div>
     <div class="card">
       <h2>🎯 Konu analizi ve soru önerisi</h2>
-      <p class="muted">Bir konudaki başarı (doğru / soru sayısı) bu sınırlara göre değerlendirilir.</p>
-      <div class="form-grid">
-        <label>“Eksik” sınırı: başarı % bunun altındaysa<input id="aEsikEksik" type="number" min="1" max="99"></label>
-        <label>“İyi” sınırı: başarı % bu ve üstündeyse<input id="aEsikIyi" type="number" min="1" max="100"></label>
-        <label>Eksik konu için önerilen soru<input id="aSoruEksik" type="number" min="0" max="500"></label>
-        <label>Geliştirilmeli konu için önerilen soru<input id="aSoruOrta" type="number" min="0" max="500"></label>
+      <p class="muted">Kutucuklardaki sayıları değiştir, sonra “Kaydet”e bas. Cümleler öğrencinin önerisinde ve çalışma planında bu sayılarla yazılır.</p>
+      <div class="cumle-ayarlar">
+        <div class="cumle-ayar"><b>“Eksik” sınırı</b>
+          <p>Bir konuda başarı % <input id="aEsikEksik" type="number" min="1" max="99" aria-label="Eksik sınırı (yüzde)"> altında ise konu “Eksik” sayılır.</p></div>
+        <div class="cumle-ayar"><b>“İyi” sınırı</b>
+          <p>Bir konuda başarı % <input id="aEsikIyi" type="number" min="1" max="100" aria-label="İyi sınırı (yüzde)"> ve üstünde ise konu “İyi” sayılır.</p></div>
+        <div class="cumle-ayar"><b>Eksik konu için önerilen soru</b>
+          <p>Konu tekrarı yap, ardından <input id="aSoruEksik" type="number" min="0" max="500" aria-label="Eksik konu için soru sayısı"> soru çöz.</p></div>
+        <div class="cumle-ayar"><b>Geliştirilmeli konu için önerilen soru</b>
+          <p><input id="aSoruOrta" type="number" min="0" max="500" aria-label="Geliştirilmeli konu için soru sayısı"> soru çöz, yanlışlarını kontrol et.</p></div>
+        <div class="cumle-ayar"><b>Kazanımlarla hazırlanan planda kazanım başına soru</b>
+          <p>Her kazanım için <input id="aSoruKazanim" type="number" min="0" max="500" aria-label="Kazanım başına soru sayısı"> soru çöz.</p></div>
+        <div class="cumle-ayar"><b>Planda tekrar testi</b>
+          <p>Tekrar testi: çalışmada çözdüğü sorunun % <input id="aTekrarOran" type="number" min="1" max="200" aria-label="Tekrar testi oranı (yüzde)"> kadarı, en az <input id="aTekrarEnAz" type="number" min="0" max="500" aria-label="Tekrar testinde en az soru"> soru çöz, yanlışlarını kontrol et.</p></div>
+        <div class="cumle-ayar"><b>Planda son gün genel tekrar</b>
+          <p>Plandaki her konu için <input id="aGenelKonuBasi" type="number" min="0" max="100" aria-label="Genel tekrarda konu başına soru"> soru, en az <input id="aGenelEnAz" type="number" min="0" max="500" aria-label="Genel tekrarda en az soru"> soru olacak şekilde karışık soru çöz; sınavdaki yanlışlarını yeniden gözden geçir.</p></div>
       </div>
       <button class="btn" id="btnAyarKaydet" style="margin-top:10px">Kaydet</button>
     </div>

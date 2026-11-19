@@ -513,3 +513,10 @@ body.kilitli { overflow: hidden; }
 .mini-kedi.kondu .govde { transform: translateY(4px) scaleY(.96); transition: transform .12s; }
 .mini-kedi.kondu .on1, .mini-kedi.kondu .on2 { transform-origin: 95px 104px; transform: scaleY(.82); }
 .secim-tb { margin: 4px 0 8px; gap: 6px; }
+
+/* Cümle içinde sayı kutusu olan ayarlar */
+.cumle-ayarlar { display: grid; gap: 10px; margin: 6px 0 12px; }
+.cumle-ayar { background: var(--th); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; }
+.cumle-ayar b { display: block; font-size: .92rem; color: var(--primary); margin-bottom: 4px; }
+.cumle-ayar p { margin: 0; line-height: 2.2; }
+.cumle-ayar input[type=number] { width: 74px; display: inline-block; margin: 0 4px; padding: 4px 6px; text-align: center; font-weight: 800; }

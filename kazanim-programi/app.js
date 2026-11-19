@@ -21,7 +21,7 @@ derinDondur(VARSAYILAN_SEVIYELER); derinDondur(VARSAYILAN_KURUMLAR);
 let KURUMLAR = [];   // = S.kurumlar (kurumlariYukle ile)
 let KURUM = {};
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, soruKazanim: 20, tekrarOran: 50, tekrarEnAz: 5, genelKonuBasi: 3, genelEnAz: 10, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
   'İngilizce', 'Sosyal Bilgiler', 'Türk Dili ve Edebiyatı', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya',
@@ -2046,7 +2046,7 @@ function planDialog(o, secili, konuBazli) {
       <label>Plan başlığı<input id="pBaslik" value="${esc((S.sinavlar.filter(s => analizSecim.sinavlar.has(s.id)).map(s => s.ad).join(', ') || 'Kazanım') + ' – Çalışma planı')}"></label>
       <label>Başlangıç tarihi<input id="pBaslangic" type="date" value="${addDays(bugun(), 1)}"></label>
       <label>Süre (gün)<input id="pGun" type="number" min="1" max="90" value="${gunOneri}"></label>
-      ${konuBazli ? '' : '<label>Kazanım başına soru sayısı<input id="pSoru" type="number" min="0" max="200" value="20"></label>'}
+      ${konuBazli ? '' : `<label>Kazanım başına soru sayısı<input id="pSoru" type="number" min="0" max="500" value="${S.ayarlar.soruKazanim}"></label>`}
       <label>Günde en fazla yeni ${birim}<input id="pGunluk" type="number" min="1" max="20" value="${konuBazli ? 2 : 3}"></label>
       <label class="cb"><input type="checkbox" id="pKonu" checked> Konu tekrarı görevi ekle</label>
       <label class="cb"><input type="checkbox" id="pTekrar" checked> 3 gün sonra tekrar testi ekle</label>
@@ -2106,14 +2106,14 @@ function planOlustur(o, secili, a) {
       let ti = gi + 3;
       const sinir = genelGun >= 0 ? genelGun - 1 : gunler.length - 1;
       if (ti > sinir) ti = sinir > gi ? sinir : -1;
-      if (ti >= 0) gorevler.push({ ...temel, tarih: gunler[ti], tur: 'Tekrar', gorev: `Tekrar testi: ${Math.max(5, Math.round(soru / 2))} soru çöz, yanlışlarını kontrol et.` });
+      if (ti >= 0) gorevler.push({ ...temel, tarih: gunler[ti], tur: 'Tekrar', gorev: `Tekrar testi: ${Math.max(S.ayarlar.tekrarEnAz, Math.round(soru * S.ayarlar.tekrarOran / 100))} soru çöz, yanlışlarını kontrol et.` });
     }
   });
   if (genelGun >= 0) {
     const dersler = [...new Set(secili.map(e => e.k.ders))];
     dersler.forEach(d => gorevler.push({
       ders: d, kod: '', kazanim: 'Genel tekrar (bu plandaki tüm konular)', kazanimId: '', tamam: false,
-      tarih: gunler[genelGun], tur: 'Genel tekrar', gorev: `${d}: plandaki konulardan karışık ${Math.max(10, secili.filter(e => e.k.ders === d).length * 3)} soru çöz; sınavdaki yanlışlarını yeniden gözden geçir.`,
+      tarih: gunler[genelGun], tur: 'Genel tekrar', gorev: `${d}: plandaki konulardan karışık ${Math.max(S.ayarlar.genelEnAz, secili.filter(e => e.k.ders === d).length * S.ayarlar.genelKonuBasi)} soru çöz; sınavdaki yanlışlarını yeniden gözden geçir.`,
     }));
   }
   const turSira = { 'Çalışma': 0, 'Tekrar': 1, 'Genel tekrar': 2 };
@@ -2427,6 +2427,11 @@ function cizAyar() {
   $('#aEsikIyi').value = S.ayarlar.esikIyi;
   $('#aSoruEksik').value = S.ayarlar.soruEksik;
   $('#aSoruOrta').value = S.ayarlar.soruOrta;
+  $('#aSoruKazanim').value = S.ayarlar.soruKazanim;
+  $('#aTekrarOran').value = S.ayarlar.tekrarOran;
+  $('#aTekrarEnAz').value = S.ayarlar.tekrarEnAz;
+  $('#aGenelKonuBasi').value = S.ayarlar.genelKonuBasi;
+  $('#aGenelEnAz').value = S.ayarlar.genelEnAz;
 }
 function tumExcel() {
   const wb = XLSX.utils.book_new();
@@ -2676,10 +2681,17 @@ function olaylar() {
   });
   $('#btnTumExcel').onclick = tumExcel;
   $('#btnAyarKaydet').onclick = () => {
-    const sayi = (id, v) => { const n = parseInt($(id).value, 10); return Number.isFinite(n) ? n : v; };
-    const a = { esikEksik: sayi('#aEsikEksik', 50), esikIyi: sayi('#aEsikIyi', 80), soruEksik: sayi('#aSoruEksik', 40), soruOrta: sayi('#aSoruOrta', 20) };
+    // Boş ya da sınır dışı yazılan sayı, kutunun en küçük / en büyük değerine çekilir
+    const sayi = (id, v) => { const el = $(id), n = parseInt(el.value, 10); if (!Number.isFinite(n)) return v; return Math.min(+el.max, Math.max(+el.min, n)); };
+    const V = VARSAYILAN_AYARLAR;
+    const a = {
+      esikEksik: sayi('#aEsikEksik', V.esikEksik), esikIyi: sayi('#aEsikIyi', V.esikIyi),
+      soruEksik: sayi('#aSoruEksik', V.soruEksik), soruOrta: sayi('#aSoruOrta', V.soruOrta), soruKazanim: sayi('#aSoruKazanim', V.soruKazanim),
+      tekrarOran: sayi('#aTekrarOran', V.tekrarOran), tekrarEnAz: sayi('#aTekrarEnAz', V.tekrarEnAz),
+      genelKonuBasi: sayi('#aGenelKonuBasi', V.genelKonuBasi), genelEnAz: sayi('#aGenelEnAz', V.genelEnAz),
+    };
     if (a.esikEksik >= a.esikIyi) { toast('“Eksik” sınırı “İyi” sınırından küçük olmalı.'); return; }
-    S.ayarlar = { ...S.ayarlar, ...a }; kaydet(); toast('Ayarlar kaydedildi.');
+    S.ayarlar = { ...S.ayarlar, ...a }; kaydet(); cizAyar(); toast('Ayarlar kaydedildi.');
   };
   // Sınıf konu analizi
   $('#saSinav').onchange = e => { filtre.saSinav = e.target.value; cizSinifAnaliz(); };
