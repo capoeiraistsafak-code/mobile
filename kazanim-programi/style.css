@@ -34,32 +34,22 @@
   --font-baslik: "Baloo 2", "Nunito", "Segoe UI", system-ui, sans-serif;
   --r-kart: 18px;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1f1816; --bg-desen: #271e1b; --card: #2b2220; --field: #231c1a; --text: #f6ebe7; --muted: #bba59e;
-    --line: #47382f; --line-strong: #6a5145; --primary: #ff9a85; --primary-ink: #1f1816; --primary-soft: #43302a;
-    --pink: #ff97c0; --pink-soft: #3d2535; --mint: #5fd3ad; --sun: #ffcf6e;
-    --danger: #ff7d90; --danger-line: #5d2a35; --chip: #3a2b26; --chip-line: #5e463c;
-    --th: #33282a; --hover: #34292a; --bar-1: #3d2a24; --bar-2: #3a2530; --bar-ink: #fbe6df;
-    --ok-bg: #173329; --ok-line: #2a5c48; --ok-ink: #8fe0c0;
-    --bad-bg: #3d1d25; --bad-line: #6b3040; --bad-ink: #ffa9b7;
-    --warn-bg: #3a2e14; --warn-line: #6b5524; --warn-ink: #f5d382;
-    --shadow: rgba(0, 0, 0, .35); --shadow-strong: rgba(0, 0, 0, .55); --backdrop: rgba(0, 0, 0, .6);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #1f1816; --bg-desen: #271e1b; --card: #2b2220; --field: #231c1a; --text: #f6ebe7; --muted: #bba59e;
-  --line: #47382f; --line-strong: #6a5145; --primary: #ff9a85; --primary-ink: #1f1816; --primary-soft: #43302a;
+/* Renk modu yalnızca Ayarlar'daki "Koyu mod" düğmesiyle değişir; bilgisayarın koyu modu programı etkilemez.
+   Açık mod: pudra ve şeftali. Koyu mod: mor tonlar. */
+:root { color-scheme: only light; }
+:root[data-tema="koyu"] {
+  --bg: #1b1826; --bg-desen: #211d2f; --card: #262236; --field: #1f1c2c; --text: #eeeaf8; --muted: #a9a2c2;
+  --line: #3a3452; --line-strong: #544a75; --primary: #a68bff; --primary-ink: #1b1826; --primary-soft: #312a4d;
   --pink: #ff97c0; --pink-soft: #3d2535; --mint: #5fd3ad; --sun: #ffcf6e;
-  --danger: #ff7d90; --danger-line: #5d2a35; --chip: #3a2b26; --chip-line: #5e463c;
-  --th: #33282a; --hover: #34292a; --bar-1: #3d2a24; --bar-2: #3a2530; --bar-ink: #fbe6df;
+  --danger: #ff7d90; --danger-line: #5d2a35; --chip: #2f2a45; --chip-line: #4a4068;
+  --th: #2b2740; --hover: #2c2840; --bar-1: #2a2442; --bar-2: #3a2537; --bar-ink: #e9e3ff;
   --ok-bg: #173329; --ok-line: #2a5c48; --ok-ink: #8fe0c0;
   --bad-bg: #3d1d25; --bad-line: #6b3040; --bad-ink: #ffa9b7;
   --warn-bg: #3a2e14; --warn-line: #6b5524; --warn-ink: #f5d382;
   --shadow: rgba(0, 0, 0, .35); --shadow-strong: rgba(0, 0, 0, .55); --backdrop: rgba(0, 0, 0, .6);
-  color-scheme: dark;
+  color-scheme: only dark;
 }
+:root[data-tema="koyu"] .zzz { color: #a68bff; }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }

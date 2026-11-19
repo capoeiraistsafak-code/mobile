@@ -21,7 +21,7 @@ derinDondur(VARSAYILAN_SEVIYELER); derinDondur(VARSAYILAN_KURUMLAR);
 let KURUMLAR = [];   // = S.kurumlar (kurumlariYukle ile)
 let KURUM = {};
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, soruKazanim: 20, tekrarOran: 50, tekrarEnAz: 5, genelKonuBasi: 3, genelEnAz: 10, analizSinavSayisi: 1, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, soruKazanim: 20, tekrarOran: 50, tekrarEnAz: 5, genelKonuBasi: 3, genelEnAz: 10, analizSinavSayisi: 1, koyuMod: false, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
   'İngilizce', 'Sosyal Bilgiler', 'Türk Dili ve Edebiyatı', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya',
@@ -277,6 +277,7 @@ function sekmeAc(ad) {
   ciz();
 }
 function ciz() {
+  temaUygula();
   if (S.kazanimlar.length) bekleyenKazanimlariBagla();
   ({
     panel: cizPanel, ogrenci: cizOgrenci, kazanim: cizKazanim, sinav: cizSinav,
@@ -2496,6 +2497,7 @@ function fabrikaSonrasi() {
     detay: 'Program ilk hâliyle, fabrika ayarlarıyla başladı.' }]);
 }
 function cizAyar() {
+  temaUygula();
   miniAyarCiz();
   kurumAyarCiz();
   $('#dersListesi').value = S.dersler.join(', ');
@@ -3861,6 +3863,18 @@ async function cikisYap() {
   girisSonrasi();
 }
 /** Doğru şifreden hemen sonra: sayaç başlar, hoş geldin animasyonu oynar. */
+/** Renk modu: Ayarlar'daki "Koyu mod" düğmesine göre (bilgisayarın ayarına bakılmaz). */
+function temaUygula() {
+  document.documentElement.setAttribute('data-tema', S.ayarlar.koyuMod ? 'koyu' : 'acik');
+  const t = $('#aKoyuMod'); if (t) t.checked = !!S.ayarlar.koyuMod;
+}
+function temaOlaylari() {
+  $('#aKoyuMod').addEventListener('change', e => {
+    S.ayarlar.koyuMod = e.target.checked;
+    kaydetHemen(); temaUygula();
+    toast(e.target.checked ? 'Koyu mod açıldı 🌙' : 'Açık mod açıldı ☀️');
+  });
+}
 function girisSonrasi() {
   $('#kilitMesaj').textContent = 'Merhaba! Programı açmak için şifreni yaz.';
   miniPlanla();
@@ -3886,12 +3900,14 @@ function sifreOlaylari() {
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   kurumlariYukle();
+  temaUygula();          // şifre ekranı da seçili renk modunda görünür
   kilitHazirla();
   await kilitAc();
   olaylar();
   ogreticiOlaylari();
   miniOlaylari();
   sifreOlaylari();
+  temaOlaylari();
   ciz();
   miniAyarCiz();
   girisSonrasi();        // sayaç doğru şifre girildiği an başlar; girişe özel hoş geldin animasyonu
