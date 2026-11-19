@@ -1953,8 +1953,8 @@ function cizAnaliz() {
     <h3>📝 Sınavlar</h3>
     ${girilmis.length ? `<div class="sinav-sayi">
       <label for="anSinavSayi">Analizi şu sınavlara göre yap:</label>
-      <select id="anSinavSayi">${SINAV_SAYILARI.map(([n, ad]) => opt(n, ad, !analizSecim.elle && n === sn)).join('')}${analizSecim.elle ? opt('elle', 'Elle seçtiğim sınavlar', true) : ''}</select>
-      <span class="muted small">Öğrencinin ${girilmis.length} sınavı var; ${secSay} sınava göre rapor hazırlanıyor.${!analizSecim.elle && sn > girilmis.length ? ' (Daha az sınavı olduğu için hepsi alındı.)' : ''}</span>
+      <select id="anSinavSayi">${opt('elle', 'Elle seçtiğim sınavlar', analizSecim.elle)}${SINAV_SAYILARI.map(([n, ad]) => opt(n, ad, !analizSecim.elle && n === sn)).join('')}</select>
+      <span class="muted small">Öğrencinin ${girilmis.length} sınavı var; ${secSay} sınava göre rapor hazırlanıyor.${!analizSecim.elle && sn > girilmis.length ? ' (Daha az sınavı olduğu için hepsi alındı.)' : ''}${analizSecim.elle ? ' Aşağıdan istediğin sınavları işaretle.' : ''}</span>
     </div>` : ''}
     ${girilmis.length > 1 ? analizHepsi('sinav') : ''}
     ${girilmis.length ? girilmis.map(s => {
@@ -2659,7 +2659,8 @@ function olaylar() {
       t.checked ? analizSecim.sinavlar.add(t.dataset.anSinav) : analizSecim.sinavlar.delete(t.dataset.anSinav);
       analizSecim.kazanimlar = null; analizSecim.konular = null; analizSecim.elle = true; cizAnaliz();
     } else if (t.id === 'anSinavSayi') {
-      if (t.value === 'elle') return;
+      // "Elle seçtiğim sınavlar": işaretli sınavlar aynen kalır, sen aşağıdan istediğini işaretlersin
+      if (t.value === 'elle') { analizSecim.elle = true; const y = window.scrollY; cizAnaliz(); window.scrollTo(0, y); return; }
       S.ayarlar.analizSinavSayisi = parseInt(t.value, 10); kaydet();
       Object.assign(analizSecim, { sinavlar: null, kazanimlar: null, konular: null, elle: false });
       const y = window.scrollY; cizAnaliz(); window.scrollTo(0, y);
