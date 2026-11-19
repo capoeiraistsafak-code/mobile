@@ -230,18 +230,40 @@ function kazanimEtiket(k) {
 function kazanimBulKodVeyaMetin(kodVeyaMetin, ders, ornek = false) {
   const v = String(kodVeyaMetin || '').trim();
   if (!v) return null;
+  // Önce sınavla aynı türdeki (kendi / örnek) kazanımlara bakılır; orada yoksa sistemde tanımlı bütün kazanımlara
+  const ayni = S.kazanimlar.filter(x => !!x.ornek === !!ornek);
+  return kazanimHavuzdaBul(v, ders, ayni) || kazanimHavuzdaBul(v, ders, S.kazanimlar);
+}
+/** Kazanımın kodu: "Kod" sütunu ya da (kod sütunu yoksa) metnin başındaki kod ("M.9.1.1.1. Metin"). */
+function kazanimKodu(k) {
+  if (k.kod) return k.kod;
+  const ilk = String(k.metin || '').trim().split(/\s+/)[0] || '';
+  return /\d/.test(ilk) && /[.\-]/.test(ilk) ? ilk.replace(/[.:]+$/, '') : '';
+}
+function kazanimHavuzdaBul(v, ders, havuz) {
   const n = norm(v);
-  // Kendi sınavların yalnızca kendi kazanımlarına, örnek sınav örnek kazanımlara bağlanır
-  const havuz = S.kazanimlar.filter(x => !!x.ornek === !!ornek);
-  let k = havuz.find(x => x.kod && norm(x.kod) === n);
+  if (!n) return null;
+  const kodlu = havuz.filter(x => kazanimKodu(x));
+  let k = kodlu.find(x => norm(kazanimKodu(x)) === n);
   if (k) return k;
-  // Kod, metnin başında olabilir: "M.8.1.1.1. Kazanım metni"
+  // Kod, yazının başında olabilir: "M.8.1.1.1. Kazanım metni" ya da listeden seçilen "M.8.1.1.1 – metin"
   const kodAdayi = v.split(/\s+/)[0];
-  k = havuz.find(x => x.kod && norm(x.kod) === norm(kodAdayi));
+  k = kodlu.find(x => norm(kazanimKodu(x)) === norm(kodAdayi));
   if (k) return k;
-  const adaylar = havuz.filter(x => norm(x.metin) === n || (n.length > 15 && norm(x.metin).startsWith(n)));
+  const adaylar = havuz.filter(x => norm(x.metin) === n || norm(kazanimEtiket(x)) === n || (n.length > 15 && norm(x.metin).startsWith(n)));
   if (ders) return adaylar.find(x => norm(x.ders) === norm(ders)) || adaylar[0] || null;
   return adaylar[0] || null;
+}
+/** Sistemde henüz olmayan bir kazanım koduyla girilmiş sorular, o kazanım tanımlanınca kendiliğinden bağlanır. */
+function bekleyenKazanimlariBagla() {
+  let n = 0;
+  for (const s of S.sinavlar) for (const q of s.sorular) {
+    if (q.kazanimId || !q.kazanimKod) continue;
+    const k = kazanimBulKodVeyaMetin(q.kazanimKod, q.ders, s.ornek);
+    if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; delete q.kazanimKod; n++; }
+  }
+  if (n) kaydet();
+  return n;
 }
 
 // ---------------------------------------------------------------------------
@@ -255,6 +277,7 @@ function sekmeAc(ad) {
   ciz();
 }
 function ciz() {
+  if (S.kazanimlar.length) bekleyenKazanimlariBagla();
   ({
     panel: cizPanel, ogrenci: cizOgrenci, kazanim: cizKazanim, sinav: cizSinav,
     sonuc: cizSonuc, analiz: cizAnaliz, sinifanaliz: cizSinifAnaliz, ayar: cizAyar,
@@ -964,7 +987,7 @@ async function anahtarIceAktarIc(s, file) {
   const r = anahtarUygula(s, p.kayitlar);
   kaydet(); cizSinav();
   const kart = { ok: true, baslik: `${file.name} aktarıldı`, detay: `${r.n} soru yüklendi: ${s.ad}.` };
-  if (r.bulunamadi) kart.not = `${r.bulunamadi} sorunun kazanım kodu Kazanımlar listesinde yok; o sorularda yalnızca konu kullanılacak.`;
+  if (r.bulunamadi) kart.not = `${r.bulunamadi} sorunun kazanım kodu Kazanımlar listesinde yok. Kodlar saklandı: o kazanımları yüklediğinde sorulara kendiliğinden bağlanır.`;
   sonucGoster([kart]);
 }
 const sonucIceAktar = tekIslem(sonucIceAktarIc);
@@ -1568,7 +1591,7 @@ function cizSinav() {
       <button class="btn danger" id="btnSinavSil">🗑️ Sınavı sil</button>
     </div>
     <p class="small muted">${s.sorular.length} soru${atanmamis ? ` · <span class="chip orange">${atanmamis} soruya kazanım atanmamış</span>` : ''}${konusuz ? ` · <span class="chip orange">${konusuz} sorunun konusu yok</span>` : ''}.
-      Konu analizi için her sorunun <b>konusu</b> yeterli; kazanım atarsanız konu kazanımdan otomatik gelir. Kazanım kutusuna kod veya metin yazarak arayabilirsiniz.</p>
+      Konu analizi için her sorunun <b>konusu</b> yeterli; kazanım atarsanız konu kazanımdan otomatik gelir. Kazanım kutusuna tanımlı bir kazanımın <b>kodunu yazıp boşluk bırakırsanız</b> kazanım kendiliğinden tanımlanır; listeden de seçebilirsiniz.</p>
     <datalist id="kzDL">${kzSecenekleri.map(k => `<option value="${esc(kazanimEtiket(k))}">`).join('')}</datalist>
     <datalist id="konuDL">${[...new Set([...S.kazanimlar.map(k => k.konu || k.unite), ...S.sinavlar.flatMap(x => x.sorular.map(q => q.konu))].filter(Boolean))].sort(cmpTr).map(k => `<option value="${esc(k)}">`).join('')}</datalist>
     <datalist id="dersDL3">${S.dersler.map(d => opt(d, d)).join('')}</datalist>
@@ -1578,18 +1601,31 @@ function cizSinav() {
         <td><input data-q="${i}" data-f="no" value="${esc(q.no)}" style="width:52px"></td>
         <td><input data-q="${i}" data-f="ders" value="${esc(q.ders)}" list="dersDL3" style="width:150px"></td>
         <td><input data-q="${i}" data-f="konu" value="${esc(q.konu || '')}" list="konuDL" style="width:180px" placeholder="${esc(q.kazanimId ? soruKonu(q) : 'konu adı')}"></td>
-        <td><input data-q="${i}" data-f="kazanim" value="${esc(q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : '')}" list="kzDL" style="width:100%" placeholder="kazanım kodu veya metni"></td>
+        <td><input data-q="${i}" data-f="kazanim" value="${esc(q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : (q.kazanimKod || ''))}" list="kzDL" style="width:100%" placeholder="kazanım kodunu yazıp boşluk bırak" ${!q.kazanimId && q.kazanimKod ? 'class="kz-bekliyor" title="Bu kod Kazanımlar listesinde yok; kazanım yüklenince kendiliğinden bağlanır."' : ''}></td>
         <td><input data-q="${i}" data-f="cevap" value="${esc(q.cevap)}" style="width:50px"></td>
         <td><button class="btn small" data-q-sil="${i}">✕</button></td></tr>`).join('')}
     </table></div>`;
 }
+function soruyaKazanimBagla(s, q, k, kutu) {
+  q.kazanimId = k.id; delete q.kazanimKod;
+  // Ders kazanımdan gelir (ör. önceki sorudan kopyalanan ders kazanımın dersiyle değişir)
+  if (k.ders && q.ders !== k.ders) { q.ders = k.ders; const d = kutu?.closest('tr')?.querySelector('[data-f=ders]'); if (d) d.value = k.ders; }
+  if (kutu) {
+    kutu.value = kazanimEtiket(k);
+    kutu.scrollLeft = 0;   // kodun görünmesi için yazının başı gösterilir
+    kutu.classList.remove('kz-tamam'); void kutu.offsetWidth; kutu.classList.add('kz-tamam');
+    const kz = kutu.closest('tr')?.querySelector('[data-f=konu]'); if (kz && !kz.value) kz.placeholder = soruKonu(q);
+  }
+}
 function sinavKazanimlari(s) {
   // Sınav seviyesine uygun kazanımları öne al; mezun sınavlarında tüm lise kazanımları
+  // Sınavla aynı türdeki kazanımlar önce; yoksa sistemde tanımlı bütün kazanımlar
   let l = S.kazanimlar.filter(k => !!k.ornek === !!s.ornek);
+  if (!l.length) l = S.kazanimlar.slice();
   const sv = s.seviye ? [s.seviye] : kurumAl(s.kurum).seviyeler;
   const uygun = l.filter(k => !k.seviye || sv.includes(k.seviye));
   if (uygun.length) l = uygun;
-  return l.slice().sort((a, b) => cmpTr(a.ders, b.ders) || cmpTr(a.kod, b.kod));
+  return l.slice().sort((a, b) => cmpTr(a.ders, b.ders) || cmpTr(kazanimKodu(a), kazanimKodu(b)));
 }
 function yeniSinav() {
   const kurum = KURUM[filtre.kurum] ? filtre.kurum : varsayilanKurum();
@@ -1651,7 +1687,8 @@ function anahtarUygula(s, kayitlar) {
     if (r.konu) q.konu = r.konu;
     if (r.kazanim) {
       const k = kazanimBulKodVeyaMetin(r.kazanim, q.ders, s.ornek);
-      if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; } else bulunamadi++;
+      if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; delete q.kazanimKod; }
+      else { q.kazanimId = ''; q.kazanimKod = String(r.kazanim).trim(); bulunamadi++; }   // kazanım sonra tanımlanınca bağlanır
     }
     n++;
   }
@@ -1672,7 +1709,7 @@ async function anahtarIceAktarElle(s, file) {
       let n = 0, bulunamadi = 0;
       for (const p of secilenler) { const r = anahtarUygula(s, p.kayitlar); n += r.n; bulunamadi += r.bulunamadi; }
       kaydet(); cizSinav();
-      toast(`${n} soru işlendi${bulunamadi ? `, ${bulunamadi} kazanım listede bulunamadı (önce kazanımları içe aktarın)` : ''}.`, 5000);
+      toast(`${n} soru işlendi${bulunamadi ? `, ${bulunamadi} kazanım kodu listede yok (kazanımları yükleyince kendiliğinden bağlanır)` : ''}.`, 5000);
     },
   });
 }
@@ -2579,6 +2616,17 @@ function olaylar() {
   // Sınavlar
   $('#btnYeniSinav').onclick = yeniSinav;
   $('#sinavListe').addEventListener('click', e => { const b = e.target.closest('[data-sinav]'); if (b) { filtre.seciliSinav = b.dataset.sinav; cizSinav(); } });
+  // Kazanım kutusuna tanımlı bir kazanımın kodu yazılıp BOŞLUK bırakılınca kazanım kendiliğinden tanımlanır
+  $('#sinavDetay').addEventListener('input', e => {
+    const t = e.target;
+    if (t.dataset.f !== 'kazanim' || !/\s$/.test(t.value)) return;
+    const s = sinavBul(filtre.seciliSinav), q = s?.sorular[+t.dataset.q];
+    const v = t.value.trim();
+    if (!q || !v || /\s/.test(v)) return;              // yalnızca tek parça kod
+    const ayni = S.kazanimlar.filter(x => !!x.ornek === !!s.ornek);
+    const k = [ayni, S.kazanimlar].map(h => h.find(x => kazanimKodu(x) && norm(kazanimKodu(x)) === norm(v))).find(Boolean);
+    if (k) { soruyaKazanimBagla(s, q, k, t); kaydet(); }
+  });
   $('#sinavDetay').addEventListener('change', e => {
     const s = sinavBul(filtre.seciliSinav);
     if (!s) return;
@@ -2593,11 +2641,11 @@ function olaylar() {
       const f = t.dataset.f;
       if (f === 'kazanim') {
         const v = t.value.trim();
-        if (!v) q.kazanimId = '';
+        if (!v) { q.kazanimId = ''; delete q.kazanimKod; }
         else {
           const k = sinavKazanimlari(s).find(k => kazanimEtiket(k) === v) || kazanimBulKodVeyaMetin(v, q.ders, s.ornek);
-          if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; t.value = kazanimEtiket(k); }
-          else { toast('Kazanım bulunamadı. Listeden seçin veya önce kazanımı ekleyin.'); t.value = q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : ''; }
+          if (k) soruyaKazanimBagla(s, q, k, t);
+          else { toast(`“${v}” kodlu kazanım tanımlı değil. Önce Kazanımlar sekmesinden kazanım listesini yükleyin.`, 4000); t.value = q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : ''; }
         }
       } else if (f === 'no') {
         const eski = String(q.no), yeni = t.value.trim();

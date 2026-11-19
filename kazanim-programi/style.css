@@ -526,3 +526,7 @@ body.kilitli { overflow: hidden; }
 /* Üst menüde Çıkış düğmesi */
 nav button.cikis-btn { color: var(--danger); }
 nav button.cikis-btn:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); }
+/* Sınav sorusunda kazanım: tanımlanınca kısa yeşil parlama; kodu henüz tanımlı değilse turuncu çerçeve */
+input.kz-tamam { animation: kzTamam 1.2s ease-out; }
+@keyframes kzTamam { 0% { box-shadow: 0 0 0 3px var(--ok-line); background: var(--ok-bg); } 100% { box-shadow: none; } }
+input.kz-bekliyor { border-color: var(--warn-line); background: var(--warn-bg); }
