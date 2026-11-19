@@ -3307,6 +3307,7 @@ const BAS_X = 104, BAS_Y = 19;                 // bulutun bağlandığı kafa te
 // Öğretici adımları. hedef: CSS seçici; sekme: önce açılacak sekme; tikla: kullanıcı hedefe tıklayınca otomatik geç.
 const OGRETICI_ADIMLAR = [
   { metin: 'Merhaba! Ben Üzüm 🐾 Bu programı birlikte öğreneceğiz. Hazırsan “Devam”a bas, ben de koşa koşa göstereyim!' },
+  { metin: 'Bu program ne işe yarar? 📚 Öğrencilerinin deneme sınavı sonuçlarına bakar ve her birinin hangi konularda eksiği olduğunu bulur. Sonra her öğrenciye hangi konudan kaç soru çözmesi gerektiğini söyler; istersen ödev ve çalışma planı da hazırlar. Sınıfın genelinde en zayıf konuları da gösterir. Amacımız: her öğrenci doğru konuya, doğru miktarda çalışsın! 🐾' },
   { sekme: 'panel', hedef: '[data-tab=panel]', metin: 'Burası Ana Sayfa. Ne yapacağını unutursan buraya gel; 4 adımın hepsi burada yazıyor.' },
   { sekme: 'panel', hedef: '#tab-panel .adim:nth-child(1) [data-ornek]', metin: 'Önce “Örnek Excel”i indir. İçinde nasıl dolduracağın yazıyor: örnek öğrencileri sil, kendi öğrencilerini yaz.' },
   { hedef: '[data-tab=ogrenci]', tikla: true, metin: 'Şimdi “Öğrenciler”e tıkla.' },
@@ -3604,13 +3605,13 @@ function kenar(ad) {
 const kTr = (x, y, r = 0) => `translate(${x}px, ${y}px) translate(${KW / 2}px, ${KH / 2}px) rotate(${r}deg) translate(${-KW / 2}px, ${-KH / 2}px) scale(${S_KEDI})`;
 function kKoy(k, x, y) { k.x = x; k.y = y; k.style.transform = kTr(x, y); }
 /** Koşar (ya da yürür); yönünü kendi çevirir. */
-async function mKos(k, x, y, hiz = HIZ_KOS, easing = 'ease-in-out') {
+async function mKos(k, x, y, hiz = HIZ_KOS, easing = 'ease-in-out', sure = 0) {
   const d = Math.hypot(x - k.x, y - k.y);
   if (d < 3) return;
   if (Math.abs(x - k.x) > 4) k.yon(x < k.x);
   k.classList.add('kosuyor');
   k.classList.toggle('yuruyor', hiz < 150);
-  const a = k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr(x, y) }], { duration: sureHiz(d, hiz), easing, fill: 'both' });
+  const a = k.animate([{ transform: kTr(k.x, k.y) }, { transform: kTr(x, y) }], { duration: sure || sureHiz(d, hiz), easing, fill: 'both' });
   k.x = x; k.y = y;
   await a.finished;
   k.classList.remove('kosuyor', 'yuruyor');
@@ -3634,14 +3635,66 @@ async function mYuvarlan(k, dx, ms = 1150) {
 async function mPati(k) { k.classList.add('pati-at'); await beklet(480); k.classList.remove('pati-at'); }
 async function mHazirlan(k, ms = 750) { k.classList.add('hazirlan'); await beklet(ms); k.classList.remove('hazirlan'); }
 /** Kedinin patisi nesneye değecek şekilde yanına koşar. */
-function yanNokta(k, o, ow = 36, oh = 36) {
-  const solda = (k.x + KW / 2) < (o.x + ow / 2);
+function yanNokta(k, o, ow = 36, oh = 36, oda = false) {
+  // oda: pati atılacak; kedi nesnenin, önünde (baktığı yönde) boşluk kalan tarafına geçer
+  const solda = oda ? (o.x + ow / 2) < ekran().w / 2 : (k.x + KW / 2) < (o.x + ow / 2);
   const x = solda ? o.x - KW * .8 : o.x + ow - KW * .2;
   const { h } = ekran();
   const y = Math.min(Math.max(o.y + oh / 2 - KH * .72, UST_SINIR - 10), h - KH - 6);
   return [x, y];
 }
-async function yanina(k, o, ow, oh, hiz = HIZ_KOS) { const [x, y] = yanNokta(k, o, ow, oh); await mKos(k, x, y, hiz); k.yon(x > o.x); }
+async function yanina(k, o, ow, oh, hiz = HIZ_KOS, oda = false) {
+  const [x, y] = yanNokta(k, o, ow, oh, oda);
+  // Nesnenin öbür yanına geçecekse içinden geçmesin: önce nesnenin altından/üstünden dolaşır
+  const kc = k.x + KW / 2, oc = o.x + ow / 2, hc = x + KW / 2;
+  if ((kc - oc) * (hc - oc) < 0 && Math.abs(kc - oc) < KW * 1.6) {
+    const { h } = ekran();
+    const dolY = o.y + oh / 2 > h * .55 ? Math.max(UST_SINIR, o.y - KH - 10) : Math.min(h - KH - 10, o.y + oh + 10);
+    await mKos(k, oc - KW / 2, dolY, hiz);
+  }
+  await mKos(k, x, y, hiz);
+  k.yon(x > o.x);
+}
+/** Kaçış/fırlatma hedefi: (vx, vy) yönünde, ekranın içinde, en az "enAz" uzakta en uygun nokta. */
+function yondekiNokta(o, vx, vy, ow = 36, oh = 36, enAz = 200) {
+  const { w, h } = ekran();
+  const L = Math.hypot(vx, vy) || 1; vx /= L; vy /= L;
+  const ox = o.x + ow / 2, oy = o.y + oh / 2;
+  let en = null, enSkor = -1e9;
+  for (let t = 0; t < 60; t++) {
+    const x = rnd(30, w - ow - 30), y = rnd(UST_SINIR + 20, h - oh - 16);
+    const dx = x + ow / 2 - ox, dy = y + oh / 2 - oy, d = Math.hypot(dx, dy);
+    if (d < enAz) continue;
+    const hiza = (dx * vx + dy * vy) / d;                  // 1: tam o yönde, -1: ters yönde
+    const skor = hiza * 3 + Math.min(d, 650) / 650 + rnd(0, .4);
+    if (skor > enSkor) { enSkor = skor; en = [x, y]; }
+  }
+  return en || [Math.min(Math.max(o.x + vx * 260, 30), w - ow - 30), Math.min(Math.max(o.y + vy * 260, UST_SINIR + 20), h - oh - 16)];
+}
+/** Kaçan, kediden UZAĞA kaçar. */
+function uzaklas(o, k, ow = 36, oh = 36) {
+  return yondekiNokta(o, o.x + ow / 2 - (k.x + KW / 2), o.y + oh / 2 - (k.y + KH / 2), ow, oh);
+}
+/** Pati, kedinin BAKTIĞI yöne atılır. */
+function ileri(o, k, ow = 36, oh = 36) { return yondekiNokta(o, k.sol ? -1 : 1, rnd(-.45, .45), ow, oh); }
+/** Kediden uzak taraftaki ekran kenarı (çıkış). */
+function uzakKenar(o, k, ow = 36, oh = 36) {
+  const { w } = ekran();
+  const sag = (o.x + ow / 2) >= (k.x + KW / 2);
+  return { nesne: [sag ? w + 20 : -ow - 20, o.y], kedi: [sag ? w + 30 : -KW - 30, o.y + oh / 2 - KH * .72] };
+}
+/** Kovalamaca: kaçan önce yola çıkar; kedi biraz sonra ARKASINDAN koşar ve hep ondan sonra varır. */
+async function kovala(k, o, hedef, hiz, ow = 36, oh = 36, secenek = {}, kediHedef = null) {
+  const [x, y] = hedef;
+  const kacSure = sureHiz(Math.hypot(x - o.x, y - o.y), hiz, 3000);
+  const kac = oGit(o, x, y, hiz, { easing: 'ease-out', ...secenek });
+  const gecikme = 260;
+  await beklet(gecikme);
+  const [cx, cy] = kediHedef || yanNokta(k, { x, y }, ow, oh);
+  const dogal = sureHiz(Math.hypot(cx - k.x, cy - k.y), HIZ_KOS + 60);
+  await Promise.all([kac, mKos(k, cx, cy, HIZ_KOS, 'ease-in-out', Math.max(dogal, kacSure - gecikme + 220))]);
+  if (!kediHedef) k.yon(cx > x);
+}
 // Nesne hareketi (yuvarlanan top, uçan kelebek, kaçan fare...)
 function oKoy(o, x, y, r = 0) { o.x = x; o.y = y; o.r = r; o.sx = o.sx || 1; o.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg) scaleX(${o.sx})`; }
 async function oGit(o, x, y, hiz, { easing = 'ease-out', don = true, ark = 0, yaricap = 18, yonlu = false } = {}) {
@@ -3665,18 +3718,17 @@ function karsiNokta(o, ow = 36, oh = 36) {
   return [x, rnd(UST_SINIR + 40, h - oh - 20)];
 }
 
-// 1) İp yumağı: girer, Üzüm yakalar, yuvarlanır, pati atar; yumak 3 kez yer değiştirip ekrandan çıkar
+// 1) İp yumağı: girer, Üzüm arkasından gelip yakalar, yuvarlanır; pati attıkça yumak İLERİ gider, Üzüm peşinden koşar; 3. patide yumak ekrandan çıkar
 async function animIpYumagi() {
-  const [g, c] = sec([['sagUst', 'solAlt'], ['solAlt', 'sagUst'], ['sagAlt', 'solUst'], ['solUst', 'sagOrta']]).map(kenar);
+  const [g] = sec([['sagUst'], ['solAlt'], ['sagAlt'], ['solUst'], ['solOrta'], ['sagOrta']]).map(kenar);
   const top = nesne(MINI_SVG.yumak), k = miniKedi();
+  const icerden = g[0] < 0 ? 1 : -1;
   oKoy(top, g[0] < 0 ? -40 : g[0] + 10, g[1] + KH * .5);
-  kKoy(k, g[0], g[1]);
+  kKoy(k, g[0] - icerden * 90, g[1]);                 // kedi yumağın arkasında, ekranın dışında
   const [ax, ay] = icNokta(.25, .75);
-  const girisTop = oGit(top, ax, ay + KH * .5, 340);
-  await beklet(350);
-  await girisTop;
+  await kovala(k, top, [ax, ay + KH * .5], 340);
   for (let tur = 0; tur < 3; tur++) {
-    await yanina(k, top);
+    await yanina(k, top, 36, 36, HIZ_KOS, true);       // önünde boşluk olan tarafa geçer
     if (tur === 0) {
       await mHazirlan(k);
       await mZipla(k, k.x + (k.sol ? -18 : 18), k.y, 40, 520);
@@ -3687,10 +3739,9 @@ async function animIpYumagi() {
     } else {
       await beklet(150);
     }
-    const [nx, ny] = tur < 2 ? karsiNokta(top) : [c[0] < 0 ? -60 : c[0] + 20, c[1] + KH * .5];
     await mPati(k);
-    if (tur < 2) await oGit(top, nx, ny, 430);
-    else await Promise.all([oGit(top, nx, ny, 430, { easing: 'ease-in' }), beklet(250).then(() => mKos(k, c[0], c[1]))]);
+    if (tur < 2) await kovala(k, top, ileri(top, k), 430);
+    else { const c = uzakKenar(top, k); await kovala(k, top, c.nesne, 430, 36, 36, { easing: 'ease-in' }, c.kedi); }
   }
 }
 // 2) Lazer: ekranın farklı yerlerine tutulur; Üzüm her seferinde peşinden koşar, bazen üstüne atlar
@@ -3723,34 +3774,38 @@ async function animKelebek() {
   for (let i = 0; i < 2; i++) {
     const [bx, by] = icNokta(i % 2 ? .5 : .05, i % 2 ? .95 : .5);
     const kon = { x: bx + KW * .45, y: by + KH * .2 };
-    await Promise.all([oGit(kb, kon.x, kon.y, 220, { don: false, ark: 50, easing: 'ease-in-out' }), beklet(400).then(() => yanina(k, kon, 34, 28, HIZ_YURU))]);
+    await oGit(kb, kon.x, kon.y, 260, { don: false, ark: 50, easing: 'ease-in-out' });   // önce kelebek konar
+    await yanina(k, kon, 34, 28, HIZ_YURU);                                                // sonra Üzüm sinsice yaklaşır
     await mHazirlan(k, 750);
-    const kac = karsiNokta(kb, 34, 28);
+    const kac = uzaklas(kb, k, 34, 28);
     await Promise.all([mZipla(k, k.x + (k.sol ? -30 : 30), k.y - 6, 70, 600), beklet(200).then(() => oGit(kb, kac[0], kac[1] - 60, 420, { don: false, ark: 80 }))]);
     kb.x = kac[0]; kb.y = kac[1] - 60;
   }
-  const cikis = oGit(kb, c[0] < 0 ? -50 : c[0], UST_SINIR - 60, 300, { don: false, ark: 40, easing: 'ease-in' });
-  await kBalon(k, 'Hıh! 😼', 1000);
-  await Promise.all([cikis, mKos(k, c[0], c[1])]);
+  await Promise.all([oGit(kb, kb.x + (kb.x > k.x ? 1 : -1) * 900, UST_SINIR - 80, 320, { don: false, ark: 40, easing: 'ease-in' }), kBalon(k, 'Hıh! 😼', 1100)]);
+  await mKos(k, c[0], c[1]);
 }
-// 4) Oyuncak fare: zikzak kaçar, Üzüm kovalar, yakalayıp pati ile fırlatır, fare kaçıp gider
+// 4) Oyuncak fare: fare hep kediden UZAĞA kaçar, Üzüm hep ARKASINDAN kovalar; yakalayıp pati ile ileri fırlatır; fare kaçıp gider
 async function animFare() {
-  const [g, c] = sec([['sagAlt', 'solAlt'], ['solAlt', 'sagOrta'], ['sagOrta', 'solUst'], ['solUst', 'sagAlt']]).map(kenar);
+  const [g] = sec([['sagAlt'], ['solAlt'], ['sagOrta'], ['solUst'], ['solOrta'], ['sagUst']]).map(kenar);
   const f = nesne(MINI_SVG.fare), k = miniKedi();
+  const icerden = g[0] < 0 ? 1 : -1;
   oKoy(f, g[0] < 0 ? -50 : g[0], g[1] + KH * .6);
-  kKoy(k, g[0], g[1]);
+  kKoy(k, g[0] - icerden * 120, g[1]);                // kedi farenin arkasında
   for (let i = 0; i < 3; i++) {
-    const [fx, fy] = karsiNokta(f, 42, 24);
-    await Promise.all([oGit(f, fx, fy, 480, { don: false, yonlu: true, easing: 'ease-in-out' }), beklet(250).then(() => yanina(k, { x: fx, y: fy }, 42, 24, 380))]);
+    await kovala(k, f, uzaklas(f, k, 42, 24), 480, 42, 24, { don: false, yonlu: true, easing: 'ease-in-out' });
     if (i === 1) {
       await mHazirlan(k, 600);
       await mZipla(k, k.x + (k.sol ? -20 : 20), k.y, 45, 520);
       await kBalon(k, 'Yakaladım!', 1000);
+      await mPati(k);
+      const [fx, fy] = ileri(f, k, 42, 24);              // pati ile ileri fırlatır, yine arkasından koşar
+      await kovala(k, f, [f.x + (fx - f.x) * .45, f.y + (fy - f.y) * .45], 320, 42, 24, { don: true, yaricap: 10 });
+    } else {
+      await mPati(k);
     }
-    await mPati(k);
-    if (i < 2) await oGit(f, f.x + (k.sol ? -90 : 90), f.y + rnd(-30, 30), 300, { don: true, yaricap: 10 });
   }
-  await Promise.all([oGit(f, c[0] < 0 ? -60 : c[0] + 20, c[1] + KH * .6, 480, { don: false, yonlu: true, easing: 'ease-in' }), beklet(300).then(() => mKos(k, c[0], c[1], 380))]);
+  const c = uzakKenar(f, k, 42, 24);
+  await kovala(k, f, c.nesne, 520, 42, 24, { don: false, yonlu: true, easing: 'ease-in' }, c.kedi);
 }
 // 5) Balık: süzülen balığa iki kez zıplar; ilkinde balık kaçar, ikincisinde "Ham!"
 async function animBalik() {
@@ -3881,12 +3936,11 @@ async function animUzum() {
   oKoy(u, g[0] < 0 ? -40 : g[0], g[1] + KH * .4);
   kKoy(k, c[0], c[1]);   // Üzüm öbür taraftan gelir
   const [ax, ay] = icNokta(.3, .7);
-  await Promise.all([oGit(u, ax, ay + KH * .4, 220, { ark: 70, yaricap: 16 }), beklet(300).then(() => yanina(k, { x: ax, y: ay + KH * .4 }, 32, 40))]);
+  await oGit(u, ax, ay + KH * .4, 260, { ark: 70, yaricap: 16 });   // önce salkım zıplayarak gelip durur
   for (let i = 0; i < 2; i++) {
-    await yanina(k, u, 32, 40);
+    await yanina(k, u, 32, 40, HIZ_KOS, true);
     await mPati(k);
-    const [nx, ny] = karsiNokta(u, 32, 40);
-    await Promise.all([oGit(u, nx, ny, 320, { ark: 90, yaricap: 16 }), beklet(300).then(() => yanina(k, { x: nx, y: ny }, 32, 40))]);
+    await kovala(k, u, ileri(u, k, 32, 40), 320, 32, 40, { ark: 90, yaricap: 16 });
   }
   await yanina(k, u, 32, 40);
   await mHazirlan(k, 700);
