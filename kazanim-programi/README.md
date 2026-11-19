@@ -6,6 +6,10 @@
 
 Ana Sayfa'daki **“Üzüm, bana bu programı kullanmayı öğretir misin?”** düğmesine (ya da üstteki kediye) bas. Üzüm ekranın solundan koşarak gelir, gösterdiği yeri kırmızı yumuşak köşeli kutuya alır, patisiyle işaret eder ve kafasının üstündeki düşünce bulutunda ne yapacağını anlatır. “Şuraya tıkla” adımlarında gerçekten tıklarsan kendiliğinden devam eder; *Geri*, *Devam* ve *Bitir* düğmeleri de var (Esc de kapatır).
 
+## Üzüm'ün mini animasyonları
+
+Ayarlar → **Üzüm'ün mini animasyonları**: açma/kapama düğmesi (varsayılan açık) ve yanında **Ne sıklıkla?** seçimi: her 1 / 5 / 15 / 30 dakikada ya da her 1 / 2 / 3 / 5 saatte bir (varsayılan 5 dakika). Seçilen sıklıkta 10 animasyondan biri (ip yumağı, kelebek, fare, lazer, balık, kutu, cee, uyku, kalpler, üzüm salkımı) 3–6 saniye oynar; tıklamalara engel olmaz. Hepsi aynı yerden tek tek izlenebilir.
+
 ## Örnek veriler ayrı durur
 
 “Örnek verilerle dene” ile gelen sınıf, öğrenci, kazanım ve sınavlar **(örnek)** olarak işaretlenir. Kendi Excel'ini yüklediğinde örnekler silinmez ve senin kayıtlarınla karışmaz (aynı numara ya da aynı sınıf adı olsa bile). “Örnekleri kaldır” yalnızca örnekleri siler.

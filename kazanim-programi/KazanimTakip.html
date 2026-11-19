@@ -369,6 +369,9 @@ dialog::backdrop { background: var(--backdrop); }
 .toggle input:checked + .toggle-bar::after { transform: translateX(22px); }
 .toggle input:focus-visible + .toggle-bar { outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: 2px; }
 .mini-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.mini-ayar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 4px; }
+.mini-ayar .toggle { margin: 0; }
+.aralik { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
 
 /* Öğretici: Üzüm */
 .ogretici-btn { margin-top: 12px; }
@@ -686,12 +689,17 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
     </div>
     <div class="card">
       <h2>🐱 Üzüm'ün mini animasyonları</h2>
-      <label class="toggle" for="aAnimasyon">
-        <input type="checkbox" id="aAnimasyon" role="switch" checked>
-        <span class="toggle-bar" aria-hidden="true"></span>
-        <span>Üzüm ara sıra ekranda oynasın</span>
-      </label>
-      <p class="muted">Açıkken Üzüm birkaç dakikada bir 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
+      <div class="mini-ayar">
+        <label class="toggle" for="aAnimasyon">
+          <input type="checkbox" id="aAnimasyon" role="switch" checked>
+          <span class="toggle-bar" aria-hidden="true"></span>
+          <span>Üzüm ekranda oynasın</span>
+        </label>
+        <label class="aralik" for="aAnimAralik">Ne sıklıkla?
+          <select id="aAnimAralik"></select>
+        </label>
+      </div>
+      <p class="muted">Açıkken Üzüm seçtiğin sıklıkta 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
       <div class="mini-liste" id="miniListe"></div>
     </div>
     <div class="card">
@@ -772,7 +780,7 @@ const KURUMLAR = [
   { key: 'kurs_mezun', ad: 'Kurs – Mezun', seviyeler: ['Mezun'] },
 ];
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true, animasyonAralik: 5 };
 const KURUM = Object.fromEntries(KURUMLAR.map(k => [k.key, k]));
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
@@ -3709,14 +3717,22 @@ function miniDurdur() {
   mini.calisiyor = false;
 }
 /** Ara sıra rastgele bir animasyon (ilk: 8 sn sonra, sonra 1–2,5 dakikada bir). */
-function miniPlanla(ilk = false) {
+// Seçilebilen sıklıklar (dakika)
+const MINI_ARALIKLAR = [
+  [1, 'Her 1 dakikada bir'], [5, 'Her 5 dakikada bir'], [15, 'Her 15 dakikada bir'], [30, 'Her 30 dakikada bir'],
+  [60, 'Her 1 saatte bir'], [120, 'Her 2 saatte bir'], [180, 'Her 3 saatte bir'], [300, 'Her 5 saatte bir'],
+];
+const miniAralikDk = () => MINI_ARALIKLAR.some(([d]) => d === S.ayarlar.animasyonAralik) ? S.ayarlar.animasyonAralik : 5;
+/** Seçilen sıklıkta bir sonraki animasyonu planlar (sayaç her çağrıda baştan başlar). */
+function miniPlanla() {
   clearTimeout(mini.zaman);
   if (!S.ayarlar.animasyon) return;
-  mini.zaman = setTimeout(miniOtomatik, ilk ? 8000 : 60000 + Math.random() * 90000);
+  mini.zaman = setTimeout(miniOtomatik, miniAralikDk() * 60000);
 }
 async function miniOtomatik() {
   if (!S.ayarlar.animasyon) return;
-  if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { miniPlanla(); return; }
+  // O an uygun değilse (öğretici, açık pencere, arka plandaki sekme) tüm aralığı beklemeden 30 sn sonra tekrar dene
+  if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { clearTimeout(mini.zaman); mini.zaman = setTimeout(miniOtomatik, 30000); return; }
   let i;
   do { i = Math.floor(Math.random() * MINI_ANIMLER.length); } while (i === mini.son && MINI_ANIMLER.length > 1);
   await miniOynat(i);
@@ -3725,6 +3741,8 @@ async function miniOtomatik() {
 function miniAyarCiz() {
   const t = $('#aAnimasyon');
   if (t) t.checked = !!S.ayarlar.animasyon;
+  const a = $('#aAnimAralik');
+  if (a) { if (!a.options.length) a.innerHTML = MINI_ARALIKLAR.map(([d, ad]) => opt(d, ad)).join(''); a.value = String(miniAralikDk()); }
   const l = $('#miniListe');
   if (l && !l.childElementCount) l.innerHTML = MINI_ANIMLER.map((a, i) => `<button type="button" class="btn small" data-mini="${i}"><span aria-hidden="true">${a.ikon}</span> ${esc(a.ad)} ▶</button>`).join('');
 }
@@ -3734,6 +3752,13 @@ function miniOlaylari() {
     kaydetHemen();
     if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(Math.floor(Math.random() * MINI_ANIMLER.length)).then(() => miniPlanla()); }
     else { miniDurdur(); toast('Mini animasyonlar kapatıldı.'); }
+  });
+  $('#aAnimAralik').addEventListener('change', e => {
+    S.ayarlar.animasyonAralik = parseInt(e.target.value, 10);
+    kaydetHemen();
+    const ad = MINI_ARALIKLAR.find(([d]) => d === S.ayarlar.animasyonAralik)[1].toLocaleLowerCase('tr-TR');
+    if (S.ayarlar.animasyon) { miniPlanla(); toast(`Üzüm artık ${ad} oynayacak 🐾`); }
+    else toast(`Sıklık kaydedildi: ${ad}. Animasyonları açınca bu sıklıkta oynar.`);
   });
   $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
 }
@@ -3746,7 +3771,8 @@ function miniOlaylari() {
   ogreticiOlaylari();
   miniOlaylari();
   ciz();
-  miniPlanla(true);
+  miniAyarCiz();
+  miniPlanla();
 })();
 
 </script>

@@ -241,12 +241,17 @@
     </div>
     <div class="card">
       <h2>🐱 Üzüm'ün mini animasyonları</h2>
-      <label class="toggle" for="aAnimasyon">
-        <input type="checkbox" id="aAnimasyon" role="switch" checked>
-        <span class="toggle-bar" aria-hidden="true"></span>
-        <span>Üzüm ara sıra ekranda oynasın</span>
-      </label>
-      <p class="muted">Açıkken Üzüm birkaç dakikada bir 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
+      <div class="mini-ayar">
+        <label class="toggle" for="aAnimasyon">
+          <input type="checkbox" id="aAnimasyon" role="switch" checked>
+          <span class="toggle-bar" aria-hidden="true"></span>
+          <span>Üzüm ekranda oynasın</span>
+        </label>
+        <label class="aralik" for="aAnimAralik">Ne sıklıkla?
+          <select id="aAnimAralik"></select>
+        </label>
+      </div>
+      <p class="muted">Açıkken Üzüm seçtiğin sıklıkta 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
       <div class="mini-liste" id="miniListe"></div>
     </div>
     <div class="card">

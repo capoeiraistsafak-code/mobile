@@ -358,6 +358,9 @@ dialog::backdrop { background: var(--backdrop); }
 .toggle input:checked + .toggle-bar::after { transform: translateX(22px); }
 .toggle input:focus-visible + .toggle-bar { outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: 2px; }
 .mini-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.mini-ayar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 4px; }
+.mini-ayar .toggle { margin: 0; }
+.aralik { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
 
 /* Öğretici: Üzüm */
 .ogretici-btn { margin-top: 12px; }
