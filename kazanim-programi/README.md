@@ -31,15 +31,12 @@ Veriler o bilgisayardaki tarayıcıda saklanır → **Yedek / Ayarlar** sekmesin
 ## Güvenlik ve ayarlar
 
 - Excel yükleme, liste güncelleme ve yedekten dönüş aynı anda iki kez çalışmaz: biri sürerken ikinci basış “önceki işlem bitmeden yenisi başlatılamaz” uyarısı verir, veri karışmaz.
-- **Fabrika ayarları paketi:** Program klasöründeki `FabrikaAyarlari.zip` programın ilk ayarlarını (`fabrika.json`: kurumlar, sınıf seviyeleri, dersler, eksik/iyi sınırları, önerilen soru sayıları, animasyon ayarları) ve `Ogretici/` klasörünün bir kopyasını (4 örnek Excel + rehber) saklar. Örnekleri silsen bile buradan geri çıkarabilirsin.
-- Ayarlar → **Fabrika ayarlarına dön** → *FabrikaAyarlari.zip'i seç*: program paketteki ayarları okur, bütün bilgileri silip o ayarlarla yeniden başlar (onay sorulur). Yanlış dosya seçilirse uyarır, hiçbir şeyi silmez. Paket elinde yoksa *Paketsiz sıfırla* programın kendi ilk ayarlarını kullanır.
-- Ayarlar → **Fabrika paketini indir**: paketi kaybedersen aynısını yeniden indirir.
+- Ayarlar → **Fabrika ayarlarına dön**: bütün bilgileri silip programı ilk hâline getirir (onay sorulur). Fabrika ayarları programın içinde kilitli durur; programda yapılan değişiklikler onları etkilemez.
 
 ## Klasörler
 
 | Klasör | İçinde |
 |---|---|
-| `FabrikaAyarlari.zip` | Fabrika ayarları paketi: ilk ayarlar + örnek dosyaların yedeği. Ayarlar → Fabrika ayarlarına dön ile kullanılır. |
 | `Ogretici/` | **Sadece öğrenme amaçlı** örnek Excel dosyaları ve `BENI_OKU.txt`. Kendi verini yükleyince bunlar silinmez, değişmez. |
 | `Ogrenci/` | **Kendi** öğrenci listelerin (ör. `9-A.xlsx`). Alt klasör adı kurum türünü de belirtebilir: `Ogrenci/Kurs Lise/11-A.xlsx`. |
 | `Kazanim/` | **Kendi** kazanım listelerin (K12'den aldıkların). |
