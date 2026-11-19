@@ -2938,16 +2938,37 @@ const MINI_ANIMLER = [
   { ad: 'Kalpler', ikon: '❤️', fn: animKalpler },
   { ad: 'Üzüm salkımı', ikon: '🍇', fn: animUzum },
 ];
-/** Rastgele bir animasyon seçer; bir önceki oynayan asla hemen arkasından tekrar seçilmez. */
+// Animasyon turu: her animasyon bir turda en fazla 3 kez gelir, hiçbiri arka arkaya iki kez gelmez;
+// 10 animasyonun hepsi en az 1 kez gösterilince tur başa sarar. Tur durumu kaydedilir.
+const TUR_EN_FAZLA = 3;
+function animTuru() {
+  const n = MINI_ANIMLER.length;
+  const t = S.animTuru;
+  if (!t || !Array.isArray(t.sayac) || t.sayac.length !== n) {
+    S.animTuru = { sayac: new Array(n).fill(0), son: Number.isInteger(S.sonAnim) ? S.sonAnim : -1, tur: 1 };
+  }
+  return S.animTuru;
+}
+/** Kurallara göre rastgele bir animasyon seçer. */
 function miniRastgele() {
-  const son = Number.isInteger(S.sonAnim) ? S.sonAnim : -1;
-  const adaylar = MINI_ANIMLER.map((_, i) => i).filter(i => i !== son);
-  return adaylar[Math.floor(Math.random() * adaylar.length)];
+  const t = animTuru();
+  const adaylar = t.sayac.map((c, i) => i).filter(i => t.sayac[i] < TUR_EN_FAZLA && i !== t.son);
+  // (Kurallar gereği aday her zaman vardır; yine de güvenlik için yalnız "arka arkaya olmasın" kuralına düş)
+  const havuz = adaylar.length ? adaylar : t.sayac.map((c, i) => i).filter(i => i !== t.son);
+  return havuz[Math.floor(Math.random() * havuz.length)];
+}
+/** Oynayan animasyonu tura işler; hepsi en az 1 kez gösterildiyse yeni tur başlar. */
+function turaIsle(i) {
+  const t = animTuru();
+  t.sayac[i] = (t.sayac[i] || 0) + 1;
+  t.son = i;
+  if (t.sayac.every(c => c >= 1)) { t.sayac = t.sayac.map(() => 0); t.tur = (t.tur || 1) + 1; }
+  S.sonAnim = i;
 }
 async function miniOynat(i) {
   if (mini.calisiyor || ogretici.aktif) return false;
   mini.calisiyor = true; mini.son = i;
-  S.sonAnim = i; kaydet();   // program kapanıp açılsa da son oynayan hatırlanır
+  turaIsle(i); kaydet();   // program kapanıp açılsa da tur kaldığı yerden devam eder (gizli kural, ekranda gösterilmez)
   try { await MINI_ANIMLER[i].fn(); }
   catch (e) { /* durduruldu */ }
   finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
