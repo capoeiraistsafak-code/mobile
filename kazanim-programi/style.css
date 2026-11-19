@@ -348,9 +348,12 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
 .uzum-kedi .ar2 { transform-origin: 50px 76px; }
 .uzum-kedi .on1 { transform-origin: 90px 76px; }
 .uzum-kedi .on2 { transform-origin: 100px 74px; }
+.uzum-kedi .on2 .kol, .uzum-kedi .on2 .pati-g { transform-box: view-box; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+.uzum-kedi .on2 .kol { transform-origin: 100px 74px; }
 .uzum-kedi .kuyruk { transform-box: view-box; transform-origin: 31px 62px; animation: kuyruk 1.4s ease-in-out infinite alternate; }
 .uzum-kedi .govde { transform-box: view-box; transform-origin: 68px 96px; }
 .uzum-kedi .pati-iz { opacity: 0; transition: opacity .2s; }
+.uzum-kedi .pati-yan { transition: opacity .2s; }
 @keyframes kuyruk { from { transform: rotate(-8deg); } to { transform: rotate(14deg); } }
 /* Koşarken bacaklar çapraz çalışır, gövde zıplar */
 .uzum-kedi.kosuyor .ar1, .uzum-kedi.kosuyor .on2 { animation: adimA .26s ease-in-out infinite alternate; }
@@ -361,7 +364,11 @@ button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
 @keyframes adimB { from { transform: rotate(-32deg); } to { transform: rotate(32deg); } }
 @keyframes hopla { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-6px) rotate(2deg); } }
 /* Patisiyle işaret eder */
-.uzum-kedi.isaret .on2 { transform: rotate(var(--aci, -100deg)) scaleY(var(--uzat, 1)); }
+/* Uzarken yalnız kol uzar; pati şeklini bozmadan ucuna kayar ve önden (pembe yastıklarıyla) görünür */
+.uzum-kedi.isaret .on2 { transform: rotate(var(--aci, -100deg)); }
+.uzum-kedi.isaret .on2 .kol { transform: scaleY(var(--uzat, 1)); }
+.uzum-kedi.isaret .on2 .pati-g { transform: translateY(calc((var(--uzat, 1) - 1) * 24px)); }
+.uzum-kedi.isaret .pati-yan { opacity: 0; }
 .uzum-kedi.isaret .pati-iz { opacity: 1; }
 .uzum-kedi.isaret .govde { animation: nefes 1.6s ease-in-out infinite; }
 @keyframes nefes { 50% { transform: scale(1.015, .985); } }

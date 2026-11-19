@@ -2470,7 +2470,7 @@ function olaylar() {
 // ÖĞRETİCİ: Üzüm koşarak gelir, patisiyle gösterir, manga bulutunda anlatır
 // ---------------------------------------------------------------------------
 // Yandan görünen, koşabilen Üzüm (sağa bakıyor). viewBox 150×112.
-// Gri-mavi British Shorthair; boynunda mor tasma ve üzüm salkımı. Pati ucu: sağa (125, 68), yukarı (140, 44); yüzün yanından uzanır.
+// Gri-mavi British Shorthair; boynunda mor tasma ve üzüm salkımı. Pati ucu: sağa (127, 68), yukarı (140, 44); yüzün yanından uzanır. Uzarken yalnız kol uzar, pati şeklini korur.
 const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hidden="true">
   <defs><radialGradient id="uk-govde" cx="45%" cy="30%" r="70%"><stop offset="0" stop-color="#b9c1cf"/><stop offset=".6" stop-color="#99a3b5"/><stop offset="1" stop-color="#7b8598"/></radialGradient>
 <radialGradient id="uk-kafa" cx="55%" cy="35%" r="62%"><stop offset="0" stop-color="#bec6d3"/><stop offset=".6" stop-color="#9ca6b8"/><stop offset="1" stop-color="#7d8799"/></radialGradient>
@@ -2482,7 +2482,7 @@ const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hid
 <g class="bacak ar1"><path d="M31.5 76 A6.75 5.5 0 0 1 45 76 C45.4 86, 44.5 91, 44 98 L33 98 C32.5 91, 31.1 86, 31.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M32 100 C32 95.4, 47.2 95.2, 47.2 100.4 C47.2 104.6, 32 104.6, 32 100 Z" fill="url(#uk-bacak-arka)"/></g>
 <g class="bacak on1"><path d="M83.5 76 A6.75 5.5 0 0 1 97 76 C97.4 86, 96.5 91, 96 98 L85 98 C84.5 91, 83.1 86, 83.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M84 100 C84 95.4, 99.2 95.2, 99.2 100.4 C99.2 104.6, 84 104.6, 84 100 Z" fill="url(#uk-bacak-arka)"/></g>
 <g class="bacak ar2"><path d="M43.5 76 A6.75 5.5 0 0 1 57 76 C57.4 86, 56.5 91, 56 98 L45 98 C44.5 91, 43.1 86, 43.5 76 Z" fill="url(#uk-bacak)"/><path d="M44 100 C44 95.4, 59.2 95.2, 59.2 100.4 C59.2 104.6, 44 104.6, 44 100 Z" fill="url(#uk-bacak)"/><g fill="#e2b9c4"><ellipse cx="47.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="51.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="55.4" cy="102.2" rx="1.4" ry=".9"/></g></g>
-<g class="bacak on2"><path d="M93.5 76 A6.75 5.5 0 0 1 107 76 C107.4 86, 106.5 91, 106 98 L95 98 C94.5 91, 93.1 86, 93.5 76 Z" fill="url(#uk-bacak)"/><path d="M94 100 C94 95.4, 109.2 95.2, 109.2 100.4 C109.2 104.6, 94 104.6, 94 100 Z" fill="url(#uk-bacak)"/><g fill="#e2b9c4"><ellipse cx="97.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="101.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="105.4" cy="102.2" rx="1.4" ry=".9"/></g><g class="pati-iz"><path d="M98.4 101.6 C98.4 98.4, 104.6 98.4, 104.6 101.6 C104.6 103.6, 98.4 103.6, 98.4 101.6 Z" fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"/><g fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"><ellipse cx="96" cy="99" rx="1.3" ry="1.5"/><ellipse cx="99.6" cy="97.4" rx="1.3" ry="1.5"/><ellipse cx="103.4" cy="97.4" rx="1.3" ry="1.5"/><ellipse cx="107" cy="99" rx="1.3" ry="1.5"/></g></g></g>
+<g class="bacak on2"><path class="kol" d="M93.5 76 A6.75 5.5 0 0 1 107 76 C107.4 86, 106.5 91, 106 98 L95 98 C94.5 91, 93.1 86, 93.5 76 Z" fill="url(#uk-bacak)"/><g class="pati-g"><path class="pati-yan" d="M94 100 C94 95.4, 109.2 95.2, 109.2 100.4 C109.2 104.6, 94 104.6, 94 100 Z" fill="url(#uk-bacak)"/><g class="pati-yan" fill="#e2b9c4"><ellipse cx="97.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="101.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="105.4" cy="102.2" rx="1.4" ry=".9"/></g><g class="pati-iz"><ellipse cx="101.5" cy="102.2" rx="7.8" ry="7" fill="url(#uk-bacak)"/><path d="M98.3 100.8 C98.3 98.4, 104.7 98.4, 104.7 100.8 C104.7 103.2, 103 103.4, 101.5 102.7 C100 103.4, 98.3 103.2, 98.3 100.8 Z" fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"/><g fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"><ellipse cx="96.4" cy="104.6" rx="1.4" ry="1.7"/><ellipse cx="99.7" cy="106.2" rx="1.4" ry="1.7"/><ellipse cx="103.3" cy="106.2" rx="1.4" ry="1.7"/><ellipse cx="106.6" cy="104.6" rx="1.4" ry="1.7"/></g></g></g></g>
 <g class="govde">
   <ellipse cx="66" cy="66" rx="41" ry="21" fill="url(#uk-govde)"/>
   <g class="kafa">
@@ -2511,7 +2511,7 @@ const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hid
 </g>
 </svg>`;
 const KEDI_W = 150, KEDI_H = 112;
-const PATI_SAG = { x: 125, y: 68, aci: 100 };  // sağa (hafif yukarı) işaret
+const PATI_SAG = { x: 127, y: 68, aci: 100 };  // sağa (hafif yukarı) işaret
 const PATI_UST = { x: 140, y: 44, aci: 125, uzat: 1.9 };  // yukarı işaret (manga gibi uzayan pati)
 const BAS_X = 104, BAS_Y = 19;                 // bulutun bağlandığı kafa tepesi
 
