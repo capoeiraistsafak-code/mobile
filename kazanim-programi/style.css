@@ -521,3 +521,8 @@ body.kilitli { overflow: hidden; }
 .cumle-ayar p { margin: 0; line-height: 2.2; }
 .cumle-ayar input[type=number] { width: 74px; display: inline-block; margin: 0 4px; padding: 4px 6px; text-align: center; font-weight: 800; }
 .sinav-sayi { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 4px 0 10px; } .sinav-sayi label { font-weight: 800; } .sinav-sayi select { width: auto; }
+/* Hoş geldin: sevinçten kuyruğu hızlı hızlı sallanır */
+.mini-kedi.sevincli .kuyruk { animation-duration: .22s; }
+/* Üst menüde Çıkış düğmesi */
+nav button.cikis-btn { color: var(--danger); }
+nav button.cikis-btn:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); }

@@ -3050,7 +3050,7 @@ const MINI_SVG = {
   fare: `<svg width="42" height="24" viewBox="0 0 42 24"><path d="M8 16 Q0 18 2 9" stroke="#9aa1ad" fill="none" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="21" cy="15" rx="13" ry="8" fill="#b8bec9"/><circle cx="29" cy="7.5" r="4.2" fill="#b8bec9"/><circle cx="29" cy="7.5" r="2.3" fill="#f2a9be"/><circle cx="33.5" cy="13.5" r="1.3" fill="#2a2a33"/><circle cx="38.2" cy="16.4" r="1.5" fill="#e7849d"/></svg>`,
   balik: `<svg width="44" height="26" viewBox="0 0 44 26"><path d="M4 13 Q16 0 30 13 Q16 26 4 13 Z" fill="#ff9f43"/><path d="M30 13 L42 4 L40 13 L42 22 Z" fill="#ff7f11"/><circle cx="11" cy="11" r="1.7" fill="#2a2a33"/><path d="M17 8 q3 5 0 10" stroke="#e8822a" fill="none" stroke-width="1.4"/></svg>`,
   kutu: `<svg width="96" height="70" viewBox="-6 0 102 70"><path d="M4 24 L86 24 L86 68 L4 68 Z" fill="#d9a066"/><path d="M4 24 L86 24 L86 32 L4 32 Z" fill="#c48a52"/><path d="M4 24 L-5 10 L40 10 L45 24 Z" fill="#e5b07a"/><path d="M86 24 L95 10 L50 10 L45 24 Z" fill="#e5b07a"/><path d="M30 48 h30" stroke="#b07a45" stroke-width="2.4" stroke-linecap="round"/></svg>`,
-  kalp: `<svg width="22" height="20" viewBox="0 0 22 20"><path d="M11 19 C-4 9 2 -2 11 5 C20 -2 26 9 11 19 Z" fill="#ff5c7a"/></svg>`,
+  kalp: `<svg width="22" height="20" viewBox="0 0 22 20"><path d="M11 19 C-4 9 2 -2 11 5 C20 -2 26 9 11 19 Z" fill="#e53945"/></svg>`,
   uzum: `<svg width="32" height="40" viewBox="0 0 32 40"><path d="M16 8 q2 -6 8 -6" stroke="#4f9a4a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M16 8 q7 -3 10 1 q-6 3 -10 -1z" fill="#6fbf5a"/><g fill="#8e5bd6"><circle cx="9" cy="14" r="4.6"/><circle cx="16" cy="13" r="4.6"/><circle cx="23" cy="14" r="4.6"/><circle cx="12.5" cy="21" r="4.6"/><circle cx="19.5" cy="21" r="4.6"/><circle cx="16" cy="28" r="4.6"/></g><g fill="#fff" opacity=".45"><circle cx="7.6" cy="12.6" r="1.2"/><circle cx="14.6" cy="11.6" r="1.2"/><circle cx="21.6" cy="12.6" r="1.2"/><circle cx="11" cy="19.6" r="1.2"/><circle cx="18" cy="19.6" r="1.2"/><circle cx="14.6" cy="26.6" r="1.2"/></g></svg>`,
   kafa: `<svg width="72" height="72" aria-hidden="true"><use href="#kedi"/></svg>`,
 };
@@ -3644,6 +3644,41 @@ async function miniOtomatik() {
   await miniOynat(miniRastgele());
   miniPlanla();
 }
+// Hoş geldin animasyonu: yalnızca şifre doğru girilince bir kez oynar. Mini animasyonlardan bağımsızdır;
+// sıra / tur kurallarına ve açma-kapama ayarlarına girmez, sayaca işlenmez.
+async function animHosgeldin() {
+  const { w, h } = ekran();
+  const k = miniKedi();
+  const giris = sec(['solOrta', 'solAlt', 'solUst']), cikis = sec(['sagOrta', 'sagAlt', 'sagUst']);
+  const g = kenar(giris), c = kenar(cikis);
+  kKoy(k, g[0], g[1]);
+  const ox = w / 2 - KW / 2, oy = Math.min(Math.max(h * .5, UST_SINIR + 60), h - KH - 20);
+  await mKos(k, ox, oy, HIZ_KOS + 60);                       // koşa koşa gelir
+  k.yon(false);
+  k.classList.add('sevincli');
+  await kBalon(k, 'Hoş geldin! ❤️', 1500);
+  // Heyecanla sağa sola zıplar
+  const adim = Math.min(90, w * .08);
+  await mZipla(k, ox - adim, oy, 55, 560);
+  await mZipla(k, ox + adim, oy, 60, 600);
+  await mZipla(k, ox, oy, 45, 500);
+  // Çok sevinir: kalpler saçar, yerinde bir kez daha zıplar
+  const kalpler = Array.from({ length: 7 }, (_, i) => {
+    const kp = nesne(MINI_SVG.kalp), sx = k.x + KW * .45 + rnd(-30, 30);
+    return oynat(kp, [{ opacity: 0, transform: `translate(${sx}px, ${k.y + 10}px) scale(.5)` }, { opacity: 1, offset: .2 }, { opacity: 0, transform: `translate(${sx + rnd(-50, 50)}px, ${k.y - 120}px) scale(1.2)` }], 1500, 'ease-out', i * 160);
+  });
+  await mZipla(k, ox, oy, 70, 620);
+  await Promise.all([...kalpler, kBalon(k, 'Hadi başlayalım! 🐾', 1300)]);
+  k.classList.remove('sevincli');
+  await mKos(k, c[0], c[1], HIZ_KOS + 60);                    // sonra koşarak gider
+}
+async function hosgeldinOynat() {
+  if (azHareket() || mini.calisiyor) return;
+  mini.calisiyor = true;
+  try { await animHosgeldin(); }
+  catch (e) { /* durduruldu */ }
+  finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+}
 /** Ayarlar'daki sayaç: bu turda kaç farklı animasyon görüldü (ör. 4 / 10). Başka yerde gösterilmez. */
 function miniTurGoster() {
   const el = $('#miniTur');
@@ -3732,17 +3767,44 @@ function sifreOzet(t) {
 }
 function sifreDogruMu(t) { return sifreOzet(t) === (S.sifre || sifreOzet(VARSAYILAN_SIFRE)); }
 /** Kilit ekranı: doğru şifre girilince açılır. */
+// Kilit ekranı: açılışta ve "Çıkış"tan sonra görünür; doğru şifre girilince açılır
+let kilitCoz = null;
+function kilitHazirla() {
+  const k = $('#kilit'), f = $('#kilitForm'), g = $('#kilitSifre'), h = $('#kilitHata');
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    if (sifreDogruMu(g.value)) {
+      g.value = ''; h.hidden = true; k.hidden = true; document.body.classList.remove('kilitli');
+      const c = kilitCoz; kilitCoz = null; if (c) c();
+    } else { h.hidden = false; g.value = ''; g.focus(); f.classList.remove('salla'); void f.offsetWidth; f.classList.add('salla'); }
+  });
+}
 function kilitAc() {
   return new Promise(coz => {
-    const k = $('#kilit'), f = $('#kilitForm'), g = $('#kilitSifre'), h = $('#kilitHata');
+    const k = $('#kilit');
     if (!k) return coz();
-    g.focus();
-    f.addEventListener('submit', e => {
-      e.preventDefault();
-      if (sifreDogruMu(g.value)) { g.value = ''; k.hidden = true; document.body.classList.remove('kilitli'); coz(); }
-      else { h.hidden = false; g.value = ''; g.focus(); f.classList.remove('salla'); void f.offsetWidth; f.classList.add('salla'); }
-    });
+    kilitCoz = coz;
+    k.hidden = false; document.body.classList.add('kilitli');
+    $('#kilitSifre').focus();
   });
+}
+/** Programdan çıkış: Üzüm'ün animasyonları durur, şifre ekranına dönülür. Bilgiler kayıtlı kalır. */
+async function cikisYap() {
+  clearTimeout(mini.zaman); mini.zaman = null;
+  miniDurdur();
+  if (ogretici.aktif) await ogreticiBitir(true);
+  const dlg = $('#dlg'); if (dlg.open) dlg.close();
+  await kaydetHemen();
+  $('#kilitMesaj').textContent = 'Çıkış yaptın. Tekrar girmek için şifreni yaz.';
+  $('#kilitHata').hidden = true;
+  await kilitAc();
+  girisSonrasi();
+}
+/** Doğru şifreden hemen sonra: sayaç başlar, hoş geldin animasyonu oynar. */
+function girisSonrasi() {
+  $('#kilitMesaj').textContent = 'Merhaba! Programı açmak için şifreni yaz.';
+  miniPlanla();
+  hosgeldinOynat();
 }
 function sifreOlaylari() {
   const m = $('#sifreMesaj');
@@ -3764,6 +3826,7 @@ function sifreOlaylari() {
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   kurumlariYukle();
+  kilitHazirla();
   await kilitAc();
   olaylar();
   ogreticiOlaylari();
@@ -3771,6 +3834,7 @@ function sifreOlaylari() {
   sifreOlaylari();
   ciz();
   miniAyarCiz();
-  miniPlanla();
+  girisSonrasi();        // sayaç doğru şifre girildiği an başlar; girişe özel hoş geldin animasyonu
+  $('#btnCikis').addEventListener('click', cikisYap);
   fabrikaSonrasi();
 })();

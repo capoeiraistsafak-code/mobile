@@ -47,7 +47,7 @@
   <form class="kilit-kart" id="kilitForm" autocomplete="off">
     <svg class="kilit-kedi" aria-hidden="true"><use href="#kedi"/></svg>
     <h1 id="kilitBaslik">Kazanım Takip</h1>
-    <p class="muted">Merhaba! Programı açmak için şifreni yaz.</p>
+    <p class="muted" id="kilitMesaj">Merhaba! Programı açmak için şifreni yaz.</p>
     <input type="password" id="kilitSifre" placeholder="Şifre" aria-label="Şifre" autofocus>
     <p class="kilit-hata" id="kilitHata" role="alert" hidden>Şifre yanlış. Lütfen tekrar dene.</p>
     <button type="submit" class="btn primary">🔓 Giriş yap</button>
@@ -64,6 +64,7 @@
     <button data-tab="analiz"><span aria-hidden="true">🔍</span> Öğrenci Analizi</button>
     <button data-tab="sinifanaliz"><span aria-hidden="true">📊</span> Sınıf Analizi</button>
     <button data-tab="ayar"><span aria-hidden="true">⚙️</span> Ayarlar</button>
+    <button type="button" id="btnCikis" class="cikis-btn" title="Şifre ekranına dön"><span aria-hidden="true">🚪</span> Çıkış</button>
   </nav>
 </header>
 
