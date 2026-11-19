@@ -1,0 +1,28 @@
+ÜZÜM'ÜN ÖĞRETİCİ KLASÖRÜ 🐾
+===========================
+
+Bu klasördeki dosyalar sadece ÖRNEKTİR. Programı öğrenmek ve Excel'i nasıl
+dolduracağını görmek için buradalar. Kendi verilerini yükleyince bu dosyalar
+silinmez, değişmez.
+
+Dosyalar (sırayla yüklenince birbirine bağlanır):
+  1. Ornek_Ogrenci_Listesi_9-A.xlsx  -> Öğrenciler sayfasından yüklenir
+  2. Ornek_Kazanim_Listesi_9.xlsx    -> Kazanımlar sayfasından yüklenir
+  3. Ornek_Cevap_Anahtari.xlsx       -> Sınavlar sayfasında, sınavı seçince yüklenir
+  4. Ornek_Sinav_Sonuclari.xlsx      -> Sonuç Girişi sayfasından yüklenir
+
+Kendi dosyanı hazırlamak için:
+  - Örnek dosyanın bir KOPYASINI al (bu klasördeki asıl dosyaya dokunma).
+  - Kopyadaki örnek satırları silip kendi bilgilerini aynı sütunlara yaz.
+  - Kopyayı ana klasöre koy:
+      öğrenci listeleri -> Ogrenci klasörü
+      kazanım listeleri -> Kazanim klasörü
+      cevap anahtarı ve sonuçlar -> Sinav klasörü
+  - Programda ilgili sayfadaki "Excel'den ... yükle" düğmesine bas.
+    Yeşil ✓ çıkarsa yüklendi, kırmızı ✕ çıkarsa nedeni yazar.
+
+Programı adım adım görmek için: Ana Sayfa'daki
+"🐾 Üzüm, bana bu programı kullanmayı öğretir misin?" düğmesine bas.
+
+Programda "Örnek verilerle dene" ile yüklenen örnekler de "(örnek)" diye
+işaretlenir; senin verilerinle karışmaz ve Ana Sayfa'dan tek tıkla kaldırılır.

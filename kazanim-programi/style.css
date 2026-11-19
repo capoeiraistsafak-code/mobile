@@ -331,6 +331,73 @@ dialog::backdrop { background: var(--backdrop); }
 }
 
 .print-only { display: none; }
+
+/* Öğretici: Üzüm */
+.ogretici-btn { margin-top: 12px; }
+button.brand { background: none; border: 0; color: inherit; cursor: pointer; padding: 2px 6px 2px 0; border-radius: 14px; }
+button.brand:hover .kedi-logo { animation: sallan .8s ease-in-out 2; }
+.uzum-kedi {
+  position: fixed; left: 0; top: 0; z-index: 420; width: 150px; height: 112px;
+  pointer-events: none; will-change: transform;
+  filter: drop-shadow(0 6px 6px rgba(40, 28, 70, .25));
+}
+.uzum-ic { width: 100%; height: 100%; }
+.uzum-kedi svg { display: block; overflow: visible; }
+.uzum-kedi .bacak { transform-box: view-box; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+.uzum-kedi .ar1 { transform-origin: 44px 76px; }
+.uzum-kedi .ar2 { transform-origin: 58px 76px; }
+.uzum-kedi .on1 { transform-origin: 102px 76px; }
+.uzum-kedi .on2 { transform-origin: 112px 74px; }
+.uzum-kedi .kuyruk { transform-box: view-box; transform-origin: 30px 66px; animation: kuyruk 1.4s ease-in-out infinite alternate; }
+.uzum-kedi .govde { transform-box: view-box; transform-origin: 70px 100px; }
+.uzum-kedi .pati-iz { opacity: 0; transition: opacity .2s; }
+@keyframes kuyruk { from { transform: rotate(-8deg); } to { transform: rotate(14deg); } }
+/* Koşarken bacaklar çapraz çalışır, gövde zıplar */
+.uzum-kedi.kosuyor .ar1, .uzum-kedi.kosuyor .on2 { animation: adimA .26s ease-in-out infinite alternate; }
+.uzum-kedi.kosuyor .ar2, .uzum-kedi.kosuyor .on1 { animation: adimB .26s ease-in-out infinite alternate; }
+.uzum-kedi.kosuyor .govde { animation: hopla .26s ease-in-out infinite alternate; }
+.uzum-kedi.kosuyor .kuyruk { animation-duration: .26s; }
+@keyframes adimA { from { transform: rotate(32deg); } to { transform: rotate(-32deg); } }
+@keyframes adimB { from { transform: rotate(-32deg); } to { transform: rotate(32deg); } }
+@keyframes hopla { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-6px) rotate(2deg); } }
+/* Patisiyle işaret eder */
+.uzum-kedi.isaret .on2 { transform: rotate(var(--aci, -100deg)) scaleY(var(--uzat, 1)); }
+.uzum-kedi.isaret .pati-iz { opacity: 1; }
+.uzum-kedi.isaret .govde { animation: nefes 1.6s ease-in-out infinite; }
+@keyframes nefes { 50% { transform: scale(1.015, .985); } }
+.uzum-kedi.sallan .govde { animation: merhaba .45s ease-in-out 2; }
+@keyframes merhaba { 50% { transform: rotate(-6deg); } }
+/* Gösterilen yer: kırmızı, yumuşak köşeli kutu */
+.uzum-vurgu {
+  position: fixed; z-index: 410; pointer-events: none;
+  border: 4px solid #ef3e5c; border-radius: 16px;
+  box-shadow: 0 0 0 6px rgba(239, 62, 92, .18);
+  animation: vurgu 1.2s ease-in-out infinite;
+  transition: left .25s, top .25s, width .25s, height .25s;
+}
+@keyframes vurgu { 50% { box-shadow: 0 0 0 12px rgba(239, 62, 92, .08); } }
+/* Manga düşünce bulutu */
+.uzum-balon {
+  position: fixed; z-index: 430;
+  background: #fff; color: #2e2a40;
+  border: 3px solid #2e2a40; border-radius: 36px / 30px;
+  padding: 14px 18px 12px;
+  box-shadow: 5px 6px 0 rgba(46, 42, 64, .18);
+  font: 700 15px/1.45 var(--font-govde);
+  animation: bulut .3s cubic-bezier(.2, 1.5, .4, 1);
+}
+.uzum-balon p { margin: 0 0 10px; font-size: 16px; }
+.uzum-adim { font: 800 11px var(--font-govde); letter-spacing: .08em; color: #8b7fb0; margin-bottom: 4px; }
+.uzum-dugmeler { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.uzum-balon .btn { --line: #e6def3; --line-strong: #cbbde6; --card: #fff; --text: #2e2a40; --primary: #7c5ce6; --primary-ink: #fff; }
+.uzum-nokta {
+  position: fixed; z-index: 425; background: #fff; border: 3px solid #2e2a40; border-radius: 50%;
+  transform: translate(-50%, -50%); pointer-events: none;
+}
+.uzum-nokta.n0 { width: 10px; height: 10px; }
+.uzum-nokta.n1 { width: 15px; height: 15px; }
+.uzum-nokta.n2 { width: 21px; height: 21px; }
+@keyframes bulut { from { opacity: 0; transform: scale(.7) translateY(10px); } to { opacity: 1; transform: none; } }
 @media print {
   body { background: #fff; }
   .topbar, main, #toast, dialog, #sonucKartlar { display: none !important; }

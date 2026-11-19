@@ -168,7 +168,8 @@ function sinifAdi(s, kisa = false) {
   if (!s) return '—';
   const sev = s.seviye === 'Mezun' ? 'Mezun' : `${s.seviye}. Sınıf`;
   const sube = s.sube ? ` / ${s.sube}` : '';
-  return kisa ? `${sev}${sube}` : `${KURUM[s.kurum]?.ad || s.kurum} · ${sev}${sube}`;
+  const ornek = s.ornek ? ' (örnek)' : '';
+  return kisa ? `${sev}${sube}${ornek}` : `${KURUM[s.kurum]?.ad || s.kurum} · ${sev}${sube}${ornek}`;
 }
 function sinifSirala(a, b) {
   const ki = KURUMLAR.findIndex(k => k.key === a.kurum) - KURUMLAR.findIndex(k => k.key === b.kurum);
@@ -177,7 +178,7 @@ function sinifSirala(a, b) {
 function sinifGetirVeyaOlustur(kurum, seviye, sube) {
   sube = trUpper(String(sube || '').trim());
   seviye = String(seviye || '').trim();
-  let s = S.siniflar.find(x => x.kurum === kurum && x.seviye === seviye && trUpper(x.sube) === sube);
+  let s = S.siniflar.find(x => !x.ornek && x.kurum === kurum && x.seviye === seviye && trUpper(x.sube) === sube);
   if (!s) {
     s = { id: uid(), kurum, seviye, sube };
     S.siniflar.push(s);
@@ -190,17 +191,19 @@ function kazanimEtiket(k) {
   if (!k) return '—';
   return (k.kod ? k.kod + ' – ' : '') + k.metin;
 }
-function kazanimBulKodVeyaMetin(kodVeyaMetin, ders) {
+function kazanimBulKodVeyaMetin(kodVeyaMetin, ders, ornek = false) {
   const v = String(kodVeyaMetin || '').trim();
   if (!v) return null;
   const n = norm(v);
-  let k = S.kazanimlar.find(x => x.kod && norm(x.kod) === n);
+  // Kendi sınavların yalnızca kendi kazanımlarına, örnek sınav örnek kazanımlara bağlanır
+  const havuz = S.kazanimlar.filter(x => !!x.ornek === !!ornek);
+  let k = havuz.find(x => x.kod && norm(x.kod) === n);
   if (k) return k;
   // Kod, metnin başında olabilir: "M.8.1.1.1. Kazanım metni"
   const kodAdayi = v.split(/\s+/)[0];
-  k = S.kazanimlar.find(x => x.kod && norm(x.kod) === norm(kodAdayi));
+  k = havuz.find(x => x.kod && norm(x.kod) === norm(kodAdayi));
   if (k) return k;
-  const adaylar = S.kazanimlar.filter(x => norm(x.metin) === n || (n.length > 15 && norm(x.metin).startsWith(n)));
+  const adaylar = havuz.filter(x => norm(x.metin) === n || (n.length > 15 && norm(x.metin).startsWith(n)));
   if (ders) return adaylar.find(x => norm(x.ders) === norm(ders)) || adaylar[0] || null;
   return adaylar[0] || null;
 }
@@ -465,6 +468,9 @@ async function dosyalariOku(girdiler, filtreKlasor) {
   const dosyalar = girdiListesi(girdiler).filter(g => EXCEL_UZANTI.test(g.file.name) && !g.file.name.startsWith('~$'));
   let secili = dosyalar;
   if (filtreKlasor) {
+    // Öğretici (örnek) dosyalar kendi verin değildir; klasörden yüklerken atlanır
+    const ogreticisiz = secili.filter(g => !g.yol.split('/').slice(0, -1).some(p => norm(p) === 'ogretici'));
+    if (ogreticisiz.length) secili = ogreticisiz;
     // Seçilen klasörün içinde Ogrenci/Kazanim alt klasörü varsa yalnızca onu al
     const alt = dosyalar.filter(g => g.yol.split('/').slice(0, -1).some(p => norm(p) === filtreKlasor));
     if (alt.length) secili = alt;
@@ -566,7 +572,7 @@ function sinifCozumle(r, ayar) {
   }
   return { kurum, seviye: String(seviye), sube: trUpper(String(sube || '').trim()) };
 }
-const sinifVarMi = c => S.siniflar.find(x => x.kurum === c.kurum && x.seviye === c.seviye && trUpper(x.sube) === c.sube);
+const sinifVarMi = c => S.siniflar.find(x => !x.ornek && x.kurum === c.kurum && x.seviye === c.seviye && trUpper(x.sube) === c.sube);
 /** Öğrenci satırlarını uygular. ayar: {vk, genelKurum, vs, vsb, cakisma} */
 function ogrenciSatirlariUygula(kayitlar, ayar, kaynakId) {
   const sonuc = { eklendi: 0, guncellendi: 0, atlandi: 0, hatali: 0, dokunulan: new Set() };
@@ -583,8 +589,8 @@ function ogrenciSatirlariUygula(kayitlar, ayar, kaynakId) {
     const no = (r.no || '').trim();
     const ayniTip = o => sinifBul(o.sinifId)?.kurum.split('_')[0] === kurum.split('_')[0];
     const mevcut = no
-      ? S.ogrenciler.find(o => o.no === no && ayniTip(o) && !sonuc.dokunulan.has(o.id))
-      : S.ogrenciler.find(o => norm(adSoyad(o)) === norm(ad + ' ' + soyad) && o.sinifId === sinif.id && !sonuc.dokunulan.has(o.id));
+      ? S.ogrenciler.find(o => !o.ornek && o.no === no && ayniTip(o) && !sonuc.dokunulan.has(o.id))
+      : S.ogrenciler.find(o => !o.ornek && norm(adSoyad(o)) === norm(ad + ' ' + soyad) && o.sinifId === sinif.id && !sonuc.dokunulan.has(o.id));
     if (mevcut) {
       sonuc.dokunulan.add(mevcut.id);
       if (ayar.cakisma === 'atla') { sonuc.atlandi++; continue; }
@@ -700,8 +706,8 @@ function kazanimSatirlariUygula(kayitlar, ayar, kaynakId) {
     const seviye = seviyeCoz(r.seviye) || ayar.vs || '';
     const veri = { kod, ders, seviye, unite: (r.unite || sonUnite).trim(), konu: (r.konu || sonKonu).trim(), metin, kaynakId };
     const mevcut = kod
-      ? S.kazanimlar.find(k => k.kod && norm(k.kod) === norm(kod) && norm(k.ders) === norm(ders))
-      : S.kazanimlar.find(k => norm(k.metin) === norm(metin) && norm(k.ders) === norm(ders) && k.seviye === seviye);
+      ? S.kazanimlar.find(k => !k.ornek && k.kod && norm(k.kod) === norm(kod) && norm(k.ders) === norm(ders))
+      : S.kazanimlar.find(k => !k.ornek && norm(k.metin) === norm(metin) && norm(k.ders) === norm(ders) && k.seviye === seviye);
     if (mevcut) { Object.assign(mevcut, veri); sonuc.guncellendi++; sonuc.dokunulan.add(mevcut.id); }
     else { const k = { id: uid(), ...veri }; S.kazanimlar.push(k); sonuc.eklendi++; sonuc.dokunulan.add(k.id); }
     if (ders && !S.dersler.some(d => norm(d) === norm(ders))) S.dersler.push(ders);
@@ -786,8 +792,9 @@ function otomatikParca(k, alanlar) {
 }
 /** Okul mu kurs mu belirtilmemişse: mevcut sınıfların çoğu hangisiyse o, hiç yoksa okul. */
 function varsayilanTip() {
-  const kurs = S.siniflar.filter(c => c.kurum.startsWith('kurs')).length;
-  return kurs > S.siniflar.length - kurs ? 'kurs' : 'okul';
+  const kendi = S.siniflar.filter(c => !c.ornek);
+  const kurs = kendi.filter(c => c.kurum.startsWith('kurs')).length;
+  return kurs > kendi.length - kurs ? 'kurs' : 'okul';
 }
 function otoAyar(tur, p) {
   const eski = S.kaynaklar.find(x => x.tur === tur && x.yol === p.yol && x.sayfa === p.sayfa);
@@ -1083,7 +1090,7 @@ const ORNEK_EXCELLER = {
       'Nasıl doldurulur: Aşağıdaki örnek öğrencileri silip kendi öğrencilerinizi aynı sütunlara yazın. Her satır bir öğrencidir.',
       'Sınıf/Şube sütununa 9-A, 10-B, 11-C gibi yazın (9A da olur). Mezun öğrenciler için “Mezun” yazın.',
       'Kurum sütununa şunlardan birini yazın: Okul Ortaokul, Okul Lise, Kurs Ortaokul, Kurs Lise, Kurs Mezun.',
-      'Başlık satırını (Öğrenci No, Adı, Soyadı…) değiştirmeyin. Aktarmak için: Sınıflar ve Öğrenciler → Bilgisayardan Excel seç.',
+      'Başlık satırını (Öğrenci No, Adı, Soyadı…) değiştirmeyin. Yüklemek için: Öğrenciler → Excel\'den öğrenci yükle.',
     ],
     basliklar: ['Öğrenci No', 'Adı', 'Soyadı', 'Sınıf/Şube', 'Kurum'],
     satirlar: [
@@ -1101,7 +1108,7 @@ const ORNEK_EXCELLER = {
       'Nasıl doldurulur: Her satır bir kazanımdır. K12\'den aldığınız kazanım listesini aynı sütunlara koyabilirsiniz; sütun adları biraz farklıysa program aktarırken eşleştirmeyi gösterir.',
       'Kazanım Kodu, cevap anahtarında soruyu kazanıma bağlamak için kullanılır. Konu sütunu, konu analizinde ve “hangi konudan soru çözmeli” önerisinde görünür.',
       'Sınıf sütununa yalnızca sayı yazın (5–12) veya “Mezun”. Aşağıdaki satırlar örnektir; resmî kazanım metinleri için K12 listenizi kullanın.',
-      'Aktarmak için: Kazanımlar → Bilgisayardan Excel seç.',
+      'Yüklemek için: Kazanımlar → Excel\'den kazanım yükle.',
     ],
     basliklar: ['Kazanım Kodu', 'Ders', 'Sınıf', 'Ünite', 'Konu', 'Kazanım'],
     satirlar: [
@@ -1122,7 +1129,7 @@ const ORNEK_EXCELLER = {
       'Nasıl doldurulur: Her satır sınavdaki bir sorudur. Soru No 1\'den başlayarak sırayla yazılır.',
       'Konu yazmanız konu analizi için yeterlidir. Kazanım Kodu isteğe bağlıdır; yazarsanız Kazanımlar listesindeki kodla aynı olmalıdır.',
       'Cevap sütununa doğru şıkkı yazın (A, B, C, D veya E). Sonuçlarda öğrencinin şıkkı bu cevapla karşılaştırılır.',
-      'Aktarmak için: Sınavlar → sınavı seçin (yoksa + Yeni sınav) → Bilgisayardan cevap anahtarı Excel\'i seç.',
+      'Yüklemek için: Sınavlar → sınavı seçin (yoksa ➕ Yeni sınav) → Excel\'den cevap anahtarı yükle.',
     ],
     basliklar: ['Soru No', 'Ders', 'Konu', 'Kazanım Kodu', 'Cevap'],
     satirlar: [
@@ -1143,7 +1150,7 @@ const ORNEK_EXCELLER = {
       'Nasıl doldurulur: Her satır bir öğrencidir. 1, 2, 3… sütunları soru numaralarıdır; öğrencinin işaretlediği şıkkı yazın (A–E).',
       'Boş bıraktığı soruyu boş bırakın. Şık yerine D (doğru), Y (yanlış) veya B (boş) da yazabilirsiniz.',
       'Öğrenci No, programdaki öğrenci numarasıyla aynı olmalıdır; numara yoksa Ad Soyad ile eşleştirilir.',
-      'Aktarmak için: Sonuç Girişi → sınavı seçin → Bilgisayardan sonuç Excel\'i seç.',
+      'Yüklemek için: Sonuç Girişi → sınavı seçin → Excel\'den sonuç yükle.',
     ],
     basliklar: ['Öğrenci No', 'Ad Soyad', '1', '2', '3', '4', '5', '6'],
     satirlar: [
@@ -1203,11 +1210,14 @@ function onayla(mesaj, fn) {
 // PANEL
 // ---------------------------------------------------------------------------
 function ornekVeriYukle() {
-  const sinif = sinifGetirVeyaOlustur('kurs_lise', '11', 'A');
-  const sinif2 = sinifGetirVeyaOlustur('okul_orta', '8', 'B');
+  if (S.ornek) ornekVeriSil(true);
+  // Örnek kayıtlar "ornek: true" ile işaretlenir; kendi verilerinle karışmaz, ayrıca silinebilir
+  const sinif = { id: uid(), kurum: 'kurs_lise', seviye: '11', sube: 'A', ornek: true, elle: true };
+  const sinif2 = { id: uid(), kurum: 'okul_orta', seviye: '8', sube: 'B', ornek: true, elle: true };
+  S.siniflar.push(sinif, sinif2);
   [['1101', 'Ayşe', 'Çelik'], ['1102', 'Mustafa', 'Şahin'], ['1103', 'Fatma Nur', 'Arslan'], ['1104', 'Emre', 'Öztürk']]
-    .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id }));
-  [['801', 'Can', 'Aydın'], ['802', 'Selin', 'Koç']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id }));
+    .forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif.id, ornek: true }));
+  [['801', 'Can', 'Aydın'], ['802', 'Selin', 'Koç']].forEach(([no, ad, soyad]) => S.ogrenciler.push({ id: uid(), no, ad, soyad, sinifId: sinif2.id, ornek: true }));
   const kz = [
     ['T.9.3.1', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metnin konusunu ve ana fikrini belirler. (örnek)'],
     ['T.9.3.2', 'Türkçe', 'Okuma', 'Metni Anlama', 'Metindeki yardımcı fikirleri belirler. (örnek)'],
@@ -1215,7 +1225,7 @@ function ornekVeriYukle() {
     ['M.9.1.1.1', 'Matematik', 'Mantık', 'Önermeler', 'Önermeyi ve önermenin doğruluk değerini açıklar. (örnek)'],
     ['M.9.1.2.1', 'Matematik', 'Kümeler', 'Kümelerde Temel Kavramlar', 'Kümeler ile ilgili temel kavramları açıklar. (örnek)'],
     ['M.9.2.2.1', 'Matematik', 'Denklemler ve Eşitsizlikler', 'Bölünebilme Kuralları', 'Bölünebilme kurallarıyla ilgili problemler çözer. (örnek)'],
-  ].map(([kod, ders, unite, konu, metin]) => { const k = { id: uid(), kod, ders, seviye: '9', unite, konu, metin }; S.kazanimlar.push(k); return k; });
+  ].map(([kod, ders, unite, konu, metin]) => { const k = { id: uid(), kod, ders, seviye: '9', unite, konu, metin, ornek: true }; S.kazanimlar.push(k); return k; });
   // 20 soruluk örnek deneme: bazı soruların kazanımı var, bazılarına yalnızca konu yazılmış
   const plan = [[0, 4], [1, 2], [2, 2], [null, 2, 'Türkçe', 'Sözcükte Anlam'], [3, 3], [4, 3], [5, 2], [null, 2, 'Matematik', 'Problemler']];
   const sorular = [];
@@ -1226,7 +1236,7 @@ function ornekVeriYukle() {
         : { no, ders: kz[ki].ders, konu: '', kazanimId: kz[ki].id, cevap: 'ABCDE'[sorular.length % 5] });
     }
   });
-  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular };
+  const sinav = { id: uid(), ad: 'ÖRNEK Deneme 1', tarih: bugun(), kurum: 'kurs_lise', seviye: '11', sorular, ornek: true };
   S.sinavlar.push(sinav);
   const og = sinifOgrencileri(sinif.id);
   const yb = (y, b = []) => Object.fromEntries([...y.map(n => [n, 'Y']), ...b.map(n => [n, 'B'])]);
@@ -1242,16 +1252,24 @@ function ornekVeriYukle() {
   toast('Örnek veriler yüklendi. Öğrenci analizi açılıyor.');
   sekmeAc('analiz');
 }
-function ornekVeriSil() {
-  S = bosDurum(); kaydet(); ciz(); toast('Örnek veriler silindi.');
+/** Yalnızca örnek kayıtları siler; kendi verilerine dokunmaz. */
+function ornekVeriSil(sessiz = false) {
+  const ogrIds = S.ogrenciler.filter(o => o.ornek).map(o => o.id);
+  ogrencileriSil(ogrIds);
+  S.siniflar = S.siniflar.filter(c => !c.ornek);
+  kazanimlariSil(S.kazanimlar.filter(k => k.ornek).map(k => k.id));
+  S.sinavlar.filter(x => x.ornek).forEach(x => { delete S.sonuclar[x.id]; });
+  S.sinavlar = S.sinavlar.filter(x => !x.ornek);
+  S.ornek = false;
+  if (sessiz) return;
+  kaydet(); ciz(); toast('Örnek veriler silindi. Senin verilerin yerinde duruyor.');
 }
 
 function cizPanel() {
-  const bos = !S.ogrenciler.length && !S.kazanimlar.length && !S.sinavlar.length;
-  $('#panelOrnek').innerHTML = bos
-    ? `<div class="card deneme"><div><h2>🎈 Önce bir denemek ister misin?</h2><p class="muted">Örnek bir sınıf, kazanımlar ve sonuçları girilmiş bir deneme yüklenir. Sonra tek tıkla silebilirsin.</p></div>
+  $('#panelOrnek').innerHTML = !S.ornek
+    ? `<div class="card deneme"><div><h2>🎈 Önce bir denemek ister misin?</h2><p class="muted">Örnek bir sınıf, kazanımlar ve sonuçları girilmiş bir deneme yüklenir. Örnekler “(örnek)” diye işaretlenir, senin verilerinle karışmaz; istediğin zaman tek tıkla silebilirsin.</p></div>
        <button class="btn fun" id="btnOrnekYukle">✨ Örnek verilerle dene</button></div>`
-    : S.ornek ? `<div class="ornek-uyari">Şu an örnek veriler yüklü. Kendi verilerinizi aktarmadan önce <button class="btn small" id="btnOrnekSil">Örnek verileri sil</button></div>` : '';
+    : `<div class="ornek-uyari">🧪 Örnek veriler yüklü. Kendi verilerini yüklesen de örnekler silinmez, karışmaz. <button class="btn small" id="btnOrnekSil">Örnekleri kaldır</button></div>`;
   const sonucSayisi = Object.values(S.sonuclar).reduce((t, x) => t + Object.keys(x).length, 0);
   $('#panelStats').innerHTML = [
     ['Sınıf', S.siniflar.length], ['Öğrenci', S.ogrenciler.length], ['Kazanım', S.kazanimlar.length],
@@ -1467,7 +1485,7 @@ function cizSinav() {
 }
 function sinavKazanimlari(s) {
   // Sınav seviyesine uygun kazanımları öne al; mezun sınavlarında tüm lise kazanımları
-  let l = S.kazanimlar;
+  let l = S.kazanimlar.filter(k => !!k.ornek === !!s.ornek);
   if (s.seviye && s.seviye !== 'Mezun') {
     const uygun = l.filter(k => !k.seviye || k.seviye === s.seviye);
     if (uygun.length) l = uygun;
@@ -1539,7 +1557,7 @@ function anahtarUygula(s, kayitlar) {
     if (r.cevap) q.cevap = trUpper(r.cevap);
     if (r.konu) q.konu = r.konu;
     if (r.kazanim) {
-      const k = kazanimBulKodVeyaMetin(r.kazanim, q.ders);
+      const k = kazanimBulKodVeyaMetin(r.kazanim, q.ders, s.ornek);
       if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; } else bulunamadi++;
     }
     n++;
@@ -1676,8 +1694,9 @@ function sonucParcaUygula(s, p) {
   veri.forEach((satir, ri) => {
     const k = p.kayitlar[ri];
     let o = null;
-    if (k.no) o = S.ogrenciler.find(x => x.no === k.no.trim());
-    if (!o && k.adsoyad) o = S.ogrenciler.find(x => norm(adSoyad(x)) === norm(k.adsoyad));
+    const uygunOgr = x => !!x.ornek === !!s.ornek;
+    if (k.no) o = S.ogrenciler.find(x => uygunOgr(x) && x.no === k.no.trim());
+    if (!o && k.adsoyad) o = S.ogrenciler.find(x => uygunOgr(x) && norm(adSoyad(x)) === norm(k.adsoyad));
     if (!o) { if (k.no || k.adsoyad) bulunamadi.push(k.adsoyad || k.no); return; }
     const r = {};
     const degerlendir = (q, v) => {
@@ -2319,7 +2338,7 @@ function olaylar() {
         const v = t.value.trim();
         if (!v) q.kazanimId = '';
         else {
-          const k = sinavKazanimlari(s).find(k => kazanimEtiket(k) === v) || kazanimBulKodVeyaMetin(v, q.ders);
+          const k = sinavKazanimlari(s).find(k => kazanimEtiket(k) === v) || kazanimBulKodVeyaMetin(v, q.ders, s.ornek);
           if (k) { q.kazanimId = k.id; if (!q.ders) q.ders = k.ders; t.value = kazanimEtiket(k); }
           else { toast('Kazanım bulunamadı. Listeden seçin veya önce kazanımı ekleyin.'); t.value = q.kazanimId ? kazanimEtiket(kazanimBul(q.kazanimId)) : ''; }
         }
@@ -2409,7 +2428,7 @@ function olaylar() {
   // Panel
   $('#panelOrnek').addEventListener('click', e => {
     if (e.target.id === 'btnOrnekYukle') ornekVeriYukle();
-    else if (e.target.id === 'btnOrnekSil') onayla('Örnek veriler ve şu ana kadar girilen her şey silinsin mi?', ornekVeriSil);
+    else if (e.target.id === 'btnOrnekSil') onayla('Örnek veriler kaldırılsın mı? Senin yüklediğin veriler silinmez.', () => ornekVeriSil());
   });
 
   // Ayarlar
@@ -2447,10 +2466,286 @@ function olaylar() {
 // ---------------------------------------------------------------------------
 // Başlat
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// ÖĞRETİCİ: Üzüm koşarak gelir, patisiyle gösterir, manga bulutunda anlatır
+// ---------------------------------------------------------------------------
+// Yandan görünen, koşabilen Üzüm (sağa bakıyor). viewBox 150×112.
+// Gri-mavi British Shorthair; boynunda mor tasma ve üzüm salkımı. Pati ucu: sağa (137, 68), yukarı (124, 37).
+const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hidden="true">
+  <defs><radialGradient id="uk-govde" cx="45%" cy="30%" r="70%"><stop offset="0" stop-color="#b9c1cf"/><stop offset=".6" stop-color="#99a3b5"/><stop offset="1" stop-color="#7b8598"/></radialGradient>
+<radialGradient id="uk-kafa" cx="55%" cy="35%" r="62%"><stop offset="0" stop-color="#bec6d3"/><stop offset=".6" stop-color="#9ca6b8"/><stop offset="1" stop-color="#7d8799"/></radialGradient>
+<linearGradient id="uk-bacak" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8d97a9"/><stop offset=".5" stop-color="#a3adbe"/><stop offset="1" stop-color="#8b95a7"/></linearGradient>
+<linearGradient id="uk-bacak-arka" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#778193"/><stop offset="1" stop-color="#848ea0"/></linearGradient>
+<linearGradient id="uk-kuyruk" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8b95a8"/><stop offset="1" stop-color="#9ea8ba"/></linearGradient>
+<radialGradient id="uk-goz" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ffd47a"/><stop offset=".55" stop-color="#f29a2e"/><stop offset="1" stop-color="#b8601a"/></radialGradient></defs>
+  <path class="kuyruk" d="M32 64 C 16 62, 8 50, 12 34 C 13.5 28, 19 27, 20 33 C 18 44, 22 54, 34 58 Z" fill="url(#uk-kuyruk)"/>
+<g class="bacak ar1"><ellipse cx="45" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M36 74 C35.5 84, 38.5 89, 39.8 98 L51.4 98 C52.6 89, 54.6 84, 54 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="46.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
+<g class="bacak on1"><ellipse cx="102" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak-arka)"/><path d="M93 74 C92.5 84, 95.5 89, 96.8 98 L108.4 98 C109.6 89, 111.6 84, 111 74 Z" fill="url(#uk-bacak-arka)"/><ellipse cx="103.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak-arka)"/></g>
+<g class="bacak ar2"><ellipse cx="59" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M50 74 C49.5 84, 52.5 89, 53.8 98 L65.4 98 C66.6 89, 68.6 84, 68 74 Z" fill="url(#uk-bacak)"/><ellipse cx="60.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M61.6 98.4 v2.6 M64.4 98.2 v2.4 M58.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/></g>
+<g class="govde">
+  <ellipse cx="70" cy="67" rx="44" ry="23.5" fill="url(#uk-govde)"/>
+  <ellipse cx="90" cy="75" rx="19" ry="12" fill="#b4bccb" opacity=".85"/>
+  <path d="M36 54 q4 -3 8 -1 M44 49 q4 -3 8 -1 M56 46 q4 -3 8 -1 M30 66 q-2 3 -1 6" stroke="#8790a3" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".7"/>
+  <path d="M84 84 l-2 3.4 M90 85 l-1 3.6 M96 84 l0 3.4" stroke="#c9cfda" stroke-width="1.2" stroke-linecap="round"/>
+  <g class="kafa">
+    <path d="M70 32 C 66 20, 68 10, 72 8 C 76 7, 82 13, 85 19 Z" fill="#8790a3"/>
+    <path d="M118 33 C 122 22, 121 12, 117 9.5 C 113 8, 106 13.5, 102 18.5 Z" fill="#96a0b2"/>
+    <path d="M114.5 27 C 116.5 20, 116 14, 114.5 13 C 112.5 12.4, 108.5 16, 106 19.5 Z" fill="#d7b4bf" opacity=".85"/>
+    <ellipse cx="94" cy="42" rx="27" ry="24" fill="url(#uk-kafa)"/>
+    <ellipse cx="108" cy="52" rx="13" ry="10" fill="#c3cad6"/>
+    <ellipse cx="79" cy="52" rx="10" ry="8" fill="#a9b2c2"/>
+    <path d="M84 21 q6 -2.4 12 0" stroke="#8790a3" stroke-width="1" fill="none" stroke-linecap="round" opacity=".7"/>
+    <circle cx="86" cy="40" r="5.8" fill="#4b3c32"/><circle cx="86" cy="40" r="5.1" fill="url(#uk-goz)"/>
+    <ellipse cx="86.6" cy="40.4" rx="2.6" ry="3.8" fill="#1e1a1b"/><circle cx="85" cy="38" r="1.5" fill="#fff"/>
+    <circle cx="104" cy="40" r="7" fill="#4b3c32"/><circle cx="104" cy="40" r="6.3" fill="url(#uk-goz)"/>
+    <ellipse class="goz" cx="104.8" cy="40.5" rx="3.2" ry="4.7" fill="#1e1a1b"/><circle cx="102.4" cy="37.6" r="1.9" fill="#fff"/><circle cx="106.6" cy="43" r=".8" fill="#fff"/>
+    <ellipse cx="112" cy="50" rx="3.4" ry="1.9" fill="#f2a9be" opacity=".35"/>
+    <path d="M103.4 48.6 Q106.2 47.4 108.8 48.6 Q107.8 51 106.1 51.5 Q104.4 51 103.4 48.6 Z" fill="#6c7487"/>
+    <path d="M106.1 51.5 v1.4 M106.1 52.9 q-1.7 1.8 -3.5 .6 M106.1 52.9 q1.7 1.8 3.5 .6" stroke="#5a6174" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <g stroke="#f4f6fa" stroke-width=".6" stroke-linecap="round" fill="none" opacity=".9"><path d="M112 52 Q122 50 131 51"/><path d="M112 54 Q121 55 129 58"/><path d="M98 52 Q90 51 84 53"/></g>
+    <path d="M74 62 Q92 70 112 61" stroke="#7c5ce6" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="96.4" cy="68.6" r="1.8" fill="#8e5bd6"/><circle cx="99.6" cy="68.6" r="1.8" fill="#8e5bd6"/><circle cx="98" cy="71.2" r="1.8" fill="#7a46c2"/>
+    <path d="M98 66.8 q.8 -1.6 2.2 -1.6" stroke="#4f9a4a" stroke-width=".9" fill="none" stroke-linecap="round"/>
+  </g>
+</g>
+<g class="bacak on2"><ellipse cx="112" cy="74" rx="9.4" ry="8" fill="url(#uk-bacak)"/><path d="M103 74 C102.5 84, 105.5 89, 106.8 98 L118.4 98 C119.6 89, 121.6 84, 121 74 Z" fill="url(#uk-bacak)"/><ellipse cx="113.5" cy="100" rx="7.6" ry="4.8" fill="url(#uk-bacak)"/><path d="M114.6 98.4 v2.6 M117.4 98.2 v2.4 M111.8 98.4 v2.4" stroke="#6f788b" stroke-width=".8" stroke-linecap="round" opacity=".8"/><ellipse class="pati-iz" cx="113.5" cy="101" rx="3.8" ry="2.2" fill="#6c7487"/></g>
+</svg>`;
+const KEDI_W = 150, KEDI_H = 112;
+const PATI_SAG = { x: 137, y: 68, aci: 100 };  // sağa (hafif yukarı) işaret
+const PATI_UST = { x: 124, y: 37, aci: 160, uzat: 1.5 };  // yukarı işaret (manga gibi uzayan pati)
+const BAS_X = 94, BAS_Y = 18;                  // bulutun bağlandığı kafa tepesi
+
+// Öğretici adımları. hedef: CSS seçici; sekme: önce açılacak sekme; tikla: kullanıcı hedefe tıklayınca otomatik geç.
+const OGRETICI_ADIMLAR = [
+  { metin: 'Merhaba! Ben Üzüm 🐾 Bu programı birlikte öğreneceğiz. Hazırsan “Devam”a bas, ben de koşa koşa göstereyim!' },
+  { sekme: 'panel', hedef: '[data-tab=panel]', metin: 'Burası Ana Sayfa. Ne yapacağını unutursan buraya gel; 4 adımın hepsi burada yazıyor.' },
+  { sekme: 'panel', hedef: '#tab-panel .adim:nth-child(1) [data-ornek]', metin: 'Önce “Örnek Excel”i indir. İçinde nasıl dolduracağın yazıyor: örnek öğrencileri sil, kendi öğrencilerini yaz.' },
+  { hedef: '[data-tab=ogrenci]', tikla: true, metin: 'Şimdi “Öğrenciler”e tıkla.' },
+  { sekme: 'ogrenci', hedef: '#tab-ogrenci .toolbar label.btn.primary', metin: 'Doldurduğun Excel’i buradan seç. Her şey yolundaysa yeşil ✓, bir sorun varsa kırmızı ✕ çıkar. Sınıf yoksa ben oluştururum!' },
+  { hedef: '[data-tab=kazanim]', tikla: true, metin: '“Kazanımlar”a tıkla.' },
+  { sekme: 'kazanim', hedef: '#tab-kazanim .toolbar label.btn.primary', metin: 'K12’den aldığın kazanım listesini buradan yükle.' },
+  { hedef: '[data-tab=sinav]', tikla: true, metin: '“Sınavlar”a tıkla.' },
+  { sekme: 'sinav', hedef: '#btnYeniSinav', metin: 'Buradan yeni sınav oluştur. Sonra cevap anahtarı Excel’ini yükle. Her sorunun konusu yazılı olsun ki eksik konuları bulabileyim.' },
+  { hedef: '[data-tab=sonuc]', tikla: true, metin: '“Sonuç Girişi”ne tıkla.' },
+  { sekme: 'sonuc', hedef: '#tab-sonuc label.btn.primary', metin: 'Sonuç Excel’ini buradan yükle. İstersen öğrencinin yanlış yaptığı soru numaralarını da yazabilirsin: 3 7 12 gibi.' },
+  { hedef: '[data-tab=analiz]', tikla: true, metin: 'Şimdi en güzel kısım! “Öğrenci Analizi”ne tıkla.' },
+  { sekme: 'analiz', hedef: '#anOgrenci', metin: 'Buradan öğrenciyi seç. Hangi konuda eksiği olduğunu ve hangi konudan kaç soru çözmesi gerektiğini aşağıda görürsün. İstersen ödev planı da hazırlarım.' },
+  { hedef: '[data-tab=sinifanaliz]', tikla: true, metin: 'Sınıfın geneline bakmak için “Sınıf Analizi”ne tıkla.' },
+  { sekme: 'sinifanaliz', hedef: '#saSinav', metin: 'Sınavı seç: sınıfın en zayıf konularını ve o konuda eksik olan öğrencileri gösteririm.' },
+  { hedef: '[data-tab=ayar]', tikla: true, metin: 'Son olarak “Ayarlar”a tıkla.' },
+  { sekme: 'ayar', hedef: '#btnYedekAl', metin: 'Arada bir buradan yedek almayı unutma! 💾 Bilgiler bu bilgisayarda saklanıyor.' },
+  { sekme: 'panel', metin: 'Hepsi bu kadar! 🎉 Takılırsan yukarıdaki kediye ya da ana sayfadaki düğmeye bas, yine gelirim. Miyav! 🐾', son: true },
+];
+
+const ogretici = { aktif: false, adim: 0, kedi: null, balon: null, vurgu: null, noktalar: [], x: -200, y: 200, yon: 1, hedefEl: null, tiklaDinle: null, zaman: null, poz: null };
+const azHareket = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function ogreticiBaslat() {
+  if (ogretici.aktif) ogreticiBitir(true);
+  const dlg = $('#dlg'); if (dlg.open) dlg.close();
+  ogretici.aktif = true;
+  ogretici.adim = 0;
+  const kedi = document.createElement('div');
+  kedi.className = 'uzum-kedi';
+  kedi.innerHTML = `<div class="uzum-ic">${UZUM_KOSAN}</div>`;
+  const vurgu = document.createElement('div'); vurgu.className = 'uzum-vurgu'; vurgu.hidden = true;
+  const balon = document.createElement('div'); balon.className = 'uzum-balon'; balon.hidden = true;
+  balon.setAttribute('role', 'dialog'); balon.setAttribute('aria-live', 'polite'); balon.setAttribute('aria-label', 'Üzüm anlatıyor');
+  const noktalar = [0, 1, 2].map(i => { const d = document.createElement('div'); d.className = 'uzum-nokta n' + i; d.hidden = true; return d; });
+  document.body.append(vurgu, kedi, ...noktalar, balon);
+  Object.assign(ogretici, { kedi, balon, vurgu, noktalar });
+  // Ekranın sol kenarından, üstten biraz ortaya yakın bir yerden girer
+  ogretici.x = -KEDI_W - 20;
+  ogretici.y = Math.round(window.innerHeight * 0.3);
+  ogretici.yon = 1;
+  kediyiKoy(false);
+  ogreticiAdim(0);
+}
+function kediyiKoy(animasyon, sure = 0) {
+  const k = ogretici.kedi;
+  k.style.transition = animasyon ? `transform ${sure}ms linear` : 'none';
+  k.style.transform = `translate(${ogretici.x}px, ${ogretici.y}px)`;
+  k.querySelector('.uzum-ic').style.transform = ogretici.yon < 0 ? 'scaleX(-1)' : 'none';
+}
+/** Kediyi (x, y)'ye koşturur; varınca söz verir. */
+function kos(x, y) {
+  return new Promise(res => {
+    const k = ogretici.kedi;
+    const dx = x - ogretici.x, dy = y - ogretici.y;
+    const mesafe = Math.hypot(dx, dy);
+    if (Math.abs(dx) > 2) ogretici.yon = dx < 0 ? -1 : 1;
+    ogretici.x = x; ogretici.y = y;
+    k.classList.remove('isaret');
+    if (azHareket() || mesafe < 4) { kediyiKoy(false); res(); return; }
+    const sure = Math.max(450, Math.min(1700, mesafe / 0.55));
+    k.classList.add('kosuyor');
+    // Tarayıcının başlangıç konumunu çizmesine izin ver, sonra koştur
+    requestAnimationFrame(() => requestAnimationFrame(() => kediyiKoy(true, sure)));
+    clearTimeout(ogretici.zaman);
+    ogretici.zaman = setTimeout(() => { k.classList.remove('kosuyor'); res(); }, sure + 40);
+  });
+}
+/** Hedefe göre kedinin duracağı yer ve patisinin yönü. */
+function hedefPozu(r) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const kenar = 6;
+  // Üst çubuktaki (sekme) hedefler: kedi altında durur, patisini yukarı kaldırır
+  if (r.top < 90 && r.bottom < 140) {
+    // Patiyi hedefin sol alt köşesine yakın uzatır; kafası hedefin yazısını kapatmaz
+    const ic = Math.min(22, r.width * 0.25);
+    let x = r.left + ic - PATI_UST.x, yon = 1;
+    if (x < kenar) { x = r.right - ic - (KEDI_W - PATI_UST.x); yon = -1; }
+    x = Math.min(Math.max(x, kenar), vw - KEDI_W - kenar);
+    return { x, y: r.bottom + 2 - PATI_UST.y, yon, pati: PATI_UST };
+  }
+  // Diğerleri: hedefin solunda durur, patisiyle sağa işaret eder; yer yoksa sağında durur
+  const hedefY = r.top + Math.min(r.height / 2, 26);
+  let y = Math.min(Math.max(hedefY - PATI_SAG.y, 70), vh - KEDI_H - kenar);
+  if (r.left - PATI_SAG.x >= kenar) return { x: r.left + 4 - PATI_SAG.x, y, yon: 1, pati: PATI_SAG };
+  if (r.right + KEDI_W <= vw - kenar) return { x: r.right - 4 - (KEDI_W - PATI_SAG.x), y, yon: -1, pati: PATI_SAG };
+  // Çok geniş hedef (telefon): altında durur ve yukarı işaret eder
+  let x = Math.min(Math.max(r.left + 30 - PATI_UST.x, kenar), vw - KEDI_W - kenar);
+  return { x, y: Math.min(r.bottom + 2 - PATI_UST.y, vh - KEDI_H - kenar), yon: 1, pati: PATI_UST };
+}
+function vurguYerlestir() {
+  const el = ogretici.hedefEl, v = ogretici.vurgu;
+  if (!el) { v.hidden = true; return; }
+  const r = el.getBoundingClientRect(), p = 6;
+  Object.assign(v.style, { left: (r.left - p) + 'px', top: (r.top - p) + 'px', width: (r.width + 2 * p) + 'px', height: (r.height + 2 * p) + 'px' });
+  v.hidden = false;
+}
+/** Düşünce bulutunu kedinin kafasının üstüne (yer yoksa altına) koyar. */
+function balonYerlestir() {
+  const b = ogretici.balon, vw = window.innerWidth, vh = window.innerHeight;
+  b.hidden = false;
+  b.style.width = Math.min(340, vw - 24) + 'px';
+  const bw = b.offsetWidth, bh = b.offsetHeight;
+  const basX = ogretici.x + (ogretici.yon < 0 ? KEDI_W - BAS_X : BAS_X), basY = ogretici.y + BAS_Y;
+  let ust = basY - 46 - bh, altta = false;
+  if (ust < 8) { ust = ogretici.y + KEDI_H + 40; altta = true; }
+  if (ust + bh > vh - 8) ust = Math.max(8, vh - 8 - bh);
+  let sol = Math.min(Math.max(basX - bw / 2, 12), vw - bw - 12);
+  b.style.left = sol + 'px'; b.style.top = ust + 'px';
+  // Manga düşünce bulutu: kafadan bulutun kenarına doğru büyüyen üç küçük daire
+  const bx = Math.min(Math.max(basX, sol + 30), sol + bw - 30), by = altta ? ust : ust + bh;
+  const kx = basX, ky = altta ? ogretici.y + KEDI_H - 4 : basY;
+  ogretici.noktalar.forEach((n, i) => {
+    const t = [0.22, 0.5, 0.78][i];
+    n.style.left = (kx + (bx - kx) * t) + 'px';
+    n.style.top = (ky + (by - ky) * t) + 'px';
+    n.hidden = false;
+  });
+}
+function balonGizle() { ogretici.balon.hidden = true; ogretici.noktalar.forEach(n => { n.hidden = true; }); }
+function tiklaDinleKaldir() {
+  if (ogretici.tiklaDinle) { ogretici.tiklaDinle.el.removeEventListener('click', ogretici.tiklaDinle.fn); ogretici.tiklaDinle = null; }
+}
+async function ogreticiAdim(i) {
+  if (!ogretici.aktif) return;
+  tiklaDinleKaldir();
+  ogretici.adim = i;
+  const a = OGRETICI_ADIMLAR[i];
+  balonGizle();
+  ogretici.vurgu.hidden = true;
+  ogretici.hedefEl = null;
+  if (a.sekme && aktifSekme !== a.sekme) sekmeAc(a.sekme);
+  let poz;
+  const el = a.hedef ? $(a.hedef) : null;
+  if (el) {
+    const r0 = el.getBoundingClientRect();
+    if (r0.top < 70 || r0.bottom > window.innerHeight - 40) {
+      el.scrollIntoView({ block: 'center', behavior: azHareket() ? 'auto' : 'smooth' });
+      await new Promise(r => setTimeout(r, 450));
+    }
+    ogretici.hedefEl = el;
+    poz = hedefPozu(el.getBoundingClientRect());
+  } else {
+    // Hedefsiz adım: ekranın ortasına yakın bir yere koşar
+    poz = { x: Math.round(window.innerWidth * 0.5 - KEDI_W / 2), y: Math.round(window.innerHeight * 0.45), yon: 1, pati: null };
+  }
+  if (!ogretici.aktif || ogretici.adim !== i) return;
+  ogretici.poz = poz;
+  await kos(poz.x, poz.y);
+  if (!ogretici.aktif || ogretici.adim !== i) return;
+  ogretici.yon = poz.yon;
+  kediyiKoy(false);
+  const k = ogretici.kedi;
+  if (poz.pati) { k.style.setProperty('--aci', `${-poz.pati.aci}deg`); k.style.setProperty('--uzat', poz.pati.uzat || 1); k.classList.add('isaret'); }
+  else k.classList.add('sallan');
+  setTimeout(() => k.classList.remove('sallan'), 900);
+  vurguYerlestir();
+  // Bulut
+  const b = ogretici.balon;
+  const son = i === OGRETICI_ADIMLAR.length - 1;
+  b.innerHTML = `<div class="uzum-adim">${i + 1} / ${OGRETICI_ADIMLAR.length}</div>
+    <p>${esc(a.metin)}</p>
+    <div class="uzum-dugmeler">
+      ${i > 0 && !son ? '<button type="button" class="btn small" data-og="geri">← Geri</button>' : ''}
+      ${son ? '' : '<button type="button" class="btn small" data-og="bitir">Bitir</button>'}
+      <button type="button" class="btn small primary" data-og="ileri">${son ? 'Teşekkürler Üzüm! 💜' : a.tikla ? 'Benim yerime tıkla ➜' : 'Devam ➜'}</button>
+    </div>`;
+  balonYerlestir();
+  b.querySelector('[data-og=ileri]').focus({ preventScroll: true });
+  // "Şuraya tıkla" adımı: kullanıcı gerçekten tıklarsa kendiliğinden ilerle
+  if (a.tikla && el) {
+    const fn = () => setTimeout(() => ogreticiIleri(), 60);
+    el.addEventListener('click', fn);
+    ogretici.tiklaDinle = { el, fn };
+  }
+}
+function ogreticiIleri() {
+  if (!ogretici.aktif) return;
+  const a = OGRETICI_ADIMLAR[ogretici.adim];
+  if (a.son) { ogreticiBitir(); return; }
+  if (a.tikla && ogretici.hedefEl) { tiklaDinleKaldir(); ogretici.hedefEl.click(); }
+  ogreticiAdim(ogretici.adim + 1);
+}
+async function ogreticiBitir(hemen = false) {
+  if (!ogretici.aktif) return;
+  ogretici.aktif = false;
+  tiklaDinleKaldir();
+  const { kedi, balon, vurgu, noktalar } = ogretici;
+  balon.remove(); vurgu.remove(); noktalar.forEach(n => n.remove());
+  if (!hemen) {
+    kedi.classList.remove('isaret');
+    // Geldiği yere, sola doğru koşarak çıkar
+    await kos(-KEDI_W - 40, Math.round(window.innerHeight * 0.3));
+  }
+  kedi.remove();
+}
+function ogreticiYenidenYerlestir() {
+  if (!ogretici.aktif || !ogretici.poz) return;
+  if (ogretici.hedefEl) {
+    const p = hedefPozu(ogretici.hedefEl.getBoundingClientRect());
+    ogretici.poz = p;
+    Object.assign(ogretici, { x: p.x, y: p.y, yon: p.yon });
+    kediyiKoy(false);
+    vurguYerlestir();
+  }
+  if (!ogretici.balon.hidden) balonYerlestir();
+}
+function ogreticiOlaylari() {
+  $('#btnOgretici').addEventListener('click', ogreticiBaslat);
+  $('#btnLogoOgretici').addEventListener('click', ogreticiBaslat);
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-og]');
+    if (!b) return;
+    if (b.dataset.og === 'ileri') ogreticiIleri();
+    else if (b.dataset.og === 'geri') ogreticiAdim(Math.max(0, ogretici.adim - 1));
+    else if (b.dataset.og === 'bitir') ogreticiBitir();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ogretici.aktif && !$('#dlg').open) ogreticiBitir(); });
+  let bekle = 0;
+  const yenile = () => { cancelAnimationFrame(bekle); bekle = requestAnimationFrame(ogreticiYenidenYerlestir); };
+  window.addEventListener('resize', yenile);
+  window.addEventListener('scroll', () => { if (!ogretici.kedi?.classList.contains('kosuyor')) yenile(); }, { passive: true });
+}
+
 (async function baslat() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   olaylar();
+  ogreticiOlaylari();
   ciz();
 })();

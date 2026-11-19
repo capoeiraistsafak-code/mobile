@@ -2,6 +2,14 @@
 
 Öğrenci bazlı kazanım takibi: sınavda çözülemeyen sorulardan öğrencinin eksik kazanımlarını bulur, isterseniz bu kazanımlara göre ödev / çalışma planı hazırlar.
 
+## Üzüm ile öğren 🐾
+
+Ana Sayfa'daki **“Üzüm, bana bu programı kullanmayı öğretir misin?”** düğmesine (ya da üstteki kediye) bas. Üzüm ekranın solundan koşarak gelir, gösterdiği yeri kırmızı yumuşak köşeli kutuya alır, patisiyle işaret eder ve kafasının üstündeki düşünce bulutunda ne yapacağını anlatır. “Şuraya tıkla” adımlarında gerçekten tıklarsan kendiliğinden devam eder; *Geri*, *Devam* ve *Bitir* düğmeleri de var (Esc de kapatır).
+
+## Örnek veriler ayrı durur
+
+“Örnek verilerle dene” ile gelen sınıf, öğrenci, kazanım ve sınavlar **(örnek)** olarak işaretlenir. Kendi Excel'ini yüklediğinde örnekler silinmez ve senin kayıtlarınla karışmaz (aynı numara ya da aynı sınıf adı olsa bile). “Örnekleri kaldır” yalnızca örnekleri siler.
+
 ## Tek tıkla Excel yükleme
 
 Excel'i seçtiğinde program sütunları kendisi tanır ve hemen yükler, ayar penceresi açılmaz:
@@ -18,22 +26,25 @@ Veriler o bilgisayardaki tarayıcıda saklanır → **Yedek / Ayarlar** sekmesin
 
 ## Klasörler
 
-| Klasör | İçine ne konur |
+| Klasör | İçinde |
 |---|---|
-| `Ogrenci/` | K12'den aldığınız öğrenci listeleri (Excel). Alt klasör adları kurum türünü belirler: `Ogrenci/Kurs Lise/11-A.xlsx`, `Ogrenci/Okul Ortaokul/8-B.xlsx`, `Ogrenci/Kurs Mezun/…` |
-| `Kazanim/` | K12'den aldığınız kazanım listeleri (Excel). Bir dosyada birden çok ders/sınıf olabilir. |
-| `Sinav/` | Sınavın cevap anahtarı + soru-kazanım eşleşmesi ve öğrenci sonuçları (Excel). |
+| `Ogretici/` | **Sadece öğrenme amaçlı** örnek Excel dosyaları ve `BENI_OKU.txt`. Kendi verini yükleyince bunlar silinmez, değişmez. |
+| `Ogrenci/` | **Kendi** öğrenci listelerin (ör. `9-A.xlsx`). Alt klasör adı kurum türünü de belirtebilir: `Ogrenci/Kurs Lise/11-A.xlsx`. |
+| `Kazanim/` | **Kendi** kazanım listelerin (K12'den aldıkların). |
+| `Sinav/` | **Kendi** cevap anahtarı ve sonuç dosyaların. |
+
+“Klasörden yükle” ile program klasörünü seçersen `Ogretici` klasöründeki örnekler atlanır.
 
 ## Örnek (öğretici) Excel dosyaları
 
-Klasörlerdeki `Ornek_…` dosyaları ve programdaki **Örnek Excel indir** düğmeleri (Panel'de hepsi bir arada; ayrıca her sekmede ilgili olan) programın doğrudan okuyabildiği hazır şablonlardır. Her dosyanın üstünde Türkçe “nasıl doldurulur” açıklaması vardır; örnek satırları silip kendi bilgilerinizi aynı sütunlara yazmanız yeterli.
+`Ogretici` klasöründeki `Ornek_…` dosyaları ve programdaki **Örnek Excel indir** düğmeleri (Panel'de hepsi bir arada; ayrıca her sekmede ilgili olan) programın doğrudan okuyabildiği hazır şablonlardır. Her dosyanın üstünde Türkçe “nasıl doldurulur” açıklaması vardır; örnek satırları silip kendi bilgilerinizi aynı sütunlara yazmanız yeterli.
 
 | Dosya | İçinde | Nereden aktarılır |
 |---|---|---|
-| `Ogrenci/Ornek_Ogrenci_Listesi_9-A.xlsx` | 9-A sınıfı, 3 öğrenci (Öğrenci No, Adı, Soyadı, Sınıf/Şube, Kurum) | Sınıflar ve Öğrenciler |
-| `Kazanim/Ornek_Kazanim_Listesi_9.xlsx` | 9. sınıf Türkçe ve Matematik (Kazanım Kodu, Ders, Sınıf, Ünite, Konu, Kazanım) | Kazanımlar |
-| `Sinav/Ornek_Cevap_Anahtari.xlsx` | 6 soru (Soru No, Ders, Konu, Kazanım Kodu, Cevap) | Sınavlar → sınav seçin |
-| `Sinav/Ornek_Sinav_Sonuclari.xlsx` | 3 öğrencinin işaretlediği şıklar (Öğrenci No, Ad Soyad, 1…6) | Sonuç Girişi |
+| `Ogretici/Ornek_Ogrenci_Listesi_9-A.xlsx` | 9-A sınıfı, 3 öğrenci (Öğrenci No, Adı, Soyadı, Sınıf/Şube, Kurum) | Sınıflar ve Öğrenciler |
+| `Ogretici/Ornek_Kazanim_Listesi_9.xlsx` | 9. sınıf Türkçe ve Matematik (Kazanım Kodu, Ders, Sınıf, Ünite, Konu, Kazanım) | Kazanımlar |
+| `Ogretici/Ornek_Cevap_Anahtari.xlsx` | 6 soru (Soru No, Ders, Konu, Kazanım Kodu, Cevap) | Sınavlar → sınav seçin |
+| `Ogretici/Ornek_Sinav_Sonuclari.xlsx` | 3 öğrencinin işaretlediği şıklar (Öğrenci No, Ad Soyad, 1…6) | Sonuç Girişi |
 
 Dört dosya birbirine uyumludur: bu sırayla aktarırsanız 9-A sınıfı, kazanımlar, 6 soruluk bir sınav ve sonuçları hazır olur, analiz hemen görünür. Kazanım metinleri örnektir; resmî liste için K12'den aldığınız dosyayı kullanın.
 

@@ -1,0 +1,2 @@
+Bu klasöre KENDİ cevap anahtarı ve sınav sonucu Excel dosyalarını koy.
+Örnek dosyalar: Ogretici klasöründe.
