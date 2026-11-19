@@ -14,7 +14,7 @@ const KURUMLAR = [
   { key: 'kurs_mezun', ad: 'Kurs – Mezun', seviyeler: ['Mezun'] },
 ];
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20 };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, animasyon: true };
 const KURUM = Object.fromEntries(KURUMLAR.map(k => [k.key, k]));
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
@@ -53,9 +53,11 @@ function addDays(iso, n) {
   const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), g = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${g}`;
 }
+const PATI_IKON = '<svg class="pati-ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.6 0-6.3-1.9-6.3-4.6 0-2.9 3-5.6 6.3-5.6s6.3 2.7 6.3 5.6c0 2.7-2.7 4.6-6.3 4.6z"/><ellipse cx="4.6" cy="10.4" rx="2.3" ry="2.9" transform="rotate(-18 4.6 10.4)"/><ellipse cx="9.2" cy="5.6" rx="2.4" ry="3" transform="rotate(-6 9.2 5.6)"/><ellipse cx="14.8" cy="5.6" rx="2.4" ry="3" transform="rotate(6 14.8 5.6)"/><ellipse cx="19.4" cy="10.4" rx="2.3" ry="2.9" transform="rotate(18 19.4 10.4)"/></svg>';
+const patili = metin => esc(metin).replace(/🐾/g, PATI_IKON);
 function toast(msg, ms = 2600) {
   const t = $('#toast');
-  t.textContent = msg;
+  t.innerHTML = patili(msg);
   t.classList.add('show');
   clearTimeout(toast._t);
   toast._t = setTimeout(() => t.classList.remove('show'), ms);
@@ -2199,6 +2201,7 @@ function sinifAnalizExcel() {
 // AYARLAR / YEDEK
 // ---------------------------------------------------------------------------
 function cizAyar() {
+  miniAyarCiz();
   $('#dersListesi').value = S.dersler.join(', ');
   $('#aEsikEksik').value = S.ayarlar.esikEksik;
   $('#aEsikIyi').value = S.ayarlar.esikIyi;
@@ -2448,7 +2451,7 @@ function olaylar() {
     const sayi = (id, v) => { const n = parseInt($(id).value, 10); return Number.isFinite(n) ? n : v; };
     const a = { esikEksik: sayi('#aEsikEksik', 50), esikIyi: sayi('#aEsikIyi', 80), soruEksik: sayi('#aSoruEksik', 40), soruOrta: sayi('#aSoruOrta', 20) };
     if (a.esikEksik >= a.esikIyi) { toast('“Eksik” sınırı “İyi” sınırından küçük olmalı.'); return; }
-    S.ayarlar = a; kaydet(); toast('Ayarlar kaydedildi.');
+    S.ayarlar = { ...S.ayarlar, ...a }; kaydet(); toast('Ayarlar kaydedildi.');
   };
   // Sınıf konu analizi
   $('#saSinav').onchange = e => { filtre.saSinav = e.target.value; cizSinifAnaliz(); };
@@ -2479,8 +2482,8 @@ const UZUM_KOSAN = `<svg viewBox="0 0 150 112" width="150" height="112" aria-hid
 <linearGradient id="uk-kuyruk" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8b95a8"/><stop offset="1" stop-color="#9ea8ba"/></linearGradient>
 <radialGradient id="uk-goz" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ffd47a"/><stop offset=".55" stop-color="#f29a2e"/><stop offset="1" stop-color="#b8601a"/></radialGradient></defs>
   <path class="kuyruk" d="M31 63 C 15 61, 7 49, 11 33 C 12.5 27, 18.5 26, 19.5 32 C 17.5 43, 21 52, 33 56 Z" fill="url(#uk-kuyruk)"/>
-<g class="bacak ar1"><path d="M31.5 76 A6.75 5.5 0 0 1 45 76 C45.4 86, 44.5 91, 44 98 L33 98 C32.5 91, 31.1 86, 31.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M32 100 C32 95.4, 47.2 95.2, 47.2 100.4 C47.2 104.6, 32 104.6, 32 100 Z" fill="url(#uk-bacak-arka)"/></g>
-<g class="bacak on1"><path d="M83.5 76 A6.75 5.5 0 0 1 97 76 C97.4 86, 96.5 91, 96 98 L85 98 C84.5 91, 83.1 86, 83.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M84 100 C84 95.4, 99.2 95.2, 99.2 100.4 C99.2 104.6, 84 104.6, 84 100 Z" fill="url(#uk-bacak-arka)"/></g>
+<g class="bacak ar1"><path d="M31.5 76 A6.75 5.5 0 0 1 45 76 C45.4 86, 44.5 91, 44 98 L33 98 C32.5 91, 31.1 86, 31.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M32 100 C32 95.4, 47.2 95.2, 47.2 100.4 C47.2 104.6, 32 104.6, 32 100 Z" fill="url(#uk-bacak-arka)"/><g fill="#e2b9c4"><ellipse cx="35.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="39.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="43.4" cy="102.2" rx="1.4" ry=".9"/></g></g>
+<g class="bacak on1"><path d="M83.5 76 A6.75 5.5 0 0 1 97 76 C97.4 86, 96.5 91, 96 98 L85 98 C84.5 91, 83.1 86, 83.5 76 Z" fill="url(#uk-bacak-arka)"/><path d="M84 100 C84 95.4, 99.2 95.2, 99.2 100.4 C99.2 104.6, 84 104.6, 84 100 Z" fill="url(#uk-bacak-arka)"/><g fill="#e2b9c4"><ellipse cx="87.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="91.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="95.4" cy="102.2" rx="1.4" ry=".9"/></g></g>
 <g class="bacak ar2"><path d="M43.5 76 A6.75 5.5 0 0 1 57 76 C57.4 86, 56.5 91, 56 98 L45 98 C44.5 91, 43.1 86, 43.5 76 Z" fill="url(#uk-bacak)"/><path d="M44 100 C44 95.4, 59.2 95.2, 59.2 100.4 C59.2 104.6, 44 104.6, 44 100 Z" fill="url(#uk-bacak)"/><g fill="#e2b9c4"><ellipse cx="47.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="51.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="55.4" cy="102.2" rx="1.4" ry=".9"/></g></g>
 <g class="bacak on2"><path class="kol" d="M93.5 76 A6.75 5.5 0 0 1 107 76 C107.4 86, 106.5 91, 106 98 L95 98 C94.5 91, 93.1 86, 93.5 76 Z" fill="url(#uk-bacak)"/><g class="pati-g"><path class="pati-yan" d="M94 100 C94 95.4, 109.2 95.2, 109.2 100.4 C109.2 104.6, 94 104.6, 94 100 Z" fill="url(#uk-bacak)"/><g class="pati-yan" fill="#e2b9c4"><ellipse cx="97.8" cy="102.2" rx="1.4" ry=".9"/><ellipse cx="101.6" cy="102.7" rx="1.5" ry=".9"/><ellipse cx="105.4" cy="102.2" rx="1.4" ry=".9"/></g><g class="pati-iz"><ellipse cx="101.5" cy="102.2" rx="7.8" ry="7" fill="url(#uk-bacak)"/><path d="M98.3 100.8 C98.3 98.4, 104.7 98.4, 104.7 100.8 C104.7 103.2, 103 103.4, 101.5 102.7 C100 103.4, 98.3 103.2, 98.3 100.8 Z" fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"/><g fill="#e2b9c4" stroke="#d59fb0" stroke-width=".4"><ellipse cx="96.4" cy="104.6" rx="1.4" ry="1.7"/><ellipse cx="99.7" cy="106.2" rx="1.4" ry="1.7"/><ellipse cx="103.3" cy="106.2" rx="1.4" ry="1.7"/><ellipse cx="106.6" cy="104.6" rx="1.4" ry="1.7"/></g></g></g></g>
 <g class="govde">
@@ -2541,6 +2544,7 @@ const ogretici = { aktif: false, adim: 0, kedi: null, balon: null, vurgu: null, 
 const azHareket = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function ogreticiBaslat() {
+  miniDurdur();
   if (ogretici.aktif) ogreticiBitir(true);
   const dlg = $('#dlg'); if (dlg.open) dlg.close();
   ogretici.aktif = true;
@@ -2678,7 +2682,7 @@ async function ogreticiAdim(i) {
   const b = ogretici.balon;
   const son = i === OGRETICI_ADIMLAR.length - 1;
   b.innerHTML = `<div class="uzum-adim">${i + 1} / ${OGRETICI_ADIMLAR.length}</div>
-    <p>${esc(a.metin)}</p>
+    <p>${patili(a.metin)}</p>
     <div class="uzum-dugmeler">
       ${i > 0 && !son ? '<button type="button" class="btn small" data-og="geri">← Geri</button>' : ''}
       ${son ? '' : '<button type="button" class="btn small" data-og="bitir">Bitir</button>'}
@@ -2741,11 +2745,248 @@ function ogreticiOlaylari() {
   window.addEventListener('scroll', () => { if (!ogretici.kedi?.classList.contains('kosuyor')) yenile(); }, { passive: true });
 }
 
+// ---------------------------------------------------------------------------
+// ÜZÜM'ÜN MİNİ ANİMASYONLARI (3–6 sn). Ayarlar'dan açılıp kapanır (varsayılan: açık).
+// Tıklamaları engellemez; öğretici, açık pencere ya da arka plandaki sekme sırasında oynamaz.
+// ---------------------------------------------------------------------------
+const MINI_SVG = {
+  yumak: `<svg width="36" height="36" viewBox="0 0 36 36" overflow="visible"><circle cx="18" cy="18" r="15" fill="#c58be8"/><path d="M6 14 Q18 8 30 16 M5 20 Q18 14 31 22 M8 27 Q18 20 28 28 M14 4 Q10 18 16 32 M22 4 Q26 18 20 32" stroke="#9d5fc9" stroke-width="1.6" fill="none"/><path d="M30 27 Q40 30 36 38" stroke="#c58be8" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  kelebek: `<svg width="34" height="28" viewBox="0 0 34 28"><g class="kanat"><ellipse cx="10" cy="10" rx="9" ry="8" fill="#ff8fb8"/><ellipse cx="11" cy="21" rx="6" ry="5" fill="#ffc24b"/><ellipse cx="24" cy="10" rx="9" ry="8" fill="#ff8fb8"/><ellipse cx="23" cy="21" rx="6" ry="5" fill="#ffc24b"/></g><rect x="15.8" y="6" width="2.4" height="18" rx="1.2" fill="#4a3f6b"/><path d="M17 6 q-3 -5 -6 -5 M17 6 q3 -5 6 -5" stroke="#4a3f6b" fill="none"/></svg>`,
+  fare: `<svg width="42" height="24" viewBox="0 0 42 24"><path d="M8 16 Q0 18 2 9" stroke="#9aa1ad" fill="none" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="21" cy="15" rx="13" ry="8" fill="#b8bec9"/><circle cx="29" cy="7.5" r="4.2" fill="#b8bec9"/><circle cx="29" cy="7.5" r="2.3" fill="#f2a9be"/><circle cx="33.5" cy="13.5" r="1.3" fill="#2a2a33"/><circle cx="38.2" cy="16.4" r="1.5" fill="#e7849d"/></svg>`,
+  balik: `<svg width="44" height="26" viewBox="0 0 44 26"><path d="M4 13 Q16 0 30 13 Q16 26 4 13 Z" fill="#ff9f43"/><path d="M30 13 L42 4 L40 13 L42 22 Z" fill="#ff7f11"/><circle cx="11" cy="11" r="1.7" fill="#2a2a33"/><path d="M17 8 q3 5 0 10" stroke="#e8822a" fill="none" stroke-width="1.4"/></svg>`,
+  kutu: `<svg width="96" height="70" viewBox="-6 0 102 70"><path d="M4 24 L86 24 L86 68 L4 68 Z" fill="#d9a066"/><path d="M4 24 L86 24 L86 32 L4 32 Z" fill="#c48a52"/><path d="M4 24 L-5 10 L40 10 L45 24 Z" fill="#e5b07a"/><path d="M86 24 L95 10 L50 10 L45 24 Z" fill="#e5b07a"/><path d="M30 48 h30" stroke="#b07a45" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  kalp: `<svg width="22" height="20" viewBox="0 0 22 20"><path d="M11 19 C-4 9 2 -2 11 5 C20 -2 26 9 11 19 Z" fill="#ff5c7a"/></svg>`,
+  uzum: `<svg width="32" height="40" viewBox="0 0 32 40"><path d="M16 8 q2 -6 8 -6" stroke="#4f9a4a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M16 8 q7 -3 10 1 q-6 3 -10 -1z" fill="#6fbf5a"/><g fill="#8e5bd6"><circle cx="9" cy="14" r="4.6"/><circle cx="16" cy="13" r="4.6"/><circle cx="23" cy="14" r="4.6"/><circle cx="12.5" cy="21" r="4.6"/><circle cx="19.5" cy="21" r="4.6"/><circle cx="16" cy="28" r="4.6"/></g><g fill="#fff" opacity=".45"><circle cx="7.6" cy="12.6" r="1.2"/><circle cx="14.6" cy="11.6" r="1.2"/><circle cx="21.6" cy="12.6" r="1.2"/><circle cx="11" cy="19.6" r="1.2"/><circle cx="18" cy="19.6" r="1.2"/><circle cx="14.6" cy="26.6" r="1.2"/></g></svg>`,
+  kafa: `<svg width="72" height="72" aria-hidden="true"><use href="#kedi"/></svg>`,
+};
+const mini = { calisiyor: false, zaman: null, son: -1, sahne: null };
+const beklet = ms => new Promise(r => setTimeout(r, ms));
+function miniSahne() {
+  if (!mini.sahne) { mini.sahne = document.createElement('div'); mini.sahne.id = 'miniSahne'; mini.sahne.setAttribute('aria-hidden', 'true'); document.body.appendChild(mini.sahne); }
+  return mini.sahne;
+}
+function nesne(html, cls = '') {
+  const d = document.createElement('div');
+  d.className = 'mini-nesne ' + cls;
+  d.innerHTML = html;
+  miniSahne().appendChild(d);
+  return d;
+}
+const S_KEDI = 0.72, KW = 150 * S_KEDI, KH = 112 * S_KEDI;
+/** Küçük, koşan Üzüm. sol=true: sola bakar. */
+function miniKedi(sol = false) {
+  const d = nesne(`<div class="uzum-ic">${UZUM_KOSAN}</div>`, 'uzum-kedi mini-kedi kosuyor');
+  d.yon = sol => { d.firstChild.style.transform = sol ? 'scaleX(-1)' : 'none'; };
+  d.yon(sol);
+  return d;
+}
+const T = (x, y, ek = '') => ({ transform: `translate(${x}px, ${y}px)${ek}` });
+const TK = (x, y) => ({ transform: `translate(${x}px, ${y}px) scale(${S_KEDI})` });
+function oynat(el, kareler, ms, easing = 'linear', delay = 0) {
+  // fill 'both': gecikmeli parça, sırası gelene kadar köşede görünmez; ilk karesinde bekler
+  return el.animate(kareler, { duration: ms, easing, delay, fill: 'both' }).finished;
+}
+function miniBalon(metin, x, y, ms = 1100) {
+  const b = nesne(`<div class="mini-balon">${esc(metin)}</div>`);
+  b.style.transform = `translate(${x}px, ${y}px)`;
+  return oynat(b, [{ opacity: 0, transform: `translate(${x}px, ${y + 8}px) scale(.6)` }, { opacity: 1, transform: `translate(${x}px, ${y}px) scale(1)`, offset: .2 }, { opacity: 1, transform: `translate(${x}px, ${y}px)`, offset: .8 }, { opacity: 0, transform: `translate(${x}px, ${y - 10}px)` }], ms);
+}
+const ekran = () => ({ w: window.innerWidth, h: window.innerHeight });
+
+// 1) İp yumağı: sağ üst köşeden girer, sol alt köşeden çıkar
+async function animIpYumagi() {
+  const { w, h } = ekran();
+  const y = nesne(MINI_SVG.yumak), k = miniKedi(true);
+  const yol = [[w + 20, 60], [w * .62, h * .38], [w * .35, h * .62], [-80, h - 60]];
+  await Promise.all([
+    oynat(y, yol.map(([x, yy], i) => T(x, yy, ` rotate(${-i * 330}deg)`)), 4200, 'ease-in'),
+    oynat(k, yol.map(([x, yy]) => TK(x + 46, yy - KH + 34)), 4300, 'ease-in', 650),
+  ]);
+}
+// 2) Kelebek: zıplaya zıplaya peşinden koşar
+async function animKelebek() {
+  const { w, h } = ekran();
+  const kb = nesne(MINI_SVG.kelebek, 'kelebek'), k = miniKedi(false);
+  const n = 9, taban = h - KH - 12;
+  const kel = Array.from({ length: n }, (_, i) => T(-40 + (w + 80) * i / (n - 1), h - 175 + Math.sin(i * 1.3) * 45));
+  const kedi = Array.from({ length: n }, (_, i) => TK(-KW - 30 + (w + KW + 60) * i / (n - 1), taban - (i % 2 ? 26 : 0)));
+  await Promise.all([oynat(kb, kel, 4800, 'ease-in-out'), oynat(k, kedi, 5000, 'linear', 450)]);
+}
+// 3) Oyuncak fare: hızla kaçar, Üzüm kovalar
+async function animFare() {
+  const { w, h } = ekran();
+  const f = nesne(MINI_SVG.fare), k = miniKedi(true);
+  await Promise.all([
+    oynat(f, [T(w + 20, h - 34, ' scaleX(-1)'), T(-70, h - 34, ' scaleX(-1)')], 2700, 'ease-in'),
+    oynat(k, [TK(w + 40, h - KH - 8), TK(-KW - 60, h - KH - 8)], 3100, 'ease-in', 450),
+  ]);
+}
+// 4) Lazer noktası: oradan oraya, Üzüm her seferinde döner
+async function animLazer() {
+  const { w, h } = ekran();
+  const nokta = nesne('<div class="lazer"></div>'), k = miniKedi(false);
+  const y = h - 30, kY = h - KH - 8;
+  let kx = -KW - 20;
+  k.style.transform = TK(kx, kY).transform;
+  const hedefler = [.72, .28, .58, .16].map(o => o * w);
+  nokta.style.transform = T(hedefler[0], y).transform;
+  for (const hx of hedefler) {
+    await oynat(nokta, [T(hx, y, ' scale(.4)'), T(hx, y, ' scale(1)')], 220);
+    const nx = hx - KW * .8;
+    k.yon(nx < kx);
+    await oynat(k, [TK(kx, kY), TK(nx, kY)], 650, 'ease-out');
+    kx = nx;
+  }
+  oynat(nokta, [{ opacity: 1 }, { opacity: 0 }], 200);
+  k.yon(false);
+  await oynat(k, [TK(kx, kY), TK(w + 30, kY)], 1100, 'ease-in');
+}
+// 5) Balık: zıplayıp yakalar
+async function animBalik() {
+  const { w, h } = ekran();
+  const fx = w * .5, fy = h - 205;
+  const b = nesne(MINI_SVG.balik, 'suzul'), k = miniKedi(false);
+  b.style.transform = T(fx, fy).transform;
+  oynat(b, [{ opacity: 0 }, { opacity: 1 }], 300);
+  const kY = h - KH - 8, kx = fx - KW * .55;
+  await oynat(k, [TK(-KW - 20, kY), TK(kx, kY)], 1400, 'ease-out');
+  const tepe = fy - KH * .25;
+  const ziplama = oynat(k, [TK(kx, kY), TK(kx + 10, tepe), TK(kx + 20, kY)], 750, 'ease-in-out');
+  await beklet(360);
+  oynat(b, [{ opacity: 1, transform: `translate(${fx}px, ${fy}px) scale(1)` }, { opacity: 0, transform: `translate(${fx}px, ${fy}px) scale(.2)` }], 200);
+  miniBalon('Ham! 🐟', fx + 30, fy - 30, 1200);
+  await ziplama;
+  await oynat(k, [TK(kx + 20, kY), TK(w + 30, kY)], 1300, 'ease-in');
+}
+// 6) Karton kutu: içine girer, kutu sallanır, kafasını çıkarır
+async function animKutu() {
+  const { w, h } = ekran();
+  const bx = w - 190, by = h - 74;
+  const kutu = nesne(MINI_SVG.kutu), k = miniKedi(false);
+  await oynat(kutu, [T(bx, h + 10), T(bx, by)], 400, 'ease-out');
+  const kY = h - KH - 8;
+  await oynat(k, [TK(-KW - 20, kY), TK(bx - 10, kY)], 1900, 'ease-in-out');
+  await oynat(k, [{ ...TK(bx - 10, kY), opacity: 1 }, { transform: `translate(${bx + 20}px, ${by - 10}px) scale(.3)`, opacity: 0 }], 260, 'ease-in');
+  await oynat(kutu, [T(bx, by, ' rotate(0)'), T(bx, by, ' rotate(-6deg)'), T(bx, by, ' rotate(6deg)'), T(bx, by, ' rotate(-4deg)'), T(bx, by, ' rotate(0)')], 650);
+  const kafa = nesne(MINI_SVG.kafa, 'arkada');
+  await oynat(kafa, [T(bx + 12, by + 20), T(bx + 12, by - 46)], 380, 'ease-out');
+  miniBalon('Miyav!', bx + 70, by - 70, 1000);
+  await oynat(kafa, [T(bx + 12, by - 46, ' rotate(0)'), T(bx + 12, by - 46, ' rotate(-8deg)'), T(bx + 12, by - 46, ' rotate(8deg)'), T(bx + 12, by - 46, ' rotate(0)')], 900);
+  await oynat(kafa, [T(bx + 12, by - 46), T(bx + 12, by + 20)], 300, 'ease-in');
+  await oynat(kutu, [T(bx, by), T(bx, h + 10)], 400, 'ease-in');
+}
+// 7) Cee: aşağıdan kafasını çıkarır
+async function animCee() {
+  const { w, h } = ekran();
+  const x = w * (.2 + Math.random() * .6), kafa = nesne(MINI_SVG.kafa);
+  await oynat(kafa, [T(x, h + 4), T(x, h - 30)], 450, 'ease-out');          // önce gözlerine kadar
+  await beklet(450);
+  await oynat(kafa, [T(x, h - 30), T(x, h - 62)], 350, 'ease-out');          // sonra "Cee!"
+  miniBalon('Cee! 👀', x + 62, h - 104, 1500);
+  await oynat(kafa, [T(x, h - 62, ' rotate(0)'), T(x, h - 62, ' rotate(-10deg)'), T(x, h - 62, ' rotate(10deg)'), T(x, h - 62, ' rotate(-6deg)'), T(x, h - 62, ' rotate(0)')], 1600);
+  await oynat(kafa, [T(x, h - 62), T(x, h + 4)], 500, 'ease-in');
+}
+// 8) Uyku: köşeden uykulu bakar, Z harfleri yükselir
+async function animUyku() {
+  const { h } = ekran();
+  const x = 22, kafa = nesne(MINI_SVG.kafa, 'uykulu');
+  await oynat(kafa, [T(x, h + 4), T(x, h - 58)], 600, 'ease-out');
+  const zler = [0, 1, 2].map(i => {
+    const z = nesne(`<span class="zzz" style="font-size:${16 + i * 6}px">Z</span>`);
+    return oynat(z, [{ opacity: 0, transform: `translate(${x + 62}px, ${h - 70}px)` }, { opacity: 1, offset: .25 }, { opacity: 0, transform: `translate(${x + 92 + i * 6}px, ${h - 160}px)` }], 1700, 'ease-out', i * 450);
+  });
+  await Promise.all(zler);
+  await oynat(kafa, [T(x, h - 58), T(x, h + 4)], 500, 'ease-in');
+}
+// 9) Kalpler: durur, başından kalpler uçuşur
+async function animKalpler() {
+  const { w, h } = ekran();
+  const k = miniKedi(true), kY = h - KH - 8, kx = w * .6;
+  await oynat(k, [TK(w + 20, kY), TK(kx, kY)], 1400, 'ease-out');
+  k.classList.remove('kosuyor');
+  const kalpler = Array.from({ length: 6 }, (_, i) => {
+    const kp = nesne(MINI_SVG.kalp), sx = kx + 20 + Math.random() * 40;
+    return oynat(kp, [{ opacity: 0, transform: `translate(${sx}px, ${kY + 10}px) scale(.5)` }, { opacity: 1, offset: .2 }, { opacity: 0, transform: `translate(${sx + (Math.random() * 50 - 25)}px, ${kY - 110}px) scale(1.2)` }], 1500, 'ease-out', i * 220);
+  });
+  await Promise.all(kalpler);
+  k.classList.add('kosuyor'); k.yon(false);
+  await oynat(k, [TK(kx, kY), TK(w + 30, kY)], 1100, 'ease-in');
+}
+// 10) Üzüm salkımı: zıplayan salkımı yakalar
+async function animUzum() {
+  const { w, h } = ekran();
+  const u = nesne(MINI_SVG.uzum), k = miniKedi(true);
+  const mx = w * .48, zemin = h - 46;
+  const zipla = [0, .2, .4, .6, .8, 1].map((t, i) => T(-40 + (mx + 40) * t, zemin - (i % 2 ? 60 : 0), ` rotate(${t * 360}deg)`));
+  const kY = h - KH - 8;
+  await Promise.all([oynat(u, zipla, 2000, 'linear'), oynat(k, [TK(w + 20, kY), TK(mx + 10, kY)], 2000, 'ease-out')]);
+  oynat(u, [{ opacity: 1, transform: `translate(${mx}px, ${zemin}px) scale(1)` }, { opacity: 0, transform: `translate(${mx}px, ${zemin}px) scale(.2)` }], 220);
+  k.classList.remove('kosuyor');
+  await miniBalon('Miyav! 🍇', mx + 20, kY - 30, 1100);
+  k.classList.add('kosuyor');
+  await oynat(k, [TK(mx + 10, kY), TK(-KW - 40, kY)], 1300, 'ease-in');
+}
+const MINI_ANIMLER = [
+  { ad: 'İp yumağının peşinde', ikon: '🧶', fn: animIpYumagi },
+  { ad: 'Kelebek kovalamaca', ikon: '🦋', fn: animKelebek },
+  { ad: 'Oyuncak fare', ikon: '🐭', fn: animFare },
+  { ad: 'Lazer noktası', ikon: '🔴', fn: animLazer },
+  { ad: 'Balık avı', ikon: '🐟', fn: animBalik },
+  { ad: 'Karton kutu', ikon: '📦', fn: animKutu },
+  { ad: 'Cee!', ikon: '👀', fn: animCee },
+  { ad: 'Uykulu Üzüm', ikon: '💤', fn: animUyku },
+  { ad: 'Kalpler', ikon: '❤️', fn: animKalpler },
+  { ad: 'Üzüm salkımı', ikon: '🍇', fn: animUzum },
+];
+async function miniOynat(i) {
+  if (mini.calisiyor || ogretici.aktif) return;
+  mini.calisiyor = true; mini.son = i;
+  try { await MINI_ANIMLER[i].fn(); }
+  catch (e) { /* durduruldu */ }
+  finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+}
+function miniDurdur() {
+  clearTimeout(mini.zaman);
+  if (mini.sahne) { mini.sahne.getAnimations({ subtree: true }).forEach(a => a.cancel()); mini.sahne.innerHTML = ''; }
+  mini.calisiyor = false;
+}
+/** Ara sıra rastgele bir animasyon (ilk: 8 sn sonra, sonra 1–2,5 dakikada bir). */
+function miniPlanla(ilk = false) {
+  clearTimeout(mini.zaman);
+  if (!S.ayarlar.animasyon) return;
+  mini.zaman = setTimeout(miniOtomatik, ilk ? 8000 : 60000 + Math.random() * 90000);
+}
+async function miniOtomatik() {
+  if (!S.ayarlar.animasyon) return;
+  if (document.hidden || ogretici.aktif || $('#dlg').open || azHareket() || mini.calisiyor) { miniPlanla(); return; }
+  let i;
+  do { i = Math.floor(Math.random() * MINI_ANIMLER.length); } while (i === mini.son && MINI_ANIMLER.length > 1);
+  await miniOynat(i);
+  miniPlanla();
+}
+function miniAyarCiz() {
+  const t = $('#aAnimasyon');
+  if (t) t.checked = !!S.ayarlar.animasyon;
+  const l = $('#miniListe');
+  if (l && !l.childElementCount) l.innerHTML = MINI_ANIMLER.map((a, i) => `<button type="button" class="btn small" data-mini="${i}"><span aria-hidden="true">${a.ikon}</span> ${esc(a.ad)} ▶</button>`).join('');
+}
+function miniOlaylari() {
+  $('#aAnimasyon').addEventListener('change', e => {
+    S.ayarlar.animasyon = e.target.checked;
+    kaydetHemen();
+    if (e.target.checked) { toast('Üzüm ara sıra oynayacak 🐾'); miniOynat(Math.floor(Math.random() * MINI_ANIMLER.length)).then(() => miniPlanla()); }
+    else { miniDurdur(); toast('Mini animasyonlar kapatıldı.'); }
+  });
+  $('#miniListe').addEventListener('click', e => { const b = e.target.closest('[data-mini]'); if (b) miniOynat(+b.dataset.mini); });
+}
+
 (async function baslat() {
   const v = await yukle();
   S = v ? { ...bosDurum(), ...v } : bosDurum();
   S.ayarlar = { ...VARSAYILAN_AYARLAR, ...(S.ayarlar || {}) };
   olaylar();
   ogreticiOlaylari();
+  miniOlaylari();
   ciz();
+  miniPlanla(true);
 })();

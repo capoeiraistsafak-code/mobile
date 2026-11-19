@@ -63,9 +63,9 @@
     <div class="hero">
       <svg class="kedi-buyuk" aria-hidden="true"><use href="#kedi"/></svg>
       <div>
-        <h1>Merhaba! Ben Üzüm <span aria-hidden="true">🐾</span></h1>
+        <h1>Merhaba! Ben Üzüm <svg class="pati-ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.6 0-6.3-1.9-6.3-4.6 0-2.9 3-5.6 6.3-5.6s6.3 2.7 6.3 5.6c0 2.7-2.7 4.6-6.3 4.6z"/><ellipse cx="4.6" cy="10.4" rx="2.3" ry="2.9" transform="rotate(-18 4.6 10.4)"/><ellipse cx="9.2" cy="5.6" rx="2.4" ry="3" transform="rotate(-6 9.2 5.6)"/><ellipse cx="14.8" cy="5.6" rx="2.4" ry="3" transform="rotate(6 14.8 5.6)"/><ellipse cx="19.4" cy="10.4" rx="2.3" ry="2.9" transform="rotate(18 19.4 10.4)"/></svg></h1>
         <p>Öğrencilerin hangi konuda eksiği olduğunu birlikte bulalım. Aşağıdaki 4 adımı sırayla yapman yeterli.</p>
-        <button class="btn fun ogretici-btn" id="btnOgretici">🐾 Üzüm, bana bu programı kullanmayı öğretir misin?</button>
+        <button class="btn fun ogretici-btn" id="btnOgretici"><svg class="pati-ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.6 0-6.3-1.9-6.3-4.6 0-2.9 3-5.6 6.3-5.6s6.3 2.7 6.3 5.6c0 2.7-2.7 4.6-6.3 4.6z"/><ellipse cx="4.6" cy="10.4" rx="2.3" ry="2.9" transform="rotate(-18 4.6 10.4)"/><ellipse cx="9.2" cy="5.6" rx="2.4" ry="3" transform="rotate(-6 9.2 5.6)"/><ellipse cx="14.8" cy="5.6" rx="2.4" ry="3" transform="rotate(6 14.8 5.6)"/><ellipse cx="19.4" cy="10.4" rx="2.3" ry="2.9" transform="rotate(18 19.4 10.4)"/></svg> Üzüm, bana bu programı kullanmayı öğretir misin?</button>
       </div>
     </div>
     <div id="panelOrnek"></div>
@@ -238,6 +238,16 @@
         </label>
         <button class="btn" id="btnTumExcel">📤 Her şeyi Excel'e aktar</button>
       </div>
+    </div>
+    <div class="card">
+      <h2>🐱 Üzüm'ün mini animasyonları</h2>
+      <label class="toggle" for="aAnimasyon">
+        <input type="checkbox" id="aAnimasyon" role="switch" checked>
+        <span class="toggle-bar" aria-hidden="true"></span>
+        <span>Üzüm ara sıra ekranda oynasın</span>
+      </label>
+      <p class="muted">Açıkken Üzüm birkaç dakikada bir 3–6 saniyelik küçük bir oyun oynar. Tıklamalarına engel olmaz. Hepsini aşağıdan tek tek izleyebilirsin.</p>
+      <div class="mini-liste" id="miniListe"></div>
     </div>
     <div class="card">
       <h2>🎯 Konu analizi ve soru önerisi</h2>

@@ -331,6 +331,33 @@ dialog::backdrop { background: var(--backdrop); }
 }
 
 .print-only { display: none; }
+/* Pembe pati simgesi (kulak içi ve pati yastıklarıyla aynı renk) */
+.pati-ikon { width: 1em; height: 1em; vertical-align: -.12em; fill: #e2b9c4; stroke: #c98fa2; stroke-width: .9; flex: none; }
+.btn .pati-ikon { width: 1.15em; height: 1.15em; }
+.btn.fun .pati-ikon { fill: #e2b9c4; stroke: #fff; stroke-width: 1.4; }
+
+/* Mini animasyonlar */
+#miniSahne { position: fixed; inset: 0; z-index: 380; pointer-events: none; overflow: hidden; }
+.mini-nesne { position: absolute; left: 0; top: 0; will-change: transform, opacity; }
+.mini-nesne.arkada { z-index: -1; }
+.mini-kedi { position: absolute; z-index: 1; transform-origin: 0 0; }
+.kelebek .kanat { transform-box: view-box; transform-origin: 17px 14px; animation: kanat .16s ease-in-out infinite alternate; }
+@keyframes kanat { to { transform: scaleX(.35); } }
+.suzul svg { animation: suzul 1s ease-in-out infinite alternate; }
+@keyframes suzul { to { transform: translateY(-8px) rotate(-6deg); } }
+.lazer { width: 12px; height: 12px; border-radius: 50%; background: #ff2d4b; box-shadow: 0 0 0 4px rgba(255, 45, 75, .25), 0 0 14px 4px rgba(255, 45, 75, .55); }
+.mini-balon { background: #fff; color: #2e2a40; border: 2.5px solid #2e2a40; border-radius: 16px; padding: 4px 12px; font: 800 15px var(--font-govde); white-space: nowrap; box-shadow: 3px 3px 0 rgba(46, 42, 64, .15); }
+.zzz { font: 800 18px var(--font-baslik); color: #7c5ce6; text-shadow: 0 1px 0 #fff; }
+.uykulu svg { filter: saturate(.85); }
+/* Açma/kapama düğmesi (toggle) */
+.toggle { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 800; margin: 4px 0 8px; }
+.toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.toggle-bar { position: relative; width: 52px; height: 30px; border-radius: 999px; background: var(--line-strong); transition: background .2s; flex: none; }
+.toggle-bar::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform .2s; }
+.toggle input:checked + .toggle-bar { background: var(--mint); }
+.toggle input:checked + .toggle-bar::after { transform: translateX(22px); }
+.toggle input:focus-visible + .toggle-bar { outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: 2px; }
+.mini-liste { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* Öğretici: Üzüm */
 .ogretici-btn { margin-top: 12px; }
