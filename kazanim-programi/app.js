@@ -1912,7 +1912,7 @@ function eksikKazanimlar(ogrId, sinavIdler) {
 }
 const analizSecim = { sinavlar: null, kazanimlar: null, konular: null, ogrId: null, elle: false };
 // Analizde kaç sınavın baz alınacağı: son 1 / 3 / 5 / 10 sınav ya da bütün sınavlar (0). Seçim kaydedilir.
-const SINAV_SAYILARI = [[0, 'Tüm sınavlar'], [1, 'Son sınav'], [3, 'Son 3 sınav'], [5, 'Son 5 sınav'], [10, 'Son 10 sınav']];
+const SINAV_SAYILARI = [[0, 'Tüm sınavlar'], [1, 'Son sınav'], ...[2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => [n, `Son ${n} sınav`])];
 const analizSinavSayisi = () => SINAV_SAYILARI.some(([n]) => n === S.ayarlar.analizSinavSayisi) ? S.ayarlar.analizSinavSayisi : 1;
 const sonSinavlar = (liste, n) => (n ? liste.slice(0, n) : liste.slice());   // liste: yeniden eskiye sıralı
 const analizHepsi = grup => `<div class="toolbar secim-tb"><button type="button" class="btn small" data-an-hepsi="${grup}" data-deger="1">☑️ Hepsini seç</button>`
