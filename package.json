@@ -1,0 +1,29 @@
+{
+  "name": "odev-kontrol",
+  "version": "1.0.0",
+  "description": "Öğrencilerin ödev fotoğraflarını yapay zekâ ile kontrol eden web uygulaması",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env --watch server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capoeiraistsafak-code/mobile.git"
+  },
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/capoeiraistsafak-code/mobile/issues"
+  },
+  "homepage": "https://github.com/capoeiraistsafak-code/mobile#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.11.0",
+    "express": "^5.3.0",
+    "zod": "^4.6.7"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "private": true
+}
