@@ -1,0 +1,2 @@
+Bu klasöre KENDİ öğrenci listelerinin Excel dosyalarını koy (ör. 9-A.xlsx).
+Örnek dosya: Ogretici klasöründe.
