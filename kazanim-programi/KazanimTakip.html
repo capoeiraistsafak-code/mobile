@@ -3861,6 +3861,9 @@ const azHareket = () => window.matchMedia && matchMedia('(prefers-reduced-motion
 function ogreticiBaslat() {
   miniDurdur();
   if (ogretici.aktif) ogreticiBitir(true);
+  // Ekrandan çıkmakta olan önceki öğretici kedisi ya da yarım kalmış parçalar varsa hemen kaldır
+  document.querySelectorAll('.uzum-kedi:not(.mini-kedi), .uzum-balon, .uzum-vurgu, .uzum-nokta').forEach(x => x.remove());
+  clearTimeout(ogretici.cikisZaman); ogretici.cikiyor = false;
   const dlg = $('#dlg'); if (dlg.open) dlg.close();
   ogretici.aktif = true;
   ogretici.adim = 0;
@@ -4025,12 +4028,21 @@ async function ogreticiBitir(hemen = false) {
   tiklaDinleKaldir();
   const { kedi, balon, vurgu, noktalar } = ogretici;
   balon.remove(); vurgu.remove(); noktalar.forEach(n => n.remove());
-  if (!hemen) {
-    kedi.classList.remove('isaret');
-    // Geldiği yere, sola doğru koşarak çıkar
-    await kos(-KEDI_W - 40, Math.round(window.innerHeight * 0.3));
+  clearTimeout(ogretici.zaman);
+  if (!hemen && !azHareket()) {
+    // Geldiği yere, sola doğru koşarak çıkar (kendi zamanlayıcısıyla; yeni bir öğretici bunu bozmaz)
+    kedi.classList.remove('isaret', 'sallan');
+    kedi.classList.add('kosuyor');
+    kedi.querySelector('.uzum-ic').style.transform = 'scaleX(-1)';
+    const x0 = ogretici.x, y = Math.round(window.innerHeight * 0.3), x = -KEDI_W - 40;
+    const sure = Math.max(450, Math.min(1700, Math.hypot(x - x0, y - ogretici.y) / 0.55));
+    ogretici.cikiyor = true;
+    requestAnimationFrame(() => requestAnimationFrame(() => { kedi.style.transition = `transform ${sure}ms linear`; kedi.style.transform = `translate(${x}px, ${y}px)`; }));
+    await new Promise(r => { ogretici.cikisZaman = setTimeout(r, sure + 60); });
+    ogretici.cikiyor = false;
   }
   kedi.remove();
+  miniPlanla();                       // öğretici bitti: Üzüm'ün sayacı yeniden başlar
 }
 function ogreticiYenidenYerlestir() {
   if (!ogretici.aktif || !ogretici.poz) return;
@@ -4074,8 +4086,25 @@ const MINI_SVG = {
   uzum: `<svg width="32" height="40" viewBox="0 0 32 40"><path d="M16 8 q2 -6 8 -6" stroke="#4f9a4a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M16 8 q7 -3 10 1 q-6 3 -10 -1z" fill="#6fbf5a"/><g fill="#8e5bd6"><circle cx="9" cy="14" r="4.6"/><circle cx="16" cy="13" r="4.6"/><circle cx="23" cy="14" r="4.6"/><circle cx="12.5" cy="21" r="4.6"/><circle cx="19.5" cy="21" r="4.6"/><circle cx="16" cy="28" r="4.6"/></g><g fill="#fff" opacity=".45"><circle cx="7.6" cy="12.6" r="1.2"/><circle cx="14.6" cy="11.6" r="1.2"/><circle cx="21.6" cy="12.6" r="1.2"/><circle cx="11" cy="19.6" r="1.2"/><circle cx="18" cy="19.6" r="1.2"/><circle cx="14.6" cy="26.6" r="1.2"/></g></svg>`,
   kafa: `<svg width="72" height="72" aria-hidden="true"><use href="#kedi"/></svg>`,
 };
-const mini = { calisiyor: false, zaman: null, son: -1, sahne: null };
-const beklet = ms => new Promise(r => setTimeout(r, ms));
+const mini = { calisiyor: false, zaman: null, son: -1, sahne: null, kusak: 0, sayac: 0 };
+// Durdurulan bir animasyonun bekleyen adımı devam etmez: kuşağı değiştiyse bekleme hata ile biter.
+const beklet = ms => {
+  const k = mini.kusak;
+  return new Promise((res, rej) => setTimeout(() => (k && mini.kusak !== k ? rej(new Error('durduruldu')) : res()), ms));
+};
+/** Bir Üzüm animasyonunu tek başına çalıştırır; durdurulursa yalnızca kendi izlerini temizler. */
+async function miniCalistir(fn) {
+  const benim = ++mini.sayac;
+  mini.kusak = benim; mini.calisiyor = true;
+  try { await fn(); }
+  catch (e) { /* durduruldu */ }
+  finally {
+    if (mini.kusak === benim) {            // hâlâ sahnedeki animasyon buysa temizle
+      if (mini.sahne) mini.sahne.innerHTML = '';
+      mini.calisiyor = false; mini.kusak = 0;
+    }
+  }
+}
 function miniSahne() {
   if (!mini.sahne) { mini.sahne = document.createElement('div'); mini.sahne.id = 'miniSahne'; mini.sahne.setAttribute('aria-hidden', 'true'); document.body.appendChild(mini.sahne); }
   return mini.sahne;
@@ -4542,7 +4571,7 @@ async function animFareYakala() {
         if (bitti || !sahte.isConnected) break;
         await oGit(sahte, rnd(40, w - 60), rnd(UST_SINIR + 40, h - 60), rnd(220, 420), { don: false, easing: 'ease-in-out' }).catch(() => {});
       }
-    })();
+    })().catch(() => {});
   }
   const hedef = () => sahte ? [sahte.x + 2, sahte.y + 2] : [fareImlec.x, fareImlec.y];
   const konum = ([hx, hy], sol) => [
@@ -4631,17 +4660,16 @@ function turaIsle(i) {
   S.sonAnim = i;
 }
 async function miniOynat(i) {
-  if (mini.calisiyor || ogretici.aktif) return false;
+  if (mini.calisiyor || ogretici.aktif || ogretici.cikiyor) return false;
   mini.calisiyor = true; mini.son = i;
   turaIsle(i); kaydet();   // program kapanıp açılsa da tur kaldığı yerden devam eder
   miniTurGoster();          // yalnızca Ayarlar'daki küçük sayaç
-  try { await MINI_ANIMLER[i].fn(); }
-  catch (e) { /* durduruldu */ }
-  finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+  await miniCalistir(MINI_ANIMLER[i].fn);
   return true;
 }
 function miniDurdur() {
   clearTimeout(mini.zaman);
+  mini.kusak = 0;                          // bekleyen adımlar artık devam etmez
   if (mini.sahne) { mini.sahne.getAnimations({ subtree: true }).forEach(a => a.cancel()); mini.sahne.innerHTML = ''; }
   mini.calisiyor = false;
 }
@@ -4653,8 +4681,9 @@ const MINI_ARALIKLAR = [
 const miniAralikDk = () => MINI_ARALIKLAR.some(([d]) => d === S.ayarlar.animasyonAralik) ? S.ayarlar.animasyonAralik : 5;
 /** Seçilen sıklıkta bir sonraki animasyonu planlar (sayaç her çağrıda baştan başlar). */
 function miniPlanla() {
-  clearTimeout(mini.zaman);
+  clearTimeout(mini.zaman); mini.zaman = null;
   if (!herhangiAcik()) return;
+  if (document.body.classList.contains('kilitli')) return;   // şifre ekranındayken sayaç çalışmaz
   mini.zaman = setTimeout(miniOtomatik, miniAralikDk() * 60000);
 }
 async function miniOtomatik() {
@@ -4693,11 +4722,9 @@ async function animHosgeldin() {
   await mKos(k, c[0], c[1], HIZ_KOS + 60);                    // sonra koşarak gider
 }
 async function hosgeldinOynat() {
-  if (azHareket() || mini.calisiyor) return;
-  mini.calisiyor = true;
-  try { await animHosgeldin(); }
-  catch (e) { /* durduruldu */ }
-  finally { if (mini.sahne) mini.sahne.innerHTML = ''; mini.calisiyor = false; }
+  if (azHareket() || mini.calisiyor || ogretici.aktif) return;
+  mini.son = -1;
+  await miniCalistir(animHosgeldin);
 }
 /** Ayarlar'daki sayaç: bu turda kaç farklı animasyon görüldü (ör. 4 / 10). Başka yerde gösterilmez. */
 function miniTurGoster() {
@@ -4763,6 +4790,7 @@ function miniOlaylari() {
   // Ana sayfadaki "Üzüm'le oyna": beklemeden rastgele bir animasyon; otomatik sayaç baştan başlar
   $('#btnUzumOyna').addEventListener('click', async () => {
     if (mini.calisiyor) { toast('Üzüm şu an zaten oynuyor 🐾'); return; }
+    if (ogretici.aktif || ogretici.cikiyor) { toast('Üzüm şu an sana programı anlatıyor 🐾 Öğretici bitince oynar.'); return; }
     await miniOynat(miniRastgele());
     miniPlanla();
   });
@@ -4810,9 +4838,13 @@ function kilitAc() {
 }
 /** Programdan çıkış: Üzüm'ün animasyonları durur, şifre ekranına dönülür. Bilgiler kayıtlı kalır. */
 async function cikisYap() {
-  clearTimeout(mini.zaman); mini.zaman = null;
-  miniDurdur();
+  document.body.classList.add('kilitli');   // en başta: bundan sonra Üzüm'ün sayacı kurulmaz
   if (ogretici.aktif) await ogreticiBitir(true);
+  clearTimeout(ogretici.cikisZaman);
+  document.querySelectorAll('.uzum-kedi:not(.mini-kedi), .uzum-balon, .uzum-vurgu, .uzum-nokta').forEach(x => x.remove());
+  ogretici.cikiyor = false;
+  miniDurdur();
+  clearTimeout(mini.zaman); mini.zaman = null;
   const dlg = $('#dlg'); if (dlg.open) dlg.close();
   await kaydetHemen();
   $('#kilitMesaj').textContent = 'Çıkış yaptın. Tekrar girmek için şifreni yaz.';
