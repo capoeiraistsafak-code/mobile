@@ -140,7 +140,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .m-not kbd{font:800 24px Inter;background:#3a4150;border:2px solid #556070;border-radius:8px;padding:2px 10px;color:#fff}
 .m-logo{position:absolute;left:40px;bottom:34px;display:flex;align-items:center;gap:18px;font:800 32px Inter;color:#fff}
 .m-logo i{width:92px;height:92px;border-radius:50%;border:6px solid #F5A300;background:url(logo.png) center/cover}
-.m-fs{position:absolute;right:40px;bottom:40px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
+.m-fs{position:absolute;right:40px;bottom:40px;display:flex;align-items:center;gap:8px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
 
 #ov{position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.62)}
 .ov-k{width:1100px;background:#2a303c;border:4px solid #F5A300;border-radius:30px;padding:46px 56px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.55)}
@@ -164,6 +164,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="tTitle"></div>
     <div id="tTask"></div>
     <button id="bNot" class="tb" title="Notlar: neden böyle? (N)"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M6 2h9l5 5v15H6zM14 3v5h5M8 12h10v1.6H8zm0 4h10v1.6H8zm0-8h5v1.6H8z" fill-rule="evenodd"/></svg>Notlar</button>
+    <button class="tb" id="bTam" title="Tam ekran / Küçült (F)" style="width:auto;padding:0 16px;gap:8px;font:800 26px Inter"></button>
     <button class="tb" id="bSes" title="Ses (M)">🔊</button>
     <button class="tb" id="bBas" title="Görevi baştan başlat">↺</button>
     <button class="tb" id="bMenu" title="Menü">☰</button>
@@ -951,8 +952,15 @@ $('qnext').onclick = qContinue;
 $('bSes').onclick = () => { ac(); setSes(!AU.on); };
 $('bMenu').onclick = () => { SFX.click(); toMenu(); };
 $('bBas').onclick = () => { SFX.click(); if (GAME.M) startMission(GAME.M); };
-const fullscreen = () => { const d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); else document.exitFullscreen && document.exitFullscreen(); };
-$('bFs').onclick = fullscreen;
+const fullscreen = () => { const d = document.documentElement; if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const f = d.requestFullscreen || d.webkitRequestFullscreen; f && f.call(d); }
+  else (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document); };
+$('bFs').onclick = fullscreen; $('bTam').onclick = () => { SFX.click(); fullscreen(); };
+const IC_TAM = '<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+const IC_KUC = '<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+function tamEtiket() { const t = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  $('bTam').innerHTML = (t ? IC_KUC + 'Küçült' : IC_TAM + 'Tam ekran'); $('bFs').innerHTML = (t ? IC_KUC + ' Küçült' : IC_TAM + ' Tam ekran'); }
+document.addEventListener('fullscreenchange', () => { tamEtiket(); fit(); }); document.addEventListener('webkitfullscreenchange', () => { tamEtiket(); fit(); });
+tamEtiket();
 $('bSifir').onclick = () => { SFX.click(); $('sifirSor').classList.remove('hide'); };
 $('sifirHayir').onclick = () => { SFX.click(); $('sifirSor').classList.add('hide'); };
 $('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { localStorage.removeItem('ch_yildiz'); } catch (e) {} $('sifirSor').classList.add('hide'); buildMenu(); };
