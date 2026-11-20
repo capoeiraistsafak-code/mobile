@@ -1,3 +1,4 @@
+// Testler için Node sürümü. Programdaki asıl kod: odev-kontrol/app.js.
 // Yerel, basit ve hızlı "yapay zekâ": internet ve ücretli servis gerekmez.
 //  - readTemplate: boş sayfanın fotoğrafındaki basılı yazıyı okur (Tesseract), soru/şık yerlerini bulur.
 //  - readStudentPage: öğrencinin fotoğrafını boş sayfaya oturtur (OpenCV ORB + homografi),
@@ -7,7 +8,8 @@ import Tesseract from "tesseract.js";
 import sharp from "sharp";
 import { createRequire } from "node:module";
 import { detectQuestions } from "./layout.js";
-import { THRESHOLDS } from "./grading.js";
+// Okuma eşikleri (odev-kontrol/app.js içindeki T ile aynı tutulmalı).
+const THRESHOLDS = { minPageMatch: 40, inkDarkness: 55, printTolerancePx: 5, markMinRatio: 0.01, markMultiMin: 0.045, markRivalRatio: 0.55, workMinRatio: 0.004 };
 
 const require = createRequire(import.meta.url);
 /** Boş sayfa bu genişliğe getirilir; bütün koordinatlar bu ölçektedir. */

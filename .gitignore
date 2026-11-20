@@ -1,3 +1,5 @@
 node_modules/
 data/
 .env
+odev-kontrol/OdevKontrol.html
+*.zip

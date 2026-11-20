@@ -1,12 +1,11 @@
 {
   "name": "odev-kontrol",
   "version": "1.0.0",
-  "description": "Öğrencilerin test ödevlerini fotoğraftan kontrol eden web uygulaması (yerel, internetsiz resim işleme)",
-  "main": "server/index.js",
+  "description": "Ödev Kontrol: geliştirme araçları (test ve örnek dosya üretimi). Program: odev-kontrol/index.html",
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env server/index.js",
-    "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env --watch server/index.js",
-    "test": "node --disable-warning=ExperimentalWarning --test test/accuracy.test.js"
+    "test": "node --disable-warning=ExperimentalWarning --test test/accuracy.test.js",
+    "ogretici": "node --disable-warning=ExperimentalWarning test/ogretici-uret.mjs",
+    "build": "cd odev-kontrol && python3 build.py"
   },
   "repository": {
     "type": "git",
@@ -17,16 +16,15 @@
     "url": "https://github.com/capoeiraistsafak-code/mobile/issues"
   },
   "homepage": "https://github.com/capoeiraistsafak-code/mobile#readme",
-  "dependencies": {
-    "@techstark/opencv-js": "^5.0.0-release.1",
-    "@tesseract.js-data/tur": "^1.0.0",
-    "express": "^5.3.0",
-    "sharp": "^0.35.5",
-    "tesseract.js": "^7.0.0"
-  },
   "type": "module",
   "engines": {
     "node": ">=22.13"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@techstark/opencv-js": "5.0.0-release.1",
+    "@tesseract.js-data/tur": "1.0.0",
+    "sharp": "^0.35.5",
+    "tesseract.js": "7.0.0"
+  }
 }

@@ -1,0 +1,38 @@
+ÖĞRETİCİ KLASÖRÜ
+================
+
+Bu klasördeki dosyalar sadece ÖRNEKTİR. Programı denemek ve Excel'i nasıl
+dolduracağını görmek için buradalar. Kendi verilerini yükleyince bu dosyalar
+silinmez, değişmez.
+
+Sırayla dene:
+  1. Ornek_Ogrenci_Listesi_8-A.xlsx   -> Ana Sayfa 1. adım ya da Öğrenciler sekmesi
+  2. Ornek_Kazanim_Listesi_TT8.xlsx   -> Ana Sayfa 2. adım ya da Kazanımlar sekmesi
+  3. Ödevler sekmesi: 8-A için yeni ödev oluştur ("Fikrî Haklar – Test 1", ders: Teknoloji ve Tasarım)
+     -> "Boş sayfa ekle" ile Ornek_Bos_Sayfa_Foto.jpg dosyasını seç
+     -> "Anahtar ve kazanımları gir":
+          Hızlı anahtar:  BCADCADB
+          Toplu kazanım:
+            1 TT.8.A.1
+            2 TT.8.A.2
+            3 TT.8.B.1
+            4 TT.8.B.2
+            5 TT.8.C.1
+            6 TT.8.A.2
+            7 TT.8.B.1
+            8 TT.8.A.2
+  4. Ödev Kontrol sekmesi: Ornek_Ogrenci_Fotograflari klasöründeki 4 fotoğrafı sürükle.
+     101.jpg ve "Buse Er.jpg" öğrencisi kendiliğinden seçilir; IMG-... dosyaları için
+     öğrenciyi sen seç. Sonra "Kontrol et".
+
+Beklenen sonuçlar:
+  101.jpg                    Ali Kaya (No 101): hepsi doğru, işlem/not var
+  Buse Er.jpg                Buse Er: 5 doğru, 3 yanlış
+  IMG-20261120-WA0012.jpg    Can Demir: 4 doğru (2'si işlemsiz), 4 boş
+  IMG-20261120-WA0013.jpg    Deniz Ak: boş sayfa (ödev yapılmamış)
+  Ece Tan (No 105): fotoğraf göndermedi -> "Yapmadı"
+
+Ornek_Bos_Sayfa_Yazdir.png sayfasını yazdırıp kendin çözebilir, telefonla
+fotoğrafını çekip programda deneyebilirsin.
+
+Kazanım kodları ve metinleri ÖRNEKTİR; resmî liste için K12'den aldığın dosyayı kullan.

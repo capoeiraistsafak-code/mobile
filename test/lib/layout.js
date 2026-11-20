@@ -1,3 +1,4 @@
+// Programdaki asıl kod: odev-kontrol/app.js ("SAYFA DÜZENİ" bölümü). İkisi aynı tutulmalı.
 // Basılı yazı okumasından (OCR) gelen kelimelerden sayfa düzenini çıkarır:
 // hangi soru nerede, şıkları (A, B, C, D, E) nerede.
 // Saf fonksiyon: resimle uğraşmaz, sadece kelime kutularıyla çalışır.

@@ -1,0 +1,2 @@
+Bu klasöre KENDİ kazanım listelerinin Excel dosyalarını koy (K12 listeleri gibi).
+Örnek dosya: Ogretici klasöründe.

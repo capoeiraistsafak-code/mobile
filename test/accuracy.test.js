@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { layoutPage, studentInk, renderPage, photograph, rng } from "./synthetic.js";
-import { readTemplate, readStudentPage, shutdownVision } from "../server/vision.js";
+import { readTemplate, readStudentPage, shutdownVision } from "./lib/vision.js";
 
 test("boş sayfa, öğrenci fotoğrafları ve şık okuma doğruluğu", { timeout: 600_000 }, async (t) => {
   const PAGES = 2;

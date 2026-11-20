@@ -1,0 +1,5 @@
+Öğrencilerden gelen ödev fotoğraflarını bu klasöre koy.
+Her ödev için bir alt klasör açman kolaylık sağlar (ör. Odev/8-A Fikri Haklar/).
+Dosya ya da klasör adına öğrencinin numarasını veya adını yazarsan (ör. 101.jpg, ali-kaya.jpg)
+program öğrenciyi kendiliğinden seçer.
+Programda: Ödev Kontrol > Klasörden yükle.
