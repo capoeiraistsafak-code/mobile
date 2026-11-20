@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Fizik Oyunları · 3D</title>
 <style>@font-face {
   font-family: 'Caveat';
@@ -164,7 +165,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#1f232c;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:#1f232c;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 button{font-family:inherit;cursor:pointer;border:none}
 #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:radial-gradient(circle at 50% 45%,#3a4150,#1f232c);overflow:hidden}
 #gl{position:absolute;left:0;top:0;width:1920px;height:1080px;touch-action:none;cursor:grab}
@@ -212,6 +213,9 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet button i{font-style:normal;font-size:26px;line-height:1}
 #palet button.on{background:#ec4899;border-color:#fff;color:#fff}
 #palet .renk{min-width:38px;width:38px;height:38px;border-radius:50%;padding:0;border:4px solid #1f232c}
+#palet .cark{position:relative;overflow:hidden;cursor:pointer;background:conic-gradient(red,#ff0,lime,cyan,blue,#f0f,red)!important}
+#palet .cark::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--sec,#ec4899);border:2px solid #fff}
+#palet .cark input{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:0;padding:0;cursor:pointer}
 #palet .renk.on{border-color:#fff;box-shadow:0 0 0 3px #ec4899}
 #palet .ayr{width:2px;height:50px;background:#556070}
 #palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
@@ -280,6 +284,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 @keyframes yaz{to{clip-path:inset(-10px -10px -10px 0)}}
 #qnext{align-self:flex-end;font:800 40px Inter;background:#22c55e;color:#0b2b16;border-radius:20px;padding:18px 40px;animation:nabiz 1.4s infinite}
 
+.ysv{display:inline-block;width:1em;height:1em;vertical-align:-0.14em;flex:none}
 /* matematik */
 .fm{display:inline-block;border:3px solid #F5C400;border-radius:14px;padding:2px 12px;margin:3px 2px;line-height:1.25;vertical-align:middle;background:rgba(245,196,0,.07)}
 #sol .fm{padding:0 10px;margin:2px 0}
@@ -340,7 +345,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .c-ac{margin-top:12px;font:600 26px/1.3 Inter;color:#cbd5e1;flex:1}
 .c-st{font:800 30px Inter;color:#4ade80}
 .c-st.yok{color:#94a3b8}
-.c-yil{margin-top:4px;font:400 30px/1 Inter;letter-spacing:2px;color:#F5C400;white-space:nowrap}.c-yil span{color:#556070}
+.c-yil{margin-top:6px;font:400 30px/1 Inter;letter-spacing:0;display:flex;gap:3px;color:#F5C400;white-space:nowrap}.c-yil span{color:#556070}
 #bSifir{right:300px}
 #sifirSor{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.7)}
 #tYil{flex:none;font:900 32px Inter;color:#F5C400;background:#1f232c;border:2px solid #F5A300;border-radius:14px;padding:8px 16px;white-space:nowrap}
@@ -366,16 +371,16 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .btn.ana{background:#22c55e;color:#0b2b16;border-color:#22c55e}
 .btn:active{transform:scale(.96)}
 </style></head><body>
-<div id="stage">
+<div id="kap" style="position:fixed;inset:0;overflow:hidden"><div id="stage">
   <canvas id="gl"></canvas>
   <div id="tags"></div>
   <canvas id="ciz" width="1920" height="1080"></canvas>
   <div id="palet" class="hide">
-    <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏</i>Kalem</button>
+    <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏︎</i>Kalem</button>
     <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
     <button id="pSilgi" title="Silgi (S)"><i>⌀</i>Silgi</button>
     <span class="etk">Silgi:</span>
-    <div class="mod" id="pMod"><button id="pParca" class="on" title="Silginin değdiği kısmı siler"><i>✂</i>Parça parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
+    <div class="mod" id="pMod"><button id="pParca" title="Silginin değdiği kısmı siler"><i>✂︎</i>Parça parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
     <button id="pTem" title="Bütün çizimleri sil"><i>⌫</i>Temizle</button>
     <span class="sat"></span>
     <button class="renk on" data-r="#ef4444" style="background:#ef4444" title="Kırmızı"></button>
@@ -383,6 +388,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button class="renk" data-r="#3b82f6" style="background:#3b82f6" title="Mavi"></button>
     <button class="renk" data-r="#22c55e" style="background:#22c55e" title="Yeşil"></button>
     <button class="renk" data-r="#ffffff" style="background:#ffffff" title="Beyaz"></button>
+    <label class="renk cark" id="pCark" title="Renk seç (istediğin renk)"><input type="color" id="pRenk" value="#ec4899"></label>
     <span class="ayr"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
@@ -390,7 +396,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="top" class="hide">
     <span class="pill" id="tNo">GÖREV 1</span>
-    <span id="tYil">★ 0 / 0</span>
+    <span id="tYil"></span>
     <div id="tTitle"></div>
     <div id="tTask"></div>
     <button id="bNot" class="tb" title="Notlar: neden böyle? (N)"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M6 2h9l5 5v15H6zM14 3v5h5M8 12h10v1.6H8zm0 4h10v1.6H8zm0-8h5v1.6H8z" fill-rule="evenodd"/></svg>Notlar</button>
@@ -401,10 +407,10 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   </div>
   <div id="board" class="hide"></div>
   <div id="sub"></div>
-  <button id="go" class="hide">▶ Başlat</button>
+  <button id="go" class="hide">▶︎ Başlat</button>
   <div id="ctl" class="hide">
     <button id="bDur" title="Duraklat / Devam et (P)"></button>
-    <button id="bCiz" title="Kalem / lazer ile çiz (K)">✏ Çiz</button><button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
+    <button id="bCiz" title="Kalem / lazer ile çiz (K)">✏︎ Çiz</button><button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
   <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
@@ -417,7 +423,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="opts"></div>
     <div id="fb"></div>
     <div id="solWrap"><div id="sol"></div><div class="kay hide" id="solKay"><button id="solY" title="Yukarı">▲</button><button id="solA" title="Aşağı">▼</button></div></div>
-    <button id="qnext" class="hide">Devam ▶</button>
+    <button id="qnext" class="hide">Devam ▶︎</button>
   </div>
 
   <div id="ov" class="hide"></div>
@@ -444,16 +450,18 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
       <div class="ks"><span><kbd>1</kbd>–<kbd>4</kbd> şık seç</span><span><kbd>Boşluk</kbd> devam</span><span><kbd>P</kbd> duraklat</span><span><kbd>O</kbd> ortala</span><span><kbd>K</kbd> kalem</span><span><kbd>L</kbd> lazer</span><span><kbd>S</kbd> silgi</span><span><kbd>N</kbd> notlar</span><span><kbd>↑</kbd><kbd>↓</kbd> kaydır</span><span><kbd>−</kbd><kbd>+</kbd> hız</span><span><kbd>M</kbd> ses</span><span><kbd>F</kbd> tam ekran</span></div>
     </div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
-    <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
+    <button class="m-fs" id="bSifir"><svg class="ysv" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg> Yıldızları sıfırla</button>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
-    <div id="sifirSor" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">☆</div><div class="ov-b" style="font-size:52px">Bütün yıldızlar silinsin mi?</div>
+    <div id="sifirSor" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic"><svg class="ysv" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z" fill="none" stroke="#F5C400" stroke-width="1.6" stroke-linejoin="round"/></svg></div><div class="ov-b" style="font-size:52px">Bütün yıldızlar silinsin mi?</div>
       <div class="ov-t">Bütün konuların yıldızları sıfırlanır. Bu işlem geri alınamaz.</div>
       <div class="ov-dg"><button class="btn" id="sifirHayir">Vazgeç</button><button class="btn ana" style="background:#ef4444;border-color:#ef4444;color:#fff" id="sifirEvet">Evet, sıfırla</button></div></div></div>
   </div>
-</div>
+</div></div>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
+const YSVG = on => `<svg class="ysv" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z" fill="${on ? '#F5C400' : 'none'}" stroke="${on ? '#F5C400' : '#64748b'}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+const YILDIZLAR = (y, t) => YSVG(true).repeat(y) + YSVG(false).repeat(Math.max(0, t - y));
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
 const V3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
@@ -467,7 +475,7 @@ const OM = 'ω', AL = 'α';
 // ======================= ÖLÇEKLEME (akıllı tahta / her ekran) =======================
 let SCALE = 1;
 function fit() {
-  const w = innerWidth, h = innerHeight; SCALE = Math.min(w / 1920, h / 1080);
+  const vv = window.visualViewport, w = $('kap').clientWidth || (vv ? vv.width : innerWidth), h = $('kap').clientHeight || (vv ? vv.height : innerHeight); SCALE = Math.min(w / 1920, h / 1080);
   $('stage').style.transform = `translate(${(w - 1920 * SCALE) / 2}px,${(h - 1080 * SCALE) / 2}px) scale(${SCALE})`;
   R3.setPixelRatio(Math.min(2, (window.devicePixelRatio || 1) * SCALE)); R3.setSize(1920, 1080, false);
 }
@@ -480,6 +488,7 @@ function ac() {
     try {
       const C = window.AudioContext || window.webkitAudioContext; AU.ctx = new C();
       AU.m = AU.ctx.createGain(); AU.m.gain.value = AU.on ? 0.8 : 0; AU.m.connect(AU.ctx.destination);
+      AU.oyun = AU.ctx.createGain(); AU.oyun.gain.value = (typeof CTL !== 'undefined' && CTL.dur) ? 0 : 1; AU.oyun.connect(AU.m);   // oyun sesleri ayrı kanal
       const n = AU.ctx.createBuffer(1, AU.ctx.sampleRate * 2, AU.ctx.sampleRate), d = n.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; AU.nb = n;
     } catch (e) { AU.ctx = null; }
@@ -492,15 +501,17 @@ function tone(f, dur, { type = 'sine', vol = .25, at = 0, to = null } = {}) {
   const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
   if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g); g.connect(AU.m); o.start(t); o.stop(t + dur + 0.05);
+  o.connect(g); g.connect(AU.hedef || AU.m); o.start(t); o.stop(t + dur + 0.05);
 }
 function noise(dur, { type = 'lowpass', f = 1000, f2 = null, q = 1, vol = .3, at = 0 } = {}) {
   const c = ac(); if (!c) return; const t = c.currentTime + at;
   const s = c.createBufferSource(); s.buffer = AU.nb; const fl = c.createBiquadFilter(); fl.type = type; fl.Q.value = q;
   fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
   const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  s.connect(fl); fl.connect(g); g.connect(AU.m); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  s.connect(fl); fl.connect(g); g.connect(AU.hedef || AU.m); s.start(t, Math.random()); s.stop(t + dur + 0.05);
 }
+const OYUN_SFX = ['snap', 'whoosh', 'ding', 'splash', 'boing', 'bell', 'pour', 'clack', 'horn'];   // oyun içi efektler (duraklatınca susar)
+function oyunSesleri() { OYUN_SFX.forEach(k => { const f = SFX[k]; SFX[k] = () => { if (typeof CTL !== 'undefined' && CTL.dur) return; ac(); AU.hedef = AU.oyun; try { f(); } finally { AU.hedef = null; } }; }); }
 const SFX = {
   click: () => tone(900, .05, { type: 'square', vol: .06 }),
   ok: () => { tone(660, .18, { vol: .22 }); tone(880, .18, { vol: .22, at: .12 }); tone(1320, .4, { vol: .2, at: .24 }); },
@@ -520,7 +531,7 @@ const SFX = {
 // sürekli sesler: roket, araba motoru, tren gürültüsü, dönen kova
 function loopSnd(kind) {
   const c = ac(); if (!c) return { set() {}, stop() {} };
-  const out = c.createGain(); out.gain.value = 0; out.connect(AU.m); const srcs = []; let setF = () => {};
+  const out = c.createGain(); out.gain.value = 0; out.connect(AU.oyun); const srcs = []; let setF = () => {};
   const nz = () => { const s = c.createBufferSource(); s.buffer = AU.nb; s.loop = true; s.start(0, Math.random()); srcs.push(s); return s; };
   if (kind === 'rocket') {
     const s = nz(), bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = .6;
@@ -540,6 +551,7 @@ function loopSnd(kind) {
     stop() { out.gain.setTargetAtTime(0, c.currentTime, .08); setTimeout(() => { srcs.forEach(s => { try { s.stop(); } catch (e) {} }); out.disconnect(); }, 500); } };
   AU.loops.push(L); return L;
 }
+oyunSesleri();
 function stopLoops() { AU.loops.forEach(l => l.stop()); AU.loops = []; }
 function setSes(on) { AU.on = on; $('bSes').textContent = on ? '🔊' : '🔇'; if (AU.m) AU.m.gain.setTargetAtTime(on ? .8 : 0, AU.ctx.currentTime, .05); try { localStorage.setItem('ch_ses', on ? '1' : '0'); } catch (e) {} }
 
@@ -710,7 +722,7 @@ const M1 = {
     setTag('r1t', S.hit ? '🎯 HEDEF VURULDU!' : '🎯 HEDEF'); show('r1t', hoop.position.clone().add(V3(0, 0.95, 0)), 1, 0, -30);
   },
   steps: [
-    { sub: 'Oyuncak roket sürtünmesiz yatay masada, 2 m uzunluğundaki ipe bağlı. Başlat\'a basın, roket dönsün.', go: '▶ Başlat' },
+    { sub: 'Oyuncak roket sürtünmesiz yatay masada, 2 m uzunluğundaki ipe bağlı. Başlat\'a basın, roket dönsün.', go: '▶︎ Başlat' },
     { do: S => { S.spin = true; }, sub: 'Roket bir turu 2 saniyede atıyor (her tur aynı sürede: düzgün çembersel hareket).', wait: 3.2 },
     { q: { t: `Roket bir turu <b>T = 2 s</b>'de atıyor. Roketin <b>açısal hızı (ω)</b> kaç rad/s?<br><small>(π = 3 alın)</small>`,
       o: ['3 rad/s', '6 rad/s', '1,5 rad/s', '12 rad/s'], lab: 'ω = ?', at: 'peg', f: ['r1r'],
@@ -727,7 +739,7 @@ const M1 = {
     { q: { t: `İp koparsa roket hangi yolu izler?`,
       f: ['r1v'], o: ['Teğet boyunca düz gider', 'Merkeze doğru düşer', 'Merkezden dışarı doğru kaçar', 'Çember çizmeye devam eder'],
       s: [`İp kopunca merkezcil kuvvet (<span class="r">F</span>, ip gerilmesi) biter.`, `Yatayda kuvvet yoksa cisim hızını korur (eylemsizlik).`, `Hız (<span class="g">v</span>) TEĞET → roket <em>DÜZ</em> gider ✓`] } },
-    { sub: 'İp, roket hedefe bakan noktaya gelince kesilecek.', go: '✂ İpi kes' },
+    { sub: 'İp, roket hedefe bakan noktaya gelince kesilecek.', go: '✂︎ İpi kes' },
     { do: S => { S.arm = true; }, sub: 'İp koptu: yatayda kuvvet yok, roket teğet boyunca sabit hızla düz gidiyor… (yavaş çekim)', until: S => S.fly >= STOP1 && S.ht > 0.8 },
     { sub: 'Roket teğet boyunca düz gitti, hedeften geçti ve yastıklı duvarda durdu! 🎯', wait: 1.2 },
   ],
@@ -783,7 +795,7 @@ const M2 = {
     if (S.lap >= 0) { setTag('c2t', `⏱ ${Math.min(S.lap, 6).toFixed(1).replace('.', ',')} s`); show('c2t', V3(0, 0.6, 2.8), 1, 120, -60); }
   },
   steps: [
-    { sub: 'Üç araba başlangıç çizgisinde. Üçünün de hızı aynı: v = 10 m/s.', go: '▶ Başlat' },
+    { sub: 'Üç araba başlangıç çizgisinde. Üçünün de hızı aynı: v = 10 m/s.', go: '▶︎ Başlat' },
     { do: S => { S.run = true; }, sub: 'Arabalar aynı çizgisel hızla (v = 10 m/s) dönüyor. Hareketlerini izleyin.', wait: 4.5 },
     { q: { t: `Üç arabanın hızı aynı (v = 10 m/s). Hangi arabanın <b>açısal hızı (ω)</b> en büyüktür?`,
       o: ['Kırmızı (r = 10 m)', 'Yeşil (r = 20 m)', 'Mavi (r = 30 m)', 'Üçünün de eşit'], fixed: true,
@@ -875,7 +887,7 @@ const M3 = {
     if (S.ok) { setTag('k3s', S.ok); show('k3s', V3(0, AX + RW + 1.1, 0), 1); }
   },
   steps: [
-    { sub: 'Kova, r = 1 m yarıçaplı dikey çemberde dönecek. Başlat\'a basın.', go: '▶ Başlat' },
+    { sub: 'Kova, r = 1 m yarıçaplı dikey çemberde dönecek. Başlat\'a basın.', go: '▶︎ Başlat' },
     { do: S => { S.mode = 'frz'; S.goal = 3 * TAU + Math.PI; }, sub: 'Kova sabit hızla dönüyor: v teğet, a merkeze…', until: S => S.mode === 'stop' },
     { do: S => { S.frz = true; }, sub: 'Kova tepeden geçerken görüntü donduruldu.', wait: 1.2 },
     { q: { t: `Kova tepedeyken suyu çembersel yolda tutan <b>merkezcil kuvveti</b> hangi kuvvetler sağlar?`,
@@ -889,7 +901,7 @@ const M3 = {
     { do: S => { S.th = 0; }, q: { t: `Kova bu kez tepeden <b>v = 2 m/s</b> hızla geçecek şekilde çevrilecek. Su ne olur?`,
       o: ['Su dökülür', 'Su dökülmez', 'Kova olduğu yerde durur', 'Hız önemli değil, sonuç değişmez'],
       s: [`${F('v<sup>2</sup>', 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s²`, `4 &lt; g = 10 → yer çekimi fazla gelir`, `Su kovadan ayrılır → su <em>DÖKÜLÜR</em> ✗`, `(v = 2 m/s, gereken en küçük hızdan (3,2 m/s) küçük: kova YAVAŞ dönüyor)`] } },
-    { sub: 'Kovayı tepede v = 2 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
+    { sub: 'Kovayı tepede v = 2 m/s olacak şekilde çevirip görelim.', go: '▶︎ Kovayı çevir' },
     { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova dönüyor (tepede v = 2 m/s)…', until: S => S.spDone },
     { sub: 'Su, tepeye varmadan kovadan ayrıldı ve döküldü. Yavaş dönerse <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> &lt; g → su DÖKÜLÜR.', go: '🪣 Kovayı doldur' },
     { do: S => { S.slowRun = false; S.sp = null; S.spDone = 0; S.mode = 'stop'; S.th = 0; water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false); SFX.pour(); },
@@ -897,7 +909,7 @@ const M3 = {
     { q: { t: `Bu kez kova tepeden <b>v = 4 m/s</b> ile geçecek. Su dökülür mü?`,
       o: ['Dökülmez', 'Dökülür', 'Yalnızca yarısı dökülür', 'Kova durur'],
       s: [`${F('v<sup>2</sup>', 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s²`, `16 ≥ g = 10 ✓`, `4 m/s > 3,2 m/s (en küçük hız) → su kovada kalır, <em>DÖKÜLMEZ</em> ✓`] } },
-    { sub: 'Kovayı tepede v = 4 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
+    { sub: 'Kovayı tepede v = 4 m/s olacak şekilde çevirip görelim.', go: '▶︎ Kovayı çevir' },
     { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova dönüyor (tepede v = 4 m/s)…', until: S => S.mode === 'stop' },
     { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, sub: 'Su hiç dökülmedi! Hızlı dönerse <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ≥ g → su DÖKÜLMEZ.', wait: 2 },
   ],
@@ -1034,7 +1046,7 @@ const M4 = {
   },
   go(S, stop, goal) { S.stop = stop; S.goal = goal; S.run = true; },
   steps: [
-    { sub: 'Tren h = 45 m yükseklikte, durgun. Başlat\'a basın: tren yokuştan inecek.', go: '▶ Başlat' },
+    { sub: 'Tren h = 45 m yükseklikte, durgun. Başlat\'a basın: tren yokuştan inecek.', go: '▶︎ Başlat' },
     { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Tren durgun bırakıldı: potansiyel enerji (m · g · h) → kinetik enerji (<span class="fr"><span>1</span><span>2</span></span> · m · v<sup>2</sup>)', until: S => !S.run },
     { do: S => { S.vlab = 'v = ?'; S.alab = 'a'; }, sub: 'Döngünün dibi. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tren h = 45 m yükseklikten durgun bırakıldı. Döngünün dibinde <b>hızı (v)</b> kaç m/s?<br><small>(Sürtünme yok, g = 10 m/s²)</small>`,
@@ -1053,14 +1065,14 @@ const M4 = {
       o: ['0', '3 rad/s²', '9 rad/s²', '1 rad/s²'], lab: 'α = ?', f: ['t4n', 't4g', 't4m'],
       s: [`Dipte <span class="r">mg</span> ve <span class="o">N</span> dikey: ikisi de merkez doğrultusunda`, `Teğet yönde kuvvet yok → teğetsel ivme a<sub>t</sub> = 0`, `Açısal ivme: <span class="fm">α = ${F('a<sub>t</sub>', 'r')} = <em>0</em> ✓</span>`, `O an hız ne artar ne azalır`],
       after: () => board('Dipte açısal ivme', 'α = 0') } },
-    { sub: 'Tren döngüye girecek ve çeyrek turda (yan noktada) duracak.', go: '▶ Treni sür' },
+    { sub: 'Tren döngüye girecek ve çeyrek turda (yan noktada) duracak.', go: '▶︎ Treni sür' },
     { do: S => M4.go(S, 'side', ROLL.sSide), sub: 'Tren döngüde yükseliyor…', until: S => !S.run },
     { sub: 'Döngünün yan noktası. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tren döngünün yan noktasında (çeyrek tur). Trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
       o: ['1 rad/s²', '10 rad/s²', '0', '100 rad/s²'], lab: 'α = ?', f: ['t4at', 't4g', 't4m'],
       s: [`Yan noktada <span class="r">mg</span> tamamen TEĞET (aşağı)`, `Teğetsel ivme: a<sub>t</sub> = g = 10 m/s²`, `α = ${F('a<sub>t</sub>', 'r')} = ${F('10', '10')} = <em>1 rad/s²</em> ✓`, `a<sub>t</sub> hıza ters → tren <em>YAVAŞLIYOR</em>`],
       after: S => { S.atlab = 'a<sub>t</sub> = g'; board('Yanda açısal ivme', 'α = 1 rad/s²'); } } },
-    { sub: 'Tren döngünün tepesine (yarım tur) kadar gidecek.', go: '▶ Treni sür' },
+    { sub: 'Tren döngünün tepesine (yarım tur) kadar gidecek.', go: '▶︎ Treni sür' },
     { do: S => { S.vlab = 'v'; S.alab = 'a = ?'; M4.go(S, 'top', ROLL.sTop); }, sub: 'Tren tepeye çıkıyor…', until: S => !S.run },
     { sub: 'Döngünün tepesi: yükseklik 2r = 20 m. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tepede yükseklik 2r = 20 m. Trenin <b>hızının karesi (v²)</b> kaçtır?`,
@@ -1074,7 +1086,7 @@ const M4 = {
     { q: { t: `Tren tepede ters duruyor. Raydan <b>düşer mi?</b>`,
       f: ['t4n', 't4g', 't4a'], o: ['Düşmez, çünkü <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 50 ≥ g = 10', 'Düşer, çünkü tren ters dönmüş', 'Düşer, çünkü hızı azaldı', 'Düşmez, çünkü tepede ağırlığı yok'],
       s: [`Düşmeme şartı: <span class="fm">${F('v<sup>2</sup>', 'r')} ≥ g</span>`, `50 ≥ 10 ✓ → ray treni iter (<span class="o">N</span> > 0)`, `<span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`, `Ray trenin ÜSTÜNDE → <span class="o">N</span> AŞAĞI (yüzeyden trene)`] } },
-    { sub: 'Tren döngüden çıkıp istasyona yaklaşacak.', go: '▶ Treni sür' },
+    { sub: 'Tren döngüden çıkıp istasyona yaklaşacak.', go: '▶︎ Treni sür' },
     { do: S => M4.go(S, 'pre', ROLL.sPre), sub: 'Tren döngüden çıktı, düz yolda ilerliyor…', until: S => !S.run },
     { do: S => { S.m = true; }, sub: 'İstasyon girişi. Tren durduruldu. Durmak için yaya çarpacak.', wait: 0.8 },
     { q: { t: `Tren (<b>m = 200 kg</b>, <b>v = 30 m/s</b>) istasyondaki yaya çarpacak. Yay <b>x = 3 m</b> sıkışıp treni durduracak. <b>Yay sabiti (k)</b> kaç N/m?`,
@@ -1122,7 +1134,7 @@ function anaKur() {
   k.style.gridTemplateColumns = `repeat(${L.length > 12 ? 4 : 2},1fr)`; k.style.width = L.length > 12 ? '1840px' : '1400px';
   L.forEach((ad, i) => { const h = HAZIR[SINAV + '|' + ad], b = document.createElement('button');
     b.className = 'konu ' + (h ? 'dolu' : 'bos');
-    let yl = ''; if (h) { const [y, t] = konuYildiz(h); yl = `<span class="yl">★ ${y}/${t}</span>`; }
+    let yl = ''; if (h) { const [y, t] = konuYildiz(h); yl = `<span class="yl">${YSVG(true)} ${y}/${t}</span>`; }
     b.innerHTML = `<span class="no">${i + 1}</span><span class="ad">${ad}</span>${yl}<span class="dot ${h ? 'dolu' : 'bos'}" title="${h ? 'Oyunu hazır' : 'Yakında'}"></span>`;
     b.onclick = () => { ac(); SFX.click(); if (h) konuAc(SINAV, ad); else { $('ykAd').textContent = `${SINAV} · ${ad}`; $('yakinda').classList.remove('hide'); } };
     k.appendChild(b); });
@@ -1141,7 +1153,7 @@ function buildMenu() {
     const b = document.createElement('button'); b.className = 'card';
     const nq = M.steps.filter(s => s.q).length, y = done[M.no];
     b.innerHTML = `<div class="c-no">GÖREV ${M.no}</div><div class="c-ic">${M.icon}</div><div class="c-ad">${M.name}</div><div class="c-ac">${M.task}</div>
-      <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru · ${nq} yıldız` : `✓ ${y} / ${nq} yıldız`}</div><div class="c-yil">${'★'.repeat(y || 0)}<span>${'☆'.repeat(nq - (y || 0))}</span></div>`;
+      <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru · ${nq} yıldız` : `✓ ${y} / ${nq} yıldız`}</div><div class="c-yil">${YILDIZLAR(y || 0, nq)}</div>`;
     b.onclick = () => { ac(); SFX.click(); startMission(M); };
     $('cards').appendChild(b);
   });
@@ -1152,13 +1164,13 @@ function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
-  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
+  $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = '';
   $('board').innerHTML = `<div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
   const nq = M.steps.filter(s => s.q).length;
   overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px">GÖREV ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
-    <div class="ov-s">${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶ Göreve başla</button></div>`);
+    <div class="ov-s">${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶︎ Göreve başla</button></div>`);
   $('ovGo').onclick = () => { SFX.start(); closeOverlay(); next(); };
 }
 function overlay(html) { $('ov').innerHTML = `<div class="ov-k">${html}</div>`; $('ov').classList.remove('hide'); }
@@ -1202,7 +1214,7 @@ function answer(k) {
   while (sol.scrollHeight > sol.clientHeight + 2 && fs > 36) { fs -= 2; sol.style.fontSize = fs + 'px'; }
   sol.scrollTop = 0; kaySolGuncelle();
   sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = '');
-  setTimeout(() => { if (GAME.q === Q) { $('qnext').textContent = ok ? 'Devam ▶' : 'Anladım, devam ▶'; $('qnext').classList.remove('hide'); } }, (0.3 + lines.length * gap) * 1000 + (ok ? 0 : 300));
+  setTimeout(() => { if (GAME.q === Q) { $('qnext').textContent = ok ? 'Devam ▶︎' : 'Anladım, devam ▶︎'; $('qnext').classList.remove('hide'); } }, (0.3 + lines.length * gap) * 1000 + (ok ? 0 : 300));
 }
 function qContinue() {
   const Q = GAME.q; if (!Q || !Q.answered || $('qnext').classList.contains('hide')) return; SFX.click(); cizTemizle();
@@ -1210,7 +1222,7 @@ function qContinue() {
   if (Q.q.after) Q.q.after(GAME.M.S, GAME.M);
   next();
 }
-function yildizGoster(pop) { const nq = GAME.M ? GAME.M.steps.filter(s => s.q).length : 0; $('tYil').textContent = `★ ${GAME.first} / ${nq}`;
+function yildizGoster(pop) { const nq = GAME.M ? GAME.M.steps.filter(s => s.q).length : 0; $('tYil').innerHTML = `${YSVG(true)} ${GAME.first} / ${nq}`;
   if (pop) { $('tYil').classList.remove('pop'); void $('tYil').offsetWidth; $('tYil').classList.add('pop'); } }
 function finish() {
   const M = GAME.M, nq = GAME.total, y = GAME.first;                       // her soru: ilk denemede doğruysa 1 yıldız
@@ -1218,8 +1230,8 @@ function finish() {
   setTimeout(() => SFX.win(), 200);
   const nx = MISSIONS[MISSIONS.indexOf(M) + 1];
   overlay(`<div class="ov-ic">🏆</div><div class="ov-b">GÖREV TAMAMLANDI!</div><div class="ov-t">${M.name}</div>
-    <div class="ov-y" style="font-size:${nq > 6 ? 64 : 80}px">${'★'.repeat(y)}${'☆'.repeat(nq - y)}</div><div class="ov-s">${y} / ${nq} yıldız · her soruda ilk denemede doğru cevap 1 yıldız</div>
-    <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar oyna</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki görev ▶</button>` : ''}</div>`);
+    <div class="ov-y" style="font-size:${nq > 6 ? 64 : 80}px">${YILDIZLAR(y, nq)}</div><div class="ov-s">${y} / ${nq} yıldız · her soruda ilk denemede doğru cevap 1 yıldız</div>
+    <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar oyna</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki görev ▶︎</button>` : ''}</div>`);
   $('ovT').onclick = () => { SFX.click(); startMission(M); };
   $('ovM').onclick = () => { SFX.click(); toMenu(); };
   if (nx) $('ovN').onclick = () => { SFX.click(); startMission(nx); };
@@ -1227,7 +1239,7 @@ function finish() {
 function toMenu() {
   stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
   cizAc(false); cizTemizle();
-  ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet', 'notlar'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
+  ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet', 'notlar'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; oyunSesKanali(true); sub(''); $('sub').classList.remove('q');
   buildMenu(); $('menu').classList.remove('hide'); menuScene();
 }
 function menuScene() { ortala(true); showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
@@ -1370,8 +1382,8 @@ MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (
 // ======================= ÇİZİM: KALEM / LAZER =======================
 // Kalem çizimi kalır; lazer çizimi 1,2 s sonra solar. Animasyon yeniden başlayınca (Devam / Başlat / sonraki adım) bütün çizimler silinir.
 // "Yalnız kalem" açıkken parmak/el (touch) çizmez; tablet kalemi ve fare çizer.
-const CZ = { silMod: 'parca', silen: new Map(), acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
-try { CZ.yalnizKalem = localStorage.getItem('ch_yalnizkalem') === '1'; } catch (e) {}
+const CZ = { silMod: 'tum', silen: new Map(), acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
+CZ.yalnizKalem = true; try { const v = localStorage.getItem('ch_yalnizkalem2'); if (v != null) CZ.yalnizKalem = v === '1'; } catch (e) {}   // varsayılan: yalnız kalem (el dokunuşu çizmez)
 const cizCtx = $('ciz').getContext('2d');
 const LAZER_OMUR = 1.2, LAZER_SOL = 0.6;
 function cizAc(ac2) {
@@ -1385,7 +1397,9 @@ function cizAracGuncelle() {
   $('pKalem').classList.toggle('on', CZ.arac === 'kalem'); $('pLazer').classList.toggle('on', CZ.arac === 'lazer'); $('pSilgi').classList.toggle('on', CZ.arac === 'silgi');
   $('pParca').classList.toggle('on', CZ.silMod === 'parca'); $('pTum').classList.toggle('on', CZ.silMod === 'tum'); $('pMod').classList.toggle('akt', CZ.arac === 'silgi');
   $('ciz').classList.toggle('silgi', CZ.arac === 'silgi');
-  document.querySelectorAll('#palet .renk').forEach(b => b.classList.toggle('on', b.dataset.r === CZ.renk));
+  document.querySelectorAll('#palet .renk[data-r]').forEach(b => b.classList.toggle('on', b.dataset.r === CZ.renk));
+  const ozel = ![...document.querySelectorAll('#palet .renk[data-r]')].some(b => b.dataset.r === CZ.renk); $('pCark').classList.toggle('on', ozel);
+  if (ozel) $('pCark').style.setProperty('--sec', CZ.renk);
   $('pDok').classList.toggle('on', CZ.yalnizKalem); $('pDok').innerHTML = '<i>✋</i>Yalnız kalem<br>' + (CZ.yalnizKalem ? 'AÇIK' : 'kapalı');
   $('ciz').classList.toggle('lazer', CZ.arac === 'lazer');
 }
@@ -1395,7 +1409,7 @@ $('ciz').addEventListener('pointerdown', e => {
   if (!CZ.acik) return;
   if (CZ.yalnizKalem && e.pointerType === 'touch') return;                 // avuç/parmak yok sayılır
   e.preventDefault(); try { $('ciz').setPointerCapture(e.pointerId); } catch (er) {}
-  if (CZ.arac === 'silgi') { const q = cizNokta(e); CZ.silen.set(e.pointerId, q); sil(q); return; }
+  if (CZ.arac === 'silgi' || kalemTusu(e)) { const q = cizNokta(e); CZ.silen.set(e.pointerId, q); sil(q); return; }
   const c = { arac: CZ.arac, renk: CZ.arac === 'lazer' ? '#ff2d2d' : CZ.renk, k: CZ.arac === 'lazer' ? 7 : (e.pointerType === 'pen' ? 4 + 6 * (e.pressure || 0.5) : 6), n: [cizNokta(e)], t: performance.now() / 1000 };
   CZ.cizgiler.push(c); CZ.aktif.set(e.pointerId, c); CZ.kirli = true;
 });
@@ -1406,7 +1420,13 @@ $('ciz').addEventListener('pointermove', e => {
       for (let i = 1; i <= n; i++) sil({ x: son.x + (q.x - son.x) * i / n, y: son.y + (q.y - son.y) * i / n }); son = q; }
     CZ.silen.set(e.pointerId, son); return; }
   const c = CZ.aktif.get(e.pointerId); if (!c) return;
+  if (kalemTusu(e)) { CZ.aktif.delete(e.pointerId); const q = cizNokta(e); CZ.silen.set(e.pointerId, q); sil(q); return; }
   const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; (ev.length ? ev : [e]).forEach(x => c.n.push(cizNokta(x))); c.t = performance.now() / 1000; CZ.kirli = true; });
+// S Pen / kalem yan tuşu (buttons: 2) ya da kalemin silgi ucu (buttons: 32) → geçici silgi
+const kalemTusu = e => e.pointerType === 'pen' && ((e.buttons & 2) || (e.buttons & 32) || e.button === 2 || e.button === 5);
+let tusSilgi = false;
+function tusGoster(v) { if (v === tusSilgi) return; tusSilgi = v; $('ciz').classList.toggle('silgi', v || CZ.arac === 'silgi'); $('pSilgi').classList.toggle('on', v || CZ.arac === 'silgi'); }
+['pointerdown', 'pointermove', 'pointerup', 'pointerleave'].forEach(t => $('ciz').addEventListener(t, e => { if (e.pointerType === 'pen' && CZ.acik) tusGoster(t !== 'pointerleave' && t !== 'pointerup' ? !!kalemTusu(e) : false); }, true));
 // silgi: 'parca' → değdiği kısmı keser (çizgi parçalara ayrılır); 'tum' → değdiği çizginin tamamını siler
 const SIL_R = 22;
 function sik(c) { if (c.sik) return; const n = [c.n[0]];                // noktaları sıklaştır: kesme ve değme hassas olsun
@@ -1456,16 +1476,20 @@ $('pLazer').onclick = () => { SFX.click(); CZ.arac = 'lazer'; cizAracGuncelle();
 $('pSilgi').onclick = () => { SFX.click(); CZ.arac = 'silgi'; cizAracGuncelle(); };
 $('pParca').onclick = () => { SFX.click(); CZ.silMod = 'parca'; CZ.arac = 'silgi'; cizAracGuncelle(); };
 $('pTum').onclick = () => { SFX.click(); CZ.silMod = 'tum'; CZ.arac = 'silgi'; cizAracGuncelle(); };
-document.querySelectorAll('#palet .renk').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
+$('pRenk').addEventListener('input', e => { CZ.renk = e.target.value; CZ.arac = 'kalem'; cizAracGuncelle(); });
+$('pRenk').addEventListener('change', e => { CZ.renk = e.target.value; CZ.arac = 'kalem'; cizAracGuncelle(); });
+document.querySelectorAll('#palet .renk[data-r]').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
 $('pTem').onclick = () => { SFX.click(); cizTemizle(); };
-$('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
+$('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem2', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
 cizAracGuncelle();
 
 // ======================= DURAKLAT / HIZ =======================
 const CTL = { dur: false, hiz: 1 };
 const IC_DUR = '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
 const IC_DEV = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>';
+function oyunSesKanali(acik) { if (AU.oyun) { AU.oyun.gain.cancelScheduledValues(AU.ctx.currentTime); AU.oyun.gain.setTargetAtTime(acik ? 1 : 0, AU.ctx.currentTime, 0.03); } }
 function setDur(d) {
+  oyunSesKanali(!d);
   if (CTL.dur && !d) cizTemizle();                                        // tekrar başlatınca çizimler silinir
   CTL.dur = d; $('bDur').innerHTML = d ? IC_DEV + 'Devam' : IC_DUR + 'Duraklat'; $('bDur').classList.toggle('dur', d);
   $('durRozet').classList.toggle('hide', !d); hizRozet();
