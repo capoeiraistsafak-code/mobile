@@ -30,11 +30,20 @@ button{font-family:inherit;cursor:pointer;border:none}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 
 /* alt yazı */
-#sub{position:absolute;left:960px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:1060px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
+#sub{position:absolute;left:1040px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:880px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
 #sub:empty{display:none}
-#sub.q{left:800px;max-width:740px}
+#sub.q{left:875px;max-width:580px;font-size:30px}
 
 /* devam düğmesi */
+#ctl{position:absolute;left:24px;bottom:24px;z-index:6;display:flex;gap:10px;align-items:center;background:rgba(36,41,52,.94);border:3px solid #4b5566;border-radius:20px;padding:8px}
+#ctl button{height:68px;min-width:68px;border-radius:14px;background:#3a4150;color:#fff;font:800 26px Inter;border:2px solid #556070;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px}
+#ctl button.on{background:#F5A300;color:#1f232c;border-color:#F5A300}
+#ctl button:active{transform:scale(.94)}
+#bDur{width:190px}
+#bDur svg{flex:none;width:28px;height:28px;fill:currentColor}
+#bDur.dur{background:#22c55e;color:#0b2b16;border-color:#22c55e;animation:nabiz 1.4s infinite}
+#durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
+#hizRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:5;background:rgba(10,12,18,.8);color:#8ec5ff;font:800 30px Inter;padding:8px 22px;border-radius:14px}
 #go{position:absolute;right:36px;bottom:24px;z-index:6;font:800 42px Inter;background:#22c55e;color:#0b2b16;border-radius:22px;padding:22px 44px;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:nabiz 1.4s infinite}
 @keyframes nabiz{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
@@ -129,6 +138,12 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <div id="board" class="hide"></div>
   <div id="sub"></div>
   <button id="go" class="hide">▶ Başlat</button>
+  <div id="ctl" class="hide">
+    <button id="bDur" title="Duraklat / Devam et (P)"></button>
+    <button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
+  </div>
+  <div id="durRozet" class="hide">DURAKLATILDI</div>
+  <div id="hizRozet" class="hide"></div>
 
   <div id="qc" class="hide">
     <div id="qn">SORU 1</div>
@@ -147,7 +162,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
     <div id="cards"></div>
     <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir<br>
-      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
+      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
   </div>
@@ -654,14 +669,14 @@ const M4 = {
     else if (['bottom', 'side', 'top'].includes(S.stop) && !S.run) camGoal([0.5, 2.8, 13.5], [0.5, 2.1, 0], snap);
     else if (S.stop === 'pre' && !S.run) camGoal([4.6, 3.6, 14.5], [4.8, 1.6, 0], snap);
     else if (S.stop === 'end' || S.stop === 'pre') camGoal([5.6, 3.6, 13.5], [5.8, 1.6, 0], snap);
-    else { const cx = clamp(x, -9, 5); camGoal([cx + 1.2, 4.6, 17], [cx, 2.8, 0], snap); }
+    else { const cx = clamp(x, -9, 5), cy = coaster(S.s).p.y; camGoal([cx + 1.2, 3.4 + 0.5 * cy, 17], [cx, Math.max(2.8, 0.78 * cy), 0], snap); }
   },
   tick(dt) {
     const S = this.S;
     if (S.run) { const c0 = coaster(S.s), v = Math.sqrt(Math.max(2 * GV * (Y0_4 - c0.p.y), 0) + 0.04 * 0.04);   // enerji korunumu (durgun bırakıldı)
       S.s += v * dt * SPD; S.clk -= v * dt * SPD; if (S.clk <= 0) { S.clk = 1.1; SFX.clack(); }
       if (S.s >= S.goal) { S.s = S.goal; S.run = false; } }
-    if (S.tc >= 0) { const was = S.tc; S.tc += dt; const comp = 0.9; if (was === 0) SFX.boing();
+    if (S.tc >= 0) { const was = S.tc; S.tc += dt; const comp = 0.9; if (!S.boing && S.tc > 0) { S.boing = true; SFX.boing(); }
       S.cx = X_SPRING * Math.sin(Math.PI / (2 * comp) * Math.min(S.tc, comp)); S.s = ROLL.sContact + S.cx; if (S.tc >= comp && !S.done) { S.done = true; SFX.bell(); } }
     const c = coaster(S.s); wagon.position.copy(c.p);
     const side = V3().crossVectors(c.f, c.u).normalize(), up = V3().crossVectors(side, c.f).normalize();
@@ -786,7 +801,7 @@ function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game';
   showOnly(M); M.reset();
-  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide');
+  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
   $('board').innerHTML = `<h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); sub(''); CAM.gvo = -200; CAM.vo = -200;
@@ -856,13 +871,13 @@ function finish() {
 }
 function toMenu() {
   stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
-  ['top', 'board', 'qc', 'go'].forEach(id => $(id).classList.add('hide')); sub(''); $('sub').classList.remove('q');
+  ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
   buildMenu(); $('menu').classList.remove('hide'); menuScene();
 }
 function menuScene() { showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
 
 // düğmeler ve klavye
-$('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
+$('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); if (CTL.dur) setDur(false); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
 $('qnext').onclick = qContinue;
 $('bSes').onclick = () => { ac(); setSes(!AU.on); };
 $('bMenu').onclick = () => { SFX.click(); toMenu(); };
@@ -873,6 +888,8 @@ addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (k === 'f') return fullscreen();
   if (k === 'm') { ac(); return setSes(!AU.on); }
+  if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
+  if (GAME.mode === 'game' && (k === '+' || k === '-' || k === '=')) { const L = [0.25, 0.5, 1, 2], i = L.indexOf(CTL.hiz); return setHiz(L[clamp(i + (k === '-' ? -1 : 1), 0, 3)]); }
   if (GAME.mode !== 'game') return;
   if (!$('ov').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); const b = $('ovGo') || $('ovN'); b && b.click(); } return; }
   const idx = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, b: 1, c: 2, d: 3 }[k];
@@ -881,22 +898,41 @@ addEventListener('keydown', e => {
 });
 addEventListener('resize', fit);
 
+// ======================= DURAKLAT / HIZ =======================
+const CTL = { dur: false, hiz: 1 };
+const IC_DUR = '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
+const IC_DEV = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>';
+function setDur(d) {
+  CTL.dur = d; $('bDur').innerHTML = d ? IC_DEV + 'Devam' : IC_DUR + 'Duraklat'; $('bDur').classList.toggle('dur', d);
+  $('durRozet').classList.toggle('hide', !d); hizRozet();
+  if (d) AU.loops.forEach(l => l.set(0));
+}
+function setHiz(h) {
+  CTL.hiz = h; [...document.querySelectorAll('#ctl button[data-h]')].forEach(b => b.classList.toggle('on', +b.dataset.h === h)); hizRozet();
+}
+function hizRozet() { const r = $('hizRozet'); const t = { 0.25: 'Yavaş çekim ¼×', 0.5: 'Yavaş çekim ½×', 2: 'Hızlı 2×' }[CTL.hiz];
+  r.textContent = t || ''; r.classList.toggle('hide', !t || CTL.dur || GAME.mode !== 'game'); }
+$('bDur').onclick = () => { SFX.click(); setDur(!CTL.dur); };
+document.querySelectorAll('#ctl button[data-h]').forEach(b => b.onclick = () => { SFX.click(); setHiz(+b.dataset.h); });
+setDur(false);
+
 // ======================= ANA DÖNGÜ =======================
 let last = performance.now(), menuT = 0;
 function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000) * (window.__hiz || 1); last = now;
+  const rdt = Math.min(0.05, (now - last) / 1000); last = now;              // kamera için gerçek zaman
+  const dt = (CTL.dur ? 0 : CTL.hiz) * rdt * (window.__hiz || 1);          // fizik zamanı: duraklat / yavaş çekim / hızlı
   for (const a of ARROWS) a.visible = false; guide1.visible = false;
   for (const k in TAG) TAG[k]._on = false;
   if (GAME.mode === 'game' && GAME.M) {
-    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows();
+    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows(); if (CTL.dur) AU.loops.forEach(l => l.set(0));
     if (GAME.wait && $('ov').classList.contains('hide')) { if (GAME.wait(M.S)) { GAME.wait = null; next(); } }
     else if (GAME.timer > 0) { GAME.timer -= dt; if (GAME.timer <= 0) { GAME.timer = 0; next(); } }
   } else {                                                  // menü: tren sahnesi yavaşça döner
-    menuT += dt; const c = coaster(ROLL.sTop); wagon.position.copy(c.p); wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, V3().crossVectors(V3().crossVectors(c.f, c.u), c.f).normalize(), V3().crossVectors(c.f, c.u).normalize()));
+    menuT += rdt; const c = coaster(ROLL.sTop); wagon.position.copy(c.p); wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, V3().crossVectors(V3().crossVectors(c.f, c.u), c.f).normalize(), V3().crossVectors(c.f, c.u).normalize()));
     cDot.visible = false; const a = menuT * 0.08; camGoal([-3 + Math.sin(a) * 15, 7, Math.cos(a) * 15], [-3, 2.2, 0], false);
   }
   for (const k in TAG) if (!TAG[k]._on) TAG[k].style.opacity = 0;
-  camStep(dt); R3.render(scene, cam);
+  camStep(rdt); R3.render(scene, cam);
   requestAnimationFrame(frame);
 }
 fit(); setSes(AU.on); buildMenu(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);

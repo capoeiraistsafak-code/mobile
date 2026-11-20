@@ -16,6 +16,8 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 - **Yanlış cevap:** doğru çözüm adım adım yazılır, sonra devam edilir.
 - Görev sonunda ilk denemedeki doğrulara göre yıldız verilir.
 
-Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `M` ses aç/kapa · `F` tam ekran.
+Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri **¼× · ½× · 1× · 2×** (yavaş çekimde ekranda "Yavaş çekim" yazar).
+
+Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran.
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
