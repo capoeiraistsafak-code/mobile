@@ -61,6 +61,9 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .renk.on{border-color:#fff;box-shadow:0 0 0 3px #ec4899}
 #palet .ayr{width:2px;height:50px;background:#556070}
 #palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
+#ktest{position:absolute;left:516px;top:300px;z-index:8;width:640px;background:#0b1220;border:3px solid #60a5fa;border-radius:18px;padding:14px 18px;font:600 22px/1.35 ui-monospace,monospace;color:#e5e7eb}
+#ktest b{color:#F5C400}#ktest .s{color:#4ade80}#ktest .h{color:#f87171}
+#ktest p{font:600 20px/1.35 Inter;color:#93c5fd;margin-top:8px}
 #durRozet.pal{top:300px}
 #palet .sat{flex-basis:100%;height:0}
 #palet .mod{display:flex;border:2px solid #556070;border-radius:16px;overflow:hidden;opacity:.45}
@@ -217,6 +220,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <canvas id="gl"></canvas>
   <div id="tags"></div>
   <canvas id="ciz" width="1920" height="1080"></canvas>
+  <div id="ktest" class="hide"></div>
   <div id="palet" class="hide">
     <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏︎</i>Kalem</button>
     <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
@@ -233,6 +237,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <label class="renk cark" id="pCark" title="Renk seç (istediğin renk)"><input type="color" id="pRenk" value="#ec4899"></label>
     <span class="ayr"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
+    <button id="pTest" title="Kalem testi: yan tuşa basınca tabletin ne gönderdiğini gösterir"><i>🔍</i>Kalem testi</button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
   </div>
 
@@ -1229,7 +1234,7 @@ CZ.yalnizKalem = true; try { const v = localStorage.getItem('ch_yalnizkalem2'); 
 const cizCtx = $('ciz').getContext('2d');
 const LAZER_OMUR = 1.2, LAZER_SOL = 0.6;
 function cizAc(ac2) {
-  CZ.acik = ac2 ?? !CZ.acik;
+  CZ.acik = ac2 ?? !CZ.acik; if (!CZ.acik && typeof KT !== 'undefined') { KT.acik = false; $('ktest').classList.add('hide'); $('pTest').classList.remove('on'); }
   $('ciz').classList.toggle('acik', CZ.acik); $('palet').classList.toggle('hide', !CZ.acik); $('bCiz').classList.toggle('on', CZ.acik);
   $('durRozet').classList.toggle('pal', CZ.acik);
   if (CZ.acik && GAME.mode === 'game' && !CTL.dur) setDur(true);          // çizmeye başlarken animasyon durur
@@ -1265,10 +1270,10 @@ $('ciz').addEventListener('pointermove', e => {
   if (kalemTusu(e)) { CZ.aktif.delete(e.pointerId); const q = cizNokta(e); CZ.silen.set(e.pointerId, q); sil(q); return; }
   const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; (ev.length ? ev : [e]).forEach(x => c.n.push(cizNokta(x))); c.t = performance.now() / 1000; CZ.kirli = true; });
 // S Pen / kalem yan tuşu (buttons: 2) ya da kalemin silgi ucu (buttons: 32) → geçici silgi
-const kalemTusu = e => e.pointerType === 'pen' && ((e.buttons & 2) || (e.buttons & 32) || e.button === 2 || e.button === 5);
+const kalemTusu = e => (e.pointerType === 'pen' || e.pointerType === 'mouse') && (((e.buttons || 0) & ~1) !== 0 || e.button === 2 || e.button === 5);   // S Pen yan tuşu / silgi ucu / farede sağ tuş
 let tusSilgi = false;
 function tusGoster(v) { if (v === tusSilgi) return; tusSilgi = v; $('ciz').classList.toggle('silgi', v || CZ.arac === 'silgi'); $('pSilgi').classList.toggle('on', v || CZ.arac === 'silgi'); }
-['pointerdown', 'pointermove', 'pointerup', 'pointerleave'].forEach(t => $('ciz').addEventListener(t, e => { if (e.pointerType === 'pen' && CZ.acik) tusGoster(t !== 'pointerleave' && t !== 'pointerup' ? !!kalemTusu(e) : false); }, true));
+['pointerdown', 'pointermove', 'pointerup', 'pointerleave'].forEach(t => $('ciz').addEventListener(t, e => { if ((e.pointerType === 'pen' || e.pointerType === 'mouse') && CZ.acik) tusGoster(t !== 'pointerleave' && t !== 'pointerup' ? !!kalemTusu(e) : false); }, true));
 // silgi: 'parca' → değdiği kısmı keser (çizgi parçalara ayrılır); 'tum' → değdiği çizginin tamamını siler
 const SIL_R = 22;
 function sik(c) { if (c.sik) return; const n = [c.n[0]];                // noktaları sıklaştır: kesme ve değme hassas olsun
@@ -1312,6 +1317,17 @@ function cizCiz() {
   x.globalAlpha = 1; x.shadowBlur = 0; CZ.kirli = false;
 }
 $('bCiz').onclick = () => { SFX.click(); cizAc(); };
+// ---- Kalem testi: yan tuşa basınca tabletin hangi sinyali gönderdiğini canlı gösterir ----
+const KT = { acik: false, son: [], tus: '' };
+function ktYaz() { if (!KT.acik) return;
+  $('ktest').innerHTML = `<b>KALEM TESTİ</b> · Kalemle ekrana dokunup sürükleyin, sonra <b>yan tuşa basılıyken</b> sürükleyin.<br>${KT.son.map(x => x).join('<br>')}
+    <br>Sonuç: ${KT.tus ? `<span class="s">✓ Yan tuş algılandı (${KT.tus}) → silgi çalışır</span>` : '<span class="h">Yan tuş henüz algılanmadı</span>'}
+    <p>Hiç "pen" yazmıyorsa tablet kalemi parmak gibi gönderiyor. Yan tuşa basınca olay listesi kesiliyor ya da menü açılıyorsa tuşu Samsung'un S Pen özelliği (Air command) yakalıyor.</p>`; }
+['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'contextmenu'].forEach(t => $('ciz').addEventListener(t, e => {
+  if (!KT.acik) return; if (t === 'pointermove' && KT.son.length && KT.son[KT.son.length - 1].startsWith(t) && !((e.buttons || 0) & ~1)) return;
+  KT.son.push(`${t} · tür: ${e.pointerType || '-'} · button: ${e.button} · buttons: ${e.buttons ?? '-'} · basınç: ${(e.pressure ?? 0).toFixed(2)}`); KT.son = KT.son.slice(-6);
+  if (e.pointerType && kalemTusu(e)) KT.tus = `${e.pointerType}, buttons=${e.buttons}, button=${e.button}`; ktYaz(); }, true));
+$('pTest').onclick = () => { SFX.click(); KT.acik = !KT.acik; KT.son = []; KT.tus = ''; $('ktest').classList.toggle('hide', !KT.acik); $('pTest').classList.toggle('on', KT.acik); ktYaz(); };
 $('pKap').onclick = () => { SFX.click(); cizAc(false); };
 $('pKalem').onclick = () => { SFX.click(); CZ.arac = 'kalem'; cizAracGuncelle(); };
 $('pLazer').onclick = () => { SFX.click(); CZ.arac = 'lazer'; cizAracGuncelle(); };
