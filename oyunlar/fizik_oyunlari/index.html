@@ -389,7 +389,9 @@ function loopSnd(kind) {
     const g2 = c.createGain(); g2.gain.value = kind === 'swish' ? 1 : 1.6; s.connect(lp); lp.connect(g2); g2.connect(out);
     setF = r => lp.frequency.setTargetAtTime((kind === 'swish' ? 500 : 180) + (kind === 'swish' ? 900 : 300) * r, c.currentTime, .1);
   }
-  const L = { v: 0, set(v, r = 0) { if (Math.abs(v - L.v) > .005) { out.gain.setTargetAtTime(v, c.currentTime, .08); L.v = v; } setF(r); },
+  const L = { v: 0, r: -1, set(v, r = 0) {
+      if (Math.abs(v - L.v) > .01) { const t = c.currentTime; out.gain.cancelScheduledValues(t); out.gain.setTargetAtTime(v, t, .08); L.v = v; }
+      if (Math.abs(r - L.r) > .03) { setF(r); L.r = r; } },
     stop() { out.gain.setTargetAtTime(0, c.currentTime, .08); setTimeout(() => { srcs.forEach(s => { try { s.stop(); } catch (e) {} }); out.disconnect(); }, 500); } };
   AU.loops.push(L); return L;
 }
@@ -1323,13 +1325,18 @@ cizAracGuncelle();
 const CTL = { dur: false, hiz: 1 };
 const IC_DUR = '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
 const IC_DEV = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>';
-function oyunSesKanali(acik) { if (AU.oyun) { AU.oyun.gain.cancelScheduledValues(AU.ctx.currentTime); AU.oyun.gain.setTargetAtTime(acik ? 1 : 0, AU.ctx.currentTime, 0.03); } }
+function oyunSesKanali(acik) { if (!AU.oyun) return; const g = AU.oyun.gain, t = AU.ctx.currentTime;
+  g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(acik ? 1 : 0, t + 0.05); if (acik) sesUyandir(); }
+// tarayıcı ses motorunu askıya alırsa (tam ekran, uygulama değiştirme, tablet ekran kilidi…) ilk dokunuşta/geri dönüşte yeniden başlat
+function sesUyandir() { if (AU.ctx && AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {}); }
+['pointerdown', 'keydown', 'touchstart'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sesUyandir(); });
+document.addEventListener('fullscreenchange', sesUyandir);
 function setDur(d) {
   oyunSesKanali(!d);
   if (CTL.dur && !d) cizTemizle();                                        // tekrar başlatınca çizimler silinir
   CTL.dur = d; $('bDur').innerHTML = d ? IC_DEV + 'Devam' : IC_DUR + 'Duraklat'; $('bDur').classList.toggle('dur', d);
   $('durRozet').classList.toggle('hide', !d); hizRozet();
-  if (d) AU.loops.forEach(l => l.set(0));
 }
 function setHiz(h) {
   CTL.hiz = h; [...document.querySelectorAll('#ctl button[data-h]')].forEach(b => b.classList.toggle('on', +b.dataset.h === h)); hizRozet();
@@ -1349,7 +1356,7 @@ function frame(now) {
   for (const a of ARROWS) a.visible = false; guide1.visible = false;
   for (const k in TAG) TAG[k]._on = false;
   if (GAME.mode === 'game' && GAME.M) {
-    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows(); if (CTL.dur) AU.loops.forEach(l => l.set(0));
+    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows();
     if (GAME.wait && $('ov').classList.contains('hide')) { if (GAME.wait(M.S)) { GAME.wait = null; next(); } }
     else if (GAME.timer > 0) { GAME.timer -= dt; if (GAME.timer <= 0) { GAME.timer = 0; next(); } }
   } else {                                                  // menü: tren sahnesi yavaşça döner
@@ -1361,5 +1368,5 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
-window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length;
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.__AU = AU;
 </script></body></html>
