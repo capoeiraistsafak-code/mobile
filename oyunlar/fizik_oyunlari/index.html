@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Çembersel Hareket · 3D Görev Oyunu</title>
+<title>Fizik Oyunları · 3D</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="three.min.js"></script>
 <style>
@@ -144,6 +144,29 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .chip{position:absolute;font:700 40px/1.05 Caveat;color:#fff;background:rgba(17,24,39,.9);border:3px solid #fff;border-radius:14px;padding:4px 14px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;text-align:center}
 
 /* katmanlar: menü, giriş, bitiş */
+#ana{position:absolute;inset:0;z-index:11;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 35%,rgba(58,65,80,.82),rgba(31,35,44,.97))}
+.a-bas{margin-top:36px;font:900 92px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.a-alt{margin-top:8px;font:700 34px Inter;color:#cbd5e1}.a-alt b{color:#F5C400}
+#sekme{margin-top:26px;display:flex;gap:0;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
+#sekme button{font:900 38px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:12px 60px;min-width:300px}
+#sekme button.on{background:#D62828;color:#fff;box-shadow:0 8px 24px rgba(214,40,40,.45)}
+#sekme button small{display:block;font:700 18px Inter;opacity:.85;margin-top:2px}
+#konular{margin-top:24px;width:1840px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px 16px;align-content:start}
+.konu{display:flex;align-items:center;gap:12px;height:80px;padding:0 18px 0 12px;background:#2a303c;border:3px solid #4b5566;border-radius:999px;color:#fff;text-align:left}
+.konu:hover,.konu:focus{border-color:#F5A300}
+.konu:active{transform:scale(.97)}
+.konu .no{flex:none;width:46px;height:46px;border-radius:50%;background:#1f232c;color:#F5C400;font:900 24px Inter;display:flex;align-items:center;justify-content:center}
+.konu .ad{flex:1;min-width:0;font:800 25px/1.12 Inter;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.konu .yl{flex:none;font:800 22px Inter;color:#F5C400;white-space:nowrap}
+.konu .dot{flex:none;width:30px;height:30px;border-radius:50%;border:4px solid rgba(255,255,255,.85)}
+.konu .dot.dolu{background:#22c55e;box-shadow:0 0 14px rgba(34,197,94,.8)}
+.konu .dot.bos{background:#ef4444}
+.konu.dolu{border-color:#22c55e;background:#1f3a2c}
+.konu.bos{opacity:.8}
+.a-acik{margin-top:20px;display:flex;gap:36px;font:700 24px Inter;color:#cbd5e1;align-items:center}
+.a-acik i{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:-4px;margin-right:8px;border:3px solid rgba(255,255,255,.85)}
+#yakinda{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.7)}
+#mGeri{position:absolute;left:40px;top:40px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:14px 24px}
 #menu{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(58,65,80,.78),rgba(31,35,44,.95))}
 .m-top{margin-top:34px}
 .m-bas{margin-top:14px;font:900 88px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
@@ -241,9 +264,21 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="ov" class="hide"></div>
 
-  <div id="menu">
-    <div class="m-top"><span class="pill" style="font-size:40px;padding:10px 26px">AYT FİZİK</span></div>
-    <div class="m-bas">ÇEMBERSEL HAREKET</div>
+  <div id="ana">
+    <div class="a-bas">FİZİK OYUNLARI</div>
+    <div class="a-alt">3D Görev Oyunu · <b>TYT ve AYT konuları tek programda</b></div>
+    <div id="sekme"><button data-s="TYT">TYT<small>9–10. sınıf</small></button><button data-s="AYT">AYT<small>11–12. sınıf</small></button></div>
+    <div id="konular"></div>
+    <div class="a-acik"><span><i style="background:#22c55e"></i>Oyunu hazır</span><span><i style="background:#ef4444"></i>Yakında</span></div>
+    <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
+    <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
+    <div id="yakinda" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">🛠</div><div class="ov-b" id="ykAd" style="font-size:50px"></div>
+      <div class="ov-t">Bu konunun oyunu henüz hazır değil. Yakında eklenecek.</div><div class="ov-dg"><button class="btn ana" id="ykTamam">Tamam</button></div></div></div>
+  </div>
+  <div id="menu" class="hide">
+    <button id="mGeri">← Konular</button>
+    <div class="m-top"><span class="pill" style="font-size:40px;padding:10px 26px" id="mSinav">AYT FİZİK</span></div>
+    <div class="m-bas" id="mKonu">ÇEMBERSEL HAREKET</div>
     <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
     <div id="cards"></div>
     <div class="m-not">
@@ -254,7 +289,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
     <div id="sifirSor" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">☆</div><div class="ov-b" style="font-size:52px">Bütün yıldızlar silinsin mi?</div>
-      <div class="ov-t">Dört görevin yıldızları sıfırlanır. Bu işlem geri alınamaz.</div>
+      <div class="ov-t">Bütün konuların yıldızları sıfırlanır. Bu işlem geri alınamaz.</div>
       <div class="ov-dg"><button class="btn" id="sifirHayir">Vazgeç</button><button class="btn ana" style="background:#ef4444;border-color:#ef4444;color:#fff" id="sifirEvet">Evet, sıfırla</button></div></div></div>
   </div>
 </div>
@@ -910,6 +945,38 @@ function subSigdir() {                                   // alt yazı taşmasın
 function board(k, v) { const d = document.createElement('div'); d.className = 'row f'; d.innerHTML = `${k}: <b>${v}</b>`; const bf = $('bFound'); bf.appendChild(d); while (bf.children.length > 5) bf.removeChild(bf.firstChild); $('bFoundH').classList.remove('hide'); }
 function goBtn(label) { $('go').textContent = label; $('go').classList.remove('hide'); }
 
+// ======================= ANA MENÜ: TYT / AYT KONULARI =======================
+const KONULAR = {
+  TYT: ['Fizik Bilimine Giriş', 'Madde ve Özellikleri', 'Hareket ve Kuvvet', 'Enerji', 'Isı ve Sıcaklık', 'Elektrostatik', 'Elektrik ve Manyetizma', 'Basınç ve Kaldırma Kuvveti', 'Dalgalar', 'Optik'],
+  AYT: ['Vektörler', 'Bağıl Hareket', "Newton'un Hareket Yasaları", 'Bir Boyutta Sabit İvmeli Hareket', 'İki Boyutta Hareket (Atışlar)', 'Enerji ve Hareket', 'İtme ve Çizgisel Momentum',
+    'Tork ve Denge', 'Kütle ve Ağırlık Merkezi', 'Basit Makineler', 'Elektriksel Kuvvet ve Alan', 'Elektriksel Potansiyel', 'Düzgün Elektrik Alan ve Sığa',
+    'Manyetizma ve İndüklenme', 'Alternatif Akım ve Transformatörler', 'Çembersel Hareket', 'Dönerek Öteleme ve Açısal Momentum',
+    'Kütle Çekim ve Kepler Yasaları', 'Basit Harmonik Hareket', 'Dalga Mekaniği', 'Atom Fiziğine Giriş ve Radyoaktivite', 'Modern Fizik', 'Modern Fiziğin Uygulamaları'],
+};
+// hazır konular: görevleri (oyunları) olanlar
+const HAZIR = { 'AYT|Çembersel Hareket': { gorevler: MISSIONS } };
+let SINAV = 'AYT'; try { SINAV = localStorage.getItem('ch_sinav') || 'AYT'; } catch (e) {}
+let KONU = null;
+function konuYildiz(h) { let y = 0, t = 0; h.gorevler.forEach(M => { t += M.steps.filter(s => s.q).length; y += done[M.no] || 0; }); return [y, t]; }
+function anaKur() {
+  document.querySelectorAll('#sekme button').forEach(b => b.classList.toggle('on', b.dataset.s === SINAV));
+  const L = KONULAR[SINAV], k = $('konular'); k.innerHTML = '';
+  k.style.gridTemplateColumns = `repeat(${L.length > 12 ? 4 : 2},1fr)`; k.style.width = L.length > 12 ? '1840px' : '1400px';
+  L.forEach((ad, i) => { const h = HAZIR[SINAV + '|' + ad], b = document.createElement('button');
+    b.className = 'konu ' + (h ? 'dolu' : 'bos');
+    let yl = ''; if (h) { const [y, t] = konuYildiz(h); yl = `<span class="yl">★ ${y}/${t}</span>`; }
+    b.innerHTML = `<span class="no">${i + 1}</span><span class="ad">${ad}</span>${yl}<span class="dot ${h ? 'dolu' : 'bos'}" title="${h ? 'Oyunu hazır' : 'Yakında'}"></span>`;
+    b.onclick = () => { ac(); SFX.click(); if (h) konuAc(SINAV, ad); else { $('ykAd').textContent = `${SINAV} · ${ad}`; $('yakinda').classList.remove('hide'); } };
+    k.appendChild(b); });
+}
+function konuAc(sinav, ad) { KONU = { sinav, ad }; $('mSinav').textContent = sinav + ' FİZİK'; $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
+  $('ana').classList.add('hide'); buildMenu(); $('menu').classList.remove('hide'); }
+function anaDon() { $('menu').classList.add('hide'); anaKur(); $('ana').classList.remove('hide'); }
+document.querySelectorAll('#sekme button').forEach(b => b.onclick = () => { SFX.click(); SINAV = b.dataset.s; try { localStorage.setItem('ch_sinav', SINAV); } catch (e) {} anaKur(); });
+$('ykTamam').onclick = () => { SFX.click(); $('yakinda').classList.add('hide'); };
+$('mGeri').onclick = () => { SFX.click(); anaDon(); };
+$('bFs2').onclick = () => fullscreen();
+
 function buildMenu() {
   $('cards').innerHTML = '';
   MISSIONS.forEach(M => {
@@ -1019,12 +1086,12 @@ $('bFs').onclick = fullscreen; $('bTam').onclick = () => { SFX.click(); fullscre
 const IC_TAM = '<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
 const IC_KUC = '<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
 function tamEtiket() { const t = !!(document.fullscreenElement || document.webkitFullscreenElement);
-  $('bTam').innerHTML = (t ? IC_KUC + 'Küçült' : IC_TAM + 'Tam ekran'); $('bFs').innerHTML = (t ? IC_KUC + ' Küçült' : IC_TAM + ' Tam ekran'); }
+  $('bTam').innerHTML = (t ? IC_KUC + 'Küçült' : IC_TAM + 'Tam ekran'); $('bFs').innerHTML = $('bFs2').innerHTML = (t ? IC_KUC + ' Küçült' : IC_TAM + ' Tam ekran'); }
 document.addEventListener('fullscreenchange', () => { tamEtiket(); fit(); }); document.addEventListener('webkitfullscreenchange', () => { tamEtiket(); fit(); });
 tamEtiket();
 $('bSifir').onclick = () => { SFX.click(); $('sifirSor').classList.remove('hide'); };
 $('sifirHayir').onclick = () => { SFX.click(); $('sifirSor').classList.add('hide'); };
-$('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { localStorage.removeItem('ch_yildiz'); } catch (e) {} $('sifirSor').classList.add('hide'); buildMenu(); };
+$('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { localStorage.removeItem('ch_yildiz'); } catch (e) {} $('sifirSor').classList.add('hide'); buildMenu(); anaKur(); };
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (k === 'f') return fullscreen();
@@ -1275,6 +1342,6 @@ function frame(now) {
   camStep(rdt); R3.render(scene, cam); cizCiz();
   requestAnimationFrame(frame);
 }
-fit(); setSes(AU.on); buildMenu(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
+fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
 window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length;
 </script></body></html>

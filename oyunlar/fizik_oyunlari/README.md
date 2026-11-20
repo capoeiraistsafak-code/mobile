@@ -1,8 +1,15 @@
-# Çembersel Hareket · 3D Görev Oyunu
+# Fizik Oyunları · 3D Görev Programı
 
-Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı) 3D fizik oyunu.
+Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı) 3D fizik oyunları. **TYT ve AYT konularının hepsi tek programda.**
 
 **Açmak için:** `index.html` dosyasına çift tıklayın (internet gerekmez; `three.min.js` ve `logo.png` aynı klasörde olmalı).
+
+## Ana menü
+- Üstte **TYT / AYT** sekmeleri; altında o sınavın konuları ders kitabı sırasıyla, yanları yuvarlak düğmeler hâlinde.
+- Düğmenin sonundaki **yeşil daire** = oyunu hazır, **kırmızı daire** = yakında. Hazır konularda kazanılan yıldızlar da yazar.
+- Hazır olan konu: **AYT 16 · Çembersel Hareket** (4 görev, 21 soru). Diğer konular sırayla doldurulacak.
+
+# AYT · Çembersel Hareket
 
 ## Görevler
 1. 🚀 **Roketi hedefe gönder** – açısal hız, çizgisel hız, merkezcil ivme, ip kopunca teğet hareket (4 soru)
