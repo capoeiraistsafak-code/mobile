@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çembersel Hareket · 3D Görev Oyunu</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="three.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#1f232c;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font-family:inherit;cursor:pointer;border:none}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:radial-gradient(circle at 50% 45%,#3a4150,#1f232c);overflow:hidden}
+#gl{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.hide{display:none!important}
+
+/* üst bant */
+#top{position:absolute;left:24px;right:24px;top:20px;height:100px;display:flex;align-items:center;gap:22px;background:#2a303c;border:3px solid #F5A300;border-radius:22px;padding:0 18px 0 22px;z-index:5}
+.pill{display:inline-block;background:#D62828;color:#fff;font:900 30px Inter;padding:8px 20px;border-radius:12px;white-space:nowrap}
+#tTitle{font:800 40px/1.1 Inter;color:#F5C400;white-space:nowrap}
+#tTask{flex:1;min-width:0;font:600 26px/1.25 Inter;color:#e5e7eb}
+.tb{flex:none;width:76px;height:76px;border-radius:18px;background:#3a4150;color:#fff;font:700 36px Inter;display:flex;align-items:center;justify-content:center;border:2px solid #556070}
+.tb:active{transform:scale(.94)}
+
+/* veri tahtası */
+#board{position:absolute;left:24px;top:142px;width:max-content;min-width:360px;max-width:500px;background:rgba(36,41,52,.94);border:3px solid #4b5566;border-radius:20px;padding:16px 20px 18px;z-index:4}
+#board h3{font:800 24px Inter;color:#94a3b8;letter-spacing:1px;margin:4px 0 8px}
+.row{font:600 27px/1.35 Inter;color:#e5e7eb;white-space:nowrap}
+.row b{color:#F5C400;font-weight:800}
+.row.f b{color:#4ade80}
+.row.f{animation:pop .5s}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+/* alt yazı */
+#sub{position:absolute;left:960px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:1060px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
+#sub:empty{display:none}
+#sub.q{left:800px;max-width:740px}
+
+/* devam düğmesi */
+#go{position:absolute;right:36px;bottom:24px;z-index:6;font:800 42px Inter;background:#22c55e;color:#0b2b16;border-radius:22px;padding:22px 44px;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:nabiz 1.4s infinite}
+@keyframes nabiz{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* soru kartı */
+#qc{position:absolute;right:24px;top:142px;bottom:24px;width:720px;background:#2a303c;border:3px solid #F5A300;border-radius:24px;padding:24px 28px;display:flex;flex-direction:column;gap:16px;z-index:6;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+#qn{align-self:flex-start;background:#F5A300;color:#1f232c;font:900 26px Inter;padding:6px 16px;border-radius:10px}
+#qt{font:700 34px/1.3 Inter;color:#fff}
+#qt b{color:#F5C400}
+#qt small{font-size:28px;color:#cbd5e1;font-weight:600}
+#opts{display:flex;flex-direction:column;gap:14px}
+.op{display:flex;align-items:center;gap:18px;text-align:left;background:#3a4150;color:#fff;font:700 34px/1.2 Inter;padding:16px 20px;border-radius:18px;border:3px solid #556070;min-height:84px}
+.op i{flex:none;font-style:normal;width:52px;height:52px;border-radius:12px;background:#1f232c;color:#F5C400;display:flex;align-items:center;justify-content:center;font:900 30px Inter}
+.op:active{transform:scale(.98)}
+.op.ok{background:#14532d;border-color:#4ade80}.op.ok i{background:#4ade80;color:#14532d}
+.op.no{background:#7f1d1d;border-color:#f87171}.op.no i{background:#f87171;color:#7f1d1d}
+.op.dim{display:none}
+#qc.cev .op{min-height:0;padding:10px 18px;font-size:30px}#qc.cev .op i{width:44px;height:44px;font-size:26px}
+#qc.cev #qt{font-size:30px}
+#fb{font:900 36px Inter}#fb:empty{display:none}
+#fb.ok{color:#4ade80}#fb.no{color:#f87171}
+#sol{flex:1;min-height:0;overflow:hidden;font-size:44px;background:#1f232c;border-radius:18px;padding:12px 22px;border:2px dashed #475569}
+#sol:empty{display:none}
+#sol .sl{font:700 1em/1.22 Caveat;color:#8ec5ff;clip-path:inset(-10px 100% -10px 0);animation:yaz 1s forwards}
+#sol .sl em{font-style:normal;color:#F5C400}
+#sol .sl .g{color:#4ade80}#sol .sl .p{color:#c084fc}#sol .sl .r{color:#f87171}#sol .sl .o{color:#fb923c}
+#sol .bas{font:800 24px Inter;color:#94a3b8;letter-spacing:1px;margin-bottom:2px}
+@keyframes yaz{to{clip-path:inset(-10px -10px -10px 0)}}
+#qnext{align-self:flex-end;font:800 40px Inter;background:#22c55e;color:#0b2b16;border-radius:20px;padding:18px 40px;animation:nabiz 1.4s infinite}
+
+/* matematik */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 4px;font-size:.82em}
+.fr>span:last-child{border-top:3px solid currentColor;padding-top:2px}
+.fr>span{padding:0 4px}
+.sq{white-space:nowrap}.sq>span{border-top:3px solid currentColor;padding:0 3px;margin-left:1px}
+sup{font-size:.6em;vertical-align:.7em;line-height:0}
+sub{font-size:.6em;vertical-align:-.2em;line-height:0}
+
+/* 3B etiketleri */
+#tags{position:absolute;inset:0;pointer-events:none;z-index:3}
+.lbl{position:absolute;font:900 36px Inter;padding:2px 12px;border-radius:12px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;color:#fff}
+.chip{position:absolute;font:700 40px/1.05 Caveat;color:#fff;background:rgba(17,24,39,.9);border:3px solid #fff;border-radius:14px;padding:4px 14px;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;text-align:center}
+
+/* katmanlar: menü, giriş, bitiş */
+#menu{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(58,65,80,.78),rgba(31,35,44,.95))}
+.m-top{margin-top:54px}
+.m-bas{margin-top:22px;font:900 96px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.m-alt{margin-top:14px;font:700 40px Inter;color:#cbd5e1}
+.m-alt b{color:#F5C400}
+#cards{margin-top:46px;display:flex;gap:30px}
+.card{width:400px;height:430px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
+.card:hover,.card:focus{border-color:#F5A300}
+.card:active{transform:scale(.97)}
+.c-ic{font-size:86px;line-height:1;font-family:"Noto Color Emoji",sans-serif}
+.c-no{position:absolute;right:24px;top:24px;font:900 26px Inter;color:#1f232c;background:#F5A300;padding:6px 14px;border-radius:10px}
+.c-ad{margin-top:18px;font:800 38px/1.12 Inter;color:#F5C400}
+.c-ac{margin-top:12px;font:600 26px/1.3 Inter;color:#cbd5e1;flex:1}
+.c-st{font:800 30px Inter;color:#4ade80}
+.c-st.yok{color:#94a3b8}
+.m-not{margin-top:36px;font:600 28px Inter;color:#94a3b8;text-align:center;line-height:1.5}
+.m-not kbd{font:800 24px Inter;background:#3a4150;border:2px solid #556070;border-radius:8px;padding:2px 10px;color:#fff}
+.m-logo{position:absolute;left:40px;bottom:34px;display:flex;align-items:center;gap:18px;font:800 32px Inter;color:#fff}
+.m-logo i{width:92px;height:92px;border-radius:50%;border:6px solid #F5A300;background:url(logo.png) center/cover}
+.m-fs{position:absolute;right:40px;bottom:40px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
+
+#ov{position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.62)}
+.ov-k{width:1100px;background:#2a303c;border:4px solid #F5A300;border-radius:30px;padding:46px 56px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.ov-ic{font-size:110px;line-height:1;font-family:"Noto Color Emoji",sans-serif}
+.ov-b{margin-top:18px;font:900 64px/1.1 Inter;color:#F5C400}
+.ov-t{margin-top:20px;font:600 36px/1.35 Inter;color:#e5e7eb}
+.ov-s{margin-top:18px;font:700 32px Inter;color:#94a3b8}
+.ov-y{margin-top:16px;font-size:80px;letter-spacing:10px;color:#F5C400}
+.ov-dg{margin-top:36px;display:flex;gap:24px;justify-content:center}
+.btn{font:800 40px Inter;border-radius:20px;padding:20px 40px;background:#3a4150;color:#fff;border:3px solid #556070}
+.btn.ana{background:#22c55e;color:#0b2b16;border-color:#22c55e}
+.btn:active{transform:scale(.96)}
+</style></head><body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <div id="tags"></div>
+
+  <div id="top" class="hide">
+    <span class="pill" id="tNo">GÖREV 1</span>
+    <div id="tTitle"></div>
+    <div id="tTask"></div>
+    <button class="tb" id="bSes" title="Ses (M)">🔊</button>
+    <button class="tb" id="bBas" title="Görevi baştan başlat">↺</button>
+    <button class="tb" id="bMenu" title="Menü">☰</button>
+  </div>
+  <div id="board" class="hide"></div>
+  <div id="sub"></div>
+  <button id="go" class="hide">▶ Başlat</button>
+
+  <div id="qc" class="hide">
+    <div id="qn">SORU 1</div>
+    <div id="qt"></div>
+    <div id="opts"></div>
+    <div id="fb"></div>
+    <div id="sol"></div>
+    <button id="qnext" class="hide">Devam ▶</button>
+  </div>
+
+  <div id="ov" class="hide"></div>
+
+  <div id="menu">
+    <div class="m-top"><span class="pill" style="font-size:40px;padding:10px 26px">AYT FİZİK</span></div>
+    <div class="m-bas">ÇEMBERSEL HAREKET</div>
+    <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
+    <div id="cards"></div>
+    <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir<br>
+      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
+    <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
+    <button class="m-fs" id="bFs">⛶ Tam ekran</button>
+  </div>
+</div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+const V3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+const TAU = Math.PI * 2;
+const mod = (x, m) => ((x % m) + m) % m;
+// yazım yardımcıları
+const F = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const SQ = x => `<span class="sq">√<span>${x}</span></span>`;
+const OM = 'ω', AL = 'α';
+
+// ======================= ÖLÇEKLEME (akıllı tahta / her ekran) =======================
+let SCALE = 1;
+function fit() {
+  const w = innerWidth, h = innerHeight; SCALE = Math.min(w / 1920, h / 1080);
+  $('stage').style.transform = `translate(${(w - 1920 * SCALE) / 2}px,${(h - 1080 * SCALE) / 2}px) scale(${SCALE})`;
+  R3.setPixelRatio(Math.min(2, (window.devicePixelRatio || 1) * SCALE)); R3.setSize(1920, 1080, false);
+}
+
+// ======================= SES (yalnız efekt, tarayıcıda üretilir) =======================
+const AU = { ctx: null, on: true, loops: [] };
+try { AU.on = localStorage.getItem('ch_ses') !== '0'; } catch (e) {}
+function ac() {
+  if (!AU.ctx) {
+    try {
+      const C = window.AudioContext || window.webkitAudioContext; AU.ctx = new C();
+      AU.m = AU.ctx.createGain(); AU.m.gain.value = AU.on ? 0.8 : 0; AU.m.connect(AU.ctx.destination);
+      const n = AU.ctx.createBuffer(1, AU.ctx.sampleRate * 2, AU.ctx.sampleRate), d = n.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; AU.nb = n;
+    } catch (e) { AU.ctx = null; }
+  }
+  if (AU.ctx && AU.ctx.state === 'suspended') AU.ctx.resume();
+  return AU.ctx;
+}
+function tone(f, dur, { type = 'sine', vol = .25, at = 0, to = null } = {}) {
+  const c = ac(); if (!c) return; const t = c.currentTime + at;
+  const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
+  if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(AU.m); o.start(t); o.stop(t + dur + 0.05);
+}
+function noise(dur, { type = 'lowpass', f = 1000, f2 = null, q = 1, vol = .3, at = 0 } = {}) {
+  const c = ac(); if (!c) return; const t = c.currentTime + at;
+  const s = c.createBufferSource(); s.buffer = AU.nb; const fl = c.createBiquadFilter(); fl.type = type; fl.Q.value = q;
+  fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(fl); fl.connect(g); g.connect(AU.m); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+}
+const SFX = {
+  click: () => tone(900, .05, { type: 'square', vol: .06 }),
+  ok: () => { tone(660, .18, { vol: .22 }); tone(880, .18, { vol: .22, at: .12 }); tone(1320, .4, { vol: .2, at: .24 }); },
+  bad: () => { tone(220, .4, { type: 'sawtooth', vol: .12, to: 140 }); tone(170, .45, { type: 'square', vol: .05, at: .05, to: 110 }); },
+  snap: () => { noise(.12, { type: 'highpass', f: 2500, vol: .5 }); tone(1400, .08, { type: 'triangle', vol: .15, to: 400 }); },
+  whoosh: () => noise(1.0, { type: 'bandpass', f: 300, f2: 2600, q: 1.2, vol: .4 }),
+  ding: () => { tone(1047, .7, { vol: .2 }); tone(1568, .9, { vol: .12, at: .06 }); },
+  splash: () => { noise(.7, { type: 'lowpass', f: 2000, f2: 300, vol: .55 }); noise(.35, { type: 'highpass', f: 3000, vol: .15, at: .05 }); },
+  boing: () => { tone(140, .7, { vol: .4, to: 420 }); noise(.15, { type: 'lowpass', f: 600, vol: .4 }); },
+  bell: () => { for (let i = 0; i < 3; i++) { tone(1318, .55, { type: 'triangle', vol: .18, at: i * .35 }); tone(1975, .45, { vol: .06, at: i * .35 }); } },
+  win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i === 4 ? .8 : .35, { type: 'triangle', vol: .2, at: i * .12 })),
+  pour: () => noise(1.3, { type: 'bandpass', f: 900, f2: 1600, q: .8, vol: .3 }),
+  clack: () => { noise(.05, { type: 'highpass', f: 1800, vol: .22 }); tone(240, .06, { type: 'square', vol: .05 }); },
+  start: () => { tone(440, .12, { type: 'square', vol: .06 }); tone(660, .15, { type: 'square', vol: .06, at: .1 }); },
+  horn: () => { tone(330, .7, { type: 'sawtooth', vol: .07 }); tone(415, .7, { type: 'sawtooth', vol: .06 }); },
+};
+// sürekli sesler: roket, araba motoru, tren gürültüsü, dönen kova
+function loopSnd(kind) {
+  const c = ac(); if (!c) return { set() {}, stop() {} };
+  const out = c.createGain(); out.gain.value = 0; out.connect(AU.m); const srcs = []; let setF = () => {};
+  const nz = () => { const s = c.createBufferSource(); s.buffer = AU.nb; s.loop = true; s.start(0, Math.random()); srcs.push(s); return s; };
+  if (kind === 'rocket') {
+    const s = nz(), bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = .6;
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160; const g2 = c.createGain(); g2.gain.value = 2;
+    s.connect(bp); bp.connect(out); s.connect(lp); lp.connect(g2); g2.connect(out);
+    setF = r => bp.frequency.setTargetAtTime(450 + 500 * r, c.currentTime, .1);
+  } else if (kind === 'engine') {
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 380; lp.connect(out); const os = [];
+    for (const f of [52, 78, 104]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; const g = c.createGain(); g.gain.value = .25; o.connect(g); g.connect(lp); o.start(); srcs.push(o); os.push([o, f]); }
+    setF = r => os.forEach(([o, f]) => o.frequency.setTargetAtTime(f * (0.8 + 0.5 * r), c.currentTime, .15));
+  } else { // rumble / swish
+    const s = nz(), lp = c.createBiquadFilter(); lp.type = kind === 'swish' ? 'bandpass' : 'lowpass'; lp.frequency.value = kind === 'swish' ? 700 : 260; lp.Q.value = .7;
+    const g2 = c.createGain(); g2.gain.value = kind === 'swish' ? 1 : 1.6; s.connect(lp); lp.connect(g2); g2.connect(out);
+    setF = r => lp.frequency.setTargetAtTime((kind === 'swish' ? 500 : 180) + (kind === 'swish' ? 900 : 300) * r, c.currentTime, .1);
+  }
+  const L = { v: 0, set(v, r = 0) { if (Math.abs(v - L.v) > .005) { out.gain.setTargetAtTime(v, c.currentTime, .08); L.v = v; } setF(r); },
+    stop() { out.gain.setTargetAtTime(0, c.currentTime, .08); setTimeout(() => { srcs.forEach(s => { try { s.stop(); } catch (e) {} }); out.disconnect(); }, 500); } };
+  AU.loops.push(L); return L;
+}
+function stopLoops() { AU.loops.forEach(l => l.stop()); AU.loops = []; }
+function setSes(on) { AU.on = on; $('bSes').textContent = on ? '🔊' : '🔇'; if (AU.m) AU.m.gain.setTargetAtTime(on ? .8 : 0, AU.ctx.currentTime, .05); try { localStorage.setItem('ch_ses', on ? '1' : '0'); } catch (e) {} }
+
+// ======================= 3D TEMEL (Tinkercad tarzı) =======================
+const R3 = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, alpha: true });
+R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(36, 1920 / 1080, 0.1, 200);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6b7a90, 1.15));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(5, 12, 7); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 12, bottom: -12, far: 60 }); scene.add(sun);
+const EDGE = new THREE.LineBasicMaterial({ color: 0x1f2937 });
+function mesh(geo, color, opt = {}) {
+  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color, side: opt.side || THREE.FrontSide, transparent: !!opt.op, opacity: opt.op || 1 }));
+  m.castShadow = opt.cast !== false; m.receiveShadow = true;
+  if (opt.edge !== false) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), EDGE));
+  return m;
+}
+const plate = mesh(new THREE.BoxGeometry(1, 0.25, 1), 0xb9d4ee, { cast: false, edge: false }); plate.position.y = -0.125; scene.add(plate);
+let grid = null;
+function setPlate(w, d, cx = 0, cz = 0) {
+  plate.scale.set(w, 1, d); plate.position.set(cx, -0.125, cz);
+  if (grid) { scene.remove(grid); grid.geometry.dispose(); }
+  const n = Math.max(w, d); grid = new THREE.GridHelper(n, n * 2, 0x6f9bc6, 0x8fb4d8); grid.position.set(cx, 0.006, cz);
+  grid.material.clippingPlanes = null; grid.scale.set(w / n, 1, d / n); scene.add(grid);
+}
+const ARROWS = [];
+function arrow(color) {
+  const g = new THREE.Group();
+  const sh = mesh(new THREE.CylinderGeometry(0.07, 0.07, 1, 12), color, { edge: false, cast: false });
+  const hd = mesh(new THREE.ConeGeometry(0.2, 0.42, 16), color, { cast: false });
+  g.add(sh, hd); g.sh = sh; g.hd = hd; g.visible = false; scene.add(g); ARROWS.push(g); return g;
+}
+const UP = V3(0, 1, 0);
+function setArrow(a, from, dir, len) {
+  const d = dir.clone().normalize(), hs = Math.min(1, Math.max(len, 0.05) / 0.75), L = Math.max(len - 0.42 * hs, 0.01);
+  a.position.copy(from); a.quaternion.setFromUnitVectors(UP, d);
+  a.sh.scale.set(hs, L, hs); a.sh.position.set(0, L / 2, 0); a.hd.scale.set(hs, hs, hs); a.hd.position.set(0, L + 0.21 * hs, 0); a.visible = true;
+}
+function dashLine(color, ds = .2, gs = .14) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(), V3(0, 1, 0)]), new THREE.LineDashedMaterial({ color, dashSize: ds, gapSize: gs })); l.visible = false; return l; }
+function setLine(l, pts) { l.geometry.setFromPoints(pts); l.computeLineDistances(); l.visible = true; }
+function textSprite(txt, w, h, bg, fg) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = Math.round(512 * h / w); const x = cv.getContext('2d');
+  x.fillStyle = bg; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = fg; x.font = `900 ${Math.round(cv.height * .62)}px Inter, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(txt, cv.width / 2, cv.height / 2 + 4); const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tx })); return m;
+}
+
+// kamera (yumuşak takip) + soru kartına göre görüntü kaydırma
+const CAM = { p: V3(0, 8, 12), l: V3(), gp: V3(0, 8, 12), gl: V3(), vo: 0, gvo: 0 };
+function camGoal(p, l, snap) { CAM.gp.set(...p); CAM.gl.set(...l); if (snap) { CAM.p.copy(CAM.gp); CAM.l.copy(CAM.gl); } }
+function camStep(dt) {
+  const k = 1 - Math.exp(-2.2 * dt); CAM.p.lerp(CAM.gp, k); CAM.l.lerp(CAM.gl, k);
+  CAM.vo += (CAM.gvo - CAM.vo) * (1 - Math.exp(-5 * dt));
+  cam.position.copy(CAM.p); cam.lookAt(CAM.l); cam.setViewOffset(1920, 1080, CAM.vo, 0, 1920, 1080); cam.updateMatrixWorld();
+}
+
+// 3B'ye bağlı etiketler
+const TAG = {};
+function tag(id, html, bg, fg = '#fff', chip = false) {
+  const d = document.createElement('div'); d.className = chip ? 'chip' : 'lbl'; d.innerHTML = html;
+  if (chip) d.style.borderColor = bg; else { d.style.background = bg; d.style.color = fg; }
+  $('tags').appendChild(d); TAG[id] = d; return d;
+}
+function show(id, p3, op = 1, dx = 0, dy = 0) {
+  const d = TAG[id]; if (!d || op <= 0) return; const p = p3.clone().project(cam); if (p.z > 1) return;
+  d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = ((1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;
+}
+function setTag(id, html) { if (TAG[id] && TAG[id]._h !== html) { TAG[id].innerHTML = html; TAG[id]._h = html; } }
+
+// ===================================================================================
+// GÖREV 1 — ROKET (ipe bağlı oyuncak roket, ip kopunca teğet gider)
+// ===================================================================================
+const G1 = new THREE.Group(); scene.add(G1);
+const R1 = 2.5, Y1 = 1.0, A_REL = -Math.PI / 2, D_REL = V3(1, 0, 0), P_REL = V3(0, Y1, -R1), TGT = 5.4;
+{ const peg = mesh(new THREE.CylinderGeometry(0.18, 0.18, Y1 + 0.3, 20), 0x9ca3af); peg.position.y = (Y1 + 0.3) / 2; G1.add(peg); }
+const rocket = new THREE.Group(); G1.add(rocket);
+{ const body = mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.8, 20), 0xf8fafc); rocket.add(body);
+  const nose = mesh(new THREE.ConeGeometry(0.2, 0.42, 20), 0xef4444); nose.position.y = 0.61; rocket.add(nose);
+  const win = mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.05, 16), 0x38bdf8); win.rotation.x = Math.PI / 2; win.position.set(0, 0.12, 0.19); rocket.add(win);
+  for (let i = 0; i < 3; i++) { const fin = mesh(new THREE.BoxGeometry(0.04, 0.32, 0.22), 0xef4444); const a = i / 3 * TAU; fin.position.set(Math.sin(a) * 0.28, -0.32, Math.cos(a) * 0.28); fin.rotation.y = a; rocket.add(fin); }
+  const noz = mesh(new THREE.CylinderGeometry(0.13, 0.17, 0.12, 16), 0x475569); noz.position.y = -0.46; rocket.add(noz); }
+const flame = mesh(new THREE.ConeGeometry(0.14, 0.5, 16), 0xfb923c, { edge: false, cast: false }); flame.rotation.x = Math.PI; flame.position.y = -0.78; rocket.add(flame);
+const rope = mesh(new THREE.CylinderGeometry(0.035, 0.035, 1, 8), 0xf8fafc, { edge: false }); G1.add(rope);
+const ring1 = (() => { const pts = []; for (let i = 0; i <= 96; i++) { const a = i / 96 * TAU; pts.push(V3(Math.cos(a) * R1, 0.02, Math.sin(a) * R1)); }
+  const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.18, gapSize: 0.14 })); l.computeLineDistances(); return l; })(); G1.add(ring1);
+const guide1 = dashLine(0xfacc15, .22, .14); G1.add(guide1);
+const hoop = new THREE.Group(); hoop.position.copy(P_REL.clone().add(D_REL.clone().multiplyScalar(TGT))); G1.add(hoop);
+const hoopR = mesh(new THREE.TorusGeometry(0.72, 0.09, 12, 40), 0xef4444); hoopR.rotation.y = Math.PI / 2; hoop.add(hoopR);
+const hoopW = mesh(new THREE.TorusGeometry(0.5, 0.07, 12, 40), 0xf8fafc); hoopW.rotation.y = Math.PI / 2; hoop.add(hoopW);
+{ const st = mesh(new THREE.BoxGeometry(0.16, Y1 - 0.72 + 0.05, 0.16), 0x64748b); st.position.y = -(0.72 + (Y1 - 0.72) / 2) + 0.03; hoop.add(st);
+  const ft = mesh(new THREE.BoxGeometry(0.8, 0.1, 0.8), 0x64748b); ft.position.y = -Y1 + 0.05; hoop.add(ft); }
+const r1v = arrow(0x22c55e), r1a = arrow(0xa855f7), r1f = arrow(0xef4444);
+tag('r1v', 'v', '#16a34a'); tag('r1a', 'a', '#9333ea'); tag('r1f', 'F', '#dc2626');
+tag('r1r', 'r = 2 m', '#F5C400', '#fff', true); tag('r1w', '', '#F5C400', '#fff', true); tag('r1t', '🎯 HEDEF', '#ef4444', '#fff', true);
+function aimRocket(dir) { const y = dir.clone().setY(0).normalize(), z = V3(0, 1, 0), x = V3().crossVectors(y, z).normalize(); rocket.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z)); }
+const orbit1 = a => V3(Math.cos(a) * R1, Y1, Math.sin(a) * R1), tang1 = a => V3(-Math.sin(a), 0, Math.cos(a));
+
+const M1 = {
+  no: 1, icon: '🚀', name: 'Roketi hedefe gönder', group: G1,
+  task: 'İpe bağlı roketin hareketini hesaplayın, sonra ipi keserek roketi hedefe gönderin.',
+  data: [['İp uzunluğu', 'r = 2 m'], ['Bir tur süresi', 'T = 2 s'], ['Alınacak değer', 'π = 3']],
+  reset() { this.S = { a: Math.PI / 2, spin: false, arm: false, fly: -1, hit: false, v: false, av: false, w: '', vt: 'v', at: 'a', ht: 0 };
+    setPlate(14, 10, 1.2, -0.5); camGoal([2.0, 10.8, 11.6], [2.0, -0.2, -0.9], true); this.snd = loopSnd('rocket'); },
+  tick(dt) {
+    const S = this.S, W = Math.PI;                       // görsel: bir tur 2 s
+    if (S.spin) { const prev = S.a; S.a += W * dt;
+      if (S.arm && mod(S.a - A_REL, TAU) < mod(prev - A_REL, TAU)) { S.a = A_REL; S.spin = false; S.fly = 0; SFX.snap(); SFX.whoosh(); } }
+    if (S.fly >= 0 && !S.hit) { S.fly += W * R1 * dt * 0.42; if (S.fly >= TGT) { S.fly = TGT; S.hit = true; SFX.ding(); setTimeout(SFX.win, 250); } }
+    if (S.hit) S.ht += dt;
+    this.snd.set(S.spin ? .16 : (S.fly >= 0 && !S.hit ? .4 : 0), S.fly >= 0 ? 1 : .3);
+    flame.visible = S.spin || (S.fly >= 0 && !S.hit); flame.scale.set(1, 0.8 + 0.4 * Math.random(), 1);
+    let p, d;
+    if (S.fly < 0) { p = orbit1(S.a); d = tang1(S.a);
+      rope.visible = true; rope.position.set(p.x / 2, Y1, p.z / 2); rope.scale.set(1, R1, 1); rope.quaternion.setFromUnitVectors(UP, V3(p.x, 0, p.z).normalize());
+      show('r1r', V3(p.x / 2, Y1 + 0.2, p.z / 2), 1, 0, -34);
+    } else { d = D_REL; p = P_REL.clone().add(D_REL.clone().multiplyScalar(S.fly + (S.hit ? Math.min(S.ht, .3) * 0.6 : 0)));
+      const st = 0.9; rope.position.set(0, Y1, -st / 2); rope.scale.set(1, st, 1); rope.quaternion.setFromUnitVectors(UP, V3(0, 0, -1));
+      setLine(guide1, [P_REL.clone().setY(0.03), p.clone().setY(0.03)]); }
+    rocket.position.copy(p); aimRocket(d);
+    if (S.v && S.fly < 4) { setArrow(r1v, p.clone().add(V3(0, 0.05, 0)).add(d.clone().multiplyScalar(0.85)), d, 1.6); setTag('r1v', S.vt); show('r1v', p.clone().add(d.clone().multiplyScalar(2.7)), 1, 0, -36); }
+    if (S.av && S.fly < 0) { const toC = p.clone().setY(0).multiplyScalar(-1).normalize();
+      setArrow(r1f, p.clone().add(toC.clone().multiplyScalar(0.35)), toC, 1.3); show('r1f', p.clone().add(toC.clone().multiplyScalar(1.45)), 1, 0, -38);
+      setArrow(r1a, p.clone().add(toC.clone().multiplyScalar(0.35)).add(V3(0, 0.45, 0)), toC, 1.05); setTag('r1a', S.at); show('r1a', p.clone().add(toC.clone().multiplyScalar(1.3)).add(V3(0, 0.45, 0)), 1, 0, -46); }
+    if (S.w) { setTag('r1w', S.w); show('r1w', V3(0, Y1 + 0.5, 0), 1, 0, -50); }
+    const pul = S.hit ? 1 + 0.25 * Math.sin(Math.min(S.ht, 1.2) * 14) * Math.exp(-S.ht * 2) : 1; hoop.scale.setScalar(pul);
+    hoopR.material.color.set(S.hit ? 0x22c55e : 0xef4444);
+    setTag('r1t', S.hit ? '🎯 HEDEF VURULDU!' : '🎯 HEDEF'); show('r1t', hoop.position.clone().add(V3(0, 0.95, 0)), 1, 0, -30);
+  },
+  steps: [
+    { sub: 'Oyuncak roket 2 m uzunluğundaki ipe bağlı. Başlat\'a basın, roket dönsün.', go: '▶ Başlat' },
+    { do: S => { S.spin = true; }, sub: 'Roket bir turu 2 saniyede atıyor (her tur aynı sürede: düzgün çembersel hareket).', wait: 3.2 },
+    { q: { t: `Roket bir turu <b>T = 2 s</b>'de atıyor. Roketin <b>açısal hızı (ω)</b> kaç rad/s?<br><small>(π = 3 alın)</small>`,
+      o: ['3 rad/s', '6 rad/s', '1,5 rad/s', '12 rad/s'],
+      s: [`Açısal hız: ω = ${F('2π', 'T')}`, `ω = ${F('2 · 3', '2')}`, `ω = <em>3 rad/s</em> ✓`],
+      after: (S, M) => { S.w = 'ω = 3 rad/s'; board('Açısal hız', 'ω = 3 rad/s'); } } },
+    { do: S => { S.v = true; S.vt = 'v = ?'; }, q: { t: `İp uzunluğu <b>r = 2 m</b>. Roketin <b>çizgisel hızı (v)</b> kaç m/s?`,
+      o: ['6 m/s', '1,5 m/s', '12 m/s', '3 m/s'],
+      s: [`Çizgisel hız: v = ω · r`, `v = 3 · 2`, `v = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
+      after: S => { S.vt = 'v = 6 m/s'; board('Çizgisel hız', 'v = 6 m/s'); } } },
+    { do: S => { S.av = true; S.at = 'a = ?'; }, q: { t: `Roketin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
+      o: ['18 m/s²', '12 m/s²', '3 m/s²', '36 m/s²'],
+      s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')}`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')}`, `a = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`],
+      after: S => { S.at = 'a = 18 m/s²'; board('Merkezcil ivme', 'a = 18 m/s²'); } } },
+    { q: { t: `İp koparsa roket hangi yolu izler?`,
+      o: ['Teğet boyunca düz gider', 'Merkeze doğru düşer', 'Merkezden dışarı doğru kaçar', 'Çember çizmeye devam eder'],
+      s: [`İp kopunca merkezcil kuvvet (<span class="r">F</span>) biter.`, `Kuvvet yoksa cisim hızını korur (eylemsizlik).`, `Hız (<span class="g">v</span>) TEĞET → roket <em>DÜZ</em> gider ✓`] } },
+    { sub: 'İp, roket hedefe bakan noktaya gelince kesilecek.', go: '✂ İpi kes' },
+    { do: S => { S.arm = true; }, sub: 'İp koptu: kuvvet yok, roket teğet boyunca düz gidiyor… (yavaş çekim)', until: S => S.hit && S.ht > 1.4 },
+    { sub: 'Roket teğet boyunca düz gitti ve hedefe ulaştı! 🎯', wait: 1.2 },
+  ],
+};
+
+// ===================================================================================
+// GÖREV 2 — VİRAJ (üç halka yol, aynı v)
+// ===================================================================================
+const G2 = new THREE.Group(); scene.add(G2);
+const LANES = [{ r: 1.4, R: 10, c: 0xef4444, hex: '#ef4444', ad: 'Kırmızı', w: '1', a: '10' }, { r: 2.8, R: 20, c: 0x22c55e, hex: '#22c55e', ad: 'Yeşil', w: F('1', '2'), a: '5' }, { r: 4.2, R: 30, c: 0x3b82f6, hex: '#3b82f6', ad: 'Mavi', w: F('1', '3'), a: '3,3' }];
+const A0 = Math.PI / 2, W_RED = TAU / 6;            // kırmızı bir turu 6 s'de atar (π = 3 ile T = 2πr/v = 6 s)
+LANES.forEach((L, i) => {
+  const road = mesh(new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 120), 0x4b5563, { cast: false, edge: false }); road.rotation.x = -Math.PI / 2; road.position.y = 0.01; G2.add(road);
+  const pts = []; for (let j = 0; j <= 160; j++) { const a = j / 160 * TAU; pts.push(V3(Math.cos(a) * L.r, 0.02, Math.sin(a) * L.r)); }
+  const cl = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.16, gapSize: 0.16 })); cl.computeLineDistances(); G2.add(cl);
+  const car = new THREE.Group(); G2.add(car); L.car = car;
+  const bd = mesh(new THREE.BoxGeometry(0.86, 0.26, 0.46), L.c); bd.position.y = 0.25; car.add(bd);
+  const cb = mesh(new THREE.BoxGeometry(0.42, 0.22, 0.4), 0xe5e7eb); cb.position.set(-0.04, 0.48, 0); car.add(cb);
+  for (const [x, z] of [[0.27, 0.24], [0.27, -0.24], [-0.27, 0.24], [-0.27, -0.24]]) { const wh = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 16), 0x111827); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.12, z); car.add(wh); }
+  L.vA = arrow(0x22c55e); L.aA = arrow(0xa855f7); L.w_ = W_RED * LANES[0].R / L.R;
+  L.wedge = mesh(new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 8, 1, 0, 0.1), L.c, { op: 0.45, cast: false, edge: false }); L.wedge.rotation.x = -Math.PI / 2; L.wedge.position.y = 0.025; G2.add(L.wedge);
+  tag('c' + i, '', L.hex, '#fff', true); tag('cr' + i, `r = ${L.R} m`, L.hex, '#fff', true);
+});
+{ const sl = mesh(new THREE.BoxGeometry(0.1, 0.02, 3.6), 0xffffff, { cast: false, edge: false }); sl.position.set(0, 0.03, 2.8); G2.add(sl);
+  for (let k = 0; k < 12; k++) { const sq = mesh(new THREE.BoxGeometry(0.1, 0.025, 0.15), 0x111827, { cast: false, edge: false }); sq.position.set(k % 2 ? 0.1 : -0.1, 0.035, 1.1 + k * 0.3); G2.add(sq); }
+  const cp = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.6, 16), 0xF5C400); cp.position.y = 0.3; G2.add(cp); }
+tag('c2m', 'merkez', '#F5C400', '#1f232c'); tag('c2t', '', '#F5C400', '#fff', true);
+
+const M2 = {
+  no: 2, icon: '🏎️', name: 'Viraj yarışı', group: G2,
+  task: 'Üç araba aynı hızla dönüyor. Virajdaki hareketlerini hesaplayın, kırmızı arabanın tur süresini ölçün.',
+  data: [['Üç arabanın hızı', 'v = 10 m/s'], ['Yarıçaplar', 'r = 10 · 20 · 30 m'], ['Alınacak değer', 'π = 3']],
+  reset() { this.S = { t: 0, run: false, wedge: false, a: false, cw: false, ca: false, lap: -1 };
+    setPlate(12, 12, 0, 0); camGoal([0, 11.6, 10.2], [0, -0.3, 0.5], true); this.snd = loopSnd('engine'); },
+  tick(dt) {
+    const S = this.S; if (S.run) S.t += dt; if (S.lap >= 0 && S.run) S.lap += dt;
+    this.snd.set(S.run ? .1 : 0, .5);
+    show('c2m', V3(0, 0.75, 0), 1, 0, -40);
+    LANES.forEach((L, i) => {
+      const a = A0 + L.w_ * S.t, p = V3(Math.cos(a) * L.r, 0, Math.sin(a) * L.r), hd = V3(-Math.sin(a), 0, Math.cos(a)), toC = p.clone().multiplyScalar(-1).normalize();
+      L.car.position.copy(p); L.car.rotation.y = Math.atan2(-hd.z, hd.x);
+      setArrow(L.vA, p.clone().add(V3(0, 0.72, 0)), hd, 1.0);
+      if (S.a) setArrow(L.aA, p.clone().add(V3(0, 0.6, 0)).add(toC.clone().multiplyScalar(0.2)), toC, 1.4 * (LANES[0].r / L.r));
+      const sw = Math.min(L.w_ * 2, L.w_ * S.t); L.wedge.visible = S.wedge && sw > 0.02;
+      if (L.wedge.visible) { L.wedge.geometry.dispose(); L.wedge.geometry = new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 48, 1, -a, sw); }
+      if (S.cw || S.ca) { const sp = p.clone().project(cam), sc = V3().project(cam); let dx = sp.x - sc.x, dy = sp.y - sc.y; const n = Math.hypot(dx, dy) || 1;
+        setTag('c' + i, (S.cw ? `<div>ω = ${L.w} rad/s</div>` : '') + (S.ca ? `<div>a = ${L.a} m/s²</div>` : ''));
+        show('c' + i, p.clone().add(V3(0, 0.6, 0)), 1, dx / n * 130, -dy / n * 110 - 30); }
+      else show('cr' + i, V3(L.r * 0.71, 0.05, -L.r * 0.71), 1, 0, 0);
+    });
+    if (S.lap >= 0) { setTag('c2t', `⏱ ${Math.min(S.lap, 6).toFixed(1).replace('.', ',')} s`); show('c2t', V3(0, 0.6, 2.8), 1, 120, -60); }
+  },
+  steps: [
+    { sub: 'Üç araba başlangıç çizgisinde. Üçünün de hızı aynı: v = 10 m/s.', go: '▶ Başlat' },
+    { do: S => { S.run = true; }, sub: 'Arabalar aynı hızla dönüyor. Hangisi daha hızlı DÖNÜYOR? Dikkatle bakın.', wait: 4.5 },
+    { q: { t: `Üç arabanın hızı aynı (v = 10 m/s). Hangi arabanın <b>açısal hızı (ω)</b> en büyüktür?`,
+      o: ['Kırmızı (r = 10 m)', 'Yeşil (r = 20 m)', 'Mavi (r = 30 m)', 'Üçünün de eşit'], fixed: true,
+      s: [`Açısal hız: ω = ${F('v', 'r')}`, `Üçünde de v = 10 m/s aynı`, `r küçülünce ω <em>BÜYÜR</em> → Kırmızı ✓`],
+      after: S => { S.wedge = true; } } },
+    { sub: 'Renkli dilimler: son 2 saniyede taranan açı. Kırmızının dilimi en büyük.', wait: 2.5 },
+    { q: { t: `Kırmızı arabanın (r = 10 m) <b>açısal hızı (ω)</b> kaç rad/s?`,
+      o: ['1 rad/s', '10 rad/s', '100 rad/s', '0,1 rad/s'],
+      s: [`ω = ${F('v', 'r')} = ${F('10', '10')} = <em>1 rad/s</em> ✓`, `Yeşil: ${F('10', '20')} = ${F('1', '2')} rad/s`, `Mavi: ${F('10', '30')} = ${F('1', '3')} rad/s`],
+      after: S => { S.cw = true; board('Kırmızı · açısal hız', 'ω = 1 rad/s'); } } },
+    { do: S => { S.a = true; }, q: { t: `Mor oklar merkezcil ivme. Mavi arabanın (r = 30 m) <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
+      o: ['3,3 m/s²', '10 m/s²', '300 m/s²', '0,33 m/s²'],
+      s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')} = ${F('10<sup>2</sup>', '30')}`, `a = ${F('100', '30')} ≈ <em>3,3 m/s²</em> ✓`, `Kırmızı: 10 m/s², Yeşil: 5 m/s²`, `r küçülünce a <em>BÜYÜR</em>`],
+      after: S => { S.ca = true; board('Mavi · merkezcil ivme', 'a ≈ 3,3 m/s²'); } } },
+    { q: { t: `Kırmızı araba (r = 10 m, v = 10 m/s) bir turu kaç saniyede tamamlar?<br><small>(π = 3 alın)</small>`,
+      o: ['6 s', '3 s', '60 s', '1 s'],
+      s: [`Bir tur yolu: 2πr = 2 · 3 · 10 = 60 m`, `Periyot: T = ${F('2πr', 'v')} = ${F('60', '10')}`, `T = <em>6 s</em> ✓`],
+      after: () => board('Kırmızı · periyot', 'T = 6 s') } },
+    { do: S => { S.run = false; S.t = 0; S.lap = -1; }, sub: 'Şimdi kırmızı arabanın turunu ölçelim. Arabalar çizgiye dizildi.', go: '⏱ Turu ölç' },
+    { do: S => { S.t = 0; S.lap = 0; S.run = true; }, sub: 'Süre tutuluyor…', until: S => S.lap >= 6 },
+    { do: S => { S.run = false; S.t = 6; S.lap = 6; SFX.ding(); }, sub: 'Kırmızı araba bir turu 6 saniyede tamamladı ✓ Yeşil yarım, mavi üçte bir tur attı.', wait: 3 },
+  ],
+};
+
+// ===================================================================================
+// GÖREV 3 — KOVA (dikey çemberde su)
+// ===================================================================================
+const G3 = new THREE.Group(); scene.add(G3);
+const AX = 3.6, RR = 2.2, RW = RR + 0.68;
+{ const base = mesh(new THREE.BoxGeometry(1.6, 0.3, 1.2), 0x64748b); base.position.set(0, 0.15, -0.9); G3.add(base);
+  const post = mesh(new THREE.BoxGeometry(0.5, AX, 0.5), 0xf59e0b); post.position.set(0, AX / 2, -0.9); G3.add(post);
+  const axle = mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.9, 16), 0x94a3b8); axle.rotation.x = Math.PI / 2; axle.position.set(0, AX, -0.5); G3.add(axle); }
+const rotor = new THREE.Group(); rotor.position.set(0, AX, 0); G3.add(rotor);
+{ const hub = mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.22, 20), 0x334155); hub.rotation.x = Math.PI / 2; rotor.add(hub);
+  const arm = mesh(new THREE.BoxGeometry(0.16, RR, 0.16), 0xfacc15); arm.position.y = -RR / 2; rotor.add(arm);
+  const bar = mesh(new THREE.BoxGeometry(1.15, 0.12, 0.12), 0xfacc15); bar.position.y = -RR; rotor.add(bar); }
+const bucket = new THREE.Group(); bucket.position.y = -RR - 0.45; rotor.add(bucket);
+{ const bWall = mesh(new THREE.CylinderGeometry(0.56, 0.44, 0.9, 32, 1, true), 0x3b82f6, { side: THREE.DoubleSide }); bucket.add(bWall);
+  const bBot = mesh(new THREE.CircleGeometry(0.44, 32), 0x3b82f6, { side: THREE.DoubleSide }); bBot.rotation.x = Math.PI / 2; bBot.position.y = -0.45; bucket.add(bBot); }
+const water = mesh(new THREE.CylinderGeometry(0.47, 0.43, 0.42, 32), 0x38bdf8, { op: 0.92 }); water.position.y = -0.23; bucket.add(water);
+const blob = mesh(new THREE.SphereGeometry(0.42, 24, 16), 0x38bdf8, { op: 0.92 }); blob.visible = false; G3.add(blob);
+const puddle = mesh(new THREE.CylinderGeometry(1, 1, 0.04, 40), 0x38bdf8, { op: 0.85, cast: false }); puddle.visible = false; G3.add(puddle);
+const drops = []; for (let i = 0; i < 7; i++) { const d = mesh(new THREE.SphereGeometry(0.11, 12, 8), 0x7dd3fc, { edge: false }); d.visible = false; G3.add(d); drops.push(d); }
+const k3g = arrow(0xef4444), k3n = arrow(0xfb923c), k3v = arrow(0x22c55e), k3a = arrow(0xa855f7), k3lv = arrow(0x22c55e), k3la = arrow(0xa855f7);
+tag('k3g', 'mg', '#dc2626'); tag('k3n', 'N', '#ea580c'); tag('k3v', 'v', '#16a34a'); tag('k3a', 'a', '#9333ea'); tag('k3m', 'merkez', '#F5C400', '#1f232c');
+tag('k3lv', 'v', '#16a34a'); tag('k3la', 'a', '#9333ea'); tag('k3r', 'r = 1 m', '#F5C400', '#fff', true); tag('k3s', '', '#4ade80', '#fff', true);
+const rimPos = (th, r) => V3(Math.sin(th) * r, AX - Math.cos(th) * r, 0);
+const W_SLOW = 1.6, W_FAST = 4, G_VIS = 9.8, TH_SEP = Math.acos(-W_SLOW * W_SLOW * RW / G_VIS);
+
+const M3 = {
+  no: 3, icon: '🪣', name: 'Su dökülmesin!', group: G3,
+  task: 'Kovayı dikey çemberde çevirin. Suyun dökülmemesi için tepedeki hızı hesaplayın.',
+  data: [['Çember yarıçapı', 'r = 1 m'], ['Yer çekimi ivmesi', 'g = 10 m/s²']],
+  reset() { this.S = { th: 0, w: 0, mode: 'stop', goal: 0, frz: false, sp: null, spDone: 0, turns: 0, ok: '' };
+    water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false);
+    setPlate(12, 8, 0, 0); camGoal([4.6, 5.6, 17.5], [0.3, AX + 0.8, 0], true); this.snd = loopSnd('swish'); },
+  tick(dt) {
+    const S = this.S;
+    if (S.mode === 'fast') { S.th += W_FAST * dt; S.w = W_FAST; }
+    else if (S.mode === 'goal') { const rem = S.goal - S.th; S.w = Math.min(S.wmax, Math.sqrt(2 * 5 * Math.max(rem, 0)) + 0.25); S.th += S.w * dt; if (S.th >= S.goal) { S.th = S.goal; S.w = 0; S.mode = 'stop'; } }
+    else if (S.mode === 'slow') { S.th += W_SLOW * dt; S.w = W_SLOW; if (S.th >= TAU + 0.0) { S.mode = 'goal'; S.goal = TAU * 1.5; S.wmax = W_SLOW; } }
+    else S.w = 0;
+    this.snd.set(S.w > 0.1 ? 0.05 + 0.03 * S.w : 0, S.w / 4);
+    rotor.rotation.z = S.th;
+    // su ayrılır (yavaş dönüş, ilk tur)
+    if (S.slowRun && !S.sp && S.th >= TH_SEP) { S.sp = { t: 0, p0: rimPos(TH_SEP, RW), v0: V3(Math.cos(TH_SEP), Math.sin(TH_SEP), 0).multiplyScalar(W_SLOW * RW), spl: false }; water.visible = false; }
+    if (S.sp) { const sp = S.sp; sp.t += dt; const g = G_VIS, p = V3(sp.p0.x + sp.v0.x * sp.t, sp.p0.y + sp.v0.y * sp.t - 0.5 * g * sp.t * sp.t, 0);
+      if (p.y > 0.3) { blob.visible = true; blob.position.copy(p); const st = 1 + Math.min(sp.t, 0.6); blob.scale.set(1 / Math.sqrt(st), st, 1 / Math.sqrt(st)); }
+      else { blob.visible = false; if (!sp.spl) { sp.spl = true; sp.tl = sp.t; sp.xl = p.x; SFX.splash(); }
+        const k = clamp((sp.t - sp.tl) / 0.35); puddle.visible = true; puddle.position.set(sp.xl, 0.03, 0.2); puddle.scale.set(0.3 + 0.9 * ease(k), 1, 0.3 + 0.75 * ease(k));
+        drops.forEach((d, i) => { const a = i / drops.length * TAU, s2 = sp.t - sp.tl; d.visible = s2 < 0.6; if (d.visible) d.position.set(sp.xl + Math.cos(a) * s2 * 2.2, 0.1 + 2.2 * s2 - 9.8 * s2 * s2, 0.2 + Math.sin(a) * s2 * 1.6); });
+        if (sp.t - sp.tl > 1.2) S.spDone = 1; } }
+    // canlı v ve a okları (dönerken)
+    if (S.w > 0.2) { const th = S.th, bc = rimPos(th, RW - 0.2).add(V3(0, 0, 0.8)), vd = V3(Math.cos(th), Math.sin(th), 0), ad = V3(-Math.sin(th), Math.cos(th), 0);
+      setArrow(k3lv, bc, vd, 0.38 * S.w); setArrow(k3la, bc, ad, 0.1 * S.w * S.w);
+      show('k3lv', bc.clone().add(vd.clone().multiplyScalar(0.38 * S.w + 0.35)), 1); show('k3la', bc.clone().add(ad.clone().multiplyScalar(0.1 * S.w * S.w + 0.35)), 1); }
+    if (S.frz) {                                            // tepede kuvvetler
+      const wc = rimPos(Math.PI, RW);
+      setArrow(k3g, wc.clone().add(V3(0.25, 0, 0.7)), V3(0, -1, 0), 1.3); show('k3g', wc.clone().add(V3(0.25, -1.5, 0.7)), 1, 55, 0);
+      setArrow(k3n, wc.clone().add(V3(-0.35, 0.25, 0.7)), V3(0, -1, 0), 1.0); show('k3n', wc.clone().add(V3(-0.35, -0.95, 0.7)), 1, -50, 0);
+      setArrow(k3v, wc.clone().add(V3(-0.6, 0.1, 0)), V3(-1, 0, 0), 1.6); show('k3v', wc.clone().add(V3(-2.4, 0.1, 0)), 1, 0, -10);
+      setArrow(k3a, wc.clone().add(V3(0.8, 0, 0.7)), V3(0, -1, 0), 1.6); show('k3a', wc.clone().add(V3(0.8, -1.9, 0.7)), 1, 30, 0);
+      show('k3m', V3(0, AX, 0), 1, 0, 70); }
+    show('k3r', V3(0, AX, 0.4).add(rimPos(S.th, RR * 0.5).sub(V3(0, AX, 0))), S.frz || S.w > 0 ? 0 : 1, -70, 0);
+    if (S.ok) { setTag('k3s', S.ok); show('k3s', V3(0, AX + RW + 1.1, 0), 1); }
+  },
+  steps: [
+    { sub: 'Kova, r = 1 m yarıçaplı dikey çemberde dönecek. Başlat\'a basın.', go: '▶ Başlat' },
+    { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = 4 * TAU + Math.PI; }, sub: 'Kova hızla dönüyor: v teğet, a merkeze…', until: S => S.mode === 'stop' },
+    { do: S => { S.frz = true; }, sub: 'Kova tepede, ters duruyor. Görüntü donduruldu.', wait: 1.2 },
+    { q: { t: `Kova tepedeyken suyu çembersel yolda tutan <b>merkezcil kuvveti</b> hangi kuvvetler sağlar?`,
+      o: ['Ağırlık (mg) ve tepki kuvveti (N) birlikte', 'Yalnız ağırlık (mg)', 'Yalnız tepki kuvveti (N)', 'Hiçbir kuvvet'],
+      s: [`Tepede <span class="r">mg</span> ve <span class="o">N</span> ikisi de AŞAĞI, yani <em>MERKEZE</em>`, `İkisi birlikte merkezcil kuvveti verir:`, `<span class="o">N</span> + <span class="r">mg</span> = m · ${F('v<sup>2</sup>', 'r')} ✓`] } },
+    { q: { t: `Suyun dökülmemesi için kovanın tepedeki <b>en küçük hızı</b> kaç m/s olmalı?<br><small>(r = 1 m, g = 10 m/s²)</small>`,
+      o: [`${SQ('10')} ≈ 3,2 m/s`, '10 m/s', '1 m/s', '100 m/s'],
+      s: [`En küçük hızda tepki kuvveti <span class="o">N</span> = 0 olur:`, `m · g = m · ${F('v<sup>2</sup>', 'r')} → v = ${SQ('g · r')}`, `v = ${SQ('10 · 1')} = ${SQ('10')} ≈ <em>3,2 m/s</em> ✓`],
+      after: () => board('Tepede en küçük hız', `v = ${SQ('g · r')} ≈ 3,2 m/s`) } },
+    { do: S => { S.frz = false; S.mode = 'goal'; S.wmax = 2.5; S.goal = 6 * TAU; }, sub: 'Kova aşağı indiriliyor…', until: S => S.mode === 'stop' },
+    { do: S => { S.th = 0; }, q: { t: `Şimdi kovayı <b>YAVAŞ</b> çevireceğiz: tepeden <b>v = 2 m/s</b> ile geçecek. Su ne olur?`,
+      o: ['Su dökülür', 'Su dökülmez', 'Kova olduğu yerde durur', 'Hız önemli değil, sonuç değişmez'],
+      s: [`${F('v<sup>2</sup>', 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s²`, `4 &lt; g = 10 → yer çekimi fazla gelir`, `Su kovadan ayrılır → su <em>DÖKÜLÜR</em> ✗`] } },
+    { sub: 'Yavaş çevirerek deneyelim.', go: '▶ Yavaş çevir' },
+    { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova yavaş dönüyor…', until: S => S.spDone },
+    { sub: 'Su, tepeye varmadan kovadan ayrıldı ve döküldü. Yavaş dönerse v²/r < g → su DÖKÜLÜR.', go: '🪣 Kovayı doldur' },
+    { do: S => { S.slowRun = false; S.sp = null; S.spDone = 0; S.mode = 'stop'; S.th = 0; water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false); SFX.pour(); },
+      sub: 'Kova yeniden dolduruldu.', wait: 1.3 },
+    { q: { t: `Bu kez kova tepeden <b>v = 4 m/s</b> ile geçecek. Su dökülür mü?`,
+      o: ['Dökülmez', 'Dökülür', 'Yalnızca yarısı dökülür', 'Kova durur'],
+      s: [`${F('v<sup>2</sup>', 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s²`, `16 ≥ g = 10 ✓`, `Hızlı dönerse → su kovada kalır, <em>DÖKÜLMEZ</em> ✓`] } },
+    { sub: 'Hızlı çevirerek deneyelim.', go: '▶ Hızlı çevir' },
+    { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova hızlı dönüyor… su yerinde!', until: S => S.mode === 'stop' },
+    { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, sub: 'Su hiç dökülmedi! Hızlı dönerse v²/r ≥ g → su DÖKÜLMEZ.', wait: 2 },
+  ],
+};
+
+// ===================================================================================
+// GÖREV 4 — LUNAPARK TRENİ (yokuş → döngü → istasyon)
+// 1 birim = 6,25 m (r = 10 m → 1,6 birim; h = 45 m → 7,2 birim)
+// ===================================================================================
+const G4 = new THREE.Group(); scene.add(G4);
+const U = 0.16, R_TY = 0.6, R_RC = 10 * U, R_CY = R_TY + R_RC, R_H0 = R_TY + 45 * U, R_Z = 0.45;
+const HX0 = -14, HX1 = -2, R_WALL = 9.6, R_SPL = 1.4, R_CONTACT = R_WALL - R_SPL - 0.5, GV = 10 * U, SPD = 1.5, X_SPRING = 3 * U;
+const R_hill = x => R_TY + (R_H0 - R_TY) * (1 + Math.cos(Math.PI * (x - HX0) / (HX1 - HX0))) / 2;
+const ROLL = { P: [], S: [] };
+{ const P = ROLL.P; const N = 300;
+  for (let i = 0; i <= N; i++) { const x = HX0 + (HX1 - HX0) * i / N; P.push([x, R_hill(x), R_Z]); }
+  for (let i = 1; i <= 40; i++) P.push([HX1 + (0 - HX1) * i / 40, R_TY, R_Z]);
+  ROLL.iLoop = P.length - 1;
+  for (let i = 1; i <= 360; i++) { const ph = i / 360 * TAU; P.push([R_RC * Math.sin(ph), R_CY - R_RC * Math.cos(ph), R_Z - 2 * R_Z * i / 360]); }
+  for (let i = 1; i <= 200; i++) P.push([R_WALL * i / 200, R_TY, -R_Z]);
+  let L = 0; ROLL.S.push(0); for (let i = 1; i < P.length; i++) { L += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]); ROLL.S.push(L); }
+  const iL = ROLL.iLoop; ROLL.sLoop = ROLL.S[iL]; ROLL.sSide = ROLL.S[iL + 90]; ROLL.sTop = ROLL.S[iL + 180]; ROLL.sLoopEnd = ROLL.S[iL + 360];
+  ROLL.sPre = ROLL.sLoopEnd + 2.2; ROLL.sContact = ROLL.sLoopEnd + R_CONTACT; }
+function coaster(s) {
+  s = clamp(s, 0, ROLL.S[ROLL.S.length - 1] - 1e-4);
+  let a = 0, b = ROLL.S.length - 1; while (b - a > 1) { const m = (a + b) >> 1; if (ROLL.S[m] <= s) a = m; else b = m; }
+  const k = (s - ROLL.S[a]) / (ROLL.S[b] - ROLL.S[a]), A = ROLL.P[a], B = ROLL.P[b];
+  const p = V3(A[0] + (B[0] - A[0]) * k, A[1] + (B[1] - A[1]) * k, A[2] + (B[2] - A[2]) * k);
+  const f = V3(B[0] - A[0], B[1] - A[1], B[2] - A[2]).normalize(), u = V3(-f.y, f.x, 0).normalize();
+  return { p, f, u };
+}
+{ for (const off of [-0.3, 0.3]) { const pts = ROLL.P.filter((_, i) => i % 3 === 0).map(q => V3(q[0], q[1], q[2] + off)); pts.push(V3(R_WALL, R_TY, -R_Z + off));
+    G4.add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 1400, 0.06, 8, false), 0x94a3b8, { edge: false })); }
+  for (let x = HX0 + 0.4; x <= HX1 - 0.6; x += 1.5) { const y = R_hill(x); const po = mesh(new THREE.BoxGeometry(0.18, y, 0.18), 0xf59e0b); po.position.set(x, y / 2, R_Z); G4.add(po); }
+  { const po = mesh(new THREE.BoxGeometry(0.18, R_TY, 0.18), 0xf59e0b); po.position.set(-1.0, R_TY / 2, R_Z); G4.add(po); }
+  for (const x of [-R_RC * 1.08, R_RC * 1.08]) { const po = mesh(new THREE.BoxGeometry(0.2, R_CY, 0.2), 0xf59e0b); po.position.set(x, R_CY / 2, x < 0 ? -0.2 : 0.2); G4.add(po); }
+  for (const x of [2.6, 4.6, 6.6, 8.4]) { const po = mesh(new THREE.BoxGeometry(0.18, R_TY, 0.18), 0xf59e0b); po.position.set(x, R_TY / 2, -R_Z); G4.add(po); }
+  // başlangıç kulesi
+  const tw = mesh(new THREE.BoxGeometry(1.2, R_H0 - 0.05, 1.2), 0x64748b); tw.position.set(HX0 - 0.3, (R_H0 - 0.05) / 2, R_Z); G4.add(tw);
+  // istasyon: peron, çatı, tabela
+  const pr = mesh(new THREE.BoxGeometry(5.2, 0.5, 1.3), 0xcbd5e1); pr.position.set(R_WALL - 2.6, 0.25, -1.55); G4.add(pr);
+  for (const x of [R_WALL - 4.8, R_WALL - 0.4]) { const c = mesh(new THREE.BoxGeometry(0.16, 2.1, 0.16), 0x475569); c.position.set(x, 1.55, -1.95); G4.add(c); }
+  const rf = mesh(new THREE.BoxGeometry(5.6, 0.14, 2.6), 0xD62828); rf.position.set(R_WALL - 2.6, 2.65, -1.2); G4.add(rf);
+  const sg = textSprite('İSTASYON', 3.2, 0.6, '#1e3a8a', '#ffffff'); sg.position.set(R_WALL - 2.6, 3.12, -1.1); G4.add(sg);
+  const sgb = mesh(new THREE.BoxGeometry(3.3, 0.7, 0.06), 0x1e3a8a); sgb.position.set(R_WALL - 2.6, 3.12, -1.15); G4.add(sgb); }
+const wall4 = mesh(new THREE.BoxGeometry(0.4, 1.5, 1.2), 0x64748b); wall4.position.set(R_WALL + 0.2, R_TY + 0.45, -R_Z); G4.add(wall4);
+const springG = new THREE.Group(); springG.position.set(R_WALL, R_TY + 0.3, -R_Z); G4.add(springG);
+{ const pts = []; const turns = 7; for (let i = 0; i <= 280; i++) { const a = i / 280 * turns * TAU; pts.push(V3(-R_SPL * i / 280, Math.sin(a) * 0.22, Math.cos(a) * 0.22)); }
+  springG.add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, 0.04, 8, false), 0x22c55e, { edge: false })); }
+const pad4 = mesh(new THREE.BoxGeometry(0.1, 0.6, 0.6), 0x334155); G4.add(pad4); pad4.position.set(R_WALL - R_SPL - 0.05, R_TY + 0.3, -R_Z);
+const hLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(HX0 - 1.1, R_H0, R_Z + 0.7), V3(HX0 - 1.1, R_TY, R_Z + 0.7)]), new THREE.LineDashedMaterial({ color: 0xF5C400, dashSize: 0.2, gapSize: 0.14 }));
+hLine.computeLineDistances(); G4.add(hLine);
+const rLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(0, R_CY, 0), V3(-R_RC * 0.707, R_CY - R_RC * 0.707, 0)]), new THREE.LineDashedMaterial({ color: 0xF5C400, dashSize: 0.12, gapSize: 0.08 }));
+rLine.computeLineDistances(); G4.add(rLine);
+const cDot = mesh(new THREE.SphereGeometry(0.11, 16, 12), 0xF5C400, { cast: false }); cDot.position.set(0, R_CY, 0); G4.add(cDot);
+const wagon = new THREE.Group(); G4.add(wagon);
+{ const bd = mesh(new THREE.BoxGeometry(1.0, 0.36, 0.64), 0xef4444); bd.position.y = 0.3; wagon.add(bd);
+  const bk = mesh(new THREE.BoxGeometry(0.12, 0.42, 0.64), 0xb91c1c); bk.position.set(-0.44, 0.66, 0); wagon.add(bk);
+  const rider = mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.36, 14), 0x3b82f6); rider.position.set(-0.18, 0.66, 0); wagon.add(rider);
+  const head = mesh(new THREE.SphereGeometry(0.14, 16, 12), 0xfcd34d); head.position.set(-0.18, 0.96, 0); wagon.add(head);
+  for (const [x, z] of [[0.32, 0.3], [0.32, -0.3], [-0.32, 0.3], [-0.32, -0.3]]) { const wh = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 14), 0x111827); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.08, z); wagon.add(wh); } }
+const t4n = arrow(0xfb923c), t4g = arrow(0xef4444), t4v = arrow(0x22c55e), t4a = arrow(0xa855f7);
+tag('t4n', 'N', '#ea580c'); tag('t4g', 'mg', '#dc2626'); tag('t4v', 'v', '#16a34a'); tag('t4a', 'a', '#9333ea'); tag('t4m', 'merkez', '#F5C400', '#1f232c');
+tag('t4h', 'h = 45 m', '#F5C400', '#fff', true); tag('t4r', 'r = 10 m', '#F5C400', '#fff', true); tag('t4k', '', '#4ade80', '#fff', true); tag('t4s', '', '#4ade80', '#fff', true);
+tag('t4at', 'a<sub>t</sub> = g', '#9333ea');
+const vReal = y => Math.sqrt(Math.max(2 * 10 * (R_H0 - y) / U, 0));      // m/s (enerji korunumu)
+
+const M4 = {
+  no: 4, icon: '🎢', name: 'Treni istasyona ulaştır', group: G4,
+  task: 'Lunapark trenini yokuştan bırakın, döngüden geçirip istasyona ulaştırın. Her durakta hesabı yapın.',
+  data: [['Başlangıç yüksekliği', 'h = 45 m'], ['Döngü yarıçapı', 'r = 10 m'], ['Yer çekimi ivmesi', 'g = 10 m/s²'], ['Sürtünme', 'yok']],
+  reset() { this.S = { s: 0, run: false, goal: 0, stop: 'start', cx: 0, tc: -1, done: false, clk: 0, m: false, vlab: 'v', alab: 'a', ok: '' };
+    setPlate(27, 9, -2.4, -0.4); this.snd = loopSnd('rumble'); this.camFor(true); },
+  camFor(snap) {
+    const S = this.S, x = coaster(S.s).p.x;
+    if (S.stop === 'start' && !S.run) camGoal([-6.2, 7.0, 21], [-6.5, 4.6, 0], snap);
+    else if (['bottom', 'side', 'top'].includes(S.stop) && !S.run) camGoal([0.5, 2.8, 13.5], [0.5, 2.1, 0], snap);
+    else if (S.stop === 'pre' && !S.run) camGoal([4.6, 3.6, 14.5], [4.8, 1.6, 0], snap);
+    else if (S.stop === 'end' || S.stop === 'pre') camGoal([5.6, 3.6, 13.5], [5.8, 1.6, 0], snap);
+    else { const cx = clamp(x, -9, 5); camGoal([cx + 1.2, 4.6, 17], [cx, 2.8, 0], snap); }
+  },
+  tick(dt) {
+    const S = this.S;
+    if (S.run) { const c0 = coaster(S.s), v = Math.sqrt(Math.max(2 * GV * (R_H0 - c0.p.y), 0) + 0.3 * 0.3);
+      S.s += v * dt * SPD; S.clk -= v * dt * SPD; if (S.clk <= 0) { S.clk = 1.1; SFX.clack(); }
+      if (S.s >= S.goal) { S.s = S.goal; S.run = false; } }
+    if (S.tc >= 0) { const was = S.tc; S.tc += dt; const comp = 0.9; if (was === 0) SFX.boing();
+      S.cx = X_SPRING * Math.sin(Math.PI / (2 * comp) * Math.min(S.tc, comp)); S.s = ROLL.sContact + S.cx; if (S.tc >= comp && !S.done) { S.done = true; SFX.bell(); } }
+    const c = coaster(S.s); wagon.position.copy(c.p);
+    const side = V3().crossVectors(c.f, c.u).normalize(), up = V3().crossVectors(side, c.f).normalize();
+    wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, up, side));
+    springG.scale.set((R_SPL - S.cx) / R_SPL, 1, 1); pad4.position.set(R_WALL - (R_SPL - S.cx) - 0.05, R_TY + 0.3, -R_Z);
+    const vr = vReal(c.p.y); this.snd.set(S.run ? 0.08 + vr / 400 : 0, vr / 30);
+    this.camFor(false);
+    // ölçüler
+    show('t4h', V3(HX0 - 1.1, (R_H0 + R_TY) / 2, R_Z + 0.7), 1, -20, 0);
+    show('t4r', V3(-R_RC * 0.35, R_CY - R_RC * 0.35, 0), S.run ? 0 : 1, -70, 20);
+    // hareket halinde canlı v (ve döngüde a)
+    if (S.run) { const o = c.p.clone().add(V3(0, 0, 0.95 - c.p.z)).add(c.u.clone().multiplyScalar(0.45)); const inLoop = S.s > ROLL.sLoop && S.s < ROLL.sLoopEnd;
+      setArrow(t4v, o, c.f, 0.04 * vr + 0.2); show('t4v', o.clone().add(c.f.clone().multiplyScalar(0.04 * vr + 0.55)), 1);
+      if (inLoop) { const aa = vr * vr / 10; setArrow(t4a, o, c.u, 0.012 * aa + 0.2); show('t4a', o.clone().add(c.u.clone().multiplyScalar(0.012 * aa + 0.5)), 1); } }
+    cDot.visible = !S.run && ['bottom', 'side', 'top'].includes(S.stop);
+    if (!S.run && S.stop === 'bottom') {                  // dipte: N yukarı (büyük), mg aşağı, a yukarı (merkeze), v teğet
+      const b = c.p.clone().add(V3(0, 0.5, 0.9));
+      setArrow(t4a, b.clone().add(V3(0.6, 0.15, 0)), UP, 1.5); setTag('t4a', S.alab); show('t4a', b.clone().add(V3(0.6, 1.75, 0)), 1, 30, 0);
+      setArrow(t4n, b.clone().add(V3(0.1, 0, 0)), UP, 1.9); show('t4n', b.clone().add(V3(0.1, 2.05, 0)), 1, -30, 0);
+      setArrow(t4g, b.clone().add(V3(-0.3, -0.1, 0)), V3(0, -1, 0), 0.45); show('t4g', b.clone().add(V3(-0.3, -0.5, 0)), 1, -50, 0);
+      setArrow(t4v, c.p.clone().add(V3(0.6, 0.35, 0.9)), V3(1, 0, 0), 1.2); setTag('t4v', S.vlab); show('t4v', c.p.clone().add(V3(2.0, 0.35, 0.9)), 1, 30, 0);
+      show('t4m', V3(0, R_CY, 0), 1, -80, -30); }
+    if (!S.run && S.stop === 'side') {                    // yan: mg teğet (aşağı) → a_t = g, N ve a merkeze, v yukarı
+      const b = c.p.clone().add(V3(0, 0, 0.9));
+      setArrow(t4v, b.clone().add(V3(0.35, 0.5, 0)), UP, 1.1); setTag('t4v', 'v'); show('t4v', b.clone().add(V3(0.35, 1.85, 0)), 1);
+      setArrow(t4g, b.clone().add(V3(0.35, -0.4, 0)), V3(0, -1, 0), 1.0); show('t4g', b.clone().add(V3(0.35, -1.6, 0)), 1, 40, 0);
+      setArrow(t4a, b.clone().add(V3(-0.3, 0.25, 0)), V3(-1, 0, 0), 0.9); setTag('t4a', 'a'); show('t4a', b.clone().add(V3(-1.45, 0.25, 0)), 1, 0, -30);
+      show('t4at', b.clone().add(V3(0.35, -1.0, 0)), 1, -95, 0); show('t4m', V3(0, R_CY, 0), 1, -80, 30); }
+    if (!S.run && S.stop === 'top') {                     // tepe: mg ve N aşağı, a aşağı, v sola
+      const b = c.p.clone().add(V3(0, 0, 0.9));
+      setArrow(t4g, b.clone().add(V3(0.3, -0.2, 0)), V3(0, -1, 0), 0.6); show('t4g', b.clone().add(V3(0.3, -0.95, 0)), 1, 40, 0);
+      setArrow(t4n, b.clone().add(V3(-0.25, -0.2, 0)), V3(0, -1, 0), 1.0); show('t4n', b.clone().add(V3(-0.25, -1.35, 0)), 1, -40, 0);
+      setArrow(t4a, b.clone().add(V3(0.75, -0.2, 0)), V3(0, -1, 0), 1.2); setTag('t4a', S.alab); show('t4a', b.clone().add(V3(0.75, -1.55, 0)), 1, 60, 0);
+      setArrow(t4v, b.clone().add(V3(-0.6, 0.55, 0)), V3(-1, 0, 0), 1.1); setTag('t4v', S.vlab); show('t4v', b.clone().add(V3(-1.95, 0.55, 0)), 1, 0, -10);
+      show('t4m', V3(0, R_CY, 0), 1, -20, 50); }
+    if (S.m) { setTag('t4k', 'm = 200 kg · v = 30 m/s'); show('t4k', c.p.clone().add(V3(0, 1.2, 0)), 1, 0, -40); }
+    if (S.ok) { setTag('t4s', S.ok); show('t4s', V3(R_WALL - 2.6, 3.9, -1.1), 1, 0, -20); }
+  },
+  go(S, stop, goal) { S.stop = stop; S.goal = goal; S.run = true; },
+  steps: [
+    { sub: 'Tren h = 45 m yükseklikte, durgun. Başlat\'a basın: tren yokuştan inecek.', go: '▶ Başlat' },
+    { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Tren iniyor: potansiyel enerji (m·g·h) → kinetik enerji (½·m·v²)', until: S => !S.run },
+    { do: S => { S.vlab = 'v = ?'; S.alab = 'a'; }, sub: 'Döngünün dibi. Tren durduruldu.', wait: 0.8 },
+    { q: { t: `Tren h = 45 m yükseklikten durgun bırakıldı. Döngünün dibinde <b>hızı (v)</b> kaç m/s?<br><small>(Sürtünme yok, g = 10 m/s²)</small>`,
+      o: ['30 m/s', '45 m/s', '900 m/s', '15 m/s'],
+      s: [`Enerji korunur: m · g · h = ${F('1', '2')} · m · v<sup>2</sup>`, `v = ${SQ('2 · g · h')} = ${SQ('2 · 10 · 45')}`, `v = ${SQ('900')} = <em>30 m/s</em> ✓`],
+      after: S => { S.vlab = 'v = 30 m/s'; board('Dipte hız', 'v = 30 m/s'); } } },
+    { q: { t: `Döngünün yarıçapı r = 10 m. Dipte trenin <b>açısal hızı (ω)</b> kaç rad/s?`,
+      o: ['3 rad/s', '300 rad/s', '0,3 rad/s', '30 rad/s'],
+      s: [`Açısal hız: ω = ${F('v', 'r')}`, `ω = ${F('30', '10')} = <em>3 rad/s</em> ✓`],
+      after: () => board('Dipte açısal hız', 'ω = 3 rad/s') } },
+    { do: S => { S.alab = 'a = ?'; }, q: { t: `Dipte trenin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
+      o: ['90 m/s²', '9 m/s²', '30 m/s²', '3 m/s²'],
+      s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')} = ${F('30<sup>2</sup>', '10')} = ${F('900', '10')}`, `a = <em>90 m/s²</em> (yukarı, merkeze) ✓`, `<span class="o">N</span> − <span class="r">mg</span> = m · a → <span class="o">N</span> > <span class="r">mg</span>: kendini <em>AĞIR</em> hissedersin`],
+      after: S => { S.alab = 'a = 90 m/s²'; board('Dipte merkezcil ivme', 'a = 90 m/s²'); } } },
+    { q: { t: `Dipte trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
+      o: ['0', '3 rad/s²', '9 rad/s²', '1 rad/s²'],
+      s: [`Dipte <span class="r">mg</span> ve <span class="o">N</span> dikey: ikisi de merkez doğrultusunda`, `Teğet yönde kuvvet yok → teğetsel ivme a<sub>t</sub> = 0`, `Açısal ivme: α = ${F('a<sub>t</sub>', 'r')} = <em>0</em> ✓`, `O an hız ne artar ne azalır`],
+      after: () => board('Dipte açısal ivme', 'α = 0') } },
+    { sub: 'Tren döngüye girecek ve çeyrek turda (yan noktada) duracak.', go: '▶ Treni sür' },
+    { do: S => M4.go(S, 'side', ROLL.sSide), sub: 'Tren döngüde yükseliyor…', until: S => !S.run },
+    { sub: 'Döngünün yan noktası. Tren durduruldu.', wait: 0.8 },
+    { q: { t: `Tren döngünün yan noktasında. Ağırlık (mg) burada tamamen <b>teğet</b> yönde. Trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
+      o: ['1 rad/s²', '10 rad/s²', '0', '100 rad/s²'],
+      s: [`Yan noktada <span class="r">mg</span> tamamen TEĞET (aşağı)`, `Teğetsel ivme: a<sub>t</sub> = g = 10 m/s²`, `α = ${F('a<sub>t</sub>', 'r')} = ${F('10', '10')} = <em>1 rad/s²</em> ✓`, `a<sub>t</sub> hıza ters → tren <em>YAVAŞLIYOR</em>`],
+      after: () => board('Yanda açısal ivme', 'α = 1 rad/s²') } },
+    { sub: 'Tren döngünün tepesine (yarım tur) kadar gidecek.', go: '▶ Treni sür' },
+    { do: S => { S.vlab = 'v'; S.alab = 'a = ?'; M4.go(S, 'top', ROLL.sTop); }, sub: 'Tren tepeye çıkıyor…', until: S => !S.run },
+    { sub: 'Döngünün tepesi: yükseklik 2r = 20 m. Tren durduruldu.', wait: 0.8 },
+    { q: { t: `Tepede yükseklik 2r = 20 m. Trenin <b>hızının karesi (v²)</b> kaçtır?`,
+      o: ['500 m²/s²', '900 m²/s²', '400 m²/s²', '100 m²/s²'],
+      s: [`m · g · h = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 2 · g · (h − 2r) = 2 · 10 · (45 − 20)`, `v<sup>2</sup> = <em>500</em> → v ≈ 22,4 m/s ✓`],
+      after: S => { S.vlab = 'v ≈ 22,4 m/s'; board('Tepede hız', 'v² = 500 (v ≈ 22,4 m/s)'); } } },
+    { q: { t: `Tepede trenin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
+      o: ['50 m/s²', '90 m/s²', '10 m/s²', '5 m/s²'],
+      s: [`a = ${F('v<sup>2</sup>', 'r')} = ${F('500', '10')}`, `a = <em>50 m/s²</em> (aşağı, merkeze) ✓`, `Tepede v küçüldü → a da <em>KÜÇÜLDÜ</em> (90 → 50)`],
+      after: S => { S.alab = 'a = 50 m/s²'; board('Tepede merkezcil ivme', 'a = 50 m/s²'); } } },
+    { q: { t: `Tren tepede ters duruyor. Raydan <b>düşer mi?</b>`,
+      o: ['Düşmez, çünkü v²/r = 50 ≥ g = 10', 'Düşer, çünkü tren ters dönmüş', 'Düşer, çünkü hızı azaldı', 'Düşmez, çünkü tepede ağırlığı yok'],
+      s: [`Düşmeme şartı: ${F('v<sup>2</sup>', 'r')} ≥ g`, `50 ≥ 10 ✓ → ray treni iter (<span class="o">N</span> > 0)`, `<span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`] } },
+    { sub: 'Tren döngüden çıkıp istasyona yaklaşacak.', go: '▶ Treni sür' },
+    { do: S => M4.go(S, 'pre', ROLL.sPre), sub: 'Tren döngüden çıktı, düz yolda ilerliyor…', until: S => !S.run },
+    { do: S => { S.m = true; }, sub: 'İstasyon girişi. Tren durduruldu. Durmak için yaya çarpacak.', wait: 0.8 },
+    { q: { t: `Tren (<b>m = 200 kg</b>, <b>v = 30 m/s</b>) istasyondaki yaya çarpacak. Yay <b>x = 3 m</b> sıkışıp treni durduracak. <b>Yay sabiti (k)</b> kaç N/m?`,
+      o: ['20 000 N/m', '2 000 N/m', '600 N/m', '60 000 N/m'],
+      s: [`Kinetik enerji yayda depolanır:`, `${F('1', '2')} · m · v<sup>2</sup> = ${F('1', '2')} · k · x<sup>2</sup>`, `k = ${F('m · v<sup>2</sup>', 'x<sup>2</sup>')} = ${F('200 · 900', '9')} = <em>20 000 N/m</em> ✓`],
+      after: () => board('Yay sabiti', 'k = 20 000 N/m') } },
+    { sub: 'Tren istasyona giriyor.', go: '🚉 İstasyona gir' },
+    { do: S => { S.m = false; M4.go(S, 'end', ROLL.sContact); }, sub: 'Tren yaya yaklaşıyor…', until: S => !S.run },
+    { do: S => { S.tc = 0; }, sub: 'Yay sıkışıyor: ½·m·v² → ½·k·x² (yavaş çekim)', until: S => S.done },
+    { do: S => { S.ok = 'Tren istasyona ulaştı ✓'; }, sub: 'Tren istasyona ulaştı! Kinetik enerji yayda DEPOLANDI. 🎉', wait: 2.2 },
+  ],
+};
+
+const MISSIONS = [M1, M2, M3, M4];
+
+// ======================= OYUN MOTORU =======================
+const GAME = { M: null, i: -1, wait: null, timer: 0, q: null, first: 0, total: 0, qn: 0, mode: 'menu' };
+let done = {}; try { done = JSON.parse(localStorage.getItem('ch_yildiz') || '{}'); } catch (e) {}
+function sub(t) { $('sub').innerHTML = t || ''; }
+function board(k, v) { const d = document.createElement('div'); d.className = 'row f'; d.innerHTML = `${k}: <b>${v}</b>`; const bf = $('bFound'); bf.appendChild(d); while (bf.children.length > 5) bf.removeChild(bf.firstChild); $('bFoundH').classList.remove('hide'); }
+function goBtn(label) { $('go').textContent = label; $('go').classList.remove('hide'); }
+
+function buildMenu() {
+  $('cards').innerHTML = '';
+  MISSIONS.forEach(M => {
+    const b = document.createElement('button'); b.className = 'card';
+    const nq = M.steps.filter(s => s.q).length, y = done[M.no];
+    b.innerHTML = `<div class="c-no">GÖREV ${M.no}</div><div class="c-ic">${M.icon}</div><div class="c-ad">${M.name}</div><div class="c-ac">${M.task}</div>
+      <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru` : `✓ Tamamlandı · ${'★'.repeat(y)}${'☆'.repeat(3 - y)}`}</div>`;
+    b.onclick = () => { ac(); SFX.click(); startMission(M); };
+    $('cards').appendChild(b);
+  });
+}
+
+function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
+
+function startMission(M) {
+  stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game';
+  showOnly(M); M.reset();
+  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide');
+  $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
+  $('board').innerHTML = `<h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
+  $('qc').classList.add('hide'); $('go').classList.add('hide'); sub(''); CAM.gvo = -200; CAM.vo = -200;
+  const nq = M.steps.filter(s => s.q).length;
+  overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px">GÖREV ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
+    <div class="ov-s">${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶ Göreve başla</button></div>`);
+  $('ovGo').onclick = () => { SFX.start(); closeOverlay(); next(); };
+}
+function overlay(html) { $('ov').innerHTML = `<div class="ov-k">${html}</div>`; $('ov').classList.remove('hide'); }
+function closeOverlay() { $('ov').classList.add('hide'); }
+
+function next() {
+  const M = GAME.M; GAME.i++; const st = M.steps[GAME.i];
+  $('go').classList.add('hide');
+  if (!st) return finish();
+  if (st.sub !== undefined) sub(st.sub);
+  if (st.do) st.do(M.S, M);
+  if (st.go) { goBtn(st.go); GAME.goFn = next; }
+  else if (st.until) GAME.wait = st.until;
+  else if (st.wait) GAME.timer = st.wait;
+  else if (st.q) ask(st.q);
+  else next();
+}
+
+function ask(q) {
+  GAME.qn++; GAME.total++;
+  const order = q.fixed ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i));
+  GAME.q = { q, order, answered: false, correctPos: order.indexOf(0) };
+  $('qn').textContent = `SORU ${GAME.qn} / ${GAME.M.steps.filter(s => s.q).length}`;
+  $('qt').innerHTML = q.t; $('fb').textContent = ''; $('fb').className = ''; $('sol').innerHTML = ''; $('qnext').classList.add('hide');
+  $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
+  [...$('opts').children].forEach(b => b.onclick = () => answer(+b.dataset.k));
+  $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); CAM.gvo = 170;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function answer(k) {
+  const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true;
+  const ok = k === Q.correctPos, btns = [...$('opts').children];
+  btns.forEach((b, j) => { b.disabled = true; if (j === Q.correctPos) b.classList.add('ok'); else if (j === k) b.classList.add('no'); else b.classList.add('dim'); });
+  if (ok) { GAME.first++; SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
+  else { SFX.bad(); $('fb').className = 'no'; $('fb').textContent = '✗ Yanlış! Önce çözümü inceleyelim.'; }
+  $('qc').classList.add('cev');
+  const lines = Q.q.s, gap = ok ? 0.45 : 1.25;
+  $('sol').innerHTML = `<div class="bas">${ok ? 'ÇÖZÜM' : 'DOĞRU ÇÖZÜM'}</div>` + lines.map((l, i) => `<div class="sl" style="animation-delay:${(0.3 + i * gap).toFixed(2)}s">${l}</div>`).join('');
+  const sol = $('sol'); let fs = 44; sol.style.fontSize = fs + 'px'; sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = 'none');
+  while (sol.scrollHeight > sol.clientHeight + 2 && fs > 26) { fs -= 2; sol.style.fontSize = fs + 'px'; }
+  sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = '');
+  setTimeout(() => { if (GAME.q === Q) { $('qnext').textContent = ok ? 'Devam ▶' : 'Anladım, devam ▶'; $('qnext').classList.remove('hide'); } }, (0.3 + lines.length * gap) * 1000 + (ok ? 0 : 300));
+}
+function qContinue() {
+  const Q = GAME.q; if (!Q || !Q.answered || $('qnext').classList.contains('hide')) return; SFX.click();
+  GAME.q = null; $('qc').classList.add('hide'); $('sub').classList.remove('q'); CAM.gvo = -200;
+  if (Q.q.after) Q.q.after(GAME.M.S, GAME.M);
+  next();
+}
+function finish() {
+  const M = GAME.M, r = GAME.total ? GAME.first / GAME.total : 1, y = r >= 0.9 ? 3 : r >= 0.6 ? 2 : 1;
+  done[M.no] = Math.max(done[M.no] || 0, y); try { localStorage.setItem('ch_yildiz', JSON.stringify(done)); } catch (e) {}
+  setTimeout(() => SFX.win(), 200);
+  const nx = MISSIONS[MISSIONS.indexOf(M) + 1];
+  overlay(`<div class="ov-ic">🏆</div><div class="ov-b">GÖREV TAMAMLANDI!</div><div class="ov-t">${M.name}</div>
+    <div class="ov-y">${'★'.repeat(y)}${'☆'.repeat(3 - y)}</div><div class="ov-s">İlk denemede doğru: ${GAME.first} / ${GAME.total}</div>
+    <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar oyna</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki görev ▶</button>` : ''}</div>`);
+  $('ovT').onclick = () => { SFX.click(); startMission(M); };
+  $('ovM').onclick = () => { SFX.click(); toMenu(); };
+  if (nx) $('ovN').onclick = () => { SFX.click(); startMission(nx); };
+}
+function toMenu() {
+  stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
+  ['top', 'board', 'qc', 'go'].forEach(id => $(id).classList.add('hide')); sub(''); $('sub').classList.remove('q');
+  buildMenu(); $('menu').classList.remove('hide'); menuScene();
+}
+function menuScene() { showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
+
+// düğmeler ve klavye
+$('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
+$('qnext').onclick = qContinue;
+$('bSes').onclick = () => { ac(); setSes(!AU.on); };
+$('bMenu').onclick = () => { SFX.click(); toMenu(); };
+$('bBas').onclick = () => { SFX.click(); if (GAME.M) startMission(GAME.M); };
+const fullscreen = () => { const d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); else document.exitFullscreen && document.exitFullscreen(); };
+$('bFs').onclick = fullscreen;
+addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'f') return fullscreen();
+  if (k === 'm') { ac(); return setSes(!AU.on); }
+  if (GAME.mode !== 'game') return;
+  if (!$('ov').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); const b = $('ovGo') || $('ovN'); b && b.click(); } return; }
+  const idx = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, b: 1, c: 2, d: 3 }[k];
+  if (GAME.q && !GAME.q.answered && idx != null) return answer(idx);
+  if (k === ' ' || k === 'enter' || k === 'arrowright') { e.preventDefault(); if (GAME.q) qContinue(); else if (!$('go').classList.contains('hide')) $('go').click(); }
+});
+addEventListener('resize', fit);
+
+// ======================= ANA DÖNGÜ =======================
+let last = performance.now(), menuT = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000) * (window.__hiz || 1); last = now;
+  for (const a of ARROWS) a.visible = false; guide1.visible = false;
+  for (const k in TAG) TAG[k]._on = false;
+  if (GAME.mode === 'game' && GAME.M) {
+    const M = GAME.M; M.tick(dt);
+    if (GAME.wait && $('ov').classList.contains('hide')) { if (GAME.wait(M.S)) { GAME.wait = null; next(); } }
+    else if (GAME.timer > 0) { GAME.timer -= dt; if (GAME.timer <= 0) { GAME.timer = 0; next(); } }
+  } else {                                                  // menü: tren sahnesi yavaşça döner
+    menuT += dt; const c = coaster(ROLL.sTop); wagon.position.copy(c.p); wagon.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(c.f, V3().crossVectors(V3().crossVectors(c.f, c.u), c.f).normalize(), V3().crossVectors(c.f, c.u).normalize()));
+    cDot.visible = false; const a = menuT * 0.08; camGoal([-3 + Math.sin(a) * 15, 7, Math.cos(a) * 15], [-3, 2.2, 0], false);
+  }
+  for (const k in TAG) if (!TAG[k]._on) TAG[k].style.opacity = 0;
+  camStep(dt); R3.render(scene, cam);
+  requestAnimationFrame(frame);
+}
+fit(); setSes(AU.on); buildMenu(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL;
+</script></body></html>
