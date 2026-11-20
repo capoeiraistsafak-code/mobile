@@ -43,6 +43,18 @@ button{font-family:inherit;cursor:pointer;border:none}
 #bDur svg{flex:none;width:28px;height:28px;fill:currentColor}
 #bDur.dur{background:#22c55e;color:#0b2b16;border-color:#22c55e;animation:nabiz 1.4s infinite}
 #durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
+#bNot{width:auto;padding:0 18px;gap:8px;font:800 28px Inter;background:#1e3a8a!important;border-color:#60a5fa!important;color:#fff}
+#bNot.acik{background:#60a5fa!important;color:#0b1b3a!important}
+#notlar{position:absolute;left:24px;top:142px;bottom:120px;width:800px;z-index:8;background:#16213a;border:4px solid #60a5fa;border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden}
+.nt-bas{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px 26px;background:#1e3a8a}
+.nt-bas span{font:900 30px Inter;color:#fff;letter-spacing:.5px}
+.nt-bas button{width:60px;height:60px;border-radius:14px;background:#0b1b3a;color:#fff;font:900 30px Inter;border:2px solid #60a5fa}
+.nt-ic{flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:16px 96px 22px 26px;scrollbar-color:#60a5fa #16213a}
+.nt-k{font:800 26px Inter;color:#93c5fd;margin:6px 0 8px;letter-spacing:.5px}
+.nt-m{display:flex;gap:14px;font:600 29px/1.38 Inter;color:#e5e7eb;margin-bottom:12px}
+.nt-m::before{content:"";flex:none;width:12px;height:12px;margin-top:14px;border-radius:50%;background:#F5C400}
+.nt-m b{color:#F5C400}.nt-m .o{color:#fb923c;font-weight:800}.nt-m .r{color:#f87171;font-weight:800}.nt-m .g{color:#4ade80;font-weight:800}.nt-m .p{color:#c084fc;font-weight:800}
+.nt-svg{margin:6px 0 14px;background:#0f172a;border-radius:16px;padding:8px}
 #hizRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:5;background:rgba(10,12,18,.8);color:#8ec5ff;font:800 30px Inter;padding:8px 22px;border-radius:14px}
 #go{position:absolute;right:36px;bottom:24px;z-index:6;font:800 42px Inter;background:#22c55e;color:#0b2b16;border-radius:22px;padding:22px 44px;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:nabiz 1.4s infinite}
 @keyframes nabiz{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -64,8 +76,18 @@ button{font-family:inherit;cursor:pointer;border:none}
 #qc.cev #qt{font-size:30px}
 #fb{font:900 36px Inter}#fb:empty{display:none}
 #fb.ok{color:#4ade80}#fb.no{color:#f87171}
-#sol{flex:1;min-height:0;overflow:hidden;font-size:44px;background:#1f232c;border-radius:18px;padding:12px 22px;border:2px dashed #475569}
+#sol{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:auto;scrollbar-color:#F5A300 #2a303c;font-size:44px;background:#1f232c;border-radius:18px;padding:12px 22px;border:2px dashed #475569}
 #sol:empty{display:none}
+#sol::-webkit-scrollbar,#notlar .nt-ic::-webkit-scrollbar{width:22px}
+#sol::-webkit-scrollbar-track,#notlar .nt-ic::-webkit-scrollbar-track{background:#2a303c;border-radius:11px}
+#sol::-webkit-scrollbar-thumb,#notlar .nt-ic::-webkit-scrollbar-thumb{background:#F5A300;border-radius:11px;border:4px solid #2a303c}
+.kay{position:absolute;right:40px;display:flex;flex-direction:column;gap:8px;z-index:2}
+.kay button{width:56px;height:56px;border-radius:14px;background:#3a4150;color:#F5C400;font:900 28px Inter;border:2px solid #556070}
+.kay button:active{transform:scale(.92)}
+#solWrap{position:relative;flex:1;min-height:0;display:flex}
+#solWrap #sol{flex:1;padding-right:90px}
+#solKay{top:10px;right:32px}
+#solKay.hide{display:none}
 #sol .sl{font:700 1em/1.22 Caveat;color:#8ec5ff;clip-path:inset(-10px 100% -10px 0);animation:yaz 1s forwards}
 #sol .sl em{font-style:normal;color:#F5C400}
 #sol .sl .g{color:#4ade80}#sol .sl .p{color:#c084fc}#sol .sl .r{color:#f87171}#sol .sl .o{color:#fb923c}
@@ -131,6 +153,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <span class="pill" id="tNo">GÖREV 1</span>
     <div id="tTitle"></div>
     <div id="tTask"></div>
+    <button id="bNot" class="tb" title="Notlar: neden böyle? (N)"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M6 2h9l5 5v15H6zM14 3v5h5M8 12h10v1.6H8zm0 4h10v1.6H8zm0-8h5v1.6H8z" fill-rule="evenodd"/></svg>Notlar</button>
     <button class="tb" id="bSes" title="Ses (M)">🔊</button>
     <button class="tb" id="bBas" title="Görevi baştan başlat">↺</button>
     <button class="tb" id="bMenu" title="Menü">☰</button>
@@ -143,6 +166,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
+  <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
+    <div class="nt-ic" id="ntIc"></div><div class="kay" id="ntKay" style="bottom:22px"><button id="ntY">▲</button><button id="ntA">▼</button></div></div>
   <div id="hizRozet" class="hide"></div>
 
   <div id="qc" class="hide">
@@ -150,7 +175,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="qt"></div>
     <div id="opts"></div>
     <div id="fb"></div>
-    <div id="sol"></div>
+    <div id="solWrap"><div id="sol"></div><div class="kay hide" id="solKay"><button id="solY" title="Yukarı">▲</button><button id="solA" title="Aşağı">▼</button></div></div>
     <button id="qnext" class="hide">Devam ▶</button>
   </div>
 
@@ -162,7 +187,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
     <div id="cards"></div>
     <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir<br>
-      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
+      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>N</kbd> notlar · <kbd>↑</kbd>/<kbd>↓</kbd> kaydır · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
   </div>
@@ -473,7 +498,7 @@ const M2 = {
   },
   steps: [
     { sub: 'Üç araba başlangıç çizgisinde. Üçünün de hızı aynı: v = 10 m/s.', go: '▶ Başlat' },
-    { do: S => { S.run = true; }, sub: 'Arabalar aynı hızla dönüyor. Hangisi daha hızlı DÖNÜYOR? Dikkatle bakın.', wait: 4.5 },
+    { do: S => { S.run = true; }, sub: 'Arabalar aynı çizgisel hızla (v = 10 m/s) dönüyor. Hareketlerini izleyin.', wait: 4.5 },
     { q: { t: `Üç arabanın hızı aynı (v = 10 m/s). Hangi arabanın <b>açısal hızı (ω)</b> en büyüktür?`,
       o: ['Kırmızı (r = 10 m)', 'Yeşil (r = 20 m)', 'Mavi (r = 30 m)', 'Üçünün de eşit'], fixed: true,
       s: [`Açısal hız: ω = ${F('v', 'r')}`, `Üçünde de v = 10 m/s aynı`, `r küçülünce ω <em>BÜYÜR</em> → Kırmızı ✓`],
@@ -565,7 +590,7 @@ const M3 = {
   steps: [
     { sub: 'Kova, r = 1 m yarıçaplı dikey çemberde dönecek. Başlat\'a basın.', go: '▶ Başlat' },
     { do: S => { S.mode = 'frz'; S.goal = 3 * TAU + Math.PI; }, sub: 'Kova sabit hızla dönüyor: v teğet, a merkeze…', until: S => S.mode === 'stop' },
-    { do: S => { S.frz = true; }, sub: 'Kova tepeden HIZLA geçerken görüntü donduruldu.', wait: 1.2 },
+    { do: S => { S.frz = true; }, sub: 'Kova tepeden geçerken görüntü donduruldu.', wait: 1.2 },
     { q: { t: `Kova tepedeyken suyu çembersel yolda tutan <b>merkezcil kuvveti</b> hangi kuvvetler sağlar?`,
       f: ['k3g', 'k3n', 'k3m'], o: ['Ağırlık (mg) ve tepki kuvveti (N) birlikte', 'Yalnız ağırlık (mg)', 'Yalnız tepki kuvveti (N)', 'Hiçbir kuvvet'],
       s: [`Tepki kuvveti (<span class="o">N</span>) yüzeye dik, yüzeyden cisme doğrudur`, `Tepede kova tabanı suyun ÜSTÜNDE → <span class="o">N</span> AŞAĞI`, `<span class="r">mg</span> ve <span class="o">N</span> ikisi de <em>MERKEZE</em>:`, `<span class="o">N</span> + <span class="r">mg</span> = m · ${F('v<sup>2</sup>', 'r')} ✓`] } },
@@ -573,20 +598,20 @@ const M3 = {
       o: [`${SQ('10')} ≈ 3,2 m/s`, '10 m/s', '1 m/s', '100 m/s'], lab: 'v = ?', f: ['k3v', 'k3g'],
       s: [`En küçük hızda tepki kuvveti <span class="o">N</span> = 0 olur:`, `m · g = m · ${F('v<sup>2</sup>', 'r')} → v = ${SQ('g · r')}`, `v = ${SQ('10 · 1')} = ${SQ('10')} ≈ <em>3,2 m/s</em> ✓`],
       after: () => board('Tepede en küçük hız', `v = ${SQ('g · r')} ≈ 3,2 m/s`) } },
-    { do: S => { S.frz = false; S.mode = 'goal'; S.wmax = W_FAST; S.goal = 6 * TAU; }, sub: 'Görüntü devam ediyor: kova hızlı dönerek aşağıda yavaşça duruyor…', until: S => S.mode === 'stop' },
-    { do: S => { S.th = 0; }, q: { t: `Şimdi kovayı <b>YAVAŞ</b> çevireceğiz: tepeden <b>v = 2 m/s</b> ile geçecek. Su ne olur?`,
+    { do: S => { S.frz = false; S.mode = 'goal'; S.wmax = W_FAST; S.goal = 6 * TAU; }, sub: 'Görüntü devam ediyor: kova dönerek aşağıda duruyor…', until: S => S.mode === 'stop' },
+    { do: S => { S.th = 0; }, q: { t: `Kova bu kez tepeden <b>v = 2 m/s</b> hızla geçecek şekilde çevrilecek. Su ne olur?`,
       o: ['Su dökülür', 'Su dökülmez', 'Kova olduğu yerde durur', 'Hız önemli değil, sonuç değişmez'],
-      s: [`${F('v<sup>2</sup>', 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s²`, `4 &lt; g = 10 → yer çekimi fazla gelir`, `Su kovadan ayrılır → su <em>DÖKÜLÜR</em> ✗`] } },
-    { sub: 'Yavaş çevirerek deneyelim.', go: '▶ Yavaş çevir' },
-    { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova yavaş dönüyor…', until: S => S.spDone },
+      s: [`${F('v<sup>2</sup>', 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s²`, `4 &lt; g = 10 → yer çekimi fazla gelir`, `Su kovadan ayrılır → su <em>DÖKÜLÜR</em> ✗`, `(v = 2 m/s, gereken en küçük hızdan (3,2 m/s) küçük: kova YAVAŞ dönüyor)`] } },
+    { sub: 'Kovayı tepede v = 2 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
+    { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova dönüyor (tepede v = 2 m/s)…', until: S => S.spDone },
     { sub: 'Su, tepeye varmadan kovadan ayrıldı ve döküldü. Yavaş dönerse v²/r < g → su DÖKÜLÜR.', go: '🪣 Kovayı doldur' },
     { do: S => { S.slowRun = false; S.sp = null; S.spDone = 0; S.mode = 'stop'; S.th = 0; water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false); SFX.pour(); },
       sub: 'Kova yeniden dolduruldu.', wait: 1.3 },
     { q: { t: `Bu kez kova tepeden <b>v = 4 m/s</b> ile geçecek. Su dökülür mü?`,
       o: ['Dökülmez', 'Dökülür', 'Yalnızca yarısı dökülür', 'Kova durur'],
-      s: [`${F('v<sup>2</sup>', 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s²`, `16 ≥ g = 10 ✓`, `Hızlı dönerse → su kovada kalır, <em>DÖKÜLMEZ</em> ✓`] } },
-    { sub: 'Hızlı çevirerek deneyelim.', go: '▶ Hızlı çevir' },
-    { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova hızlı dönüyor… su yerinde!', until: S => S.mode === 'stop' },
+      s: [`${F('v<sup>2</sup>', 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s²`, `16 ≥ g = 10 ✓`, `4 m/s > 3,2 m/s (en küçük hız) → su kovada kalır, <em>DÖKÜLMEZ</em> ✓`] } },
+    { sub: 'Kovayı tepede v = 4 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
+    { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova dönüyor (tepede v = 4 m/s)…', until: S => S.mode === 'stop' },
     { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, sub: 'Su hiç dökülmedi! Hızlı dönerse v²/r ≥ g → su DÖKÜLMEZ.', wait: 2 },
   ],
 };
@@ -743,7 +768,7 @@ const M4 = {
     { sub: 'Tren döngüye girecek ve çeyrek turda (yan noktada) duracak.', go: '▶ Treni sür' },
     { do: S => M4.go(S, 'side', ROLL.sSide), sub: 'Tren döngüde yükseliyor…', until: S => !S.run },
     { sub: 'Döngünün yan noktası. Tren durduruldu.', wait: 0.8 },
-    { q: { t: `Tren döngünün yan noktasında. Ağırlık (mg) burada tamamen <b>teğet</b> yönde. Trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
+    { q: { t: `Tren döngünün yan noktasında (çeyrek tur). Trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
       o: ['1 rad/s²', '10 rad/s²', '0', '100 rad/s²'], lab: 'α = ?', f: ['t4at', 't4g', 't4m'],
       s: [`Yan noktada <span class="r">mg</span> tamamen TEĞET (aşağı)`, `Teğetsel ivme: a<sub>t</sub> = g = 10 m/s²`, `α = ${F('a<sub>t</sub>', 'r')} = ${F('10', '10')} = <em>1 rad/s²</em> ✓`, `a<sub>t</sub> hıza ters → tren <em>YAVAŞLIYOR</em>`],
       after: S => { S.atlab = 'a<sub>t</sub> = g'; board('Yanda açısal ivme', 'α = 1 rad/s²'); } } },
@@ -801,7 +826,7 @@ function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game';
   showOnly(M); M.reset();
-  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false);
+  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
   $('board').innerHTML = `<h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); sub(''); CAM.gvo = -200; CAM.vo = -200;
@@ -829,7 +854,8 @@ function next() {
 function ask(q) {
   GAME.qn++; GAME.total++;
   const order = q.fixed ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i));
-  GAME.q = { q, order, answered: false, correctPos: order.indexOf(0) };
+  GAME.q = { q, order, answered: false, correctPos: order.indexOf(0) }; SON_Q = q;
+  if (!$('notlar').classList.contains('hide')) notAc(true);
   $('qn').textContent = `SORU ${GAME.qn} / ${GAME.M.steps.filter(s => s.q).length}`;
   $('qt').innerHTML = q.t; $('fb').textContent = ''; $('fb').className = ''; $('sol').innerHTML = ''; $('qnext').classList.add('hide');
   $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
@@ -847,7 +873,8 @@ function answer(k) {
   const lines = Q.q.s, gap = ok ? 0.45 : 1.25;
   $('sol').innerHTML = `<div class="bas">${ok ? 'ÇÖZÜM' : 'DOĞRU ÇÖZÜM'}</div>` + lines.map((l, i) => `<div class="sl" style="animation-delay:${(0.3 + i * gap).toFixed(2)}s">${l}</div>`).join('');
   const sol = $('sol'); let fs = 44; sol.style.fontSize = fs + 'px'; sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = 'none');
-  while (sol.scrollHeight > sol.clientHeight + 2 && fs > 26) { fs -= 2; sol.style.fontSize = fs + 'px'; }
+  while (sol.scrollHeight > sol.clientHeight + 2 && fs > 36) { fs -= 2; sol.style.fontSize = fs + 'px'; }
+  sol.scrollTop = 0; kaySolGuncelle();
   sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = '');
   setTimeout(() => { if (GAME.q === Q) { $('qnext').textContent = ok ? 'Devam ▶' : 'Anladım, devam ▶'; $('qnext').classList.remove('hide'); } }, (0.3 + lines.length * gap) * 1000 + (ok ? 0 : 300));
 }
@@ -871,7 +898,7 @@ function finish() {
 }
 function toMenu() {
   stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
-  ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
+  ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet', 'notlar'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
   buildMenu(); $('menu').classList.remove('hide'); menuScene();
 }
 function menuScene() { showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
@@ -889,6 +916,9 @@ addEventListener('keydown', e => {
   if (k === 'f') return fullscreen();
   if (k === 'm') { ac(); return setSes(!AU.on); }
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
+  if (GAME.mode === 'game' && k === 'n') return notAc();
+  if (GAME.mode === 'game' && (k === 'arrowdown' || k === 'arrowup' || k === 'pagedown' || k === 'pageup')) { e.preventDefault();
+    const el = !$('notlar').classList.contains('hide') ? $('ntIc') : $('sol'); return kaydir(el, k.includes('down') ? 1 : -1); }
   if (GAME.mode === 'game' && (k === '+' || k === '-' || k === '=')) { const L = [0.25, 0.5, 1, 2], i = L.indexOf(CTL.hiz); return setHiz(L[clamp(i + (k === '-' ? -1 : 1), 0, 3)]); }
   if (GAME.mode !== 'game') return;
   if (!$('ov').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); const b = $('ovGo') || $('ovN'); b && b.click(); } return; }
@@ -897,6 +927,87 @@ addEventListener('keydown', e => {
   if (k === ' ' || k === 'enter' || k === 'arrowright') { e.preventDefault(); if (GAME.q) qContinue(); else if (!$('go').classList.contains('hide')) $('go').click(); }
 });
 addEventListener('resize', fit);
+
+// ======================= NOTLAR (neden böyle?) =======================
+const O = t => `<span class="o">${t}</span>`, K = t => `<span class="r">${t}</span>`, Y = t => `<span class="g">${t}</span>`, M_ = t => `<span class="p">${t}</span>`;
+// dipte / tepede kuvvet çizimi (oklar verilen oranla: piksel = kuvvet / mg × ölçek)
+function svgDipTepe(ad, nDip, nTepe, olc, alt) {
+  const ok = (x, y, L, yon, renk, etk, sag) => { const y2 = y + yon * L, h = yon * 12;
+    return `<line x1="${x}" y1="${y}" x2="${x}" y2="${y2 - h}" stroke="${renk}" stroke-width="8"/><path d="M${x - 11} ${y2 - h}L${x + 11} ${y2 - h}L${x} ${y2}z" fill="${renk}"/>` +
+      `<text x="${x + (sag ? 16 : -16)}" y="${y + yon * L / 2 + 10}" fill="${renk}" font-size="26" font-weight="900" text-anchor="${sag ? 'start' : 'end'}" font-family="Inter">${etk}</text>`; };
+  const pano = (cx, baslik, nL, gL, yer) => { const cy = 200, r = 120, oy = yer === 'dip' ? cy + r : cy - r;
+    return `<text x="${cx}" y="34" fill="#fff" font-size="27" font-weight="900" text-anchor="middle" font-family="Inter">${baslik}</text>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#64748b" stroke-width="6"/><circle cx="${cx}" cy="${cy}" r="7" fill="#F5C400"/>` +
+      `<text x="${cx}" y="${cy - 14}" fill="#F5C400" font-size="20" font-weight="800" text-anchor="middle" font-family="Inter">merkez</text>` +
+      `<rect x="${cx - 26}" y="${oy - 14}" width="52" height="28" rx="6" fill="#3b82f6" stroke="#0f172a" stroke-width="3"/>` +
+      ok(cx - 14, oy, nL, yer === 'dip' ? -1 : 1, '#fb923c', 'N', false) + ok(cx + 12, oy, gL, 1, '#ef4444', 'mg', true); };
+  return `<div class="nt-svg"><svg viewBox="0 0 740 ${alt ? 410 : 380}" width="100%">` + pano(185, 'DİPTE: ' + ad + ' altta', nDip * olc, olc, 'dip') + pano(555, 'TEPEDE: ' + ad + ' üstte', nTepe * olc, olc, 'tepe') +
+    (alt ? `<text x="370" y="400" fill="#94a3b8" font-size="21" text-anchor="middle" font-family="Inter">${alt}</text>` : '') + `</svg></div>`;
+}
+const NOT_GOREV = {
+  1: [`Roket <b>yatay, sürtünmesiz</b> masada: düşeyde ağırlık (${K('mg')}) ile masanın tepki kuvveti (${O('N')}) birbirini dengeler.`, `Yatayda tek kuvvet ipteki gerilme kuvvetidir (${K('F')}); her an <b>merkeze</b> doğrudur.`],
+  2: [`Arabaları virajda tutan kuvvet, yolun lastiklere uyguladığı <b>sürtünme kuvvetidir</b> (yatay, merkeze doğru).`, `Düşeyde ${K('mg')} ile yolun tepki kuvveti ${O('N')} dengededir.`],
+  3: [`Kova motorla <b>sabit açısal hızla</b> çevriliyor.`, `Suya etki eden kuvvetler yalnızca ağırlık (${K('mg')}) ve kova tabanının tepki kuvvetidir (${O('N')}).`],
+  4: [`Sürtünme yok → <b>mekanik enerji korunur</b>.`, `Rayın tepki kuvveti (${O('N')}) her an harekete dik olduğu için <b>iş yapmaz</b>; trenin enerjisini değiştirmez.`, `Döngüde hız değiştiği için hareket düzgün çembersel DEĞİLDİR: ivmenin merkezcil (${M_('a<sub>m</sub>')}) ve teğetsel (${M_('a<sub>t</sub>')}) bileşenleri vardır.`],
+};
+const N_KURAL = `Tepki kuvveti (${O('N')}) yüzeye <b>diktir</b> ve <b>yüzeyden cisme doğrudur</b>: yüzey cismi itebilir, kendine doğru çekemez.`;
+const N_CIFT = `${O('N')} ile ${K('mg')} etki-tepki çifti DEĞİLDİR. ${O('N')}'nin çifti cismin yüzeyi itmesi, ${K('mg')}'nin çifti cismin Dünya'yı çekmesidir; bu kuvvetler başka cisimlere etki eder.`;
+const NOTLAR = {
+  1: [
+    [`Açısal hız (ω): birim zamanda taranan açı. Bir turda 2π radyan taranır → <b>ω = 2π / T</b>.`, `Düzgün çembersel harekette ω sabittir: roket her turu aynı sürede (2 s) atar.`, `Birim rad/s'dir (radyan birimsiz olduğu için 1/s de yazılabilir).`],
+    [`Çizgisel hız (${Y('v')}) her an çembere <b>TEĞETTİR</b>: roketin o anki hareket yönüdür.`, `Büyüklüğü <b>v = ω · r</b>: aynı ω'da merkezden uzak nokta aynı sürede daha çok yol alır.`, `Hızın BÜYÜKLÜĞÜ sabit kalır ama YÖNÜ sürekli değişir → hız vektörü değişir → ivme vardır.`],
+    [`Hızın yönü değiştiği için ivme vardır ve bu ivme <b>MERKEZE</b> doğrudur: merkezcil ivme, ${M_('a')} = v²/r.`, `Bu ivmeyi sağlayan kuvvet ipteki gerilmedir (${K('F')}): ip roketi merkeze doğru çeker. Newton'un 2. yasası: F = m · a.`, `Masa sürtünmesiz ve yatay: ${K('mg')} ile ${O('N')} düşeyde dengelenir, yatay harekete katkıları yoktur.`, `"Merkezkaç kuvveti" diye ayrı bir kuvvet yoktur; dışarı doğru itilme hissi <b>eylemsizlikten</b> gelir.`],
+    [`İp kopunca ${K('F')} = 0 → yatayda net kuvvet sıfır olur.`, `Newton'un 1. yasası: net kuvvet sıfırsa cisim hızını (büyüklüğünü ve yönünü) korur.`, `Kopma anındaki hız <b>teğet</b> olduğu için roket teğet doğrultuda <b>düz</b> gider; merkezden dışarı doğru kaçmaz, merkeze de düşmez.`],
+  ],
+  2: [
+    [`Açısal hız <b>ω = v / r</b>. Hızlar (v) eşitse yarıçapı küçük olanın ω'sı büyüktür.`, `İç şeritteki araba aynı sürede daha büyük açı tarar (renkli dilimler).`],
+    [`ω = v / r = 10 / 10 = 1 rad/s → kırmızı araba saniyede 1 radyan (≈ 57°) döner.`, `Yeşil 1/2, mavi 1/3 rad/s: yarıçap 2 ve 3 katına çıkınca ω yarıya ve üçte bire iner.`],
+    [`Merkezcil ivme <b>a = v² / r</b>: v aynıyken r küçüldükçe a büyür. Mor oklar bu oranla çizildi (10 : 5 : 3,3).`, `Arabayı merkeze doğru tutan kuvvet lastiklerle yol arasındaki <b>sürtünme kuvvetidir</b> (yatay, merkeze).`, `Dar virajda daha büyük sürtünme gerekir. Yol kayganken sürtünme yetmezse araba teğete doğru (dışarı) kayar.`],
+    [`Periyot (T): bir tam tur süresi. Bir turda alınan yol 2πr.`, `<b>T = 2πr / v</b> ya da <b>T = 2π / ω</b> → 2·3 / 1 = 6 s. İki yol da aynı sonucu verir.`],
+  ],
+  3: [
+    [N_KURAL, `Tepede kova ters durur: taban suyun <b>ÜSTÜNDE</b> → taban suyu <b>AŞAĞI</b> iter → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `Dipte taban suyun <b>ALTINDA</b> → ${O('N')} yukarı. Yani ${O('N')} her zaman ${K('mg')}'nin tersi değildir.`,
+      `Dipte: ${O('N')} − ${K('mg')} = m · v²/r &nbsp;·&nbsp; Tepede: ${O('N')} + ${K('mg')} = m · v²/r`, N_CIFT,
+      svgDipTepe('taban', 5.7, 3.7, 20, 'Oklar oyundaki hızlı dönüşün oranıyla: dipte N ≈ 5,7 mg, tepede N ≈ 3,7 mg')],
+    [`Kova yavaşladıkça gereken merkezcil kuvvet (m · v²/r) küçülür, ${O('N')} de küçülür.`, `${O('N')} = 0 olduğu hız sınırdır: yalnız ${K('mg')} merkezcil kuvveti sağlar → mg = m · v²/r → <b>v = √(g · r)</b>.`, `Kütle (m) sadeleşir: en küçük hız suyun miktarına bağlı değildir.`],
+    [`v = 2 m/s → v²/r = 4 m/s² &lt; g = 10 m/s².`, `Suyun çember üzerinde kalması için yalnız 4 m/s²'lik ivme gerekir ama yer çekimi tek başına 10 m/s² verir → su çemberin <b>içine doğru</b> kovadan ayrılır.`, `Kova tabanı suyu çekemeyeceği için (${O('N')} negatif olamaz) bunu engelleyemez.`, `Ayrıldıktan sonra su yalnız yer çekimi etkisindedir: ayrılma anındaki hızla <b>eğik atış</b> yapar (animasyondaki parabol).`],
+    [`v = 4 m/s → v²/r = 16 m/s² ≥ g → ${K('mg')} tek başına yetmez, kova tabanı da suyu aşağı iter (${O('N')} > 0).`, `Tepede ${O('N')} = m (v²/r − g) = m · 6 → ${O('N')} = 0,6 · ${K('mg')}.`, `Su tabana bastırmaya devam ettiği için dökülmez.`],
+  ],
+  4: [
+    [`Sürtünme yok → mekanik enerji korunur: <b>m · g · h = ½ · m · v²</b>.`, `Kütle sadeleşir: dipteki hız trenin kütlesine bağlı değildir.`, `Rayın ${O('N')} kuvveti harekete her an dik → iş yapmaz, enerjiyi değiştirmez.`],
+    [`ω = v / r. Dipte v = 30 m/s, r = 10 m → ω = 3 rad/s.`, `Döngüde hız değiştiği için ω da değişir: dipte en büyük, tepede en küçük.`],
+    [`Dipte merkez yukarıda → merkezcil ivme ${M_('a')} <b>yukarı</b>.`, N_KURAL, `Dipte ray trenin <b>ALTINDA</b> → ${O('N')} yukarı; ${K('mg')} aşağı. Net kuvvet merkeze: ${O('N')} − ${K('mg')} = m · v²/r.`, `${O('N')} = m (g + v²/r) = m (10 + 90) = 10 · ${K('mg')} → yolcu kendini ağırlığının 10 katı ağır hisseder (oklar bu oranla).`],
+    [`Açısal ivme (α), açısal hızın değişme hızıdır: <b>α = a<sub>t</sub> / r</b>.`, `Teğetsel ivme (${M_('a<sub>t</sub>')}) yalnız hareket yönündeki kuvvetten gelir.`, `Dipte ${K('mg')} ve ${O('N')} düşey, hareket yönü yatay → teğet yönde kuvvet yok → a<sub>t</sub> = 0 → <b>α = 0</b>.`, `Bu, ivmenin sıfır olduğu anlamına gelmez: merkezcil ivme 90 m/s²'dir.`],
+    [`Yan noktada ray trenin dışında (sağında) → ${O('N')} yatay ve <b>merkeze</b> doğru (sola). ${O('N')}'nin teğet bileşeni yoktur.`, `${K('mg')} düşey aşağı; tren yukarı gittiği için bu tam <b>teğet</b> yöndür → a<sub>t</sub> = g = 10 m/s², hıza ters → tren yavaşlar.`, `α = a<sub>t</sub> / r = 10 / 10 = 1 rad/s² (açısal hız azalıyor).`, `Burada ${O('N')} = m · v²/r = m · 70 = 7 · ${K('mg')} (v² = 2g(h − r) = 700).`, `Toplam ivme, merkezcil (${M_('a<sub>m</sub>')} = 70 m/s²) ile teğetsel (${M_('a<sub>t</sub>')} = 10 m/s²) bileşenlerin vektörel toplamıdır.`],
+    [`Tepe, dipten 2r = 20 m yukarıdadır.`, `Enerji korunumu: m · g · h = m · g · 2r + ½ · m · v² → <b>v² = 2g (h − 2r)</b>.`, `Yükseldikçe kinetik enerjinin bir kısmı potansiyel enerjiye döner → tren tepede yavaşlar.`],
+    [`Tepede merkez <b>AŞAĞIDA</b> → merkezcil ivme aşağı: a = v²/r = 50 m/s².`, `Dipteki 90 m/s²'den küçüktür çünkü v küçüldü.`, `Tepede ${K('mg')} ve ${O('N')} düşey, hareket yatay → a<sub>t</sub> = 0: ivmenin tamamı merkezcil.`],
+    [N_KURAL, `Tepede ray trenin <b>ÜSTÜNDE</b>: ray treni yalnız <b>AŞAĞI</b> itebilir → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `${O('N')} + ${K('mg')} = m · v²/r → ${O('N')} = m (50 − 10) = 4 · ${K('mg')}.`, `Raydan düşmeme şartı ${O('N')} ≥ 0 → v²/r ≥ g → v ≥ √(g · r) = 10 m/s. Burada v ≈ 22,4 m/s.`, `Tren tersken düşmez: çembersel yolda kalmak için gereken ivme (50 m/s²) g'den büyüktür; yer çekimi tek başına yetmez, ray iterek eksiği tamamlar.`, N_CIFT,
+      svgDipTepe('ray', 10, 4, 14, 'Oklar gerçek oranla: dipte N = 10 mg, tepede N = 4 mg')],
+    [`Düz yolda yükseklik değişmez → tren yaya dipteki hızla (30 m/s) varır.`, `Yay kuvveti (F = k · x) harekete ters → treni yavaşlatır.`, `Kinetik enerji yayın esneklik potansiyel enerjisine dönüşür: <b>½ · m · v² = ½ · k · x²</b>.`, `En çok sıkışmada tren bir an durur; fren tutmasa yay treni geri iterdi.`],
+  ],
+};
+let SON_Q = null;
+function notIcerik() {
+  const M = GAME.M; if (!M) return '';
+  const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
+  if (Q && Q.n) { const no = M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1;
+    h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`).join(''); }
+  h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (NOT_GOREV[M.no] || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
+  return h;
+}
+function notAc(ac_) {
+  const ac2 = ac_ ?? $('notlar').classList.contains('hide');
+  $('notlar').classList.toggle('hide', !ac2); $('bNot').classList.toggle('acik', ac2);
+  if (ac2) { $('ntIc').innerHTML = notIcerik(); $('ntIc').scrollTop = 0; kayGuncelle($('ntIc'), $('ntKay')); }
+}
+function kayGuncelle(el, kay) { kay.classList.toggle('hide', el.scrollHeight <= el.clientHeight + 4); }
+function kaySolGuncelle() { setTimeout(() => kayGuncelle($('sol'), $('solKay')), 50); }
+const kaydir = (el, d) => el.scrollBy({ top: d * el.clientHeight * 0.6, behavior: 'smooth' });
+$('solY').onclick = () => kaydir($('sol'), -1); $('solA').onclick = () => kaydir($('sol'), 1);
+$('ntY').onclick = () => kaydir($('ntIc'), -1); $('ntA').onclick = () => kaydir($('ntIc'), 1);
+$('bNot').onclick = () => { SFX.click(); notAc(); };
+$('ntKapat').onclick = () => { SFX.click(); notAc(false); };
+MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (NOTLAR[M.no] || [])[i]; }));
 
 // ======================= DURAKLAT / HIZ =======================
 const CTL = { dur: false, hiz: 1 };
