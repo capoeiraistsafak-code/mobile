@@ -12,3 +12,17 @@ Kullanıcının ElevenLabs kredisi sınırlıdır (aylık 30.000). Daha önce bi
 5. Seslendirme gerekirse önce kredisiz yol önerilir (kullanıcı kendi sesini mp3 olarak gönderir).
 6. **SESLENDİRME HER ZAMAN EN SON yapılır** ve yalnızca kullanıcı "seslendirme yap" dediğinde başlar. Önce görüntü/animasyon/video seslendirmesiz bitirilir ve onaylanır; seslendirme metni bile kullanıcı istemeden yazılmaz ve önerilmez.
 
+
+# ⚛️ FİZİK KURALLARINA BİREBİR UYUM (zorunlu)
+
+Şu oturumlarda/çalışmalarda **kesinlikle** uygulanır: TYT soru video, konu video, popüler fizik videoları, sınav videosu, animasyon programı, soru çözüm oluşturucu 1-2, konu anlatımı fasikül, hap video, soru bankası, fizik oyunları. (Diğer oturumlarda gerekmez.)
+
+1. Her animasyon, soru, çözüm, görsel ve ok fizik yasalarıyla **birebir** uyumlu olur. Her iş bitince ve her yeni soru/sahne eklenince şu kontrol yapılır:
+   - **Kuvvet okları:** yön, uygulama noktası (cismin üzerinde) ve büyüklük oranı doğru. Ağırlık (mg) her zaman düşey aşağı.
+   - **Tepki kuvveti (N):** yüzeye dik ve yüzeyden cisme doğrudur. mg'nin zıttı olmak zorunda DEĞİLDİR (ör. döngünün ya da kovanın tepesinde ray/kova tabanı cismin üstünde olduğu için N AŞAĞI, mg ile aynı yöndedir). N ile mg etki-tepki çifti değildir.
+   - **Hız** teğet; **ivme** merkezcil (a_m) ve teğetsel (a_t) bileşen olarak ayrı gösterilir; hız büyüklüğü değişiyorsa yalnız merkezcil ok "a" diye etiketlenmez.
+   - **Ok uzunlukları:** aynı tür nicelikler (kuvvet–kuvvet, ivme–ivme, hız–hız) gerçek oranla çizilir.
+   - Enerji/momentum korunumu, birimler, sayısal sonuçlar, süreler ve ölçek birbiriyle tutarlıdır.
+   - Fiziksel olarak imkânsız durum çizilmez (havada asılı cisim, kuvvetsiz yavaşlayan/duran cisim, tepede durmuş su dolu kova vb.). Anlatım için gerekiyorsa açıkça "görüntü donduruldu / yavaş çekim / fren" diye belirtilir.
+2. Kullanıcı fiziksel olarak yanlış bir değişiklik isterse yapılmadan önce nedeni kibarca açıklanır ve doğru hali önerilir.
+3. **Fizik oyunları:** Yeni soru gelince o sorunun görselleri öne çıkarılır (ilgili ok ve etiketler parlar, sorulan nicelik "x = ?" etiketiyle gösterilir, diğerleri sönükleşir).
