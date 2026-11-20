@@ -75,6 +75,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 60px; }
 .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--line); }
 .btn.primary { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); box-shadow: 0 3px 0 color-mix(in srgb, var(--primary) 65%, #000); }
 .btn.mint { background: var(--mint); color: #fff; border-color: var(--mint); box-shadow: 0 3px 0 color-mix(in srgb, var(--mint) 65%, #000); }
+.btn.fun { background: var(--pink); color: #fff; border-color: var(--pink); box-shadow: 0 3px 0 color-mix(in srgb, var(--pink) 65%, #000); }
 .btn.danger { color: var(--danger); border-color: var(--danger-line); box-shadow: 0 3px 0 var(--danger-line); }
 .btn.small { padding: 5px 11px; font-size: 13px; }
 .btn.big { width: 100%; padding: 14px; font-size: 17px; }
@@ -197,3 +198,9 @@ dialog::backdrop { background: var(--backdrop); }
 .yolu a { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 @media print { .topbar, .toolbar, .btn, .no-print, #sonucKartlar { display: none !important; } body { background: #fff; } .card { box-shadow: none; break-inside: avoid; } }
+
+/* Örnek veriler */
+.deneme { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; border: 2px dashed var(--chip-line); }
+.deneme h2, .deneme p { margin: 0 0 4px; }
+.deneme > div { flex: 1 1 360px; }
+.ornek-uyari { background: var(--warn-bg); color: var(--warn-ink); border: 2px dashed var(--warn-line); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

@@ -89,6 +89,7 @@ const simdi = () => new Date().toISOString();
 // ---------------------------------------------------------------------------
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const trSirala = (a, b) => String(a).localeCompare(String(b), "tr", { numeric: true });
+const sinifAdi = (s) => (s ? s.ad + (s.ornek ? " (örnek)" : "") : "");
 const ogrAd = (o) => [o.ad, o.soyad].filter(Boolean).join(" ");
 const ogrSirala = (a, b) => trSirala(a.no || "", b.no || "") || trSirala(ogrAd(a), ogrAd(b));
 const tarihYaz = (s) => {
@@ -266,7 +267,7 @@ async function ogrenciYukle(file) {
         if (!sinifAdi) throw new Error("Sınıf bilgisi bulunamadı.");
         varsayilanSinif = sinifAdi;
       }
-      let sinif = list("siniflar", (s) => s.ad === sinifAdi)[0];
+      let sinif = list("siniflar", (s) => s.ad === sinifAdi && !s.ornek)[0];
       if (!sinif) {
         sinif = await DB.put("siniflar", { ad: sinifAdi, seviye: parseInt(sinifAdi) || null });
         yeniSiniflar.push(sinifAdi);
@@ -307,7 +308,7 @@ async function kazanimYukle(file) {
       const al = (k) => (b.yer[k] != null ? String(r[b.yer[k]]).trim() : "");
       const k = { kod, metin, ders: al("ders") || sh.ad, seviye: al("seviye") || (/(\d{1,2})\s*\.?\s*sınıf/i.exec(ustYazi)?.[1] ?? ""), unite: al("unite"), konu: al("konu") };
       dersler.add(k.ders);
-      const eski = list("kazanimlar", (x) => x.kod === kod)[0];
+      const eski = list("kazanimlar", (x) => x.kod === kod && !x.ornek)[0];
       if (eski) {
         Object.assign(eski, k);
         await DB.put("kazanimlar", eski);
@@ -955,7 +956,7 @@ function siraya(fn) {
 
 async function sayfaIsle(sayfa) {
   try {
-    const havuz = list("sayfalar", (p) => p.id !== sayfa.id && p.durum === "hazir");
+    const havuz = sayfa.ornek ? [] : list("sayfalar", (p) => p.id !== sayfa.id && p.durum === "hazir" && !p.ornek);
     if (havuz.length) {
       const m = await enBenzerSayfa(sayfa.foto, havuz);
       if (m.id && m.puan >= T.samePageMatch) {
@@ -1068,14 +1069,19 @@ function say(satirlar) {
   }
   return c;
 }
-const kazanimBul = (kod) => (kod ? list("kazanimlar", (k) => k.kod === kod)[0] : null);
+/** Kazanımı koduyla bulur; örnek sayfalar örnek kazanımları, kendi sayfaların kendi kazanımlarını önce dener. */
+const kazanimBul = (kod, ornek = false) => {
+  if (!kod) return null;
+  const hepsi = list("kazanimlar", (k) => k.kod === kod);
+  return hepsi.find((k) => !!k.ornek === !!ornek) || hepsi[0] || null;
+};
 const PUAN = { dogru: 1, yanlis: 0, bos: 0 };
 /** Kazanım (yoksa konu) bazında başarı. */
 function kazanimOzeti(satirlar) {
   const map = new Map();
   for (const r of satirlar) {
     if (!(r.sonuc in PUAN)) continue;
-    const kz = kazanimBul(r.q.kazanimKod);
+    const kz = kazanimBul(r.q.kazanimKod, r.sayfa.ornek);
     const anahtarAd = r.q.kazanimKod || r.q.konu || "Kazanım girilmemiş";
     const o = map.get(anahtarAd) || { anahtarAd, kod: r.q.kazanimKod, metin: kz?.metin || "", konu: r.q.konu || kz?.konu || "", ders: kz?.ders || r.sayfa.ders || "", soru: 0, puan: 0, dogru: 0, yanlis: 0, bos: 0, ogr: new Map() };
     o.soru++;
@@ -1112,6 +1118,66 @@ function odevDurumu(odev, ogrId) {
     durum = gec ? "gec" : odev.sayfaIds.length && sayfa < odev.sayfaIds.length ? "eksik" : "yapti";
   }
   return { durum, sayfa, gs, kopya: gs.some((g) => g.kopyaId), ...say(bitti.flatMap(degerlendir)) };
+}
+
+// ---------------------------------------------------------------------------
+// ÖRNEK VERİLER: "Örnek verilerle dene" (Teknoloji ve Tasarım 8. sınıf).
+// Örnek kayıtlar "ornek: true" ile işaretlenir; kendi verilerinle karışmaz ve tek tıkla silinir.
+// Fotoğraflar programın içindeki gerçek okuma motoruyla okunur (vendor/ornek-veri.js).
+// ---------------------------------------------------------------------------
+const ornekVar = () => STORES.some((s) => list(s, (x) => x.ornek).length);
+let ornekYukleniyor = false;
+async function ornekVeriYukle() {
+  const V = window.ORNEK_VERI;
+  if (!V) return sonucKarti(false, "Örnek veriler bulunamadı", ["vendor klasöründeki ornek-veri.js dosyası eksik."]);
+  if (ornekYukleniyor || excelMesgul) return toast("Önceki işlem bitmeden yenisi başlatılamaz.");
+  ornekYukleniyor = true;
+  ciz();
+  try {
+    await ornekVeriSil(true);
+    const blob = (b64) => new Blob([Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))], { type: "image/jpeg" });
+    const sinif = await DB.put("siniflar", { ad: "8-A", seviye: 8, ornek: true });
+    const ogr = {};
+    for (const [no, ad, soyad] of ORNEK_OGRENCI.slice(3)) ogr[no] = await DB.put("ogrenciler", { sinifId: sinif.id, no, ad, soyad, ornek: true });
+    for (const [kod, ders, seviye, unite, konu, metin] of ORNEK_KAZANIM.slice(3)) await DB.put("kazanimlar", { kod, ders, seviye, unite, konu, metin, ornek: true });
+    const sayfa = await DB.put("sayfalar", { baslik: "", ders: "Teknoloji ve Tasarım", durum: "isleniyor", foto: blob(V.bosSayfa), sorular: [], tarih: simdi(), ornek: true });
+    const odev = await DB.put("odevler", { sinifId: sinif.id, baslik: "Fikrî Haklar – Test 1", ders: "Teknoloji ve Tasarım", sonTarih: null, sayfaIds: [sayfa.id], tarih: simdi(), ornek: true });
+    await siraya(() => sayfaIsle(sayfa));
+    if (sayfa.durum !== "hazir") throw new Error(sayfa.hata || "Örnek sayfa okunamadı.");
+    for (const q of sayfa.sorular) {
+      q.anahtar = V.anahtar[q.no - 1] || null;
+      q.kazanimKod = V.kodlar[q.no - 1] || "";
+      q.konu = kazanimBul(q.kazanimKod, true)?.konu || "";
+    }
+    await DB.put("sayfalar", sayfa);
+    const isler = [];
+    for (const f of V.fotolar) {
+      const foto = blob(f.b64);
+      const g = await DB.put("gonderimler", { ogrenciId: ogr[f.no].id, odevId: odev.id, foto, parmakIzi: await parmakIzi(foto), kopyaId: null, durum: "bekliyor", cevaplar: [], tarih: simdi(), dosyaAdi: f.dosya, ornek: true });
+      isler.push(siraya(() => gonderimIsle(g)));
+    }
+    await Promise.all(isler);
+    sonucKarti(true, "Örnek veriler yüklendi", [
+      "8-A (örnek) sınıfı, 5 öğrenci, 5 kazanım ve \"Fikrî Haklar – Test 1\" ödevi eklendi.",
+      "Boş sayfa ve 4 öğrenci fotoğrafı programın kendi motoruyla okundu.",
+    ]);
+    G.kontrol = { odevId: odev.id, gonderimId: null };
+  } catch (e) {
+    console.error(e);
+    sonucKarti(false, "Örnek veriler yüklenemedi", [e.message]);
+  } finally {
+    ornekYukleniyor = false;
+  }
+  if (G.tab === "panel") git("kontrol");
+  else ciz();
+}
+async function ornekVeriSil(sessiz = false) {
+  for (const s of STORES) for (const x of list(s, (x) => x.ornek)) await DB.del(s, x.id);
+  for (let i = kuyruk.length - 1; i >= 0; i--) if (!D.odevler.has(kuyruk[i].odevId)) kuyruk.splice(i, 1);
+  if (!sessiz) {
+    sonucKarti(true, "Örnek veriler kaldırıldı", ["Senin yüklediğin veriler silinmedi."]);
+    ciz();
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1175,7 +1241,7 @@ function motorDurumu() {
 }
 
 const sinifSecenekleri = (secili, bos = "Sınıf seçin") =>
-  `<option value="">${bos}</option>` + list("siniflar").sort((a, b) => trSirala(a.ad, b.ad)).map((s) => `<option value="${s.id}" ${+secili === s.id ? "selected" : ""}>${esc(s.ad)}</option>`).join("");
+  `<option value="">${bos}</option>` + list("siniflar").sort((a, b) => trSirala(a.ad, b.ad)).map((s) => `<option value="${s.id}" ${+secili === s.id ? "selected" : ""}>${esc(sinifAdi(s))}</option>`).join("");
 const sinifOgrencileri = (sinifId) => list("ogrenciler", (o) => o.sinifId === sinifId).sort(ogrSirala);
 const excelDugmesi = (id, yazi, sinif = "primary") =>
   `<label class="btn ${sinif}">${yazi}<input type="file" id="${id}" accept=".xlsx,.xls,.xlsm,.csv" multiple class="dosya-input"></label>`;
@@ -1202,6 +1268,12 @@ EKRAN.panel = (el) => {
       <h1>Ödev Kontrol</h1>
       <p>Öğrencilerin gönderdiği ödev fotoğraflarını yükle; program her sayfada işaretlenen şıkkı bulur, anahtarla karşılaştırır, ödevi yapan ve yapmayanları, eksik kazanımları gösterir. Her şey bu bilgisayarda, internetsiz çalışır.</p>
     </div></div>
+    ${ornekYukleniyor
+      ? `<div class="ornek-uyari"><span class="spinner"></span> Örnek veriler yükleniyor; boş sayfa ve 4 öğrenci fotoğrafı okunuyor… (yaklaşık 15 saniye)</div>`
+      : !ornekVar()
+        ? `<div class="card deneme"><div><h2>🎈 Önce bir denemek ister misin?</h2><p class="muted">Örnek bir sınıf (8-A), Teknoloji ve Tasarım kazanımları ve bir ödev yüklenir; 4 öğrencinin ödev fotoğrafı programın kendisi tarafından okunur. Örnekler “(örnek)” diye işaretlenir, senin verilerinle karışmaz; istediğin zaman tek tıkla silebilirsin.</p></div>
+           <button class="btn fun" id="ornekYukle">✨ Örnek verilerle dene</button></div>`
+        : `<div class="ornek-uyari">🧪 Örnek veriler yüklü. Kendi verilerini yüklesen de örnekler silinmez, karışmaz. <button class="btn small" id="ornekSil">Örnekleri kaldır</button></div>`}
     <div class="adimlar">
       <div class="adim"><div class="adim-no">1</div><h2>Öğrencileri yükle</h2><p>Öğrenci listesinin olduğu Excel'i seç (K12 listesi de olur).</p>${tamam(nOgr)}
         <div class="adim-btn">${excelDugmesi("pOgr", "📥 Excel seç")}<button class="btn" data-ornek="ogrenci">📄 Örnek Excel</button></div></div>
@@ -1220,11 +1292,13 @@ EKRAN.panel = (el) => {
       ${odevler.slice(0, 8).map((o) => {
         const ogr = sinifOgrencileri(o.sinifId);
         const yapan = ogr.filter((x) => ["yapti", "gec", "eksik"].includes(odevDurumu(o, x.id).durum)).length;
-        return `<div class="list-item" data-kontrol="${o.id}"><span><b>${esc(o.baslik)}</b> <span class="muted small">${esc(D.siniflar.get(o.sinifId)?.ad || "")}${o.sonTarih ? " · son gün " + tarihYaz(o.sonTarih) : ""}</span></span><span class="chip ${yapan === ogr.length && ogr.length ? "green" : "orange"}">${yapan}/${ogr.length} yaptı</span></div>`;
+        return `<div class="list-item" data-kontrol="${o.id}"><span><b>${esc(o.baslik)}</b> <span class="muted small">${esc(sinifAdi(D.siniflar.get(o.sinifId)))}${o.sonTarih ? " · son gün " + tarihYaz(o.sonTarih) : ""}</span></span><span class="chip ${yapan === ogr.length && ogr.length ? "green" : "orange"}">${yapan}/${ogr.length} yaptı</span></div>`;
       }).join("") || `<p class="muted">Henüz ödev yok.</p>`}
     </div>`;
   excelBagla(el, "pOgr", "ogrenci");
   excelBagla(el, "pKz", "kazanim");
+  el.querySelector("#ornekYukle")?.addEventListener("click", ornekVeriYukle);
+  el.querySelector("#ornekSil")?.addEventListener("click", () => confirm("Örnek veriler kaldırılsın mı? Senin yüklediğin veriler silinmez.") && ornekVeriSil());
   el.querySelectorAll("[data-ornek]").forEach((b) => (b.onclick = () => ornekExcel(b.dataset.ornek)));
   el.querySelectorAll("[data-git]").forEach((b) => (b.onclick = () => git(b.dataset.git)));
   el.querySelectorAll("[data-kontrol]").forEach((b) => (b.onclick = () => git("kontrol", { odevId: +b.dataset.kontrol, gonderimId: null })));
@@ -1248,10 +1322,10 @@ EKRAN.ogrenci = (el) => {
     ${kaynaklar.length ? `<div class="card"><h2>İçe aktarılan listeler</h2>${kaynaklar.slice(0, 10).map((k) => `<div class="list-item"><span><b>${esc(k.dosya)}</b> <span class="muted small">${esc(k.aciklama)} · ${k.sayi} öğrenci · ${tarihYaz(k.tarih)}</span></span><button class="link danger" data-kaynak="${k.id}">Kaydı sil</button></div>`).join("")}</div>` : ""}
     <div class="grid2">
       <div class="card"><h2>Sınıflar</h2>
-        ${siniflar.map((x) => `<div class="list-item ${x.id === s?.id ? "sel" : ""}" data-sinif="${x.id}"><b>${esc(x.ad)}</b><span class="chip">${sinifOgrencileri(x.id).length}</span></div>`).join("") || `<p class="muted">Henüz sınıf yok. Excel yükleyince kendiliğinden oluşur.</p>`}
+        ${siniflar.map((x) => `<div class="list-item ${x.id === s?.id ? "sel" : ""}" data-sinif="${x.id}"><b>${esc(sinifAdi(x))}</b><span class="chip">${sinifOgrencileri(x.id).length}</span></div>`).join("") || `<p class="muted">Henüz sınıf yok. Excel yükleyince kendiliğinden oluşur.</p>`}
       </div>
       <div class="card">
-        ${s ? `<div class="kaynak-baslik row" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">${esc(s.ad)} <span class="muted small">${ogr.length} öğrenci</span></h2>
+        ${s ? `<div class="kaynak-baslik row" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">${esc(sinifAdi(s))} <span class="muted small">${ogr.length} öğrenci</span></h2>
           <span><button class="btn small" id="sinifAd">✎ Adını değiştir</button> <button class="btn small danger" id="sinifSil">🗑️ Sınıfı sil</button></span></div>
           <div class="filters" style="margin-top:10px"><input id="oAra" placeholder="🔎 Öğrenci ara (ad, numara)" value="${esc(G.ogrenci.ara)}"></div>
           <div class="tablewrap"><table><tr><th>No</th><th>Adı Soyadı</th><th class="sag">Kontrol edilen sayfa</th><th></th></tr>
@@ -1289,7 +1363,7 @@ EKRAN.ogrenci = (el) => {
       { yazi: "Ekle", sinif: "primary", deger: () => ({ no: document.getElementById("yNo").value.trim(), ad: document.getElementById("yAd").value.trim(), soyad: document.getElementById("ySoyad").value.trim() }) },
     ]);
     if (!v?.ad) return;
-    await DB.put("ogrenciler", { sinifId: s.id, ...v });
+    await DB.put("ogrenciler", { sinifId: s.id, ...v, ...(s.ornek ? { ornek: true } : {}) });
     ciz();
   });
   el.querySelector("#sinifAd")?.addEventListener("click", async () => {
@@ -1300,7 +1374,7 @@ EKRAN.ogrenci = (el) => {
     ciz();
   });
   el.querySelector("#sinifSil")?.addEventListener("click", async () => {
-    if (!confirm(`${s.ad} sınıfı; öğrencileri, ödevleri ve yüklenen fotoğraflarıyla birlikte silinsin mi?`)) return;
+    if (!confirm(`${sinifAdi(s)} sınıfı; öğrencileri, ödevleri ve yüklenen fotoğraflarıyla birlikte silinsin mi?`)) return;
     for (const o of sinifOgrencileri(s.id)) await ogrenciSil(o.id);
     for (const o of list("odevler", (x) => x.sinifId === s.id)) await DB.del("odevler", o.id);
     await DB.del("siniflar", s.id);
@@ -1337,7 +1411,7 @@ EKRAN.kazanim = (el) => {
     <div class="filters"><select id="kDers"><option value="">Bütün dersler</option>${dersler.map((d) => `<option ${d === G.kazanim.ders ? "selected" : ""}>${esc(d)}</option>`).join("")}</select>
       <input id="kAra" placeholder="🔎 Kazanım ara (kod, konu, metin)" value="${esc(G.kazanim.ara)}"></div>
     <div class="card"><div class="muted small">${kz.length} kazanım</div><div class="tablewrap"><table><tr><th>Kod</th><th>Ders</th><th>Sınıf</th><th>Konu</th><th>Kazanım</th></tr>
-      ${kz.slice(0, 500).map((k) => `<tr><td><b>${esc(k.kod)}</b></td><td>${esc(k.ders)}</td><td>${esc(k.seviye)}</td><td>${esc(k.konu || k.unite)}</td><td>${esc(k.metin)}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">Henüz kazanım yok.</td></tr>`}</table></div></div>`;
+      ${kz.slice(0, 500).map((k) => `<tr><td><b>${esc(k.kod)}</b>${k.ornek ? ` <span class="chip orange">örnek</span>` : ""}</td><td>${esc(k.ders)}</td><td>${esc(k.seviye)}</td><td>${esc(k.konu || k.unite)}</td><td>${esc(k.metin)}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">Henüz kazanım yok.</td></tr>`}</table></div></div>`;
   excelBagla(el, "kExcel", "kazanim");
   birakmaAlani(el, (f) => f.length && excelleriYukle(f, "kazanim"), (f) => /\.(xlsx|xls|xlsm|csv)$/i.test(f.name));
   el.querySelector("[data-ornek]").onclick = () => ornekExcel("kazanim");
@@ -1368,7 +1442,7 @@ EKRAN.odev = (el) => {
     <h1>📝 Ödevler</h1>
     <div class="yanyana">
       <div class="card"><h2>Ödev listesi</h2>
-        ${odevler.map((o) => `<div class="list-item" data-odev="${o.id}"><span><b>${esc(o.baslik)}</b><br><span class="muted small">${esc(D.siniflar.get(o.sinifId)?.ad || "?")} · ${o.sayfaIds.length} sayfa · ${o.sonTarih ? "son gün " + tarihYaz(o.sonTarih) : "süresiz"}</span></span><span class="chip">Aç →</span></div>`).join("") || `<p class="muted">Henüz ödev yok.</p>`}
+        ${odevler.map((o) => `<div class="list-item" data-odev="${o.id}"><span><b>${esc(o.baslik)}</b><br><span class="muted small">${esc(sinifAdi(D.siniflar.get(o.sinifId)))} · ${o.sayfaIds.length} sayfa · ${o.sonTarih ? "son gün " + tarihYaz(o.sonTarih) : "süresiz"}</span></span><span class="chip">Aç →</span></div>`).join("") || `<p class="muted">Henüz ödev yok.</p>`}
       </div>
       <div class="card"><h2>Yeni ödev</h2>
         ${D.siniflar.size ? `<div class="form-grid">
@@ -1386,7 +1460,7 @@ EKRAN.odev = (el) => {
     const sinifId = +document.getElementById("nSinif").value;
     const baslik = document.getElementById("nBaslik").value.trim();
     if (!sinifId || !baslik) return toast("Sınıf ve ödevin adını yazın.");
-    const o = await DB.put("odevler", { sinifId, baslik, ders: document.getElementById("nDers").value.trim(), sonTarih: document.getElementById("nTarih").value || null, sayfaIds: [], tarih: simdi() });
+    const o = await DB.put("odevler", { ...(D.siniflar.get(sinifId)?.ornek ? { ornek: true } : {}), sinifId, baslik, ders: document.getElementById("nDers").value.trim(), sonTarih: document.getElementById("nTarih").value || null, sayfaIds: [], tarih: simdi() });
     G.odev.id = o.id;
     ciz();
   });
@@ -1399,11 +1473,11 @@ function eksikNumaralar(p) {
 
 function odevEkrani(el, o) {
   const sayfalar = o.sayfaIds.map((id) => D.sayfalar.get(id)).filter(Boolean);
-  const kutuphane = list("sayfalar", (p) => p.durum === "hazir" && !o.sayfaIds.includes(p.id));
+  const kutuphane = list("sayfalar", (p) => p.durum === "hazir" && !o.sayfaIds.includes(p.id) && !!p.ornek === !!o.ornek);
   el.innerHTML = `
     <div class="yolu"><a href="#" id="geri">← Ödevler</a></div>
     <h1>📝 ${esc(o.baslik)}</h1>
-    <div class="toolbar"><span class="chip">${esc(D.siniflar.get(o.sinifId)?.ad || "")}</span>${o.ders ? `<span class="chip">${esc(o.ders)}</span>` : ""}<span class="chip">${o.sonTarih ? "Son gün " + tarihYaz(o.sonTarih) : "Süresiz"}</span>
+    <div class="toolbar"><span class="chip">${esc(sinifAdi(D.siniflar.get(o.sinifId)))}</span>${o.ders ? `<span class="chip">${esc(o.ders)}</span>` : ""}<span class="chip">${o.sonTarih ? "Son gün " + tarihYaz(o.sonTarih) : "Süresiz"}</span>
       <button class="btn small" id="duzenle">✎ Düzenle</button><button class="btn small danger" id="sil">🗑️ Ödevi sil</button>
       <button class="btn mint" id="kontrolGit">📷 Fotoğrafları kontrol et →</button></div>
     <h2>Boş sayfalar ve cevap anahtarı</h2>
@@ -1452,7 +1526,7 @@ function odevEkrani(el, o) {
   };
   const ekle = async (files) => {
     for (const f of files) {
-      const p = await DB.put("sayfalar", { baslik: "", ders: o.ders, durum: "isleniyor", foto: f, sorular: [], tarih: simdi() });
+      const p = await DB.put("sayfalar", { baslik: "", ders: o.ders, durum: "isleniyor", foto: f, sorular: [], tarih: simdi(), ...(o.ornek ? { ornek: true } : {}) });
       o.sayfaIds.push(p.id);
       await DB.put("odevler", o);
       siraya(async () => {
@@ -1483,7 +1557,7 @@ const sekil = (blob, W, H, icerik) => `<div class="fig"><img src="${adresi(blob)
 
 function sayfaEkrani(el, p) {
   const odev = D.odevler.get(G.odev.id);
-  const kzler = list("kazanimlar", (k) => !p.ders || !odev?.ders || sadelestir(k.ders) === sadelestir(p.ders || odev.ders)).sort((a, b) => trSirala(a.kod, b.kod));
+  const kzler = list("kazanimlar", (k) => !!k.ornek === !!p.ornek && (!p.ders || !odev?.ders || sadelestir(k.ders) === sadelestir(p.ders || odev.ders))).sort((a, b) => trSirala(a.kod, b.kod));
   const tumKz = kzler.length ? kzler : list("kazanimlar");
   const eksik = eksikNumaralar(p);
   const icerik = p.sorular.map((q) => kutu(q.bolge, "q-reg", String(q.no)) + q.siklar.map((o) => kutu(o.box, anahtar(p, q).harf === o.letter ? "m-ok" : "opt")).join("")).join("");
@@ -1505,7 +1579,7 @@ function sayfaEkrani(el, p) {
         ${p.sorular.map((q, i) => {
           const v = oylar(p.id, q.no);
           const k = anahtar(p, q);
-          const kz = kazanimBul(q.kazanimKod);
+          const kz = kazanimBul(q.kazanimKod, p.ornek);
           return `<div class="soru-kart" data-q="${i}">
             <div class="ust"><b>Soru ${q.no}</b><span class="muted small">${Object.keys(v).length ? "Öğrenciler: " + Object.entries(v).map(([h, n]) => `${h} ${n}`).join(", ") : ""}</span></div>
             <div class="harfler">${q.siklar.map((o) => `<button class="harf ${q.anahtar === o.letter ? "sec" : ""}" data-h="${o.letter}">${o.letter}</button>`).join("")}
@@ -1547,7 +1621,7 @@ function sayfaEkrani(el, p) {
     kart.querySelectorAll("[data-h]").forEach((b) => (b.onclick = async () => { q.anahtar = b.dataset.h || null; await kaydet(); ciz(); }));
     kart.querySelectorAll("input").forEach((inp) => (inp.onchange = async () => {
       q[inp.name] = inp.value.trim();
-      if (inp.name === "kazanimKod" && !q.konu) q.konu = kazanimBul(q.kazanimKod)?.konu || "";
+      if (inp.name === "kazanimKod" && !q.konu) q.konu = kazanimBul(q.kazanimKod, p.ornek)?.konu || "";
       await kaydet();
       yenidenCiz();
     }));
@@ -1574,7 +1648,7 @@ EKRAN.kontrol = (el) => {
   const o = D.odevler.get(G.kontrol.odevId);
   if (G.kontrol.gonderimId && D.gonderimler.has(G.kontrol.gonderimId)) return sonucEkrani(el, D.gonderimler.get(G.kontrol.gonderimId));
   G.kontrol.gonderimId = null;
-  const secim = `<select id="kOdev" style="min-width:280px">${odevler.map((x) => `<option value="${x.id}" ${x.id === o?.id ? "selected" : ""}>${esc(D.siniflar.get(x.sinifId)?.ad || "")} · ${esc(x.baslik)}</option>`).join("")}</select>`;
+  const secim = `<select id="kOdev" style="min-width:280px">${odevler.map((x) => `<option value="${x.id}" ${x.id === o?.id ? "selected" : ""}>${esc(sinifAdi(D.siniflar.get(x.sinifId)))} · ${esc(x.baslik)}</option>`).join("")}</select>`;
   if (!o) {
     el.innerHTML = `<h1>📷 Ödev Kontrol</h1><div class="card"><p>Önce <a href="#" id="gOdev">Ödevler</a> sekmesinden bir ödev oluşturun ve boş sayfasını ekleyin.</p></div>`;
     el.querySelector("#gOdev").onclick = (e) => (e.preventDefault(), git("odev"));
@@ -1648,8 +1722,8 @@ EKRAN.kontrol = (el) => {
         kuyruk.splice(kuyruk.indexOf(k), 1);
         continue;
       }
-      const kopya = list("gonderimler", (g) => g.parmakIzi === iz && g.ogrenciId !== ogrenciId)[0];
-      const g = await DB.put("gonderimler", { ogrenciId, odevId: o.id, foto: await fotoKucult(k.dosya), parmakIzi: iz, kopyaId: kopya?.id || null, durum: "bekliyor", cevaplar: [], tarih: simdi(), dosyaAdi: k.dosya.name });
+      const kopya = list("gonderimler", (g) => g.parmakIzi === iz && g.ogrenciId !== ogrenciId && !!g.ornek === !!o.ornek)[0];
+      const g = await DB.put("gonderimler", { ...(o.ornek ? { ornek: true } : {}), ogrenciId, odevId: o.id, foto: await fotoKucult(k.dosya), parmakIzi: iz, kopyaId: kopya?.id || null, durum: "bekliyor", cevaplar: [], tarih: simdi(), dosyaAdi: k.dosya.name });
       k.gId = g.id;
       siraya(() => gonderimIsle(g));
     }
@@ -1690,7 +1764,7 @@ function sonucEkrani(el, g) {
           <p class="muted small">Mavi: öğrencinin el yazısı (basılı yazıdan ayrıldı). Yeşil kutu: doğru işaret · kırmızı: yanlış işaret · kesikli yeşil: doğru şık · sarı: bakılacak.</p></div>
         <div class="card"><div class="tablewrap"><table><tr><th>Soru</th><th>İşaret</th><th>Doğru</th><th>Sonuç</th><th>İşlem</th></tr>
           ${satirlar.map((r, i) => {
-            const kz = kazanimBul(r.q.kazanimKod);
+            const kz = kazanimBul(r.q.kazanimKod, p.ornek);
             return `<tr><td><b>${r.no}</b>${r.q.kazanimKod || r.q.konu ? `<br><span class="muted small">${esc(r.q.kazanimKod || "")} ${esc(r.q.konu || kz?.konu || "")}</span>` : ""}</td>
               <td>${r.isaret ? `<b>${r.isaret}</b> <span class="muted small" title="İşaretin bu şıkta yoğunlaşma oranı">%${Math.round(r.pay * 100)}</span>` : r.durum === "multi" ? "Birden fazla" : "–"}</td>
               <td>${r.anahtarHarf ? `<b>${r.anahtarHarf}</b>${r.anahtarKaynak === "cogunluk" ? ` <span class="muted small" title="Öğrenci çoğunluğundan">(ç)</span>` : ""}` : "?"}</td>
@@ -1732,7 +1806,7 @@ EKRAN.analiz = (el) => {
     const odevler = list("odevler", (o) => o.sinifId === ogr.sinifId).sort((a, b) => (b.sonTarih || "9999").localeCompare(a.sonTarih || "9999") || b.id - a.id);
     const durumlar = odevler.map((o) => ({ o, ...odevDurumu(o, ogr.id) }));
     govde = `
-      <h2 style="margin-top:6px">${esc(ogrAd(ogr))} <span class="muted small">${esc(ogr.no || "")} · ${esc(D.siniflar.get(ogr.sinifId)?.ad || "")}</span></h2>
+      <h2 style="margin-top:6px">${esc(ogrAd(ogr))} <span class="muted small">${esc(ogr.no || "")} · ${esc(sinifAdi(D.siniflar.get(ogr.sinifId)))}</span></h2>
       <div class="stats"><div class="stat"><b>${durumlar.filter((d) => ["yapti", "gec", "eksik"].includes(d.durum)).length}/${odevler.length}</b>Yapılan ödev</div>
         <div class="stat"><b>${c.dogru}</b>Doğru</div><div class="stat"><b>${c.yanlis}</b>Yanlış</div><div class="stat"><b>${c.bos}</b>Boş</div><div class="stat"><b>${c.islemsiz}</b>İşlemsiz doğru</div></div>
       <div class="card"><h2>Eksik olduğu kazanımlar</h2>
@@ -1801,7 +1875,7 @@ EKRAN.sinifanaliz = (el) => {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t1), "Ödev durumu");
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t2), "Kazanımlar");
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t3), "Öğrenci x kazanım (%)");
-    XLSX.writeFile(wb, `Odev_Kontrol_${s.ad}.xlsx`);
+    XLSX.writeFile(wb, `Odev_Kontrol_${s.ad}${s.ornek ? "_ornek" : ""}.xlsx`);
   });
 };
 

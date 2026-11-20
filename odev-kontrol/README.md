@@ -19,6 +19,29 @@ Kurulum ve internet gerekmez; kütüphaneler `vendor/` klasöründe durur. Sağ 
 
 Veriler o bilgisayardaki tarayıcının içinde saklanır. **Ayarlar** sekmesinden düzenli yedek alın.
 
+## Örnek verilerle dene 🎈
+
+Ana Sayfa'daki **✨ Örnek verilerle dene** düğmesi programı tanımak için hazır bir deneme yükler:
+
+- 8-A sınıfı (5 öğrenci)
+- 5 Teknoloji ve Tasarım kazanımı
+- "Fikrî Haklar – Test 1" ödevi: boş sayfa, cevap anahtarı ve kazanım kodları
+- 4 öğrencinin ödev fotoğrafı
+
+Fotoğraflar programın kendi okuma motoruyla, sizin fotoğraflarınız gibi okunur; yaklaşık 15 saniye sürer. Sonra Ödev Kontrol ekranı açılır. Beklenen sonuçlar:
+
+- Ali: 8/8
+- Buse: 5 doğru, 3 yanlış
+- Can: 4 doğru, 4 boş (2'si işlemsiz)
+- Deniz: boş sayfa
+- Ece: yapmadı
+
+**Örnekler ayrı durur:**
+
+- "(örnek)" diye işaretlenir.
+- Kendi Excel'inizi yükleyince örnekler silinmez ve sizin kayıtlarınızla karışmaz; aynı sınıf adı ya da aynı kazanım kodu olsa bile.
+- **Örnekleri kaldır** yalnızca örnekleri siler.
+
 ## Kullanım sırası
 
 1. **Öğrencileri yükle** (Ana Sayfa 1. adım ya da Öğrenciler sekmesi): Öğrenci listesinin Excel'ini seçin. Sütunlar kendiliğinden tanınır; K12 listeleri de olur.

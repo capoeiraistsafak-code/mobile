@@ -60,6 +60,24 @@ for (const [ad, , f] of OGRENCILER) {
   fs.writeFileSync(path.join(OUT, "Ornek_Ogrenci_Fotograflari", ad), await photograph(await renderPage(layout, ink), 900 + ad.length, 1));
 }
 
+// --- Programın "Örnek verilerle dene" düğmesi için gömülü örnekler (vendor/ornek-veri.js) ---
+const sharp = (await import("sharp")).default;
+const kucuk = async (buf) => (await sharp(buf).resize({ width: 1800, height: 1800, fit: "inside" }).jpeg({ quality: 82 }).toBuffer()).toString("base64");
+const NO = { "101.jpg": "101", "Buse Er.jpg": "102", "IMG-20261120-WA0012.jpg": "103", "IMG-20261120-WA0013.jpg": "104" };
+const veri = {
+  bosSayfa: await kucuk(fs.readFileSync(path.join(OUT, "Ornek_Bos_Sayfa_Foto.jpg"))),
+  anahtar: ANAHTAR,
+  kodlar: SORULAR.map((q) => q.kod),
+  fotolar: [],
+};
+for (const [ad] of OGRENCILER) veri.fotolar.push({ dosya: ad, no: NO[ad], b64: await kucuk(fs.readFileSync(path.join(OUT, "Ornek_Ogrenci_Fotograflari", ad))) });
+fs.writeFileSync(
+  "odev-kontrol/vendor/ornek-veri.js",
+  "// Ana Sayfa'daki \"Örnek verilerle dene\" için gömülü örnekler (test/ogretici-uret.mjs üretir).\n" +
+    "// Teknoloji ve Tasarım 8. sınıf: boş test sayfası, anahtar, kazanım kodları, 4 öğrenci fotoğrafı.\n" +
+    "window.ORNEK_VERI = " + JSON.stringify(veri) + ";\n"
+);
+
 fs.writeFileSync(
   path.join(OUT, "BENI_OKU.txt"),
   `ÖĞRETİCİ KLASÖRÜ
