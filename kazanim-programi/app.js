@@ -21,7 +21,7 @@ derinDondur(VARSAYILAN_SEVIYELER); derinDondur(VARSAYILAN_KURUMLAR);
 let KURUMLAR = [];   // = S.kurumlar (kurumlariYukle ile)
 let KURUM = {};
 // Konu başarısına göre durum ve soru çözme önerisi (Yedek / Ayarlar sekmesinden değiştirilebilir)
-const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, soruKazanim: 20, tekrarOran: 50, tekrarEnAz: 5, genelKonuBasi: 3, genelEnAz: 10, analizSinavSayisi: 1, koyuMod: false, animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
+const VARSAYILAN_AYARLAR = { esikEksik: 50, esikIyi: 80, soruEksik: 40, soruOrta: 20, soruKazanim: 20, tekrarOran: 50, tekrarEnAz: 5, genelKonuBasi: 3, genelEnAz: 10, analizSinavSayisi: 1, koyuMod: false, dinlenmeAcik: true, dinlenmeGunleri: [0], animasyon: true, animasyonAralik: 5, ozelOyun: true, ozelSure: 10 };
 const VARSAYILAN_DERSLER = [
   'Türkçe', 'Matematik', 'Fen Bilimleri', 'T.C. İnkılap Tarihi ve Atatürkçülük', 'Din Kültürü ve Ahlak Bilgisi',
   'İngilizce', 'Sosyal Bilgiler', 'Türk Dili ve Edebiyatı', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya',
@@ -2110,7 +2110,11 @@ function planDialog(o, secili, konuBazli) {
       <label>Günde en fazla yeni ${birim}<input id="pGunluk" type="number" min="1" max="20" value="${konuBazli ? 2 : 3}"></label>
       <label class="cb"><input type="checkbox" id="pKonu" checked> Konu tekrarı görevi ekle</label>
       <label class="cb"><input type="checkbox" id="pTekrar" checked> 3 gün sonra tekrar testi ekle</label>
-      <label class="cb"><input type="checkbox" id="pPazar" checked> Pazar günü dinlenme</label>
+      <div class="dinlenme">
+        <label class="cb"><input type="checkbox" id="pDinlenme" ${S.ayarlar.dinlenmeAcik !== false ? 'checked' : ''}> Dinlenme ekle</label>
+        <label class="dinlenme-sayi">Haftada<select id="pDinlenmeSayi">${[1, 2, 3].map(n => opt(n, n + ' gün', n === dinlenmeGunleri().length)).join('')}</select>dinlenme</label>
+        <div id="pDinlenmeGunler" class="dinlenme-gunler"></div>
+      </div>
       <label class="cb"><input type="checkbox" id="pGenel" checked> Son gün genel tekrar</label>
     </div>
     <label class="muted small">Öğretmen notu (planın altına yazılır)<textarea id="pNot" rows="2" placeholder="ör. Yanlış yaptığın soruları deftere yazıp tekrar çöz."></textarea></label>`, [
@@ -2123,9 +2127,13 @@ function planDialog(o, secili, konuBazli) {
           gun: Math.max(1, Math.min(90, parseInt($('#pGun').value, 10) || 7)),
           soru: konuBazli ? S.ayarlar.soruOrta : Math.max(0, parseInt($('#pSoru')?.value, 10) || 0),
           gunluk: Math.max(1, parseInt($('#pGunluk').value, 10) || 3),
-          konu: $('#pKonu').checked, tekrar: $('#pTekrar').checked, pazar: $('#pPazar').checked, genel: $('#pGenel').checked,
+          konu: $('#pKonu').checked, tekrar: $('#pTekrar').checked, genel: $('#pGenel').checked,
+          dinlenme: $('#pDinlenme').checked ? $$('#pDinlenmeGunler select').map(x => +x.value) : [],
           not: $('#pNot').value.trim(),
         };
+        if (new Set(ayar.dinlenme).size !== ayar.dinlenme.length) { toast('Aynı günü iki kez seçtin. Her dinlenme için farklı bir gün seç.', 3500); return false; }
+        S.ayarlar.dinlenmeAcik = $('#pDinlenme').checked;            // bir sonraki plan için hatırlanır
+        if (ayar.dinlenme.length) S.ayarlar.dinlenmeGunleri = ayar.dinlenme;
         const plan = planOlustur(o, secili, ayar);
         S.planlar.push(plan);
         kaydet(); ciz();
@@ -2134,14 +2142,38 @@ function planDialog(o, secili, konuBazli) {
       },
     },
   ]);
+  dinlenmeOlaylari();
 }
 
+// Dinlenme günleri (0 = Pazar … 6 = Cumartesi). Haftada 1, 2 ya da 3 gün; her biri ayrı ayrı seçilir.
+const HAFTA_GUNLERI = [[1, 'Pazartesi'], [2, 'Salı'], [3, 'Çarşamba'], [4, 'Perşembe'], [5, 'Cuma'], [6, 'Cumartesi'], [0, 'Pazar']];
+const DINLENME_ONERI = { 1: [0], 2: [6, 0], 3: [3, 6, 0] };
+function dinlenmeGunleri() {
+  const l = Array.isArray(S.ayarlar.dinlenmeGunleri) ? S.ayarlar.dinlenmeGunleri.filter(g => g >= 0 && g <= 6) : [];
+  return l.length && l.length <= 3 ? l : [0];
+}
+/** n tane "dinlenme günü" seçim kutusu çizer; önceden seçilenler korunur, eksikler önerilen günlerle dolar. */
+function dinlenmeKutulariniCiz(n, mevcut) {
+  const alan = $('#pDinlenmeGunler');
+  if (!alan) return;
+  const gunler = mevcut.slice(0, n);
+  for (const g of DINLENME_ONERI[n]) if (gunler.length < n && !gunler.includes(g)) gunler.push(g);
+  for (const [g] of HAFTA_GUNLERI) if (gunler.length < n && !gunler.includes(g)) gunler.push(g);
+  alan.innerHTML = gunler.map((g, i) => `<label>${n > 1 ? `${i + 1}. dinlenme günü` : 'Dinlenme günü'}<select data-dinlenme="${i}">${HAFTA_GUNLERI.map(([d, ad]) => opt(d, ad, d === g)).join('')}</select></label>`).join('');
+}
+function dinlenmeOlaylari() {
+  const goster = () => { const on = $('#pDinlenme').checked; $('.dinlenme-sayi').hidden = !on; $('#pDinlenmeGunler').hidden = !on; };
+  dinlenmeKutulariniCiz(dinlenmeGunleri().length, dinlenmeGunleri());
+  goster();
+  $('#pDinlenme').onchange = goster;
+  $('#pDinlenmeSayi').onchange = e => dinlenmeKutulariniCiz(+e.target.value, $$('#pDinlenmeGunler select').map(x => +x.value));
+}
 function planOlustur(o, secili, a) {
   // Çalışma günlerini belirle
   const gunler = [];
   for (let i = 0; gunler.length < a.gun && i < a.gun * 2 + 7; i++) {
     const t = addDays(a.baslangic, i);
-    if (a.pazar && new Date(t + 'T00:00:00').getDay() === 0) continue;
+    if ((a.dinlenme || []).includes(new Date(t + 'T00:00:00').getDay())) continue;   // dinlenme günü
     gunler.push(t);
   }
   const genelGun = a.genel && gunler.length >= 3 ? gunler.length - 1 : -1;

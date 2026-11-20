@@ -520,3 +520,10 @@ nav button.cikis-btn:hover { background: color-mix(in srgb, var(--danger) 12%, t
 input.kz-tamam { animation: kzTamam 1.2s ease-out; }
 @keyframes kzTamam { 0% { box-shadow: 0 0 0 3px var(--ok-line); background: var(--ok-bg); } 100% { box-shadow: none; } }
 input.kz-bekliyor { border-color: var(--warn-line); background: var(--warn-bg); }
+/* Çalışma planında dinlenme günleri */
+.plan-ayar .dinlenme { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; background: var(--th); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.dinlenme .dinlenme-sayi { display: inline-flex; flex-direction: row; align-items: center; gap: 6px; font-weight: 700; color: var(--text); font-size: 14px; }
+.dinlenme .dinlenme-sayi select { width: auto; }
+.dinlenme-gunler { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.dinlenme-gunler label { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.dinlenme-gunler select { width: auto; }
