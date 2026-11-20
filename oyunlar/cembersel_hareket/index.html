@@ -49,7 +49,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 #ciz.acik{pointer-events:auto;cursor:crosshair}
 #ciz.lazer{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='7' fill='%23ff2d2d' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 12 12,crosshair}
 #bCiz.on{background:#ec4899;border-color:#ec4899;color:#fff}
-#palet{position:absolute;left:516px;top:130px;z-index:7;display:flex;align-items:center;gap:6px;background:rgba(36,41,52,.97);border:3px solid #ec4899;border-radius:20px;padding:8px 12px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+#palet{position:absolute;left:516px;top:130px;z-index:7;display:flex;flex-wrap:wrap;width:640px;align-items:center;gap:6px;background:rgba(36,41,52,.97);border:3px solid #ec4899;border-radius:20px;padding:8px 12px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
 #palet button{height:66px;min-width:58px;border-radius:14px;background:#3a4150;color:#fff;font:800 15px/1.1 Inter;border:2px solid #556070;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px}
 #palet button i{font-style:normal;font-size:26px;line-height:1}
 #palet button.on{background:#ec4899;border-color:#fff;color:#fff}
@@ -57,7 +57,14 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .renk.on{border-color:#fff;box-shadow:0 0 0 3px #ec4899}
 #palet .ayr{width:2px;height:50px;background:#556070}
 #palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
-#durRozet.pal{top:226px}
+#durRozet.pal{top:300px}
+#palet .sat{flex-basis:100%;height:0}
+#palet .mod{display:flex;border:2px solid #556070;border-radius:16px;overflow:hidden;opacity:.45}
+#palet .mod.akt{opacity:1;border-color:#f472b6}
+#palet .mod button{border:none;border-radius:0;height:62px;min-width:86px;background:#2a303c}
+#palet .mod button.on{background:#f472b6;color:#1f232c}
+#palet .etk{font:800 15px Inter;color:#cbd5e1;padding:0 2px}
+#ciz.silgi{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='24' cy='24' r='21' fill='rgba(255,255,255,.25)' stroke='white' stroke-width='3'/%3E%3C/svg%3E") 24 24,cell}
 #durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
 #bNot{width:auto;padding:0 18px;gap:8px;font:800 28px Inter;background:#1e3a8a!important;border-color:#60a5fa!important;color:#fff}
 #bNot.acik{background:#60a5fa!important;color:#0b1b3a!important}
@@ -185,14 +192,17 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <div id="palet" class="hide">
     <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏</i>Kalem</button>
     <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
-    <span class="ayr"></span>
+    <button id="pSilgi" title="Silgi (S)"><i>⌀</i>Silgi</button>
+    <span class="etk">Silgi:</span>
+    <div class="mod" id="pMod"><button id="pParca" class="on" title="Silginin değdiği kısmı siler"><i>✂</i>Parça parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
+    <button id="pTem" title="Bütün çizimleri sil"><i>⌫</i>Temizle</button>
+    <span class="sat"></span>
     <button class="renk on" data-r="#ef4444" style="background:#ef4444" title="Kırmızı"></button>
     <button class="renk" data-r="#facc15" style="background:#facc15" title="Sarı"></button>
     <button class="renk" data-r="#3b82f6" style="background:#3b82f6" title="Mavi"></button>
     <button class="renk" data-r="#22c55e" style="background:#22c55e" title="Yeşil"></button>
     <button class="renk" data-r="#ffffff" style="background:#ffffff" title="Beyaz"></button>
     <span class="ayr"></span>
-    <button id="pTem" title="Çizimleri sil"><i>⌫</i>Temizle</button>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
   </div>
@@ -238,7 +248,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="cards"></div>
     <div class="m-not">
       <div class="bil">Doğru cevapta devam · Yanlışta önce çözüm · Sahneyi sürükleyip döndürün, tekerlek / iki parmakla yakınlaştırın</div>
-      <div class="ks"><span><kbd>1</kbd>–<kbd>4</kbd> şık seç</span><span><kbd>Boşluk</kbd> devam</span><span><kbd>P</kbd> duraklat</span><span><kbd>O</kbd> ortala</span><span><kbd>K</kbd> kalem</span><span><kbd>L</kbd> lazer</span><span><kbd>N</kbd> notlar</span><span><kbd>↑</kbd><kbd>↓</kbd> kaydır</span><span><kbd>−</kbd><kbd>+</kbd> hız</span><span><kbd>M</kbd> ses</span><span><kbd>F</kbd> tam ekran</span></div>
+      <div class="ks"><span><kbd>1</kbd>–<kbd>4</kbd> şık seç</span><span><kbd>Boşluk</kbd> devam</span><span><kbd>P</kbd> duraklat</span><span><kbd>O</kbd> ortala</span><span><kbd>K</kbd> kalem</span><span><kbd>L</kbd> lazer</span><span><kbd>S</kbd> silgi</span><span><kbd>N</kbd> notlar</span><span><kbd>↑</kbd><kbd>↓</kbd> kaydır</span><span><kbd>−</kbd><kbd>+</kbd> hız</span><span><kbd>M</kbd> ses</span><span><kbd>F</kbd> tam ekran</span></div>
     </div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
@@ -1022,6 +1032,7 @@ addEventListener('keydown', e => {
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
   if (GAME.mode === 'game' && k === 'o') return ortala(false);
   if (GAME.mode === 'game' && k === 'k') return cizAc();
+  if (GAME.mode === 'game' && k === 's' && CZ.acik) { CZ.arac = 'silgi'; return cizAracGuncelle(); }
   if (GAME.mode === 'game' && k === 'l') { CZ.arac = 'lazer'; if (!CZ.acik) cizAc(true); return cizAracGuncelle(); }
   if (k === 'escape' && CZ.acik) return cizAc(false);
   if (GAME.mode === 'game' && k === 'n') return notAc();
@@ -1134,7 +1145,7 @@ MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (
 // ======================= ÇİZİM: KALEM / LAZER =======================
 // Kalem çizimi kalır; lazer çizimi 1,2 s sonra solar. Animasyon yeniden başlayınca (Devam / Başlat / sonraki adım) bütün çizimler silinir.
 // "Yalnız kalem" açıkken parmak/el (touch) çizmez; tablet kalemi ve fare çizer.
-const CZ = { acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
+const CZ = { silMod: 'parca', silen: new Map(), acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
 try { CZ.yalnizKalem = localStorage.getItem('ch_yalnizkalem') === '1'; } catch (e) {}
 const cizCtx = $('ciz').getContext('2d');
 const LAZER_OMUR = 1.2, LAZER_SOL = 0.6;
@@ -1146,7 +1157,9 @@ function cizAc(ac2) {
   cizAracGuncelle();
 }
 function cizAracGuncelle() {
-  $('pKalem').classList.toggle('on', CZ.arac === 'kalem'); $('pLazer').classList.toggle('on', CZ.arac === 'lazer');
+  $('pKalem').classList.toggle('on', CZ.arac === 'kalem'); $('pLazer').classList.toggle('on', CZ.arac === 'lazer'); $('pSilgi').classList.toggle('on', CZ.arac === 'silgi');
+  $('pParca').classList.toggle('on', CZ.silMod === 'parca'); $('pTum').classList.toggle('on', CZ.silMod === 'tum'); $('pMod').classList.toggle('akt', CZ.arac === 'silgi');
+  $('ciz').classList.toggle('silgi', CZ.arac === 'silgi');
   document.querySelectorAll('#palet .renk').forEach(b => b.classList.toggle('on', b.dataset.r === CZ.renk));
   $('pDok').classList.toggle('on', CZ.yalnizKalem); $('pDok').innerHTML = '<i>✋</i>Yalnız kalem<br>' + (CZ.yalnizKalem ? 'AÇIK' : 'kapalı');
   $('ciz').classList.toggle('lazer', CZ.arac === 'lazer');
@@ -1157,12 +1170,38 @@ $('ciz').addEventListener('pointerdown', e => {
   if (!CZ.acik) return;
   if (CZ.yalnizKalem && e.pointerType === 'touch') return;                 // avuç/parmak yok sayılır
   e.preventDefault(); try { $('ciz').setPointerCapture(e.pointerId); } catch (er) {}
+  if (CZ.arac === 'silgi') { const q = cizNokta(e); CZ.silen.set(e.pointerId, q); sil(q); return; }
   const c = { arac: CZ.arac, renk: CZ.arac === 'lazer' ? '#ff2d2d' : CZ.renk, k: CZ.arac === 'lazer' ? 7 : (e.pointerType === 'pen' ? 4 + 6 * (e.pressure || 0.5) : 6), n: [cizNokta(e)], t: performance.now() / 1000 };
   CZ.cizgiler.push(c); CZ.aktif.set(e.pointerId, c); CZ.kirli = true;
 });
-$('ciz').addEventListener('pointermove', e => { const c = CZ.aktif.get(e.pointerId); if (!c) return;
+$('ciz').addEventListener('pointermove', e => {
+  const sp = CZ.silen.get(e.pointerId);
+  if (sp) { const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : []; let son = sp;
+    for (const x of (ev.length ? ev : [e])) { const q = cizNokta(x), d = Math.hypot(q.x - son.x, q.y - son.y), n = Math.max(1, Math.ceil(d / 8));
+      for (let i = 1; i <= n; i++) sil({ x: son.x + (q.x - son.x) * i / n, y: son.y + (q.y - son.y) * i / n }); son = q; }
+    CZ.silen.set(e.pointerId, son); return; }
+  const c = CZ.aktif.get(e.pointerId); if (!c) return;
   const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; (ev.length ? ev : [e]).forEach(x => c.n.push(cizNokta(x))); c.t = performance.now() / 1000; CZ.kirli = true; });
-const cizBitir = e => { const c = CZ.aktif.get(e.pointerId); if (c) { c.t = performance.now() / 1000; CZ.aktif.delete(e.pointerId); } };
+// silgi: 'parca' → değdiği kısmı keser (çizgi parçalara ayrılır); 'tum' → değdiği çizginin tamamını siler
+const SIL_R = 22;
+function sik(c) { if (c.sik) return; const n = [c.n[0]];                // noktaları sıklaştır: kesme ve değme hassas olsun
+  for (let i = 1; i < c.n.length; i++) { const a = c.n[i - 1], b = c.n[i], d = Math.hypot(b.x - a.x, b.y - a.y), k = Math.max(1, Math.ceil(d / 4));
+    for (let j = 1; j <= k; j++) n.push({ x: a.x + (b.x - a.x) * j / k, y: a.y + (b.y - a.y) * j / k }); }
+  c.n = n; c.sik = true; }
+function sil(q) {
+  const yeni = []; let degisti = false;
+  for (const c of CZ.cizgiler) {
+    if (c.arac !== 'kalem') { yeni.push(c); continue; }
+    sik(c); const ic = c.n.map(p => Math.hypot(p.x - q.x, p.y - q.y) <= SIL_R + c.k / 2);
+    if (!ic.some(Boolean)) { yeni.push(c); continue; }
+    degisti = true; if (CZ.silMod === 'tum') continue;
+    let run = [];
+    c.n.forEach((p, i) => { if (!ic[i]) run.push(p); else { if (run.length > 1) yeni.push({ ...c, n: run, sik: true }); run = []; } });
+    if (run.length > 1) yeni.push({ ...c, n: run, sik: true });
+  }
+  if (degisti) { CZ.cizgiler = yeni; CZ.kirli = true; }
+}
+const cizBitir = e => { CZ.silen.delete(e.pointerId); const c = CZ.aktif.get(e.pointerId); if (c) { c.t = performance.now() / 1000; CZ.aktif.delete(e.pointerId); } };
 $('ciz').addEventListener('pointerup', cizBitir); $('ciz').addEventListener('pointercancel', cizBitir);
 $('ciz').addEventListener('contextmenu', e => e.preventDefault());
 function cizCiz() {
@@ -1189,6 +1228,9 @@ $('bCiz').onclick = () => { SFX.click(); cizAc(); };
 $('pKap').onclick = () => { SFX.click(); cizAc(false); };
 $('pKalem').onclick = () => { SFX.click(); CZ.arac = 'kalem'; cizAracGuncelle(); };
 $('pLazer').onclick = () => { SFX.click(); CZ.arac = 'lazer'; cizAracGuncelle(); };
+$('pSilgi').onclick = () => { SFX.click(); CZ.arac = 'silgi'; cizAracGuncelle(); };
+$('pParca').onclick = () => { SFX.click(); CZ.silMod = 'parca'; CZ.arac = 'silgi'; cizAracGuncelle(); };
+$('pTum').onclick = () => { SFX.click(); CZ.silMod = 'tum'; CZ.arac = 'silgi'; cizAracGuncelle(); };
 document.querySelectorAll('#palet .renk').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
 $('pTem').onclick = () => { SFX.click(); cizTemizle(); };
 $('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
