@@ -18,7 +18,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 #top{position:absolute;left:24px;right:24px;top:20px;height:100px;display:flex;align-items:center;gap:22px;background:#2a303c;border:3px solid #F5A300;border-radius:22px;padding:0 18px 0 22px;z-index:5}
 .pill{display:inline-block;background:#D62828;color:#fff;font:900 30px Inter;padding:8px 20px;border-radius:12px;white-space:nowrap}
 #tTitle{font:800 40px/1.1 Inter;color:#F5C400;white-space:nowrap}
-#tTask{flex:1;min-width:0;font:600 23px/1.22 Inter;color:#e5e7eb}
+#tTask{flex:1;min-width:0;font:600 23px/1.22 Inter;color:#e5e7eb;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#tTitle{overflow:hidden;text-overflow:ellipsis;max-width:520px}
 .tb{flex:none;width:76px;height:76px;border-radius:18px;background:#3a4150;color:#fff;font:700 36px Inter;display:flex;align-items:center;justify-content:center;border:2px solid #556070}
 .tb:active{transform:scale(.94)}
 
@@ -53,10 +54,12 @@ button{font-family:inherit;cursor:pointer;border:none}
 .nt-bas button{width:60px;height:60px;border-radius:14px;background:#0b1b3a;color:#fff;font:900 30px Inter;border:2px solid #60a5fa}
 .nt-ic{flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:16px 96px 22px 26px;scrollbar-color:#60a5fa #16213a}
 .nt-k{font:800 26px Inter;color:#93c5fd;margin:6px 0 8px;letter-spacing:.5px}
-.nt-m{display:flex;gap:14px;font:600 29px/1.38 Inter;color:#e5e7eb;margin-bottom:12px}
+.nt-m{display:flex;gap:14px;font:600 29px/1.42 Inter;color:#e5e7eb;padding:14px 0;border-bottom:2px solid #2f4a80}
+.nt-k+.nt-m{padding-top:6px}
+.nt-m:last-child{border-bottom:none}
 .nt-m::before{content:"";flex:none;width:12px;height:12px;margin-top:14px;border-radius:50%;background:#F5C400}
 .nt-m b{color:#F5C400}.nt-m .o{color:#fb923c;font-weight:800}.nt-m .r{color:#f87171;font-weight:800}.nt-m .g{color:#4ade80;font-weight:800}.nt-m .p{color:#c084fc;font-weight:800}
-.nt-svg{margin:6px 0 14px;background:#0f172a;border-radius:16px;padding:8px}
+.nt-svg{margin:12px 0 14px;background:#0f172a;border-radius:16px;padding:8px}
 #hizRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:5;background:rgba(10,12,18,.8);color:#8ec5ff;font:800 30px Inter;padding:8px 22px;border-radius:14px}
 #go{position:absolute;right:36px;bottom:24px;z-index:6;font:800 42px Inter;background:#22c55e;color:#0b2b16;border-radius:22px;padding:22px 44px;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:nabiz 1.4s infinite}
 @keyframes nabiz{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -100,6 +103,11 @@ button{font-family:inherit;cursor:pointer;border:none}
 #qnext{align-self:flex-end;font:800 40px Inter;background:#22c55e;color:#0b2b16;border-radius:20px;padding:18px 40px;animation:nabiz 1.4s infinite}
 
 /* matematik */
+.fm{display:inline-block;border:3px solid #F5C400;border-radius:14px;padding:2px 12px;margin:3px 2px;line-height:1.25;vertical-align:middle;background:rgba(245,196,0,.07)}
+#sol .fm{padding:0 10px;margin:2px 0}
+#sol .sl.yol .fm{font:700 40px/1.1 Caveat;color:#8ec5ff;padding:2px 10px}
+#board .gorev{font:700 25px/1.3 Inter;color:#fff;background:#1f232c;border-left:6px solid #D62828;border-radius:8px;padding:8px 12px;margin-bottom:10px;max-width:440px;white-space:normal}
+.nt-m .fm{font-weight:700}
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 4px;font-size:.82em}
 .fr>span:last-child{border-top:3px solid currentColor;padding-top:2px}
 .fr>span{padding:0 4px}
@@ -433,6 +441,7 @@ const orbit1 = a => V3(Math.cos(a) * R1, Y1, Math.sin(a) * R1), tang1 = a => V3(
 
 const M1 = {
   no: 1, icon: '🚀', name: 'Roketi hedefe gönder', group: G1,
+  kisa: 'Roketin hareketini hesaplayın, ipi keserek roketi hedefe gönderin.',
   task: 'İpe bağlı roketin hareketini hesaplayın, sonra ipi keserek roketi hedefe gönderin.',
   data: [['İp uzunluğu', 'r = 2 m'], ['Bir tur süresi', 'T = 2 s'], ['Masa', 'yatay, sürtünmesiz'], ['Alınacak değer', 'π = 3']],
   reset() { this.S = { a: Math.PI / 2, spin: false, arm: false, fly: -1, hit: false, v: false, av: false, w: '', vt: 'v', at: 'a', ht: 0 };
@@ -469,15 +478,15 @@ const M1 = {
     { do: S => { S.spin = true; }, sub: 'Roket bir turu 2 saniyede atıyor (her tur aynı sürede: düzgün çembersel hareket).', wait: 3.2 },
     { q: { t: `Roket bir turu <b>T = 2 s</b>'de atıyor. Roketin <b>açısal hızı (ω)</b> kaç rad/s?<br><small>(π = 3 alın)</small>`,
       o: ['3 rad/s', '6 rad/s', '1,5 rad/s', '12 rad/s'], lab: 'ω = ?', at: 'peg', f: ['r1r'],
-      s: [`Açısal hız: ω = ${F('2π', 'T')}`, `ω = ${F('2 · 3', '2')}`, `ω = <em>3 rad/s</em> ✓`],
+      s: [`Açısal hız: <span class="fm">ω = ${F('2π', 'T')}</span>`, `ω = ${F('2 · 3', '2')}`, `ω = <em>3 rad/s</em> ✓`],
       after: (S, M) => { S.w = 'ω = 3 rad/s'; board('Açısal hız', 'ω = 3 rad/s'); } } },
     { do: S => { S.v = true; S.vt = 'v = ?'; }, q: { t: `İp uzunluğu <b>r = 2 m</b>. Roketin <b>çizgisel hızı (v)</b> kaç m/s?`,
       o: ['6 m/s', '1,5 m/s', '12 m/s', '3 m/s'], f: ['r1v', 'r1r', 'r1w'],
-      s: [`Çizgisel hız: v = ω · r`, `v = 3 · 2`, `v = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
+      s: [`Çizgisel hız: <span class="fm">v = ω · r</span>`, `v = 3 · 2`, `v = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
       after: S => { S.vt = 'v = 6 m/s'; board('Çizgisel hız', 'v = 6 m/s'); } } },
     { do: S => { S.av = true; S.at = 'a = ?'; }, q: { t: `Roketin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
       o: ['18 m/s²', '12 m/s²', '3 m/s²', '36 m/s²'], f: ['r1a', 'r1f'],
-      s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')}`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')}`, `a = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`],
+      s: [`Merkezcil ivme: <span class="fm">a = ${F('v<sup>2</sup>', 'r')}</span>`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')}`, `a = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`],
       after: S => { S.at = 'a = 18 m/s²'; board('Merkezcil ivme', 'a = 18 m/s²'); } } },
     { q: { t: `İp koparsa roket hangi yolu izler?`,
       f: ['r1v'], o: ['Teğet boyunca düz gider', 'Merkeze doğru düşer', 'Merkezden dışarı doğru kaçar', 'Çember çizmeye devam eder'],
@@ -513,6 +522,7 @@ tag('c2m', 'merkez', '#F5C400', '#1f232c'); tag('c2t', '', '#F5C400', '#fff', tr
 
 const M2 = {
   no: 2, icon: '🏎️', name: 'Viraj yarışı', group: G2,
+  kisa: 'Virajdaki hareketi hesaplayın, kırmızı arabanın tur süresini ölçün.',
   task: 'Üç araba aynı hızla dönüyor. Virajdaki hareketlerini hesaplayın, kırmızı arabanın tur süresini ölçün.',
   data: [['Üç arabanın hızı', 'v = 10 m/s'], ['Yarıçaplar', 'r = 10 · 20 · 30 m'], ['Alınacak değer', 'π = 3']],
   qp(at) { return LANES[at].car.position.clone().add(V3(0, 1.2, 0)); },
@@ -541,7 +551,7 @@ const M2 = {
     { do: S => { S.run = true; }, sub: 'Arabalar aynı çizgisel hızla (v = 10 m/s) dönüyor. Hareketlerini izleyin.', wait: 4.5 },
     { q: { t: `Üç arabanın hızı aynı (v = 10 m/s). Hangi arabanın <b>açısal hızı (ω)</b> en büyüktür?`,
       o: ['Kırmızı (r = 10 m)', 'Yeşil (r = 20 m)', 'Mavi (r = 30 m)', 'Üçünün de eşit'], fixed: true,
-      s: [`Açısal hız: ω = ${F('v', 'r')}`, `Üçünde de v = 10 m/s aynı`, `r küçülünce ω <em>BÜYÜR</em> → Kırmızı ✓`],
+      s: [`Açısal hız: <span class="fm">ω = ${F('v', 'r')}</span>`, `Üçünde de v = 10 m/s aynı`, `r küçülünce ω <em>BÜYÜR</em> → Kırmızı ✓`],
       after: S => { S.wedge = true; } } },
     { sub: 'Renkli dilimler: son 2 saniyede taranan açı. Kırmızının dilimi en büyük.', wait: 2.5 },
     { q: { t: `Kırmızı arabanın (r = 10 m) <b>açısal hızı (ω)</b> kaç rad/s?`,
@@ -589,6 +599,7 @@ const W_SLOW = 1.6, W_FAST = 4, G_VIS = 9.8, TH_SEP = Math.acos(-W_SLOW * W_SLOW
 
 const M3 = {
   no: 3, icon: '🪣', name: 'Su dökülmesin!', group: G3,
+  kisa: 'Kovayı çevirin; suyun dökülmemesi için tepedeki hızı hesaplayın.',
   task: 'Kovayı dikey çemberde çevirin. Suyun dökülmemesi için tepedeki hızı hesaplayın.',
   data: [['Çember yarıçapı', 'r = 1 m'], ['Yer çekimi ivmesi', 'g = 10 m/s²']],
   qp() { return rimPos(Math.PI, RW).add(V3(0, 1.0, 0.9)); },
@@ -636,7 +647,7 @@ const M3 = {
       s: [`Tepki kuvveti (<span class="o">N</span>) yüzeye dik, yüzeyden cisme doğrudur`, `Tepede kova tabanı suyun ÜSTÜNDE → <span class="o">N</span> AŞAĞI`, `<span class="r">mg</span> ve <span class="o">N</span> ikisi de <em>MERKEZE</em>:`, `<span class="o">N</span> + <span class="r">mg</span> = m · ${F('v<sup>2</sup>', 'r')} ✓`] } },
     { q: { t: `Suyun dökülmemesi için kovanın tepedeki <b>en küçük hızı</b> kaç m/s olmalı?<br><small>(r = 1 m, g = 10 m/s²)</small>`,
       o: [`${SQ('10')} ≈ 3,2 m/s`, '10 m/s', '1 m/s', '100 m/s'], lab: 'v = ?', f: ['k3v', 'k3g'],
-      s: [`En küçük hızda tepki kuvveti <span class="o">N</span> = 0 olur:`, `m · g = m · ${F('v<sup>2</sup>', 'r')} → v = ${SQ('g · r')}`, `v = ${SQ('10 · 1')} = ${SQ('10')} ≈ <em>3,2 m/s</em> ✓`],
+      s: [`En küçük hızda tepki kuvveti <span class="o">N</span> = 0 olur:`, `m · g = m · ${F('v<sup>2</sup>', 'r')} → <span class="fm">v = ${SQ('g · r')}</span>`, `v = ${SQ('10 · 1')} = ${SQ('10')} ≈ <em>3,2 m/s</em> ✓`],
       after: () => board('Tepede en küçük hız', `v = ${SQ('g · r')} ≈ 3,2 m/s`) } },
     { do: S => { S.frz = false; S.mode = 'goal'; S.wmax = W_FAST; S.goal = 6 * TAU; }, sub: 'Görüntü devam ediyor: kova dönerek aşağıda duruyor…', until: S => S.mode === 'stop' },
     { do: S => { S.th = 0; }, q: { t: `Kova bu kez tepeden <b>v = 2 m/s</b> hızla geçecek şekilde çevrilecek. Su ne olur?`,
@@ -644,7 +655,7 @@ const M3 = {
       s: [`${F('v<sup>2</sup>', 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s²`, `4 &lt; g = 10 → yer çekimi fazla gelir`, `Su kovadan ayrılır → su <em>DÖKÜLÜR</em> ✗`, `(v = 2 m/s, gereken en küçük hızdan (3,2 m/s) küçük: kova YAVAŞ dönüyor)`] } },
     { sub: 'Kovayı tepede v = 2 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
     { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova dönüyor (tepede v = 2 m/s)…', until: S => S.spDone },
-    { sub: 'Su, tepeye varmadan kovadan ayrıldı ve döküldü. Yavaş dönerse v²/r < g → su DÖKÜLÜR.', go: '🪣 Kovayı doldur' },
+    { sub: 'Su, tepeye varmadan kovadan ayrıldı ve döküldü. Yavaş dönerse <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> &lt; g → su DÖKÜLÜR.', go: '🪣 Kovayı doldur' },
     { do: S => { S.slowRun = false; S.sp = null; S.spDone = 0; S.mode = 'stop'; S.th = 0; water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false); SFX.pour(); },
       sub: 'Kova yeniden dolduruldu.', wait: 1.3 },
     { q: { t: `Bu kez kova tepeden <b>v = 4 m/s</b> ile geçecek. Su dökülür mü?`,
@@ -652,7 +663,7 @@ const M3 = {
       s: [`${F('v<sup>2</sup>', 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s²`, `16 ≥ g = 10 ✓`, `4 m/s > 3,2 m/s (en küçük hız) → su kovada kalır, <em>DÖKÜLMEZ</em> ✓`] } },
     { sub: 'Kovayı tepede v = 4 m/s olacak şekilde çevirip görelim.', go: '▶ Kovayı çevir' },
     { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova dönüyor (tepede v = 4 m/s)…', until: S => S.mode === 'stop' },
-    { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, sub: 'Su hiç dökülmedi! Hızlı dönerse v²/r ≥ g → su DÖKÜLMEZ.', wait: 2 },
+    { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, sub: 'Su hiç dökülmedi! Hızlı dönerse <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ≥ g → su DÖKÜLMEZ.', wait: 2 },
   ],
 };
 
@@ -723,6 +734,7 @@ const vReal = y => Math.sqrt(Math.max(2 * 10 * (R_H0 - y) / U, 0));      // m/s 
 
 const M4 = {
   no: 4, icon: '🎢', name: 'Treni istasyona ulaştır', group: G4,
+  kisa: 'Treni döngüden geçirip istasyona ulaştırın; her durakta hesaplayın.',
   task: 'Lunapark trenini yokuştan bırakın, döngüden geçirip istasyona ulaştırın. Her durakta hesabı yapın.',
   data: [['Başlangıç yüksekliği', 'h = 45 m'], ['Döngü yarıçapı', 'r = 10 m'], ['Yer çekimi ivmesi', 'g = 10 m/s²'], ['Sürtünme', 'yok']],
   qp(at) { return at === 'yay' ? V3(R_WALL - 0.7, R_TY + 1.3, -R_Z) : wagon.position.clone().add(V3(1.4, 1.0, 0.9)); },
@@ -787,15 +799,15 @@ const M4 = {
   go(S, stop, goal) { S.stop = stop; S.goal = goal; S.run = true; },
   steps: [
     { sub: 'Tren h = 45 m yükseklikte, durgun. Başlat\'a basın: tren yokuştan inecek.', go: '▶ Başlat' },
-    { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Tren durgun bırakıldı: potansiyel enerji (m·g·h) → kinetik enerji (½·m·v²)', until: S => !S.run },
+    { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Tren durgun bırakıldı: potansiyel enerji (m · g · h) → kinetik enerji (<span class="fr"><span>1</span><span>2</span></span> · m · v<sup>2</sup>)', until: S => !S.run },
     { do: S => { S.vlab = 'v = ?'; S.alab = 'a'; }, sub: 'Döngünün dibi. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tren h = 45 m yükseklikten durgun bırakıldı. Döngünün dibinde <b>hızı (v)</b> kaç m/s?<br><small>(Sürtünme yok, g = 10 m/s²)</small>`,
       o: ['30 m/s', '45 m/s', '900 m/s', '15 m/s'], f: ['t4v', 't4h'],
-      s: [`Enerji korunur: m · g · h = ${F('1', '2')} · m · v<sup>2</sup>`, `v = ${SQ('2 · g · h')} = ${SQ('2 · 10 · 45')}`, `v = ${SQ('900')} = <em>30 m/s</em> ✓`],
+      s: [`Enerji korunur: <span class="fm">m · g · h = ${F('1', '2')} · m · v<sup>2</sup></span>`, `v = ${SQ('2 · g · h')} = ${SQ('2 · 10 · 45')}`, `v = ${SQ('900')} = <em>30 m/s</em> ✓`],
       after: S => { S.vlab = 'v = 30 m/s'; board('Dipte hız', 'v = 30 m/s'); } } },
     { q: { t: `Döngünün yarıçapı r = 10 m. Dipte trenin <b>açısal hızı (ω)</b> kaç rad/s?`,
       o: ['3 rad/s', '300 rad/s', '0,3 rad/s', '30 rad/s'], lab: 'ω = ?', f: ['t4v', 't4r'],
-      s: [`Açısal hız: ω = ${F('v', 'r')}`, `ω = ${F('30', '10')} = <em>3 rad/s</em> ✓`],
+      s: [`Açısal hız: <span class="fm">ω = ${F('v', 'r')}</span>`, `ω = ${F('30', '10')} = <em>3 rad/s</em> ✓`],
       after: () => board('Dipte açısal hız', 'ω = 3 rad/s') } },
     { do: S => { S.alab = 'a = ?'; }, q: { t: `Dipte trenin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
       o: ['90 m/s²', '9 m/s²', '30 m/s²', '3 m/s²'], f: ['t4a', 't4v', 't4r'],
@@ -803,7 +815,7 @@ const M4 = {
       after: S => { S.alab = 'a = 90 m/s²'; board('Dipte merkezcil ivme', 'a = 90 m/s²'); } } },
     { q: { t: `Dipte trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
       o: ['0', '3 rad/s²', '9 rad/s²', '1 rad/s²'], lab: 'α = ?', f: ['t4n', 't4g', 't4m'],
-      s: [`Dipte <span class="r">mg</span> ve <span class="o">N</span> dikey: ikisi de merkez doğrultusunda`, `Teğet yönde kuvvet yok → teğetsel ivme a<sub>t</sub> = 0`, `Açısal ivme: α = ${F('a<sub>t</sub>', 'r')} = <em>0</em> ✓`, `O an hız ne artar ne azalır`],
+      s: [`Dipte <span class="r">mg</span> ve <span class="o">N</span> dikey: ikisi de merkez doğrultusunda`, `Teğet yönde kuvvet yok → teğetsel ivme a<sub>t</sub> = 0`, `Açısal ivme: <span class="fm">α = ${F('a<sub>t</sub>', 'r')} = <em>0</em> ✓</span>`, `O an hız ne artar ne azalır`],
       after: () => board('Dipte açısal ivme', 'α = 0') } },
     { sub: 'Tren döngüye girecek ve çeyrek turda (yan noktada) duracak.', go: '▶ Treni sür' },
     { do: S => M4.go(S, 'side', ROLL.sSide), sub: 'Tren döngüde yükseliyor…', until: S => !S.run },
@@ -824,18 +836,18 @@ const M4 = {
       s: [`a = ${F('v<sup>2</sup>', 'r')} = ${F('500', '10')}`, `a = <em>50 m/s²</em> (aşağı, merkeze) ✓`, `Tepede v küçüldü → a da <em>KÜÇÜLDÜ</em> (90 → 50)`],
       after: S => { S.alab = 'a = 50 m/s²'; board('Tepede merkezcil ivme', 'a = 50 m/s²'); } } },
     { q: { t: `Tren tepede ters duruyor. Raydan <b>düşer mi?</b>`,
-      f: ['t4n', 't4g', 't4a'], o: ['Düşmez, çünkü v²/r = 50 ≥ g = 10', 'Düşer, çünkü tren ters dönmüş', 'Düşer, çünkü hızı azaldı', 'Düşmez, çünkü tepede ağırlığı yok'],
-      s: [`Düşmeme şartı: ${F('v<sup>2</sup>', 'r')} ≥ g`, `50 ≥ 10 ✓ → ray treni iter (<span class="o">N</span> > 0)`, `<span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`, `Ray trenin ÜSTÜNDE → <span class="o">N</span> AŞAĞI (yüzeyden trene)`] } },
+      f: ['t4n', 't4g', 't4a'], o: ['Düşmez, çünkü <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 50 ≥ g = 10', 'Düşer, çünkü tren ters dönmüş', 'Düşer, çünkü hızı azaldı', 'Düşmez, çünkü tepede ağırlığı yok'],
+      s: [`Düşmeme şartı: <span class="fm">${F('v<sup>2</sup>', 'r')} ≥ g</span>`, `50 ≥ 10 ✓ → ray treni iter (<span class="o">N</span> > 0)`, `<span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`, `Ray trenin ÜSTÜNDE → <span class="o">N</span> AŞAĞI (yüzeyden trene)`] } },
     { sub: 'Tren döngüden çıkıp istasyona yaklaşacak.', go: '▶ Treni sür' },
     { do: S => M4.go(S, 'pre', ROLL.sPre), sub: 'Tren döngüden çıktı, düz yolda ilerliyor…', until: S => !S.run },
     { do: S => { S.m = true; }, sub: 'İstasyon girişi. Tren durduruldu. Durmak için yaya çarpacak.', wait: 0.8 },
     { q: { t: `Tren (<b>m = 200 kg</b>, <b>v = 30 m/s</b>) istasyondaki yaya çarpacak. Yay <b>x = 3 m</b> sıkışıp treni durduracak. <b>Yay sabiti (k)</b> kaç N/m?`,
       o: ['20 000 N/m', '2 000 N/m', '600 N/m', '60 000 N/m'], lab: 'k = ?', at: 'yay', f: ['t4k'],
-      s: [`Kinetik enerji yayda depolanır:`, `${F('1', '2')} · m · v<sup>2</sup> = ${F('1', '2')} · k · x<sup>2</sup>`, `k = ${F('m · v<sup>2</sup>', 'x<sup>2</sup>')} = ${F('200 · 900', '9')} = <em>20 000 N/m</em> ✓`],
+      s: [`Kinetik enerji yayda depolanır:`, `<span class="fm">${F('1', '2')} · m · v<sup>2</sup> = ${F('1', '2')} · k · x<sup>2</sup></span>`, `k = ${F('m · v<sup>2</sup>', 'x<sup>2</sup>')} = ${F('200 · 900', '9')} = <em>20 000 N/m</em> ✓`],
       after: () => board('Yay sabiti', 'k = 20 000 N/m') } },
     { sub: 'Tren istasyona giriyor.', go: '🚉 İstasyona gir' },
     { do: S => { S.m = false; M4.go(S, 'end', ROLL.sContact); }, sub: 'Tren yaya yaklaşıyor…', until: S => !S.run },
-    { do: S => { S.tc = 0; }, sub: 'Yay sıkışıyor: ½·m·v² → ½·k·x² (yavaş çekim)', until: S => S.done },
+    { do: S => { S.tc = 0; }, sub: 'Yay sıkışıyor: <span class="fr"><span>1</span><span>2</span></span> · m · v<sup>2</sup> → <span class="fr"><span>1</span><span>2</span></span> · k · x<sup>2</sup> (yavaş çekim)', until: S => S.done },
     { do: S => { S.ok = 'Tren istasyona ulaştı ✓'; }, sub: 'Tren istasyona ulaştı! Kinetik enerji yayda DEPOLANDI. En çok sıkışma anında istasyon freni treni tuttu (fren olmasa yay treni geri iterdi). 🎉', wait: 2.6 },
   ],
 };
@@ -846,7 +858,12 @@ const MISSIONS = [M1, M2, M3, M4];
 const GAME = { M: null, i: -1, wait: null, timer: 0, q: null, first: 0, total: 0, qn: 0, mode: 'menu' };
 let done = {}; try { done = JSON.parse(localStorage.getItem('ch_yildiz2') || '{}'); } catch (e) {}
 const yildizKaydet = () => { try { localStorage.setItem('ch_yildiz2', JSON.stringify(done)); } catch (e) {} };
-function sub(t) { $('sub').innerHTML = t || ''; }
+function sub(t) { $('sub').innerHTML = t || ''; subSigdir(); }
+function subSigdir() {                                   // alt yazı taşmasın: en çok 2–3 satıra sığana kadar yazıyı küçült
+  const e = $('sub'); e.style.fontSize = ''; if (!e.innerHTML) return;
+  const q = e.classList.contains('q'), sinir = q ? 128 : 140; let fs = q ? 30 : 34;
+  while (e.offsetHeight > sinir && fs > 22) { fs -= 2; e.style.fontSize = fs + 'px'; }
+}
 function board(k, v) { const d = document.createElement('div'); d.className = 'row f'; d.innerHTML = `${k}: <b>${v}</b>`; const bf = $('bFound'); bf.appendChild(d); while (bf.children.length > 5) bf.removeChild(bf.firstChild); $('bFoundH').classList.remove('hide'); }
 function goBtn(label) { $('go').textContent = label; $('go').classList.remove('hide'); }
 
@@ -868,9 +885,9 @@ function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); ortala(true); SON_Q = null; notAc(false);
-  $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
-  $('board').innerHTML = `<h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
-  $('qc').classList.add('hide'); $('go').classList.add('hide'); sub(''); CAM.gvo = -200; CAM.vo = -200;
+  $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = '';
+  $('board').innerHTML = `<div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
+  $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
   const nq = M.steps.filter(s => s.q).length;
   overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px">GÖREV ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
     <div class="ov-s">${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶ Göreve başla</button></div>`);
@@ -901,7 +918,7 @@ function ask(q) {
   $('qt').innerHTML = q.t; $('fb').textContent = ''; $('fb').className = ''; $('sol').innerHTML = ''; $('qnext').classList.add('hide');
   $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => answer(+b.dataset.k));
-  $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); CAM.gvo = 170;
+  $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function answer(k) {
@@ -921,7 +938,7 @@ function answer(k) {
 }
 function qContinue() {
   const Q = GAME.q; if (!Q || !Q.answered || $('qnext').classList.contains('hide')) return; SFX.click();
-  GAME.q = null; $('qc').classList.add('hide'); $('sub').classList.remove('q'); CAM.gvo = -200;
+  GAME.q = null; $('qc').classList.add('hide'); $('sub').classList.remove('q'); subSigdir(); CAM.gvo = -200;
   if (Q.q.after) Q.q.after(GAME.M.S, GAME.M);
   next();
 }
@@ -1008,36 +1025,36 @@ const N_KURAL = `Tepki kuvveti (${O('N')}) yüzeye <b>diktir</b> ve <b>yüzeyden
 const N_CIFT = `${O('N')} ile ${K('mg')} etki-tepki çifti DEĞİLDİR. ${O('N')}'nin çifti cismin yüzeyi itmesi, ${K('mg')}'nin çifti cismin Dünya'yı çekmesidir; bu kuvvetler başka cisimlere etki eder.`;
 const NOTLAR = {
   1: [
-    [`Açısal hız (ω): birim zamanda taranan açı. Bir turda 2π radyan taranır → <b>ω = 2π / T</b>.`, `Düzgün çembersel harekette ω sabittir: roket her turu aynı sürede (2 s) atar.`, `Birim rad/s'dir (radyan birimsiz olduğu için 1/s de yazılabilir).`],
-    [`Çizgisel hız (${Y('v')}) her an çembere <b>TEĞETTİR</b>: roketin o anki hareket yönüdür.`, `Büyüklüğü <b>v = ω · r</b>: aynı ω'da merkezden uzak nokta aynı sürede daha çok yol alır.`, `Hızın BÜYÜKLÜĞÜ sabit kalır ama YÖNÜ sürekli değişir → hız vektörü değişir → ivme vardır.`],
-    [`Hızın yönü değiştiği için ivme vardır ve bu ivme <b>MERKEZE</b> doğrudur: merkezcil ivme, ${M_('a')} = v²/r.`, `Bu ivmeyi sağlayan kuvvet ipteki gerilmedir (${K('F')}): ip roketi merkeze doğru çeker. Newton'un 2. yasası: F = m · a.`, `Masa sürtünmesiz ve yatay: ${K('mg')} ile ${O('N')} düşeyde dengelenir, yatay harekete katkıları yoktur.`, `"Merkezkaç kuvveti" diye ayrı bir kuvvet yoktur; dışarı doğru itilme hissi <b>eylemsizlikten</b> gelir.`],
+    [`Açısal hız (ω): birim zamanda taranan açı. Bir turda 2π radyan taranır → <span class="fm">ω = <span class="fr"><span>2π</span><span>T</span></span></span>.`, `Düzgün çembersel harekette ω sabittir: roket her turu aynı sürede (2 s) atar.`, `Birim rad/s'dir (radyan birimsiz olduğu için 1/s de yazılabilir).`],
+    [`Çizgisel hız (${Y('v')}) her an çembere <b>TEĞETTİR</b>: roketin o anki hareket yönüdür.`, `Büyüklüğü <span class="fm">v = ω · r</span>: aynı ω'da merkezden uzak nokta aynı sürede daha çok yol alır.`, `Hızın BÜYÜKLÜĞÜ sabit kalır ama YÖNÜ sürekli değişir → hız vektörü değişir → ivme vardır.`],
+    [`Hızın yönü değiştiği için ivme vardır ve bu ivme <b>MERKEZE</b> doğrudur: merkezcil ivme, ${M_('a')} = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>.`, `Bu ivmeyi sağlayan kuvvet ipteki gerilmedir (${K('F')}): ip roketi merkeze doğru çeker. Newton'un 2. yasası: F = m · a.`, `Masa sürtünmesiz ve yatay: ${K('mg')} ile ${O('N')} düşeyde dengelenir, yatay harekete katkıları yoktur.`, `"Merkezkaç kuvveti" diye ayrı bir kuvvet yoktur; dışarı doğru itilme hissi <b>eylemsizlikten</b> gelir.`],
     [`İp kopunca ${K('F')} = 0 → yatayda net kuvvet sıfır olur.`, `Newton'un 1. yasası: net kuvvet sıfırsa cisim hızını (büyüklüğünü ve yönünü) korur.`, `Kopma anındaki hız <b>teğet</b> olduğu için roket teğet doğrultuda <b>düz</b> gider; merkezden dışarı doğru kaçmaz, merkeze de düşmez.`],
   ],
   2: [
-    [`Açısal hız <b>ω = v / r</b>. Hızlar (v) eşitse yarıçapı küçük olanın ω'sı büyüktür.`, `İç şeritteki araba aynı sürede daha büyük açı tarar (renkli dilimler).`],
-    [`ω = v / r = 10 / 10 = 1 rad/s → kırmızı araba saniyede 1 radyan (≈ 57°) döner.`, `Yeşil 1/2, mavi 1/3 rad/s: yarıçap 2 ve 3 katına çıkınca ω yarıya ve üçte bire iner.`],
-    [`Merkezcil ivme <b>a = v² / r</b>: v aynıyken r küçüldükçe a büyür. Mor oklar bu oranla çizildi (10 : 5 : 3,3).`, `Arabayı merkeze doğru tutan kuvvet lastiklerle yol arasındaki <b>sürtünme kuvvetidir</b> (yatay, merkeze).`, `Dar virajda daha büyük sürtünme gerekir. Yol kayganken sürtünme yetmezse araba teğete doğru (dışarı) kayar.`],
-    [`Periyot (T): bir tam tur süresi. Bir turda alınan yol 2πr.`, `<b>T = 2πr / v</b> ya da <b>T = 2π / ω</b> → 2·3 / 1 = 6 s. İki yol da aynı sonucu verir.`],
+    [`Açısal hız <span class="fm">ω = <span class="fr"><span>v</span><span>r</span></span></span>. Hızlar (v) eşitse yarıçapı küçük olanın ω'sı büyüktür.`, `İç şeritteki araba aynı sürede daha büyük açı tarar (renkli dilimler).`],
+    [`ω = <span class="fr"><span>v</span><span>r</span></span> = <span class="fr"><span>10</span><span>10</span></span> = 1 rad/s → kırmızı araba saniyede 1 radyan (≈ 57°) döner.`, `Yeşil 1/2, mavi 1/3 rad/s: yarıçap 2 ve 3 katına çıkınca ω yarıya ve üçte bire iner.`],
+    [`Merkezcil ivme <span class="fm">a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>: v aynıyken r küçüldükçe a büyür. Mor oklar bu oranla çizildi (10 : 5 : 3,3).`, `Arabayı merkeze doğru tutan kuvvet lastiklerle yol arasındaki <b>sürtünme kuvvetidir</b> (yatay, merkeze).`, `Dar virajda daha büyük sürtünme gerekir. Yol kayganken sürtünme yetmezse araba teğete doğru (dışarı) kayar.`],
+    [`Periyot (T): bir tam tur süresi. Bir turda alınan yol 2πr.`, `<span class="fm">T = <span class="fr"><span>2πr</span><span>v</span></span></span> ya da <span class="fm">T = <span class="fr"><span>2π</span><span>ω</span></span></span> → <span class="fr"><span>2·3</span><span>1</span></span> = 6 s. İki yol da aynı sonucu verir.`],
   ],
   3: [
     [N_KURAL, `Tepede kova ters durur: taban suyun <b>ÜSTÜNDE</b> → taban suyu <b>AŞAĞI</b> iter → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `Dipte taban suyun <b>ALTINDA</b> → ${O('N')} yukarı. Yani ${O('N')} her zaman ${K('mg')}'nin tersi değildir.`,
-      `Dipte: ${O('N')} − ${K('mg')} = m · v²/r &nbsp;·&nbsp; Tepede: ${O('N')} + ${K('mg')} = m · v²/r`, N_CIFT,
+      `Dipte: <span class="fm">${O('N')} − ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span> &nbsp; Tepede: <span class="fm">${O('N')} + ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>`, N_CIFT,
       svgDipTepe('taban', 5.7, 3.7, 20, 'Oklar oyundaki hızlı dönüşün oranıyla: dipte N ≈ 5,7 mg, tepede N ≈ 3,7 mg')],
-    [`Kova yavaşladıkça gereken merkezcil kuvvet (m · v²/r) küçülür, ${O('N')} de küçülür.`, `${O('N')} = 0 olduğu hız sınırdır: yalnız ${K('mg')} merkezcil kuvveti sağlar → mg = m · v²/r → <b>v = √(g · r)</b>.`, `Kütle (m) sadeleşir: en küçük hız suyun miktarına bağlı değildir.`],
-    [`v = 2 m/s → v²/r = 4 m/s² &lt; g = 10 m/s².`, `Suyun çember üzerinde kalması için yalnız 4 m/s²'lik ivme gerekir ama yer çekimi tek başına 10 m/s² verir → su çemberin <b>içine doğru</b> kovadan ayrılır.`, `Kova tabanı suyu çekemeyeceği için (${O('N')} negatif olamaz) bunu engelleyemez.`, `Ayrıldıktan sonra su yalnız yer çekimi etkisindedir: ayrılma anındaki hızla <b>eğik atış</b> yapar (animasyondaki parabol).`],
-    [`v = 4 m/s → v²/r = 16 m/s² ≥ g → ${K('mg')} tek başına yetmez, kova tabanı da suyu aşağı iter (${O('N')} > 0).`, `Tepede ${O('N')} = m (v²/r − g) = m · 6 → ${O('N')} = 0,6 · ${K('mg')}.`, `Su tabana bastırmaya devam ettiği için dökülmez.`],
+    [`Kova yavaşladıkça gereken merkezcil kuvvet (m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>) küçülür, ${O('N')} de küçülür.`, `${O('N')} = 0 olduğu hız sınırdır: yalnız ${K('mg')} merkezcil kuvveti sağlar → mg = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → <span class="fm">v = √(g · r)</span>.`, `Kütle (m) sadeleşir: en küçük hız suyun miktarına bağlı değildir.`],
+    [`v = 2 m/s → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 4 m/s² &lt; g = 10 m/s².`, `Suyun çember üzerinde kalması için yalnız 4 m/s²'lik ivme gerekir ama yer çekimi tek başına 10 m/s² verir → su çemberin <b>içine doğru</b> kovadan ayrılır.`, `Kova tabanı suyu çekemeyeceği için (${O('N')} negatif olamaz) bunu engelleyemez.`, `Ayrıldıktan sonra su yalnız yer çekimi etkisindedir: ayrılma anındaki hızla <b>eğik atış</b> yapar (animasyondaki parabol).`],
+    [`v = 4 m/s → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 16 m/s² ≥ g → ${K('mg')} tek başına yetmez, kova tabanı da suyu aşağı iter (${O('N')} > 0).`, `Tepede ${O('N')} = m (<span class="fr"><span>v<sup>2</sup></span><span>r</span></span> − g) = m · 6 → ${O('N')} = 0,6 · ${K('mg')}.`, `Su tabana bastırmaya devam ettiği için dökülmez.`],
   ],
   4: [
-    [`Sürtünme yok → mekanik enerji korunur: <b>m · g · h = ½ · m · v²</b>.`, `Kütle sadeleşir: dipteki hız trenin kütlesine bağlı değildir.`, `Rayın ${O('N')} kuvveti harekete her an dik → iş yapmaz, enerjiyi değiştirmez.`],
-    [`ω = v / r. Dipte v = 30 m/s, r = 10 m → ω = 3 rad/s.`, `Döngüde hız değiştiği için ω da değişir: dipte en büyük, tepede en küçük.`],
-    [`Dipte merkez yukarıda → merkezcil ivme ${M_('a')} <b>yukarı</b>.`, N_KURAL, `Dipte ray trenin <b>ALTINDA</b> → ${O('N')} yukarı; ${K('mg')} aşağı. Net kuvvet merkeze: ${O('N')} − ${K('mg')} = m · v²/r.`, `${O('N')} = m (g + v²/r) = m (10 + 90) = 10 · ${K('mg')} → yolcu kendini ağırlığının 10 katı ağır hisseder (oklar bu oranla).`],
-    [`Açısal ivme (α), açısal hızın değişme hızıdır: <b>α = a<sub>t</sub> / r</b>.`, `Teğetsel ivme (${M_('a<sub>t</sub>')}) yalnız hareket yönündeki kuvvetten gelir.`, `Dipte ${K('mg')} ve ${O('N')} düşey, hareket yönü yatay → teğet yönde kuvvet yok → a<sub>t</sub> = 0 → <b>α = 0</b>.`, `Bu, ivmenin sıfır olduğu anlamına gelmez: merkezcil ivme 90 m/s²'dir.`],
-    [`Yan noktada ray trenin dışında (sağında) → ${O('N')} yatay ve <b>merkeze</b> doğru (sola). ${O('N')}'nin teğet bileşeni yoktur.`, `${K('mg')} düşey aşağı; tren yukarı gittiği için bu tam <b>teğet</b> yöndür → a<sub>t</sub> = g = 10 m/s², hıza ters → tren yavaşlar.`, `α = a<sub>t</sub> / r = 10 / 10 = 1 rad/s² (açısal hız azalıyor).`, `Burada ${O('N')} = m · v²/r = m · 70 = 7 · ${K('mg')} (v² = 2g(h − r) = 700).`, `Toplam ivme, merkezcil (${M_('a<sub>m</sub>')} = 70 m/s²) ile teğetsel (${M_('a<sub>t</sub>')} = 10 m/s²) bileşenlerin vektörel toplamıdır.`],
-    [`Tepe, dipten 2r = 20 m yukarıdadır.`, `Enerji korunumu: m · g · h = m · g · 2r + ½ · m · v² → <b>v² = 2g (h − 2r)</b>.`, `Yükseldikçe kinetik enerjinin bir kısmı potansiyel enerjiye döner → tren tepede yavaşlar.`],
-    [`Tepede merkez <b>AŞAĞIDA</b> → merkezcil ivme aşağı: a = v²/r = 50 m/s².`, `Dipteki 90 m/s²'den küçüktür çünkü v küçüldü.`, `Tepede ${K('mg')} ve ${O('N')} düşey, hareket yatay → a<sub>t</sub> = 0: ivmenin tamamı merkezcil.`],
-    [N_KURAL, `Tepede ray trenin <b>ÜSTÜNDE</b>: ray treni yalnız <b>AŞAĞI</b> itebilir → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `${O('N')} + ${K('mg')} = m · v²/r → ${O('N')} = m (50 − 10) = 4 · ${K('mg')}.`, `Raydan düşmeme şartı ${O('N')} ≥ 0 → v²/r ≥ g → v ≥ √(g · r) = 10 m/s. Burada v ≈ 22,4 m/s.`, `Tren tersken düşmez: çembersel yolda kalmak için gereken ivme (50 m/s²) g'den büyüktür; yer çekimi tek başına yetmez, ray iterek eksiği tamamlar.`, N_CIFT,
+    [`Sürtünme yok → mekanik enerji korunur: <span class="fm">m · g · h = <span class="fr"><span>1</span><span>2</span></span> · m · v²</span>.`, `Kütle sadeleşir: dipteki hız trenin kütlesine bağlı değildir.`, `Rayın ${O('N')} kuvveti harekete her an dik → iş yapmaz, enerjiyi değiştirmez.`],
+    [`ω = <span class="fr"><span>v</span><span>r</span></span>. Dipte v = 30 m/s, r = 10 m → ω = 3 rad/s.`, `Döngüde hız değiştiği için ω da değişir: dipte en büyük, tepede en küçük.`],
+    [`Dipte merkez yukarıda → merkezcil ivme ${M_('a')} <b>yukarı</b>.`, N_KURAL, `Dipte ray trenin <b>ALTINDA</b> → ${O('N')} yukarı; ${K('mg')} aşağı. Net kuvvet merkeze: ${O('N')} − ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>.`, `${O('N')} = m (g + <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>) = m (10 + 90) = 10 · ${K('mg')} → yolcu kendini ağırlığının 10 katı ağır hisseder (oklar bu oranla).`],
+    [`Açısal ivme (α), açısal hızın değişme hızıdır: <span class="fm">α = <span class="fr"><span>a<sub>t</sub></span><span>r</span></span></span>.`, `Teğetsel ivme (${M_('a<sub>t</sub>')}) yalnız hareket yönündeki kuvvetten gelir.`, `Dipte ${K('mg')} ve ${O('N')} düşey, hareket yönü yatay → teğet yönde kuvvet yok → a<sub>t</sub> = 0 → <span class="fm">α = 0</span>.`, `Bu, ivmenin sıfır olduğu anlamına gelmez: merkezcil ivme 90 m/s²'dir.`],
+    [`Yan noktada ray trenin dışında (sağında) → ${O('N')} yatay ve <b>merkeze</b> doğru (sola). ${O('N')}'nin teğet bileşeni yoktur.`, `${K('mg')} düşey aşağı; tren yukarı gittiği için bu tam <b>teğet</b> yöndür → a<sub>t</sub> = g = 10 m/s², hıza ters → tren yavaşlar.`, `α = <span class="fr"><span>a<sub>t</sub></span><span>r</span></span> = <span class="fr"><span>10</span><span>10</span></span> = 1 rad/s² (açısal hız azalıyor).`, `Burada ${O('N')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = m · 70 = 7 · ${K('mg')} (v² = 2g(h − r) = 700).`, `Toplam ivme, merkezcil (${M_('a<sub>m</sub>')} = 70 m/s²) ile teğetsel (${M_('a<sub>t</sub>')} = 10 m/s²) bileşenlerin vektörel toplamıdır.`],
+    [`Tepe, dipten 2r = 20 m yukarıdadır.`, `Enerji korunumu: m · g · h = m · g · 2r + <span class="fr"><span>1</span><span>2</span></span> · m · v² → <span class="fm">v² = 2g (h − 2r)</span>.`, `Yükseldikçe kinetik enerjinin bir kısmı potansiyel enerjiye döner → tren tepede yavaşlar.`],
+    [`Tepede merkez <b>AŞAĞIDA</b> → merkezcil ivme aşağı: a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 50 m/s².`, `Dipteki 90 m/s²'den küçüktür çünkü v küçüldü.`, `Tepede ${K('mg')} ve ${O('N')} düşey, hareket yatay → a<sub>t</sub> = 0: ivmenin tamamı merkezcil.`],
+    [N_KURAL, `Tepede ray trenin <b>ÜSTÜNDE</b>: ray treni yalnız <b>AŞAĞI</b> itebilir → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `${O('N')} + ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → ${O('N')} = m (50 − 10) = 4 · ${K('mg')}.`, `Raydan düşmeme şartı ${O('N')} ≥ 0 → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ≥ g → v ≥ √(g · r) = 10 m/s. Burada v ≈ 22,4 m/s.`, `Tren tersken düşmez: çembersel yolda kalmak için gereken ivme (50 m/s²) g'den büyüktür; yer çekimi tek başına yetmez, ray iterek eksiği tamamlar.`, N_CIFT,
       svgDipTepe('ray', 10, 4, 14, 'Oklar gerçek oranla: dipte N = 10 mg, tepede N = 4 mg')],
-    [`Düz yolda yükseklik değişmez → tren yaya dipteki hızla (30 m/s) varır.`, `Yay kuvveti (F = k · x) harekete ters → treni yavaşlatır.`, `Kinetik enerji yayın esneklik potansiyel enerjisine dönüşür: <b>½ · m · v² = ½ · k · x²</b>.`, `En çok sıkışmada tren bir an durur; fren tutmasa yay treni geri iterdi.`],
+    [`Düz yolda yükseklik değişmez → tren yaya dipteki hızla (30 m/s) varır.`, `Yay kuvveti (F = k · x) harekete ters → treni yavaşlatır.`, `Kinetik enerji yayın esneklik potansiyel enerjisine dönüşür: <span class="fm"><span class="fr"><span>1</span><span>2</span></span> · m · v² = <span class="fr"><span>1</span><span>2</span></span> · k · x²</span>.`, `En çok sıkışmada tren bir an durur; fren tutmasa yay treni geri iterdi.`],
   ],
 };
 let SON_Q = null;
@@ -1057,6 +1074,7 @@ function notAc(ac_) {
 function kayGuncelle(el, kay) { kay.classList.toggle('hide', el.scrollHeight <= el.clientHeight + 4); }
 function kaySolGuncelle() { setTimeout(() => kayGuncelle($('sol'), $('solKay')), 50); }
 const kaydir = (el, d) => el.scrollBy({ top: d * el.clientHeight * 0.6, behavior: 'smooth' });
+setInterval(() => { if (!$('qc').classList.contains('hide')) kayGuncelle($('sol'), $('solKay')); if (!$('notlar').classList.contains('hide')) kayGuncelle($('ntIc'), $('ntKay')); }, 400);   // yazı tipi geç yüklenirse de ▲▼ görünsün
 $('solY').onclick = () => kaydir($('sol'), -1); $('solA').onclick = () => kaydir($('sol'), 1);
 $('ntY').onclick = () => kaydir($('ntIc'), -1); $('ntA').onclick = () => kaydir($('ntIc'), 1);
 $('bNot').onclick = () => { SFX.click(); notAc(); };
@@ -1064,13 +1082,13 @@ $('ntKapat').onclick = () => { SFX.click(); notAc(false); };
 // birden fazla çözüm yolu olan sorular: '§' ile başlayan satır yol başlığıdır
 const V2_ = 'v<sup>2</sup>';
 const YOLLAR = {
-  1: { 1: [`§1. YOL · v = ω · r`, `v = 3 · 2 = <em>6 m/s</em> ✓`, `§2. YOL · bir turdaki yol ÷ periyot`, `v = ${F('2πr', 'T')} = ${F('2 · 3 · 2', '2')} = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
-       2: [`§1. YOL · a = v²/r`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')} = <em>18 m/s²</em> ✓`, `§2. YOL · a = ω² · r`, `a = 3<sup>2</sup> · 2 = 9 · 2 = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`] },
-  2: { 2: [`§1. YOL · a = v²/r`, `a = ${F('10<sup>2</sup>', '30')} = ${F('100', '30')} ≈ <em>3,3 m/s²</em> ✓`, `§2. YOL · a = ω · v`, `a = ${F('1', '3')} · 10 ≈ <em>3,3 m/s²</em> ✓`, `Kırmızı 10, yeşil 5 m/s² → r küçülünce a <em>BÜYÜR</em>`],
-       3: [`§1. YOL · T = 2πr / v`, `T = ${F('2 · 3 · 10', '10')} = <em>6 s</em> ✓`, `§2. YOL · T = 2π / ω`, `T = ${F('2 · 3', '1')} = <em>6 s</em> ✓`] },
-  3: { 2: [`§1. YOL · v²/r ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s² &lt; g = 10`, `Yer çekimi gerekenden fazla → su kovadan ayrılır`, `§2. YOL · en küçük hızla karşılaştır`, `v<sub>en küçük</sub> = ${SQ('g · r')} ≈ 3,2 m/s → 2 &lt; 3,2`, `Su <em>DÖKÜLÜR</em> ✗ (kova YAVAŞ dönüyor)`],
-       3: [`§1. YOL · v²/r ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s² ≥ g = 10 → <span class="o">N</span> > 0`, `§2. YOL · en küçük hızla karşılaştır`, `4 m/s > 3,2 m/s`, `Su kovada kalır, <em>DÖKÜLMEZ</em> ✓ (kova HIZLI dönüyor)`] },
-  4: { 2: [`§1. YOL · a = v²/r`, `a = ${F('30<sup>2</sup>', '10')} = ${F('900', '10')} = <em>90 m/s²</em> ✓`, `§2. YOL · a = ω² · r`, `a = 3<sup>2</sup> · 10 = <em>90 m/s²</em> ✓`, `Yönü yukarı (merkeze): <span class="o">N</span> − <span class="r">mg</span> = m · a → <span class="o">N</span> > <span class="r">mg</span>`],
+  1: { 1: [`§1. YOL · <span class="fm">v = ω · r</span>`, `v = 3 · 2 = <em>6 m/s</em> ✓`, `§2. YOL · <span class="fm">v = <span class="fr"><span>2πr</span><span>T</span></span></span>`, `v = ${F('2πr', 'T')} = ${F('2 · 3 · 2', '2')} = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
+       2: [`§1. YOL · <span class="fm">a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')} = <em>18 m/s²</em> ✓`, `§2. YOL · <span class="fm">a = ω<sup>2</sup> · r</span>`, `a = 3<sup>2</sup> · 2 = 9 · 2 = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`] },
+  2: { 2: [`§1. YOL · <span class="fm">a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>`, `a = ${F('10<sup>2</sup>', '30')} = ${F('100', '30')} ≈ <em>3,3 m/s²</em> ✓`, `§2. YOL · <span class="fm">a = ω · v</span>`, `a = ${F('1', '3')} · 10 ≈ <em>3,3 m/s²</em> ✓`, `Kırmızı 10, yeşil 5 m/s² → r küçülünce a <em>BÜYÜR</em>`],
+       3: [`§1. YOL · <span class="fm">T = <span class="fr"><span>2πr</span><span>v</span></span></span>`, `T = ${F('2 · 3 · 10', '10')} = <em>6 s</em> ✓`, `§2. YOL · <span class="fm">T = <span class="fr"><span>2π</span><span>ω</span></span></span>`, `T = ${F('2 · 3', '1')} = <em>6 s</em> ✓`] },
+  3: { 2: [`§1. YOL · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s² &lt; g = 10`, `Yer çekimi gerekenden fazla → su kovadan ayrılır`, `§2. YOL · en küçük hızla karşılaştır`, `v<sub>en küçük</sub> = ${SQ('g · r')} ≈ 3,2 m/s → 2 &lt; 3,2`, `Su <em>DÖKÜLÜR</em> ✗ (kova YAVAŞ dönüyor)`],
+       3: [`§1. YOL · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s² ≥ g = 10 → <span class="o">N</span> > 0`, `§2. YOL · en küçük hızla karşılaştır`, `4 m/s > 3,2 m/s`, `Su kovada kalır, <em>DÖKÜLMEZ</em> ✓ (kova HIZLI dönüyor)`] },
+  4: { 2: [`§1. YOL · <span class="fm">a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>`, `a = ${F('30<sup>2</sup>', '10')} = ${F('900', '10')} = <em>90 m/s²</em> ✓`, `§2. YOL · <span class="fm">a = ω<sup>2</sup> · r</span>`, `a = 3<sup>2</sup> · 10 = <em>90 m/s²</em> ✓`, `Yönü yukarı (merkeze): <span class="o">N</span> − <span class="r">mg</span> = m · a → <span class="o">N</span> > <span class="r">mg</span>`],
        5: [`§1. YOL · başlangıç → tepe (enerji)`, `m · g · h = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 2 · 10 · (45 − 20) = <em>500</em> ✓`, `§2. YOL · dip → tepe (enerji)`, `${F('1', '2')} · m · v<sub>dip</sub><sup>2</sup> = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 900 − 2 · 10 · 20 = <em>500</em> ✓ → v ≈ 22,4 m/s`],
        7: [`§1. YOL · ivme ile g'yi karşılaştır`, `${F(V2_, 'r')} = 50 ≥ g = 10 ✓`, `§2. YOL · hız ile en küçük hızı karşılaştır`, `v<sub>en küçük</sub> = ${SQ('g · r')} = ${SQ('100')} = 10 m/s → 22,4 ≥ 10 ✓`, `Ray treni iter: <span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`, `Ray trenin ÜSTÜNDE → <span class="o">N</span> AŞAĞI`] },
 };
