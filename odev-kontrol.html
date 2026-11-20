@@ -1,0 +1,1620 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ödev Kontrol</title>
+<!--
+  Ödev Kontrol – tek dosyalık sürüm.
+  Çift tıklayıp tarayıcıda (Chrome ya da Edge) açın. Kurulum gerekmez.
+  Veriler bu bilgisayardaki tarayıcının içinde saklanır; "Yedek al" ile dosyaya kaydedin.
+  İlk açılışta resim işleme kütüphaneleri internetten yüklenir.
+-->
+<style>
+:root {
+  --bg: #f5f7fb; --card: #fff; --text: #1b2330; --muted: #627084; --line: #dfe4ec;
+  --primary: #1f6feb; --primary-text: #fff;
+  --ok: #1a7f37; --ok-bg: #dcf5e3; --mid: #9a6700; --mid-bg: #fff3c4; --bad: #cf222e; --bad-bg: #ffe1e3; --gray-bg: #eceff4;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f141b; --card: #18202b; --text: #e6edf3; --muted: #93a1b3; --line: #2b3646; --primary: #4c8dff;
+    --ok: #4ac26b; --ok-bg: #12301c; --mid: #e3b341; --mid-bg: #3a2e0b; --bad: #ff7b72; --bad-bg: #3d1517; --gray-bg: #232d3b; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; color: var(--text); text-decoration: none; }
+#engine { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+main { max-width: 1100px; margin: 0 auto; padding: 16px 16px 60px; }
+h1 { font-size: 22px; margin: 4px 0 12px; } h2 { font-size: 18px; margin: 22px 0 8px; } h3 { font-size: 16px; margin: 0 0 6px; }
+a { color: var(--primary); }
+.muted { color: var(--muted); } .small { font-size: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 10px 0; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .between { justify-content: space-between; }
+.stack > * + * { margin-top: 10px; }
+label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+input, select, textarea, button { font: inherit; }
+input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); }
+textarea { min-height: 110px; }
+button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 15px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; text-decoration: none; min-height: 40px; }
+button.primary, .btn.primary { background: var(--primary); color: var(--primary-text); border-color: var(--primary); }
+button.big { width: 100%; padding: 14px; font-size: 17px; font-weight: 600; }
+button.link { border: none; background: none; color: var(--primary); padding: 2px; min-height: 0; }
+button.danger { color: var(--bad); }
+button:disabled { opacity: .55; cursor: wait; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 8px 0 12px; }
+.tabs a { padding: 10px 14px; border-bottom: 3px solid transparent; color: var(--text); text-decoration: none; white-space: nowrap; }
+.tabs a.on { border-bottom-color: var(--primary); color: var(--primary); font-weight: 600; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.b-correct, .b-yapti { background: var(--ok-bg); color: var(--ok); }
+.b-review, .b-gec, .b-eksik, .b-nokey, .b-isleniyor { background: var(--mid-bg); color: var(--mid); }
+.b-wrong, .b-yapmadi, .b-bos { background: var(--bad-bg); color: var(--bad); }
+.b-blank { background: var(--gray-bg); color: var(--muted); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.bar { height: 8px; background: var(--gray-bg); border-radius: 4px; overflow: hidden; min-width: 60px; }
+.bar > span { display: block; height: 100%; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+.stat b { display: block; font-size: 22px; }
+.spinner { width: 16px; height: 16px; border: 3px solid var(--line); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 16px;
+  border-radius: 10px; max-width: calc(100% - 32px); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 10; }
+#toast.show { opacity: 1; }
+.fig { position: relative; margin: 10px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; max-width: 760px; }
+.fig img { display: block; width: 100%; height: auto; }
+.fig svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.fig rect { fill: none; stroke-width: 5; }
+.fig .opt { stroke: #8a94a6; stroke-width: 2; }
+.fig .q-reg { stroke: #f0883e; stroke-width: 3; stroke-dasharray: 10 8; }
+.fig .q-reg-t, .fig .qn { fill: #f0883e; font: bold 30px system-ui, sans-serif; }
+.fig .m-ok { stroke: #1a7f37; fill: rgba(26,127,55,.12); }
+.fig .m-bad { stroke: #cf222e; fill: rgba(207,34,46,.12); }
+.fig .m-mid { stroke: #bf8700; fill: rgba(191,135,0,.12); }
+.fig .m-key { stroke: #1a7f37; stroke-dasharray: 10 6; }
+.keys button { min-width: 46px; font-weight: 700; }
+.dropzone { border: 2px dashed var(--line); border-radius: 12px; padding: 22px 16px; text-align: center; color: var(--muted); }
+.dropzone.over { border-color: var(--primary); color: var(--primary); }
+.qgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.qitem { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: var(--bg); }
+.qitem img { width: 64px; height: 86px; object-fit: cover; border-radius: 6px; flex: none; }
+.qitem > div { flex: 1; min-width: 0; }
+.qitem select { padding: 6px 8px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 800px) { .split { grid-template-columns: 1fr; } }
+.warn { border-color: var(--bad); }
+@media print { .top, .tabs, button, .noprint { display: none !important; } .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="#/" class="brand">📘 Ödev Kontrol</a>
+  <span id="engine"></span>
+</header>
+<main id="app"><p class="muted">Yükleniyor…</p></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<!-- Resim işleme (OpenCV) ve basılı yazı okuma (Tesseract) kütüphaneleri -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/@techstark/opencv-js@5.0.0-release.1/dist/opencv.js" id="cvjs"></script>
+<script>
+"use strict";
+// =====================================================================
+//  SAYFA DÜZENİ: basılı yazıdan soru ve şık yerlerini bulma
+// =====================================================================
+// Basılı yazı okumasından (OCR) gelen kelimelerden sayfa düzenini çıkarır:
+// hangi soru nerede, şıkları (A, B, C, D, E) nerede.
+// Saf fonksiyon: resimle uğraşmaz, sadece kelime kutularıyla çalışır.
+
+const LABEL_RE = /^[(\[]?([A-E])\1?[)\].:]/; // "A)", "(A)", "A.", "A:", OCR çift okursa "CC)"
+const NUMBER_RE = /^(\d{1,3})[.)]$/; // "12." ya da "12)"
+const LETTERS = ["A", "B", "C", "D", "E"];
+
+const median = (a) => {
+  if (!a.length) return 0;
+  const s = [...a].sort((x, y) => x - y);
+  return s[Math.floor(s.length / 2)];
+};
+const cy = (w) => (w.y0 + w.y1) / 2;
+
+/**
+ * @param {{text:string,x0:number,y0:number,x1:number,y1:number}[]} words OCR kelimeleri
+ * @param {number} W sayfa genişliği (piksel)
+ * @param {number} H sayfa yüksekliği (piksel)
+ * @returns {{number:number, region:Rect, options:{letter:string, box:Rect}[]}[]}
+ */
+function detectQuestions(words, W, H) {
+  words = words.filter((w) => w.text && w.x1 > w.x0 && w.y1 > w.y0);
+  const labels = words
+    .map((w) => {
+      // OCR'nin sık karıştırdığı işaretler: "©)" ve "€)" aslında "C)".
+      const m = LABEL_RE.exec(w.text.trim().replace(/^[©€¢]/, "C"));
+      return m ? { ...w, L: m[1], used: false } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => cy(a) - cy(b) || a.x0 - b.x0);
+  if (!labels.length) return [];
+  const lh = median(labels.map((l) => l.y1 - l.y0)) || 20; // satır yüksekliği
+
+  // 1) A'dan başlayıp B, C, D, E'yi zincirle. Tek bir harf okunamadıysa atlanır, yeri sonra tahmin edilir.
+  const findNext = (prev, a, letter, maxRows) => {
+    let best = null;
+    let bestD = Infinity;
+    for (const l of labels) {
+      if (l.used || l.L !== letter) continue;
+      const dy = cy(l) - cy(prev);
+      const sameLine = Math.abs(dy) < lh * 1.1 && l.x0 > prev.x1 && l.x0 - a.x0 < W * 0.48;
+      // Alt satırdaki şık A'nın ya da bir önceki şıkkın hizasında olmalı (alt alta ya da 2x2 düzen);
+      // değilse başka sütundaki bir sorunun şıkkıdır.
+      const aligned = Math.abs(l.x0 - a.x0) < lh * 2.5 || Math.abs(l.x0 - prev.x0) < lh * 2.5;
+      const below = dy > lh * 1.1 && dy < lh * maxRows && aligned;
+      if (!sameLine && !below) continue;
+      const d = Math.hypot(l.x0 - prev.x0, dy * 1.5);
+      if (d < bestD) {
+        bestD = d;
+        best = l;
+      }
+    }
+    return best;
+  };
+  const chains = [];
+  // A'dan (A okunamadıysa B'den) başlayıp sonraki harfleri zincirle.
+  const build = (start, from) => {
+    const chain = { [start.L]: start };
+    let prev = start;
+    let skipped = 0;
+    for (let i = from + 1; i < LETTERS.length; i++) {
+      let next = findNext(prev, start, LETTERS[i], 7);
+      if (!next && skipped === 0 && i + 1 < LETTERS.length) {
+        // Bu harf okunamamış olabilir: bir sonrakini dene.
+        next = findNext(prev, start, LETTERS[i + 1], 12);
+        if (next) {
+          skipped++;
+          i++;
+        }
+      }
+      if (!next) break;
+      chain[next.L] = next;
+      prev = next;
+    }
+    const found = Object.keys(chain).length;
+    if (found >= 3 && (chain.D || chain.C)) {
+      Object.values(chain).forEach((l) => (l.used = true));
+      chains.push(fillMissing(chain, lh));
+    }
+  };
+  for (const a of labels.filter((l) => l.L === "A")) if (!a.used) build(a, 0);
+  for (const b of labels.filter((l) => l.L === "B")) if (!b.used) build(b, 1);
+  if (!chains.length) return [];
+
+  // 2) Her zincire soru numarasını bul: A'nın üstünde, aynı sütunda, en yakın "12." gibi kelime.
+  const numbers = words
+    .map((w) => {
+      const m = NUMBER_RE.exec(w.text.trim());
+      return m ? { ...w, n: Number(m[1]) } : null;
+    })
+    .filter(Boolean);
+  const qs = chains.map((chain) => {
+    const a = chain[0];
+    const top = Math.min(...chain.map((l) => l.y0));
+    let num = null;
+    for (const n of numbers) {
+      if (n.y0 > top + lh * 0.3) continue; // numara şıkların üstünde ya da aynı satırda olmalı
+      if (n.x0 > a.x0 + W * 0.1 || a.x0 - n.x0 > W * 0.35) continue;
+      if (!num || n.y0 > num.y0) num = n;
+    }
+    return { chain, num, anchorX: Math.min(a.x0, num ? num.x0 : a.x0) };
+  });
+  // Aynı numara iki soruya verildiyse alttakine bırakmaz (en yakın olan kalır).
+  const byNum = new Map();
+  for (const q of qs) {
+    if (!q.num) continue;
+    const prev = byNum.get(q.num);
+    if (!prev || q.chain[0].y0 < prev.chain[0].y0) byNum.set(q.num, q);
+  }
+  for (const q of qs) if (q.num && byNum.get(q.num) !== q) q.num = null;
+
+  // 3) Sütunlar: soru başlangıçlarının x konumlarını grupla.
+  const xs = [...new Set(qs.map((q) => q.anchorX))].sort((a, b) => a - b);
+  const colStarts = [];
+  for (const x of xs) if (!colStarts.length || x - colStarts[colStarts.length - 1] > W * 0.25) colStarts.push(x);
+  const colOf = (x) => {
+    let c = 0;
+    for (let i = 0; i < colStarts.length; i++) if (x >= colStarts[i] - W * 0.12) c = i;
+    return c;
+  };
+  for (const q of qs) {
+    q.col = colOf(q.anchorX);
+    q.top = q.num ? q.num.y0 : Math.min(...q.chain.map((l) => l.y0));
+  }
+
+  // 4) Soru alanı: kendi başından aynı sütundaki bir sonraki sorunun başına kadar.
+  const pad = lh * 0.4;
+  const optBottom = (q) => Math.max(...q.chain.map((l) => l.y1));
+  for (const q of qs) {
+    const prevInCol = qs.filter((o) => o.col === q.col && o.top < q.top - lh).sort((a, b) => b.top - a.top)[0];
+    // Numarasız soruda alanın üstü: bir önceki sorunun şıklarının altı.
+    q.regionTop = q.num
+      ? q.num.y0 - pad
+      : prevInCol
+        ? optBottom(prevInCol) + lh
+        : Math.max(0, q.top - lh * 8);
+  }
+  const out = [];
+  for (const q of qs) {
+    const colLeft = Math.max(0, q.col === 0 ? 0 : colStarts[q.col] - W * 0.03);
+    const colRight = q.col + 1 < colStarts.length ? colStarts[q.col + 1] - W * 0.02 : W;
+    const next = qs.filter((o) => o.col === q.col && o.top > q.top + lh).sort((a, b) => a.top - b.top)[0];
+    const bottom = next ? Math.max(optBottom(q) + lh, next.regionTop) : H - pad;
+    const region = clampRect({ x0: colLeft, y0: q.regionTop, x1: colRight, y1: bottom }, W, H);
+
+    // Şık kutuları: harfin çevresi + aynı satırdaki şık metni (bir sonraki harfe kadar).
+    const options = q.chain.map((l, i) => {
+      const next = q.chain[i + 1];
+      const nextSameLine = next && Math.abs(cy(next) - cy(l)) < lh * 1.1 ? next : null;
+      const limit = nextSameLine ? nextSameLine.x0 - lh * 0.3 : Math.min(colRight, l.x1 + W * 0.3);
+      let textRight = l.x1;
+      for (const w of words) {
+        if (Math.abs(cy(w) - cy(l)) < lh * 0.6 && w.x0 > l.x1 - 1 && w.x1 <= limit + lh) textRight = Math.max(textRight, w.x1);
+      }
+      return {
+        letter: l.L,
+        box: clampRect(
+          { x0: l.x0 - lh * 0.6, y0: l.y0 - lh * 0.45, x1: Math.min(limit, Math.max(textRight, l.x1 + lh)) + lh * 0.3, y1: l.y1 + lh * 0.45 },
+          W,
+          H
+        ),
+      };
+    });
+    splitOverlaps(options.map((o) => o.box));
+    out.push({ number: q.num?.n ?? null, col: q.col, region, options });
+  }
+
+  // Okuma sırası: sütun sütun, yukarıdan aşağı. Numarası okunamayanlara sıra numarası ver.
+  out.sort((a, b) => a.col - b.col || a.region.y0 - b.region.y0);
+  const taken = new Set(out.map((q) => q.number).filter((n) => n != null));
+  let k = 1;
+  for (const q of out) {
+    if (q.number == null) {
+      while (taken.has(k)) k++;
+      q.number = k;
+      q.numberGuessed = true;
+      taken.add(k);
+    }
+    delete q.col;
+  }
+  return out;
+}
+
+/**
+ * Okunamayan şıkkın yerini diğerlerinden tahmin eder (A-D arası).
+ * Düzenler: yan yana, 2x2, alt alta.
+ */
+function fillMissing(chain, lh) {
+  const L = ["A", "B", "C", "D"];
+  const has = (k) => !!chain[k];
+  const make = (x, y, like) => ({ ...like, text: "?", L: "", x0: x, x1: x + (like.x1 - like.x0), y0: y, y1: y + (like.y1 - like.y0), guessed: true });
+  const known = L.filter(has).map((k) => chain[k]);
+  const ref = known[0];
+  // Düzeni bul: aynı sütundaki şıklar alt alta mı, yan yana mı?
+  const sameX = (p, q) => Math.abs(p.x0 - q.x0) < lh * 1.5;
+  const below = (p, q) => cy(q) - cy(p) > lh * 1.1;
+  const stacked = (a, b) => has(a) && has(b) && sameX(chain[a], chain[b]) && below(chain[a], chain[b]);
+  const beside = (a, b) => has(a) && has(b) && !sameX(chain[a], chain[b]);
+  let layout = "row";
+  if ((stacked("A", "C") || stacked("B", "D")) && (beside("A", "B") || beside("C", "D"))) layout = "grid";
+  else if (known.every((k) => sameX(k, ref))) layout = "col";
+  for (let i = 0; i < 4; i++) {
+    const k = L[i];
+    if (has(k)) continue;
+    let p = null;
+    if (layout === "grid") {
+      const colMate = chain[L[i ^ 2]]; // A<->C, B<->D aynı sütun
+      const rowMate = chain[L[i ^ 1]]; // A<->B, C<->D aynı satır
+      if (colMate && rowMate) p = make(colMate.x0, rowMate.y0, ref);
+    } else {
+      const prev = chain[L[i - 1]];
+      const next = chain[L[i + 1]];
+      if (prev && next) p = make((prev.x0 + next.x0) / 2, (prev.y0 + next.y0) / 2, ref);
+      else if (prev && chain[L[i - 2]]) {
+        const pp = chain[L[i - 2]];
+        p = make(prev.x0 * 2 - pp.x0, prev.y0 * 2 - pp.y0, ref);
+      } else if (next && chain[L[i + 2]]) {
+        // A okunamadı: B ile C arasındaki adımı geriye uygula.
+        const nn = chain[L[i + 2]];
+        p = make(next.x0 * 2 - nn.x0, next.y0 * 2 - nn.y0, ref);
+      }
+    }
+    if (p) {
+      p.L = k;
+      chain[k] = p;
+    }
+  }
+  return [...L, "E"].filter(has).map((k) => chain[k]);
+}
+
+function clampRect(r, W, H) {
+  const x0 = Math.min(W - 1, Math.max(0, Math.round(r.x0)));
+  const y0 = Math.min(H - 1, Math.max(0, Math.round(r.y0)));
+  return { x0, y0, x1: Math.max(x0 + 1, Math.min(W, Math.round(r.x1))), y1: Math.max(y0 + 1, Math.min(H, Math.round(r.y1))) };
+}
+
+/** Üst üste binen şık kutularını ortadan böler (alt alta dizilmiş şıklar için). */
+function splitOverlaps(boxes) {
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i];
+      const b = boxes[j];
+      const ox = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0);
+      const oy = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0);
+      if (ox <= 0 || oy <= 0) continue;
+      if (Math.min(ox, oy) > Math.min(a.x1 - a.x0, a.y1 - a.y0, b.x1 - b.x0, b.y1 - b.y0) * 0.8) continue; // tamamen üst üste: bölme
+      if (oy < ox) {
+        const [up, down] = a.y0 <= b.y0 ? [a, b] : [b, a];
+        const mid = Math.round((up.y1 + down.y0) / 2);
+        up.y1 = mid;
+        down.y0 = mid;
+      } else {
+        const [l, r] = a.x0 <= b.x0 ? [a, b] : [b, a];
+        const mid = Math.round((l.x1 + r.x0) / 2);
+        l.x1 = mid;
+        r.x0 = mid;
+      }
+    }
+  }
+}
+
+// =====================================================================
+//  AYARLAR (eşikler) – gerçek ödevlerle denedikten sonra buradan değiştirilir
+// =====================================================================
+const T = {
+  // Resim benzerliği: öğrenci fotoğrafı ile boş sayfa arasında en az bu kadar ortak nokta olmalı.
+  minPageMatch: 40,
+  // Aynı sayfa ikinci kez eklenirse eskisi (anahtarıyla) kullanılır.
+  samePageMatch: 120,
+  // El yazısı: öğrenci sayfasındaki nokta boş sayfadan bu kadar koyuysa el yazısı sayılır (0-255).
+  inkDarkness: 55,
+  // Basılı yazıdaki küçük kaymaları tolere etme payı (piksel, tek sayı).
+  printTolerancePx: 5,
+  // Şık kutusunun en az %1'i mürekkepse işaretli sayılır.
+  markMinRatio: 0.01,
+  // İkinci şık hem %4,5'i geçerse hem de birincinin 0,55 katından fazlaysa "iki şık işaretli".
+  markMultiMin: 0.045,
+  markRivalRatio: 0.55,
+  // Soru alanının en az %0,4'ü el yazısıysa "işlem yapılmış".
+  workMinRatio: 0.004,
+  // Sayfanın en az %0,2'si el yazısıysa ödev yapılmış; altıysa "boş sayfa".
+  pageMinInk: 0.002,
+  // Öğretmen anahtar girmediyse: en az 3 öğrencinin en az %60'ı aynı şıkkı seçtiyse o şık anahtar olur.
+  crowdMinStudents: 3,
+  crowdMinShare: 0.6,
+  // Kazanım başarısı %60'ın altındaysa (en az 2 soru) "eksik".
+  weakOutcomeRate: 0.6,
+  weakOutcomeMinAttempts: 2,
+};
+const PAGE_WIDTH = 1400; // boş sayfa bu genişliğe getirilir; bütün kutular bu ölçektedir
+const STUDENT_MAX_SIDE = 1800;
+const OCR_SCALE = 1.6;
+
+// =====================================================================
+//  VERİ DEPOSU (tarayıcının IndexedDB'si)
+// =====================================================================
+const STORES = ["classes", "students", "assignments", "pages", "submissions"];
+const D = Object.fromEntries(STORES.map((s) => [s, new Map()])); // bellekteki kopya
+
+const DB = {
+  db: null,
+  async open() {
+    this.db = await new Promise((res, rej) => {
+      const r = indexedDB.open("odev-kontrol", 1);
+      r.onupgradeneeded = () => STORES.forEach((s) => r.result.createObjectStore(s, { keyPath: "id", autoIncrement: true }));
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    for (const s of STORES) for (const o of await this.req(s, "readonly", (st) => st.getAll())) D[s].set(o.id, o);
+  },
+  req(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const tx = this.db.transaction(store, mode);
+      const r = fn(tx.objectStore(store));
+      tx.oncomplete = () => res(r?.result);
+      tx.onerror = () => rej(tx.error);
+    });
+  },
+  async put(store, obj) {
+    const id = await this.req(store, "readwrite", (st) => st.put(obj));
+    obj.id = id;
+    D[store].set(id, obj);
+    return obj;
+  },
+  async del(store, id) {
+    await this.req(store, "readwrite", (st) => st.delete(id));
+    D[store].delete(id);
+  },
+  async clearAll() {
+    for (const s of STORES) {
+      await this.req(s, "readwrite", (st) => st.clear());
+      D[s].clear();
+    }
+  },
+};
+const list = (s, f = () => true) => [...D[s].values()].filter(f);
+const nowIso = () => new Date().toISOString();
+
+// =====================================================================
+//  PUANLAMA
+// =====================================================================
+
+/** Bir soruya öğrenci oyları: {A: 3, C: 1} (her öğrenci bir kez sayılır). */
+function votesFor(pageId, number) {
+  const by = {};
+  const seen = new Set();
+  for (const s of list("submissions", (x) => x.pageId === pageId && x.status === "done")) {
+    const a = s.answers.find((x) => x.number === number);
+    if (!a || a.state !== "ok") continue;
+    const k = `${s.studentId}:${a.marked}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    by[a.marked] = (by[a.marked] || 0) + 1;
+  }
+  return by;
+}
+
+/** Sorunun anahtarı: önce öğretmenin girdiği, yoksa öğrenci çoğunluğu. */
+function keyFor(page, q) {
+  if (q.key) return { letter: q.key, source: "teacher" };
+  const v = votesFor(page.id, q.number);
+  const total = Object.values(v).reduce((a, b) => a + b, 0);
+  const [letter, n] = Object.entries(v).sort((a, b) => b[1] - a[1])[0] || [];
+  if (total >= T.crowdMinStudents && n / total >= T.crowdMinShare) return { letter, source: "crowd" };
+  return { letter: null, source: null };
+}
+
+function verdictFor(a, key) {
+  if (a.override) return { verdict: a.override, reason: "Öğretmen kararı." };
+  if (a.state === "multi") return { verdict: "review", reason: "Birden fazla şık işaretlenmiş gibi görünüyor." };
+  if (a.state === "none")
+    return a.hasWork ? { verdict: "review", reason: "İşlem yazılmış ama şık işaretlenmemiş." } : { verdict: "blank", reason: "Boş bırakılmış." };
+  if (!key.letter) return { verdict: "nokey", reason: "Cevap anahtarı yok." };
+  if (a.marked === key.letter) return { verdict: "correct", reason: a.hasWork ? "Doğru." : "Doğru ama işlem görünmüyor.", noWork: !a.hasWork };
+  return { verdict: "wrong", reason: `${a.marked} işaretlenmiş, doğrusu ${key.letter}.` };
+}
+
+/** Bir gönderimin cevapları, güncel anahtara göre kararlarıyla. */
+function judged(sub) {
+  const page = D.pages.get(sub.pageId);
+  if (!page || sub.status !== "done") return [];
+  return sub.answers.map((a) => {
+    const q = page.questions.find((x) => x.number === a.number) || {};
+    const key = keyFor(page, q);
+    return { ...a, q, page, key: key.letter, keySource: key.source, ...verdictFor(a, key) };
+  });
+}
+
+function countVerdicts(rows) {
+  const c = { n: rows.length, correct: 0, wrong: 0, blank: 0, review: 0, nokey: 0, nowork: 0 };
+  for (const r of rows) {
+    c[r.verdict]++;
+    if (r.noWork) c.nowork++;
+  }
+  return c;
+}
+
+const SCORE = { correct: 1, wrong: 0, blank: 0 };
+const outcomeKey = (q) => q.outcomeCode || q.topic || "Konu girilmemiş";
+
+function summarizeOutcomes(rows) {
+  const map = new Map();
+  for (const r of rows) {
+    if (!(r.verdict in SCORE)) continue;
+    const k = outcomeKey(r.q);
+    const o = map.get(k) || { key: k, subject: r.page.subject, topic: r.q.topic, outcomeCode: r.q.outcomeCode, outcomeText: r.q.outcomeText,
+      attempts: 0, score: 0, correct: 0, wrong: 0, blank: 0, students: new Map() };
+    o.attempts++;
+    o.score += SCORE[r.verdict];
+    o[r.verdict]++;
+    const p = o.students.get(r.studentId) || { n: 0, s: 0 };
+    p.n++;
+    p.s += SCORE[r.verdict];
+    o.students.set(r.studentId, p);
+    map.set(k, o);
+  }
+  return [...map.values()]
+    .map((o) => {
+      const rate = o.score / o.attempts;
+      const weakStudents = [...o.students.values()].filter((p) => p.n >= T.weakOutcomeMinAttempts && p.s / p.n < T.weakOutcomeRate).length;
+      return { ...o, rate: Math.round(rate * 100), weak: o.attempts >= T.weakOutcomeMinAttempts && rate < T.weakOutcomeRate, weakStudents };
+    })
+    .sort((a, b) => a.rate - b.rate);
+}
+
+const rowsOfStudent = (studentId) =>
+  list("submissions", (s) => s.studentId === studentId).flatMap((s) => judged(s).map((r) => ({ ...r, studentId })));
+
+/** Öğrencinin bir ödevdeki durumu. */
+function assignmentState(asg, studentId) {
+  const subs = list("submissions", (s) => s.assignmentId === asg.id && s.studentId === studentId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const done = subs.filter((s) => s.status === "done");
+  const rows = done.flatMap(judged);
+  const pages = new Set(done.map((s) => s.pageId)).size;
+  let state = "yapmadi";
+  if (subs.some((s) => s.status === "processing" || s.status === "waiting")) state = "isleniyor";
+  else if (done.length && done.every((s) => !s.hasHandwriting)) state = "bos";
+  else if (done.length) {
+    const late = asg.dueDate && done[0].createdAt.slice(0, 10) > asg.dueDate;
+    state = late ? "gec" : asg.pageIds.length && pages < asg.pageIds.length ? "eksik" : "yapti";
+  }
+  return { state, pages, subs, duplicate: subs.some((s) => s.duplicateOf), ...countVerdicts(rows) };
+}
+
+// =====================================================================
+//  RESİM İŞLEME (OpenCV) VE BASILI YAZI OKUMA (Tesseract)
+// =====================================================================
+let cv = null;
+const cvReady = new Promise((resolve, reject) => {
+  const tag = document.getElementById("cvjs");
+  const done = () => {
+    const m = window.cv;
+    if (!m) return reject(new Error("OpenCV yüklenemedi. İnternet bağlantısını kontrol edin."));
+    if (m instanceof Promise) m.then((x) => resolve((cv = x)));
+    else if (m.Mat) resolve((cv = m));
+    else m.onRuntimeInitialized = () => resolve((cv = m));
+  };
+  if (window.cv) done();
+  else {
+    tag.addEventListener("load", done);
+    tag.addEventListener("error", () => reject(new Error("OpenCV yüklenemedi. İnternet bağlantısını kontrol edin.")));
+  }
+});
+
+// Türkçe yazı okuma verisi (sabit sürüm).
+const TESS_LANG_PATH = "https://cdn.jsdelivr.net/npm/@tesseract.js-data/tur@1.0.0/4.0.0_best_int";
+const withTimeout = (p, ms, msg) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(msg)), ms))]);
+
+let ocrWorkerP = null;
+function ocrWorker() {
+  if (!ocrWorkerP) {
+    if (!window.Tesseract) throw new Error("Yazı okuma motoru (Tesseract) yüklenemedi. İnternet bağlantısını kontrol edin.");
+    ocrWorkerP = withTimeout(
+      Tesseract.createWorker("tur", Tesseract.OEM.LSTM_ONLY, {
+        langPath: TESS_LANG_PATH,
+        errorHandler: (e) => console.error("Tesseract:", e),
+      }).then(async (w) => {
+        await w.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.SPARSE_TEXT });
+        return w;
+      }),
+      180000,
+      "Yazı okuma motoru yüklenemedi (ilk açılışta internet gerekir). Sayfayı yenileyip tekrar deneyin."
+    ).catch((e) => {
+      ocrWorkerP = null; // bir sonraki denemede yeniden yüklensin
+      throw e;
+    });
+  }
+  return ocrWorkerP;
+}
+
+/** Mat'ları iş bitince siler (OpenCV.js'te çöp toplayıcı yoktur). */
+function scope(fn) {
+  const mats = [];
+  const keep = (m) => (mats.push(m), m);
+  try {
+    return fn(keep);
+  } catch (e) {
+    if (typeof e === "number" && cv.exceptionFromPtr) throw new Error(`OpenCV: ${cv.exceptionFromPtr(e).msg}`);
+    throw e;
+  } finally {
+    for (const m of mats) if (m && !m.isDeleted?.()) m.delete();
+  }
+}
+
+/** Resim dosyasını (telefon yönüyle) açıp gri Mat yapar. */
+async function toGrayMat(blob, { width, maxSide }) {
+  const bmp = await createImageBitmap(blob, { imageOrientation: "from-image" });
+  const scale = width ? width / bmp.width : Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * scale);
+  c.height = Math.round(bmp.height * scale);
+  const g = c.getContext("2d", { willReadFrequently: true });
+  g.drawImage(bmp, 0, 0, c.width, c.height);
+  bmp.close?.();
+  const rgba = cv.matFromImageData(g.getImageData(0, 0, c.width, c.height));
+  const gray = new cv.Mat();
+  cv.cvtColor(rgba, gray, cv.COLOR_RGBA2GRAY);
+  rgba.delete();
+  return gray;
+}
+
+/** Işık farklarını düzeltir: kağıt beyaz, yazı koyu olur. */
+function flatten(gray, keep) {
+  const k = Math.max(15, Math.round(Math.max(gray.cols, gray.rows) / 60) | 1);
+  const bg = keep(new cv.Mat());
+  const kernel = keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(k, k)));
+  cv.dilate(gray, bg, kernel);
+  cv.GaussianBlur(bg, bg, new cv.Size(k * 2 + 1, k * 2 + 1), 0);
+  const out = new cv.Mat();
+  cv.divide(gray, bg, out, 255);
+  return out;
+}
+
+function matToCanvas(mat) {
+  const c = document.createElement("canvas");
+  cv.imshow(c, mat);
+  return c;
+}
+const canvasToBlob = (c, type, q) => new Promise((r) => c.toBlob(r, type, q));
+
+/** Öğrenci fotoğrafını depolamak için küçültür. */
+async function shrinkPhoto(blob, maxSide = 2400) {
+  const bmp = await createImageBitmap(blob, { imageOrientation: "from-image" });
+  const s = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * s);
+  c.height = Math.round(bmp.height * s);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  bmp.close?.();
+  return canvasToBlob(c, "image/jpeg", 0.88);
+}
+
+async function ocrWords(canvas) {
+  const big = document.createElement("canvas");
+  big.width = Math.round(canvas.width * OCR_SCALE);
+  big.height = Math.round(canvas.height * OCR_SCALE);
+  const g = big.getContext("2d");
+  g.imageSmoothingQuality = "high";
+  g.drawImage(canvas, 0, 0, big.width, big.height);
+  const w = await ocrWorker();
+  const r = await w.recognize(big, {}, { blocks: true });
+  const k = 1 / OCR_SCALE;
+  const words = [];
+  for (const b of r.data.blocks || [])
+    for (const p of b.paragraphs)
+      for (const l of p.lines)
+        for (const wd of l.words)
+          words.push({ text: wd.text, conf: wd.confidence, x0: wd.bbox.x0 * k, y0: wd.bbox.y0 * k, x1: wd.bbox.x1 * k, y1: wd.bbox.y1 * k });
+  return words;
+}
+
+/** Boş sayfa fotoğrafını işler: soruları ve şık kutularını bulur. */
+async function readTemplate(photo) {
+  await cvReady;
+  const gray = await toGrayMat(photo, { width: PAGE_WIDTH });
+  const { canvas, W, H } = scope((keep) => {
+    keep(gray);
+    const flat = keep(flatten(gray, keep));
+    return { canvas: matToCanvas(flat), W: flat.cols, H: flat.rows };
+  });
+  const words = await ocrWords(canvas);
+  const questions = detectQuestions(words, W, H);
+  const good = words.filter((w) => w.conf > 30 && w.text.trim().length > 1);
+  const topY = Math.min(...good.map((w) => w.y0));
+  const headerText = good.filter((w) => w.y0 < topY + 25).sort((a, b) => a.x0 - b.x0).map((w) => w.text).join(" ").slice(0, 120);
+  return { template: await canvasToBlob(canvas, "image/png"), width: W, height: H, questions, headerText };
+}
+
+function features(img, keep) {
+  const orb = keep(new cv.ORB(4000));
+  const kp = keep(new cv.KeyPointVector());
+  const des = keep(new cv.Mat());
+  orb.detectAndCompute(img, keep(new cv.Mat()), kp, des);
+  return { kp, des };
+}
+
+/** Öğrenci fotoğrafını şablona oturtan dönüşüm; inliers = resim benzerliği puanı. */
+function findHomography(tmpl, stud, keep) {
+  const a = features(tmpl, keep);
+  const b = features(stud, keep);
+  if (a.des.rows < 10 || b.des.rows < 10) return null;
+  const bf = keep(new cv.BFMatcher(cv.NORM_HAMMING, false));
+  const knn = keep(new cv.DMatchVectorVector());
+  bf.knnMatch(b.des, a.des, knn, 2);
+  const src = [];
+  const dst = [];
+  for (let i = 0; i < knn.size(); i++) {
+    const m = knn.get(i);
+    if (m.size() < 2) continue;
+    const m0 = m.get(0);
+    const m1 = m.get(1);
+    if (m0.distance < 0.75 * m1.distance) {
+      const p = b.kp.get(m0.queryIdx).pt;
+      const q = a.kp.get(m0.trainIdx).pt;
+      src.push(p.x, p.y);
+      dst.push(q.x, q.y);
+    }
+  }
+  const n = src.length / 2;
+  if (n < 12) return { H: null, inliers: 0 };
+  const srcM = keep(cv.matFromArray(n, 1, cv.CV_32FC2, src));
+  const dstM = keep(cv.matFromArray(n, 1, cv.CV_32FC2, dst));
+  const mask = keep(new cv.Mat());
+  const H = cv.findHomography(srcM, dstM, cv.RANSAC, 4, mask);
+  if (H.empty()) {
+    H.delete();
+    return { H: null, inliers: 0 };
+  }
+  return { H: keep(H), inliers: cv.countNonZero(mask) };
+}
+
+/** Bir fotoğrafın hangi boş sayfaya benzediğini bulur. */
+async function bestMatch(photo, pages) {
+  await cvReady;
+  const img = await toGrayMat(photo, { width: PAGE_WIDTH });
+  let best = { id: null, score: 0 };
+  for (const p of pages) {
+    const tm = await toGrayMat(p.template, { width: PAGE_WIDTH });
+    scope((keep) => {
+      keep(tm);
+      const h = findHomography(tm, img, keep);
+      if (h?.inliers > best.score) best = { id: p.id, score: h.inliers };
+    });
+  }
+  img.delete();
+  return best;
+}
+
+const rectArea = (r) => (r.x1 - r.x0) * (r.y1 - r.y0);
+function inkIn(ink, r) {
+  const x0 = Math.max(0, Math.min(ink.cols - 1, r.x0));
+  const y0 = Math.max(0, Math.min(ink.rows - 1, r.y0));
+  const x1 = Math.max(x0 + 1, Math.min(ink.cols, r.x1));
+  const y1 = Math.max(y0 + 1, Math.min(ink.rows, r.y1));
+  const roi = ink.roi(new cv.Rect(x0, y0, x1 - x0, y1 - y0));
+  const n = cv.countNonZero(roi);
+  roi.delete();
+  return n;
+}
+
+/** Öğrenci fotoğrafını adaylar arasından doğru sayfaya oturtur, el yazısını ayırır, cevapları okur. */
+async function readStudentPage(photo, pages) {
+  await cvReady;
+  const studGray = await toGrayMat(photo, { maxSide: STUDENT_MAX_SIDE });
+  const tmplMats = [];
+  for (const p of pages) tmplMats.push(await toGrayMat(p.template, { width: PAGE_WIDTH }));
+  const r = scope((keep) => {
+    keep(studGray);
+    tmplMats.forEach(keep);
+    const stud = keep(flatten(studGray, keep));
+    let best = null;
+    pages.forEach((p, i) => {
+      const h = findHomography(tmplMats[i], stud, keep);
+      if (h?.H && (!best || h.inliers > best.h.inliers)) best = { p, h, tmpl: tmplMats[i] };
+    });
+    if (!best || best.h.inliers < T.minPageMatch) return { matched: false };
+    const { p, h, tmpl } = best;
+    const size = new cv.Size(tmpl.cols, tmpl.rows);
+    const warped = keep(new cv.Mat());
+    cv.warpPerspective(stud, warped, h.H, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar(255));
+    const ones = keep(new cv.Mat(stud.rows, stud.cols, cv.CV_8UC1, new cv.Scalar(255)));
+    const valid = keep(new cv.Mat());
+    cv.warpPerspective(ones, valid, h.H, size, cv.INTER_NEAREST, cv.BORDER_CONSTANT, new cv.Scalar(0));
+    cv.erode(valid, valid, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(9, 9))));
+
+    // El yazısı = öğrenci sayfasında olup boş sayfada olmayan koyu izler.
+    const tmplMin = keep(new cv.Mat());
+    cv.erode(tmpl, tmplMin, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(T.printTolerancePx, T.printTolerancePx))));
+    const diff = keep(new cv.Mat());
+    cv.subtract(tmplMin, warped, diff);
+    const ink = keep(new cv.Mat());
+    cv.threshold(diff, ink, T.inkDarkness, 255, cv.THRESH_BINARY);
+    cv.bitwise_and(ink, valid, ink);
+    cv.morphologyEx(ink, ink, cv.MORPH_OPEN, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2))));
+    const pageInk = cv.countNonZero(ink) / (ink.rows * ink.cols);
+
+    const answers = p.questions.map((q) => {
+      const opt = q.options.map((o) => {
+        const n = inkIn(ink, o.box);
+        return { letter: o.letter, ink: n, ratio: n / rectArea(o.box) };
+      });
+      const [first, second] = [...opt].sort((a, b) => b.ratio - a.ratio);
+      const total = opt.reduce((s, o) => s + o.ink, 0);
+      let state = "none";
+      let marked = null;
+      if (first && first.ratio >= T.markMinRatio) {
+        if (second && second.ratio >= T.markMultiMin && second.ratio > first.ratio * T.markRivalRatio) state = "multi";
+        else {
+          state = "ok";
+          marked = first.letter;
+        }
+      }
+      const regionInk = inkIn(ink, q.region) - total;
+      const regionArea = rectArea(q.region) - q.options.reduce((s, o) => s + rectArea(o.box), 0);
+      const workRatio = Math.max(0, regionInk) / Math.max(1, regionArea);
+      return {
+        number: q.number,
+        marked,
+        state,
+        share: total ? (first?.ink ?? 0) / total : 0,
+        ratios: Object.fromEntries(opt.map((o) => [o.letter, Math.round(o.ratio * 1000) / 1000])),
+        workRatio,
+        hasWork: workRatio >= T.workMinRatio,
+      };
+    });
+
+    // Görsel: oturtulmuş sayfa, el yazısı maviye boyalı.
+    const rgba = keep(new cv.Mat());
+    cv.cvtColor(warped, rgba, cv.COLOR_GRAY2RGBA);
+    const d = rgba.data;
+    const m = ink.data;
+    for (let i = 0; i < m.length; i++)
+      if (m[i]) {
+        d[i * 4] = 20;
+        d[i * 4 + 1] = 90;
+        d[i * 4 + 2] = 230;
+      }
+    return { matched: true, pageId: p.id, score: h.inliers, pageInk, answers, canvas: matToCanvas(rgba) };
+  });
+  if (r.matched) r.overlay = await canvasToBlob(r.canvas, "image/jpeg", 0.8);
+  delete r.canvas;
+  return r;
+}
+
+// =====================================================================
+//  İŞ KUYRUĞU: fotoğraflar sırayla işlenir
+// =====================================================================
+let queue = Promise.resolve();
+let queued = 0;
+const enqueue = (fn) => {
+  queued++;
+  updateEngine();
+  const p = queue.then(fn, fn).finally(() => {
+    queued--;
+    updateEngine();
+    scheduleRender();
+  });
+  queue = p.catch(() => {});
+  return p;
+};
+
+/** Boş sayfayı işler. Aynı sayfa varsa eskisinin id'si döner. */
+async function processPage(page) {
+  try {
+    const pool = list("pages", (p) => p.id !== page.id && p.status === "ready");
+    if (pool.length) {
+      const m = await bestMatch(page.photo, pool);
+      if (m.id && m.score >= T.samePageMatch) {
+        await DB.del("pages", page.id);
+        return m.id;
+      }
+    }
+    const t = await readTemplate(page.photo);
+    Object.assign(page, {
+      template: t.template,
+      width: t.width,
+      height: t.height,
+      status: "ready",
+      title: page.title || t.headerText || "Adsız sayfa",
+      questions: t.questions.map((q) => ({ number: q.number, region: q.region, options: q.options, key: null, topic: "", outcomeCode: "", outcomeText: "" })),
+      error: t.questions.length ? null : "Sayfada şık (A, B, C, D) bulunamadı. Sayfayı düz, gölgesiz ve yakından tekrar çekin.",
+    });
+    delete page.photo; // yer kaplamasın; şablon yeterli
+    await DB.put("pages", page);
+    return page.id;
+  } catch (e) {
+    console.error(e);
+    page.status = "failed";
+    page.error = String(e.message || e);
+    await DB.put("pages", page);
+    return page.id;
+  }
+}
+
+async function processSubmission(sub) {
+  try {
+    sub.status = "processing";
+    scheduleRender();
+    const asg = D.assignments.get(sub.assignmentId);
+    const pages = (asg?.pageIds || []).map((id) => D.pages.get(id)).filter((p) => p?.status === "ready");
+    if (!pages.length) throw new Error("Bu ödeve henüz boş sayfa eklenmemiş.");
+    const r = await readStudentPage(sub.image, pages);
+    if (!r.matched) throw new Error("Fotoğraf bu ödevin sayfalarından hiçbirine benzemiyor. Doğru sayfa mı? Bütün sayfa görünüyor mu?");
+    Object.assign(sub, {
+      status: "done",
+      error: null,
+      pageId: r.pageId,
+      overlay: r.overlay,
+      matchScore: r.score,
+      pageInk: r.pageInk,
+      hasHandwriting: r.pageInk >= T.pageMinInk,
+      answers: r.answers,
+    });
+  } catch (e) {
+    console.error(e);
+    sub.status = "failed";
+    sub.error = String(e.message || e);
+  }
+  await DB.put("submissions", sub);
+}
+
+/** Basit ve hızlı dosya parmak izi (kopya fotoğraf kontrolü için). */
+async function fingerprint(blob) {
+  const b = new Uint8Array(await blob.arrayBuffer());
+  let h1 = 0x811c9dc5;
+  let h2 = 0;
+  for (let i = 0; i < b.length; i++) {
+    h1 = Math.imul(h1 ^ b[i], 16777619);
+    h2 = (h2 + b[i] * (i + 1)) | 0;
+  }
+  return `${b.length}-${(h1 >>> 0).toString(16)}-${(h2 >>> 0).toString(16)}`;
+}
+
+// =====================================================================
+//  YEDEK AL / YÜKLE
+// =====================================================================
+const blobToDataUrl = (b) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
+const dataUrlToBlob = async (u) => (await fetch(u)).blob();
+
+async function exportBackup() {
+  const out = { app: "odev-kontrol", version: 1, date: nowIso() };
+  for (const s of STORES) {
+    out[s] = [];
+    for (const o of D[s].values()) {
+      const c = { ...o };
+      for (const k of Object.keys(c)) if (c[k] instanceof Blob) c[k] = { $blob: await blobToDataUrl(c[k]) };
+      out[s].push(c);
+    }
+  }
+  const blob = new Blob([JSON.stringify(out)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `odev-kontrol-yedek-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+async function importBackup(file) {
+  const data = JSON.parse(await file.text());
+  if (data.app !== "odev-kontrol") throw new Error("Bu dosya bir Ödev Kontrol yedeği değil.");
+  await DB.clearAll();
+  for (const s of STORES)
+    for (const o of data[s] || []) {
+      for (const k of Object.keys(o)) if (o[k]?.$blob) o[k] = await dataUrlToBlob(o[k].$blob);
+      await DB.put(s, o);
+    }
+}
+
+// =====================================================================
+//  ARAYÜZ
+// =====================================================================
+const $app = document.getElementById("app");
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const VERDICT = { correct: "Doğru", wrong: "Yanlış", blank: "Boş", review: "Öğretmen bakacak", nokey: "Anahtar yok" };
+const STATE = { yapti: "Yaptı", eksik: "Eksik sayfa", gec: "Geç teslim", yapmadi: "Yapmadı", bos: "Boş sayfa", isleniyor: "İşleniyor" };
+const badge = (cls, text) => `<span class="badge b-${esc(cls)}">${esc(text)}</span>`;
+const fmtDate = (s) => {
+  if (!s) return "";
+  if (s.length === 10) return new Date(s + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  return new Date(s).toLocaleString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+};
+const byName = (a, b) => a.name.localeCompare(b.name, "tr");
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+function rateBar(rate) {
+  const color = rate >= 75 ? "var(--ok)" : rate >= 60 ? "var(--mid)" : "var(--bad)";
+  return `<div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><span style="width:${rate}%;background:${color}"></span></div><b style="width:46px;text-align:right">%${rate}</b></div>`;
+}
+
+// Resimler için geçici adresler (blob URL), sayfa değişince serbest bırakılır.
+let urls = [];
+const urlOf = (blob) => {
+  if (!blob) return "";
+  const u = URL.createObjectURL(blob);
+  urls.push(u);
+  return u;
+};
+
+function figure(blob, W, H, shapes) {
+  return `<div class="fig"><img src="${urlOf(blob)}" alt="Sayfa" /><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${shapes}</svg></div>`;
+}
+const rect = (b, cls, label = "") =>
+  `<rect class="${cls}" x="${b.x0}" y="${b.y0}" width="${b.x1 - b.x0}" height="${b.y1 - b.y0}" rx="6" />` +
+  (label ? `<text class="${cls}-t" x="${b.x0 + 8}" y="${b.y0 + 34}">${esc(label)}</text>` : "");
+
+function updateEngine() {
+  const el = document.getElementById("engine");
+  if (!el) return;
+  el.innerHTML = queued ? `<span class="spinner"></span> ${queued} iş sırada` : cv ? "Hazır" : `<span class="spinner"></span> Okuma motoru yükleniyor…`;
+}
+
+/** Bir dosya seçme penceresi açar. */
+function pickFiles({ multiple = false } = {}) {
+  return new Promise((resolve) => {
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "image/*";
+    inp.multiple = multiple;
+    inp.onchange = () => resolve([...inp.files]);
+    inp.click();
+  });
+}
+
+function dropTarget(el, onFiles) {
+  el.ondragover = (e) => {
+    e.preventDefault();
+    el.classList.add("over");
+  };
+  el.ondragleave = () => el.classList.remove("over");
+  el.ondrop = (e) => {
+    e.preventDefault();
+    el.classList.remove("over");
+    onFiles([...e.dataTransfer.files].filter((f) => f.type.startsWith("image/")));
+  };
+}
+
+// ---------- Yönlendirme ----------
+const routes = [
+  [/^\/$/, viewHome],
+  [/^\/sinif\/(\d+)(?:\/(\w+))?$/, (id, tab) => viewClass(+id, tab || "odevler")],
+  [/^\/odev\/(\d+)$/, (id) => viewAssignment(+id)],
+  [/^\/sayfa\/(\d+)$/, (id) => viewPage(+id)],
+  [/^\/ogrenci\/(\d+)$/, (id) => viewStudent(+id)],
+  [/^\/gonderim\/(\d+)$/, (id) => viewSubmission(+id)],
+];
+let currentView = null;
+function render() {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  const hash = location.hash.slice(1) || "/";
+  for (const [re, fn] of routes) {
+    const m = re.exec(hash);
+    if (m) {
+      currentView = hash;
+      try {
+        fn(...m.slice(1));
+      } catch (e) {
+        console.error(e);
+        $app.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div><a href="#/">Ana sayfa</a>`;
+      }
+      return;
+    }
+  }
+  $app.innerHTML = `<p>Sayfa bulunamadı. <a href="#/">Ana sayfa</a></p>`;
+}
+// Arka planda iş bitince ekranı tazele (kullanıcı yazı yazarken bölmemek için kısa gecikmeyle).
+let renderTimer = null;
+let keepScreen = false; // toplu yükleme listesi açıkken ekranı yeniden çizme
+function scheduleRender() {
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(() => {
+    if (keepScreen) return refreshParts?.();
+    const y = window.scrollY;
+    const active = document.activeElement;
+    if (active && /INPUT|TEXTAREA|SELECT/.test(active.tagName)) return;
+    render();
+    window.scrollTo(0, y);
+  }, 300);
+}
+let refreshParts = null;
+window.addEventListener("hashchange", () => {
+  keepScreen = false;
+  refreshParts = null;
+  render();
+  window.scrollTo(0, 0);
+});
+
+// ---------- Ana sayfa: sınıflar ----------
+function viewHome() {
+  const classes = list("classes").sort(byName);
+  $app.innerHTML = `
+    <h1>Sınıflarım</h1>
+    ${classes
+      .map((c) => {
+        const n = list("students", (s) => s.classId === c.id).length;
+        return `<a class="card row between" href="#/sinif/${c.id}" style="text-decoration:none;color:inherit"><b>${esc(c.name)}</b><span class="muted">${n} öğrenci →</span></a>`;
+      })
+      .join("") || `<p class="muted">Henüz sınıf yok. Aşağıdan ekleyin.</p>`}
+    <form class="card stack" id="nc">
+      <h3>Yeni sınıf</h3>
+      <div class="row" style="flex-wrap:nowrap"><input name="name" placeholder="ör. 8-A" required /><input name="grade" type="number" min="1" max="12" placeholder="Sınıf" style="width:110px" /></div>
+      <button class="primary">Sınıf ekle</button>
+    </form>
+    <h2>Yedek</h2>
+    <div class="card stack">
+      <p class="small muted" style="margin:0">Veriler bu bilgisayardaki tarayıcının içinde saklanır. Tarayıcı geçmişi "tüm site verileri" ile temizlenirse silinebilir. Ara sıra yedek alın.</p>
+      <div class="row"><button id="bk">💾 Yedek al</button><button id="rs">📂 Yedekten yükle</button></div>
+    </div>`;
+  document.getElementById("nc").onsubmit = async (e) => {
+    e.preventDefault();
+    const c = await DB.put("classes", { name: e.target.name.value.trim(), grade: +e.target.grade.value || null });
+    location.hash = `#/sinif/${c.id}/ogrenciler`;
+  };
+  document.getElementById("bk").onclick = () => exportBackup().catch((e) => toast(e.message));
+  document.getElementById("rs").onclick = () => {
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = ".json,application/json";
+    inp.onchange = async () => {
+      if (!inp.files[0] || !confirm("Şu anki bütün veriler silinip yedekteki veriler yüklenecek. Devam edilsin mi?")) return;
+      try {
+        await importBackup(inp.files[0]);
+        toast("Yedek yüklendi.");
+        render();
+      } catch (e) {
+        toast(e.message);
+      }
+    };
+    inp.click();
+  };
+}
+
+// ---------- Sınıf ----------
+function viewClass(id, tab) {
+  const c = D.classes.get(id);
+  if (!c) throw new Error("Sınıf bulunamadı.");
+  const tabs = { odevler: "Ödevler", ogrenciler: "Öğrenciler", kazanimlar: "Kazanımlar" };
+  $app.innerHTML = `
+    <a href="#/" class="small">← Sınıflar</a>
+    <h1>${esc(c.name)}</h1>
+    <div class="tabs">${Object.entries(tabs).map(([k, v]) => `<a href="#/sinif/${id}/${k}" class="${k === tab ? "on" : ""}">${v}</a>`).join("")}</div>
+    <div id="tab"></div>`;
+  const el = document.getElementById("tab");
+  const students = list("students", (s) => s.classId === id).sort(byName);
+
+  if (tab === "ogrenciler") {
+    el.innerHTML = `
+      ${students.length
+        ? `<div class="card table-wrap"><table><tr><th>Öğrenci</th><th>Gönderilen sayfa</th><th></th></tr>
+          ${students.map((s) => `<tr><td><a href="#/ogrenci/${s.id}">${esc(s.name)}</a></td><td>${list("submissions", (x) => x.studentId === s.id && x.status === "done").length}</td>
+            <td style="text-align:right"><button class="link small danger" data-del="${s.id}">Sil</button></td></tr>`).join("")}</table></div>`
+        : `<p class="muted">Öğrenci yok.</p>`}
+      <form class="card stack" id="ns">
+        <h3>Öğrenci ekle</h3>
+        <div><label>Her satıra bir öğrenci adı (listeyi yapıştırabilirsiniz)</label><textarea name="names" required></textarea></div>
+        <button class="primary">Ekle</button>
+      </form>`;
+    el.querySelector("#ns").onsubmit = async (e) => {
+      e.preventDefault();
+      const names = e.target.names.value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+      for (const name of names) await DB.put("students", { classId: id, name });
+      toast(`${names.length} öğrenci eklendi.`);
+      render();
+    };
+    el.querySelectorAll("[data-del]").forEach((b) => (b.onclick = async () => {
+      const s = D.students.get(+b.dataset.del);
+      if (!confirm(`${s.name} ve bütün fotoğrafları silinsin mi?`)) return;
+      for (const x of list("submissions", (x) => x.studentId === s.id)) await DB.del("submissions", x.id);
+      await DB.del("students", s.id);
+      render();
+    }));
+    return;
+  }
+
+  if (tab === "kazanimlar") {
+    const rows = students.flatMap((s) => rowsOfStudent(s.id));
+    const outs = summarizeOutcomes(rows);
+    el.innerHTML = outs.length
+      ? `<p class="muted small">Başarı %${T.weakOutcomeRate * 100}'ın altındaysa (en az ${T.weakOutcomeMinAttempts} soru) kazanım "eksik" sayılır. Konu ve kazanımları sayfa ekranından girersiniz.</p>
+        <div class="card table-wrap"><table><tr><th>Konu / kazanım</th><th>Soru</th><th>Eksik öğrenci</th><th style="min-width:140px">Sınıf başarısı</th></tr>
+        ${outs.map((o) => `<tr><td><b>${esc(o.topic || o.key)}</b><br><span class="muted small">${esc(o.subject || "")}${o.outcomeCode ? " · " + esc(o.outcomeCode) : ""}</span>${o.outcomeText ? `<br><span class="small">${esc(o.outcomeText)}</span>` : ""}</td>
+          <td>${o.attempts}</td><td>${o.weakStudents}</td><td>${rateBar(o.rate)}</td></tr>`).join("")}</table></div>`
+      : `<p class="muted">Henüz kontrol edilmiş ödev yok.</p>`;
+    return;
+  }
+
+  const asgs = list("assignments", (a) => a.classId === id).sort((a, b) => (b.dueDate || "9999").localeCompare(a.dueDate || "9999") || b.id - a.id);
+  el.innerHTML = `
+    ${asgs.map((a) => {
+      const done = students.filter((s) => ["yapti", "gec", "eksik"].includes(assignmentState(a, s.id).state)).length;
+      return `<a class="card row between" href="#/odev/${a.id}" style="text-decoration:none;color:inherit">
+        <span><b>${esc(a.title)}</b><br><span class="muted small">${a.pageIds.length} sayfa · ${a.dueDate ? "Son gün " + fmtDate(a.dueDate) : "Süresiz"}</span></span>
+        <span><b>${done}</b>/${students.length} yaptı →</span></a>`;
+    }).join("") || `<p class="muted">Henüz ödev yok.</p>`}
+    <form class="card stack" id="na">
+      <h3>Yeni ödev</h3>
+      <div><label>Başlık</label><input name="title" placeholder="ör. Fikrî Haklar – Test 2" required /></div>
+      <div class="row" style="flex-wrap:nowrap">
+        <div style="flex:1"><label>Ders</label><input name="subject" placeholder="Teknoloji ve Tasarım" /></div>
+        <div style="flex:1"><label>Son gün</label><input name="due" type="date" /></div>
+      </div>
+      <button class="primary">Ödev oluştur →</button>
+    </form>`;
+  el.querySelector("#na").onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const a = await DB.put("assignments", { classId: id, title: f.title.value.trim(), subject: f.subject.value.trim(), dueDate: f.due.value || null, pageIds: [], createdAt: nowIso() });
+    location.hash = `#/odev/${a.id}`;
+  };
+}
+
+// ---------- Ödev ----------
+function pageInfo(p) {
+  if (p.status === "processing") return `<span class="row small"><span class="spinner"></span> Okunuyor…</span>`;
+  if (p.status === "failed") return badge("wrong", "Okunamadı");
+  const keys = p.questions.filter((q) => q.key).length;
+  const crowd = p.questions.filter((q) => !q.key && keyFor(p, q).letter).length;
+  return `${p.questions.length} soru · ${keys} anahtar${crowd ? ` · ${crowd} öğrenci çoğunluğu` : ""}`;
+}
+
+function missingNumbers(p) {
+  const nums = p.questions.map((q) => q.number);
+  return Array.from({ length: Math.max(0, ...nums) }, (_, i) => i + 1).filter((n) => !nums.includes(n));
+}
+
+function whoDidHtml(a, students) {
+  const st = students.map((s) => ({ s, ...assignmentState(a, s.id) }));
+  const count = (k) => st.filter((x) => x.state === k).length;
+  return `
+    <div class="stats">
+      <div class="stat"><b>${count("yapti")}</b>Yaptı</div>
+      <div class="stat"><b>${count("eksik") + count("gec")}</b>Eksik / geç</div>
+      <div class="stat"><b>${count("bos")}</b>Boş sayfa</div>
+      <div class="stat"><b>${count("yapmadi")}</b>Yapmadı</div>
+    </div>
+    <div class="card table-wrap"><table>
+      <tr><th>Öğrenci</th><th>Durum</th><th>Sayfa</th><th>D / Y / B</th><th>İşlemsiz doğru</th><th></th></tr>
+      ${st.map((x) => `<tr>
+        <td><a href="#/ogrenci/${x.s.id}">${esc(x.s.name)}</a>${x.duplicate ? ` ${badge("wrong", "Kopya foto")}` : ""}${x.review ? ` ${badge("review", x.review + " kontrol")}` : ""}</td>
+        <td>${badge(x.state, STATE[x.state])}</td><td>${x.pages}/${a.pageIds.length}</td>
+        <td>${x.n ? `${x.correct} / ${x.wrong} / ${x.blank}` : "–"}</td><td>${x.nowork || "–"}</td>
+        <td style="text-align:right"><button class="small" data-up="${x.s.id}">📎 Yükle</button></td></tr>`).join("")}
+    </table></div>
+    <p class="muted small">D: doğru, Y: yanlış, B: boş. "İşlemsiz doğru": doğru şık işaretlenmiş ama soru alanında yazı yok (tahmin ya da kopya olabilir). Öğrencinin adına tıklayarak sayfalarını ve eksik kazanımlarını görün.</p>`;
+}
+
+const norm = (s) => s.toLocaleLowerCase("tr-TR").replace(/ı/g, "i").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+function guessStudent(fileName, students) {
+  const f = ` ${norm(fileName)} `;
+  const full = students.filter((s) => f.includes(` ${norm(s.name)} `));
+  if (full.length === 1) return full[0].id;
+  const first = students.filter((s) => f.includes(` ${norm(s.name).split(" ")[0]} `));
+  return first.length === 1 ? first[0].id : "";
+}
+
+function viewAssignment(id) {
+  const a = D.assignments.get(id);
+  if (!a) throw new Error("Ödev bulunamadı.");
+  const students = list("students", (s) => s.classId === a.classId).sort(byName);
+  const pages = a.pageIds.map((pid) => D.pages.get(pid)).filter(Boolean);
+  const library = list("pages", (p) => p.status === "ready" && !a.pageIds.includes(p.id));
+  $app.innerHTML = `
+    <a href="#/sinif/${a.classId}" class="small">← Ödevler</a>
+    <div class="row between"><h1>${esc(a.title)}</h1><button class="link small danger" id="del">Ödevi sil</button></div>
+    <p class="muted" style="margin-top:-8px">${a.subject ? esc(a.subject) + " · " : ""}${a.dueDate ? "Son gün " + fmtDate(a.dueDate) : "Süresiz"}</p>
+
+    <h2>1. Boş sayfalar ve cevap anahtarı</h2>
+    <div id="pages">${pagesHtml()}</div>
+    <div class="card stack">
+      <div class="dropzone" id="pdz">Öğrencilerin çözeceği sayfanın <b>boş</b> hâlinin fotoğrafını buraya sürükleyin<br>
+        <button type="button" class="primary" id="padd" style="margin-top:10px">Boş sayfa ekle</button></div>
+      ${library.length ? `<div class="row"><select id="lib" style="flex:1"><option value="">…ya da daha önce eklenen bir sayfayı seçin</option>${library.map((p) => `<option value="${p.id}">${esc(p.title)}</option>`).join("")}</select><button id="libadd">Ekle</button></div>` : ""}
+      <p class="muted small" style="margin:0">Sayfa işaretsiz olmalı; düz koyun, bütün sayfa görünsün. Program soruları ve şıkları kendisi bulur.</p>
+    </div>
+
+    <h2>2. Öğrenci fotoğraflarını yükle</h2>
+    <div class="card stack">
+      <div class="dropzone" id="dz">📥 Öğrencilerin gönderdiği fotoğrafları buraya sürükleyin<br>
+        <button type="button" class="primary" id="pick" style="margin-top:10px">Fotoğrafları seç</button></div>
+      <p class="muted small" style="margin:0">Her fotoğraf için öğrenciyi seçip "Kontrol et"e basın. Dosya adında öğrencinin adı geçiyorsa (ör. <i>ali-kaya-1.jpg</i>) öğrenci kendiliğinden seçilir. Tablodaki "📎 Yükle" ile bir öğrencinin fotoğraflarını doğrudan ekleyebilirsiniz.</p>
+      <div id="queue"></div>
+    </div>
+
+    <h2>3. Kim yaptı?</h2>
+    <div id="whodid">${whoDidHtml(a, students)}</div>`;
+
+  function pagesHtml() {
+    return pages.map((p) => {
+      const miss = p.status === "ready" ? missingNumbers(p) : [];
+      const nokey = p.status === "ready" && p.questions.some((q) => !keyFor(p, q).letter);
+      return `<div class="card">
+        <div class="row between"><b>${esc(p.title || "Sayfa")}</b><span class="small">${pageInfo(p)}</span></div>
+        ${p.error ? `<p class="small" style="color:var(--bad)">${esc(p.error)}</p>` : ""}
+        ${miss.length ? `<p class="small" style="color:var(--bad)">⚠ ${miss.join(", ")}. soru bulunamadı. Sayfayı daha düz ve net çekip yeniden ekleyin.</p>` : ""}
+        ${nokey ? `<p class="small" style="color:var(--mid)">Bazı soruların anahtarı yok.</p>` : ""}
+        <div class="row">${p.status === "ready" ? `<a class="btn primary" href="#/sayfa/${p.id}">Anahtar ve konuları gir</a>` : ""}<button data-unlink="${p.id}">Ödevden çıkar</button></div>
+      </div>`;
+    }).join("") || `<p class="muted">Henüz sayfa yok.</p>`;
+  }
+
+  const addPages = async (files) => {
+    for (const f of files) {
+      const p = await DB.put("pages", { title: "", subject: a.subject, status: "processing", photo: f, questions: [], createdAt: nowIso() });
+      a.pageIds.push(p.id);
+      await DB.put("assignments", a);
+      enqueue(async () => {
+        const used = await processPage(p);
+        if (used !== p.id) {
+          a.pageIds = [...new Set(a.pageIds.map((x) => (x === p.id ? used : x)))];
+          await DB.put("assignments", a);
+          toast("Bu sayfa daha önce eklenmişti; hazır anahtarı kullanılıyor.");
+        }
+      });
+    }
+    render();
+  };
+  document.getElementById("padd").onclick = async () => addPages(await pickFiles({ multiple: true }));
+  dropTarget(document.getElementById("pdz"), addPages);
+  document.getElementById("libadd")?.addEventListener("click", async () => {
+    const v = +document.getElementById("lib").value;
+    if (!v) return;
+    a.pageIds.push(v);
+    await DB.put("assignments", a);
+    render();
+  });
+  $app.querySelectorAll("[data-unlink]").forEach((b) => (b.onclick = async () => {
+    if (!confirm("Bu sayfa ödevden çıkarılsın mı?")) return;
+    a.pageIds = a.pageIds.filter((x) => x !== +b.dataset.unlink);
+    await DB.put("assignments", a);
+    render();
+  }));
+  document.getElementById("del").onclick = async () => {
+    if (!confirm("Bu ödev ve ödeve yüklenen bütün öğrenci fotoğrafları silinsin mi?")) return;
+    for (const s of list("submissions", (x) => x.assignmentId === id)) await DB.del("submissions", s.id);
+    await DB.del("assignments", id);
+    location.hash = `#/sinif/${a.classId}`;
+  };
+
+  // --- Toplu yükleme listesi ---
+  const items = []; // { file, url, student, sub }
+  const box = document.getElementById("queue");
+  const opts = (sel) => `<option value="">— Öğrenci seçin —</option>` + students.map((s) => `<option value="${s.id}" ${+sel === s.id ? "selected" : ""}>${esc(s.name)}</option>`).join("");
+  const add = (files, studentId) => {
+    for (const f of files) items.push({ file: f, url: URL.createObjectURL(f), student: studentId ?? guessStudent(f.name, students) });
+    keepScreen = items.length > 0;
+    drawQueue();
+  };
+  function drawQueue() {
+    const waiting = items.filter((q) => !q.sub);
+    box.innerHTML = items.length
+      ? `<div class="qgrid">${items.map((q, i) => {
+          const name = D.students.get(+q.student)?.name || "";
+          let info;
+          if (!q.sub) info = `<select data-i="${i}">${opts(q.student)}</select><button class="link small" data-rm="${i}">Kaldır</button>`;
+          else {
+            const s = D.submissions.get(q.sub) || {};
+            const c = countVerdicts(judged(s));
+            info = `<div><b>${esc(name)}</b></div><div class="small">${
+              s.status === "failed" ? `<span style="color:var(--bad)">⚠ ${esc(s.error)}</span>`
+              : s.status === "done" ? `<a href="#/gonderim/${s.id}">${!s.hasHandwriting ? "Boş sayfa" : c.nokey === c.n ? "Anahtar yok" : `${c.correct}/${c.n} doğru`} →</a>`
+              : `<span class="row"><span class="spinner"></span> Okunuyor…</span>`}</div>`;
+          }
+          return `<div class="qitem"><img src="${q.url}" alt="" /><div class="stack">${info}</div></div>`;
+        }).join("")}</div>
+        ${waiting.length ? `<button class="primary big" id="go">✔ ${waiting.length} fotoğrafı kontrol et</button>` : `<button id="clear">Listeyi temizle</button>`}`
+      : "";
+    box.querySelectorAll("select[data-i]").forEach((s) => (s.onchange = () => (items[s.dataset.i].student = s.value)));
+    box.querySelectorAll("[data-rm]").forEach((b) => (b.onclick = () => { items.splice(+b.dataset.rm, 1); keepScreen = items.length > 0; drawQueue(); }));
+    document.getElementById("go")?.addEventListener("click", start);
+    document.getElementById("clear")?.addEventListener("click", () => { items.length = 0; keepScreen = false; render(); });
+  }
+  async function start() {
+    const todo = items.filter((q) => !q.sub);
+    if (todo.some((q) => !q.student)) return toast("Her fotoğraf için öğrenci seçin.");
+    for (const q of todo) {
+      const studentId = +q.student;
+      const hash = await fingerprint(q.file);
+      if (list("submissions", (s) => s.hash === hash && s.studentId === studentId && s.status !== "failed").length) {
+        toast(`${D.students.get(studentId).name}: bu fotoğraf zaten yüklenmiş.`);
+        items.splice(items.indexOf(q), 1);
+        continue;
+      }
+      const dup = list("submissions", (s) => s.hash === hash && s.studentId !== studentId)[0];
+      const sub = await DB.put("submissions", {
+        studentId, assignmentId: id, image: await shrinkPhoto(q.file), hash, duplicateOf: dup?.id || null,
+        status: "waiting", answers: [], createdAt: nowIso(), fileName: q.file.name,
+      });
+      q.sub = sub.id;
+      enqueue(() => processSubmission(sub));
+    }
+    drawQueue();
+  }
+  refreshParts = () => {
+    drawQueue();
+    document.getElementById("whodid").innerHTML = whoDidHtml(a, students);
+    document.getElementById("pages").innerHTML = pagesHtml();
+    bindRows();
+  };
+  const bindRows = () => $app.querySelectorAll("[data-up]").forEach((b) => (b.onclick = async () => {
+    add(await pickFiles({ multiple: true }), +b.dataset.up);
+    document.getElementById("dz").scrollIntoView({ behavior: "smooth", block: "center" });
+  }));
+  bindRows();
+  document.getElementById("pick").onclick = async () => add(await pickFiles({ multiple: true }));
+  dropTarget(document.getElementById("dz"), (f) => add(f));
+}
+
+// ---------- Sayfa: anahtar ve konular ----------
+function viewPage(id) {
+  const p = D.pages.get(id);
+  if (!p) throw new Error("Sayfa bulunamadı.");
+  if (p.status !== "ready") {
+    $app.innerHTML = `<div class="card row"><span class="spinner"></span> Sayfa okunuyor…</div>`;
+    return;
+  }
+  const shapes = p.questions.map((q) => rect(q.region, "q-reg", String(q.number)) + q.options.map((o) => rect(o.box, keyFor(p, q).letter === o.letter ? "m-ok" : "opt")).join("")).join("");
+  const miss = missingNumbers(p);
+  $app.innerHTML = `
+    <a href="javascript:history.back()" class="small">← Geri</a>
+    <h1>Anahtar ve konular</h1>
+    ${miss.length ? `<div class="card warn">⚠ <b>${miss.join(", ")}. soru bulunamadı.</b> Bu sorular kontrol edilemez. Sayfayı daha düz, yakın ve gölgesiz çekip yeniden ekleyin.</div>` : ""}
+    <div class="split">
+      <div>
+        ${figure(p.template, p.width, p.height, shapes)}
+        <p class="muted small">Turuncu: soru alanı · gri: şık kutusu · yeşil: doğru şık. Program ${p.questions.length} soru buldu.</p>
+      </div>
+      <div>
+        <div class="card stack">
+          <div><label>Sayfa adı (yayın, kitap, sayfa)</label><input id="ptitle" value="${esc(p.title)}" /></div>
+          <div><label>Ders</label><input id="psubj" value="${esc(p.subject || "")}" /></div>
+          <div><label>Hızlı anahtar: "1C 2A 3D…" ya da sırayla "CAD…"</label><input id="pkeys" placeholder="${esc(p.questions.map((q) => q.number + (q.key || "?")).join(" "))}" style="text-transform:uppercase" /></div>
+          <details><summary class="small">Bütün sorulara aynı konu / kazanım</summary>
+            <div class="stack" style="margin-top:8px">
+              <input id="ptopic" placeholder="Konu, ör. Fikrî Haklar" />
+              <input id="pcode" placeholder="Kazanım kodu, ör. TT.8.B.1.1" />
+              <input id="ptext" placeholder="Kazanım açıklaması" />
+              <p class="muted small" style="margin:0">Yalnızca konusu boş olan sorulara yazılır.</p>
+            </div></details>
+          <button class="primary" id="psave">Kaydet</button>
+        </div>
+        ${p.questions.map((q, i) => {
+          const v = votesFor(p.id, q.number);
+          const k = keyFor(p, q);
+          return `<div class="card stack" data-q="${i}">
+            <div class="row between"><b>Soru ${q.number}</b><span class="muted small">${Object.keys(v).length ? "Öğrenciler: " + Object.entries(v).map(([a, n]) => `${a} ${n}`).join(", ") : ""}</span></div>
+            <div class="row keys">${q.options.map((o) => `<button type="button" data-k="${o.letter}" class="${q.key === o.letter ? "primary" : ""}">${o.letter}</button>`).join("")}
+              ${q.key ? `<button type="button" data-k="" class="link small">Temizle</button>` : k.source === "crowd" ? `<span class="small muted">Öğrenci çoğunluğu: <b>${k.letter}</b></span>` : `<span class="small muted">Anahtar yok</span>`}</div>
+            <div class="row" style="flex-wrap:nowrap"><input name="topic" placeholder="Konu" value="${esc(q.topic)}" style="flex:2" /><input name="outcomeCode" placeholder="Kazanım kodu" value="${esc(q.outcomeCode)}" style="flex:1" /></div>
+            <input name="outcomeText" placeholder="Kazanım açıklaması" value="${esc(q.outcomeText)}" />
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  const save = async (msg = "Kaydedildi.") => {
+    await DB.put("pages", p);
+    toast(msg);
+  };
+  document.getElementById("psave").onclick = async () => {
+    p.title = document.getElementById("ptitle").value.trim();
+    p.subject = document.getElementById("psubj").value.trim();
+    const keys = document.getElementById("pkeys").value.toUpperCase();
+    const pairs = [...keys.matchAll(/(\d+)\s*[-.:)]?\s*([A-E])/g)];
+    if (pairs.length) for (const [, n, L] of pairs) { const q = p.questions.find((x) => x.number === +n); if (q) q.key = L; }
+    else keys.replace(/[^A-E]/g, "").split("").forEach((L, i) => { const q = p.questions.find((x) => x.number === i + 1); if (q) q.key = L; });
+    const topic = document.getElementById("ptopic").value.trim();
+    const code = document.getElementById("pcode").value.trim();
+    const text = document.getElementById("ptext").value.trim();
+    for (const q of p.questions) {
+      if (topic && !q.topic) q.topic = topic;
+      if (code && !q.outcomeCode) q.outcomeCode = code;
+      if (text && !q.outcomeText) q.outcomeText = text;
+    }
+    await save();
+    render();
+  };
+  $app.querySelectorAll("[data-q]").forEach((card) => {
+    const q = p.questions[+card.dataset.q];
+    card.querySelectorAll("[data-k]").forEach((b) => (b.onclick = async () => { q.key = b.dataset.k || null; await save(); render(); }));
+    card.querySelectorAll("input").forEach((inp) => (inp.onchange = () => { q[inp.name] = inp.value.trim(); save(); }));
+  });
+}
+
+// ---------- Öğrencinin bir fotoğrafının sonucu ----------
+function viewSubmission(id) {
+  const s = D.submissions.get(id);
+  if (!s) throw new Error("Bulunamadı.");
+  const st = D.students.get(s.studentId);
+  const asg = D.assignments.get(s.assignmentId);
+  const head = `
+    <a href="#/odev/${s.assignmentId}" class="small">← ${esc(asg?.title || "Ödev")}</a>
+    <div class="row between"><h1>${esc(st?.name)}</h1><span class="muted small">${fmtDate(s.createdAt)}${s.fileName ? " · " + esc(s.fileName) : ""}</span></div>
+    ${s.duplicateOf ? `<div class="card warn">${badge("wrong", "Uyarı")} Bu fotoğrafın aynısı başka bir öğrenci için de yüklenmiş.</div>` : ""}
+    ${s.status === "done" && !s.hasHandwriting ? `<div class="card warn">${badge("bos", "Boş")} Sayfada öğrenci yazısı bulunamadı; ödev yapılmamış görünüyor.</div>` : ""}`;
+  const foot = `
+    <details class="card"><summary>Gönderilen fotoğraf</summary><img src="${urlOf(s.image)}" alt="" style="max-width:100%;margin-top:8px;border-radius:8px"></details>
+    <button class="danger" id="delsub">Bu fotoğrafı sil (yanlış öğrenciye yüklendiyse)</button>`;
+  if (s.status !== "done") {
+    $app.innerHTML = head + (s.status === "failed" ? `<div class="card warn">⚠ ${esc(s.error)}</div>` : `<div class="card row"><span class="spinner"></span> Okunuyor…</div>`) + foot;
+  } else {
+    const rows = judged(s);
+    const page = D.pages.get(s.pageId);
+    const c = countVerdicts(rows);
+    const shapes = rows.map((a) => {
+      let out = `<text class="qn" x="${a.q.region.x0 + 8}" y="${a.q.region.y0 + 30}">${a.number}</text>`;
+      for (const o of a.q.options) {
+        if (a.marked === o.letter) out += rect(o.box, a.verdict === "correct" ? "m-ok" : a.verdict === "wrong" ? "m-bad" : "m-mid");
+        else if (a.key === o.letter && a.verdict === "wrong") out += rect(o.box, "m-key");
+        else if (a.state === "multi" && a.ratios[o.letter] >= T.markMultiMin) out += rect(o.box, "m-mid");
+      }
+      return out;
+    }).join("");
+    $app.innerHTML = head + `
+      <p class="muted" style="margin-top:-8px">${esc(page?.title || "")}</p>
+      <div class="stats">
+        <div class="stat"><b>${c.correct}</b>Doğru</div><div class="stat"><b>${c.wrong}</b>Yanlış</div><div class="stat"><b>${c.blank}</b>Boş</div>
+        ${c.review ? `<div class="stat"><b>${c.review}</b>Kontrol</div>` : ""}${c.nokey ? `<div class="stat"><b>${c.nokey}</b>Anahtar yok</div>` : ""}
+      </div>
+      <div class="split">
+        <div>${figure(s.overlay, page.width, page.height, shapes)}
+          <p class="muted small">Mavi: öğrencinin el yazısı (basılı yazıdan ayrıldı). Yeşil kutu: doğru işaret · kırmızı: yanlış işaret · kesikli yeşil: doğru şık.</p></div>
+        <div class="card table-wrap"><table>
+          <tr><th>Soru</th><th>İşaret</th><th>Doğru</th><th>Sonuç</th><th>İşlem</th></tr>
+          ${rows.map((a, i) => `<tr>
+            <td><b>${a.number}</b>${a.q.topic ? `<br><span class="muted small">${esc(a.q.topic)}</span>` : ""}</td>
+            <td>${a.marked ? `<b>${a.marked}</b> <span class="muted small" title="İşaretin bu şıkta yoğunlaşma oranı">%${Math.round(a.share * 100)}</span>` : a.state === "multi" ? "Birden fazla" : "–"}</td>
+            <td>${a.key ? `<b>${a.key}</b>${a.keySource === "crowd" ? ` <span class="muted small" title="Öğrenci çoğunluğu">(ç)</span>` : ""}` : "?"}</td>
+            <td>${badge(a.verdict, VERDICT[a.verdict])}<br>
+              <select data-ov="${i}" class="small" style="width:auto;padding:3px;margin-top:4px">
+                <option value="">Otomatik</option>${["correct", "wrong", "blank"].map((x) => `<option value="${x}" ${a.override === x ? "selected" : ""}>${VERDICT[x]}</option>`).join("")}
+              </select></td>
+            <td>${a.hasWork ? "✓ var" : `<span class="muted">yok</span>`}</td></tr>`).join("")}
+        </table>
+        <p class="muted small">(ç): anahtar öğrenci çoğunluğundan. Sonucu elle değiştirmek için "Otomatik" kutusunu kullanın.</p></div>
+      </div>` + foot;
+    $app.querySelectorAll("[data-ov]").forEach((sel) => (sel.onchange = async () => {
+      s.answers[+sel.dataset.ov].override = sel.value || null;
+      await DB.put("submissions", s);
+      toast("Karar kaydedildi.");
+      render();
+    }));
+  }
+  document.getElementById("delsub").onclick = async () => {
+    if (!confirm("Bu fotoğraf ve sonuçları silinsin mi?")) return;
+    await DB.del("submissions", id);
+    location.hash = `#/odev/${s.assignmentId}`;
+  };
+}
+
+// ---------- Öğrenci raporu ----------
+function viewStudent(id) {
+  const st = D.students.get(id);
+  if (!st) throw new Error("Öğrenci bulunamadı.");
+  const rows = rowsOfStudent(id);
+  const c = countVerdicts(rows);
+  const outs = summarizeOutcomes(rows);
+  const weak = outs.filter((o) => o.weak);
+  const subs = list("submissions", (s) => s.studentId === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const asgs = list("assignments", (a) => a.classId === st.classId).sort((a, b) => (b.dueDate || "9999").localeCompare(a.dueDate || "9999"));
+  $app.innerHTML = `
+    <a href="#/sinif/${st.classId}/ogrenciler" class="small">← ${esc(D.classes.get(st.classId)?.name || "")}</a>
+    <h1>${esc(st.name)}</h1>
+    <div class="stats">
+      <div class="stat"><b>${subs.filter((s) => s.status === "done").length}</b>Sayfa</div>
+      <div class="stat"><b>${c.correct}</b>Doğru</div><div class="stat"><b>${c.wrong}</b>Yanlış</div><div class="stat"><b>${c.blank}</b>Boş</div>
+      <div class="stat"><b>${c.nowork}</b>İşlemsiz doğru</div>
+    </div>
+    <h2>Eksik olduğu kazanımlar</h2>
+    ${weak.length ? weak.map((o) => `<div class="card">
+        <div class="row between"><b>${esc(o.topic || o.key)}</b>${badge("wrong", "%" + o.rate)}</div>
+        <p class="small" style="margin:4px 0">${esc(o.subject || "")}${o.outcomeCode ? ` · <b>${esc(o.outcomeCode)}</b>` : ""}</p>
+        ${o.outcomeText ? `<p class="small" style="margin:4px 0">${esc(o.outcomeText)}</p>` : ""}
+        <p class="small muted" style="margin:0">${o.attempts} soru: ${o.correct} doğru, ${o.wrong} yanlış, ${o.blank} boş</p></div>`).join("")
+      : `<p class="muted">${!outs.length ? "Henüz yeterli veri yok." : outs.some((o) => o.rate < T.weakOutcomeRate * 100) ? `Bazı konularda başarı düşük, ama karar için her konuda en az ${T.weakOutcomeMinAttempts} soru gerekiyor.` : "Eksik kazanım görünmüyor. 👏"}</p>`}
+    ${asgs.length ? `<h2>Ödevler</h2><div class="card table-wrap"><table><tr><th>Ödev</th><th>Son gün</th><th>Durum</th><th>D / Y / B</th></tr>
+      ${asgs.map((a) => { const x = assignmentState(a, id); return `<tr><td><a href="#/odev/${a.id}">${esc(a.title)}</a></td><td>${fmtDate(a.dueDate)}</td><td>${badge(x.state, STATE[x.state])}</td><td>${x.n ? `${x.correct} / ${x.wrong} / ${x.blank}` : "–"}</td></tr>`; }).join("")}</table></div>` : ""}
+    <h2>Bütün konular</h2>
+    ${outs.length ? `<div class="card table-wrap"><table><tr><th>Konu / kazanım</th><th>Soru</th><th style="min-width:140px">Başarı</th></tr>
+      ${outs.map((o) => `<tr><td><b>${esc(o.topic || o.key)}</b><br><span class="muted small">${esc(o.subject || "")}${o.outcomeCode ? " · " + esc(o.outcomeCode) : ""}</span></td><td>${o.attempts}</td><td>${rateBar(o.rate)}</td></tr>`).join("")}</table></div>` : `<p class="muted">Henüz kontrol edilmiş ödev yok.</p>`}
+    <h2>Gönderilen fotoğraflar</h2>
+    ${subs.map((s) => { const k = countVerdicts(judged(s)); return `<a class="card row between" href="#/gonderim/${s.id}" style="text-decoration:none;color:inherit">
+      <span><b>${esc(D.assignments.get(s.assignmentId)?.title || "")}</b><br><span class="muted small">${fmtDate(s.createdAt)}</span></span>
+      <span>${s.status === "failed" ? badge("wrong", "Okunamadı") : s.status !== "done" ? `<span class="spinner"></span>` : !s.hasHandwriting ? badge("bos", "Boş sayfa") : `<b>${k.correct}</b>/${k.n} doğru`}</span></a>`; }).join("") || `<p class="muted">Fotoğraf yok.</p>`}`;
+}
+
+// =====================================================================
+//  BAŞLAT
+// =====================================================================
+(async () => {
+  try {
+    await DB.open();
+  } catch (e) {
+    $app.innerHTML = `<div class="card warn">Veri deposu açılamadı: ${esc(e.message)}. Dosyayı Chrome ya da Edge ile açın.</div>`;
+    return;
+  }
+  updateEngine();
+  cvReady.then(updateEngine, (e) => (document.getElementById("engine").innerHTML = `<span style="color:var(--bad)">⚠ ${esc(e.message)}</span>`));
+  // Yarım kalan işleri yeniden sıraya al.
+  for (const p of list("pages", (p) => p.status === "processing")) enqueue(() => processPage(p));
+  for (const s of list("submissions", (s) => s.status === "waiting" || s.status === "processing")) enqueue(() => processSubmission(s));
+  render();
+})();
+</script>
+</body>
+</html>

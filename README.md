@@ -12,6 +12,17 @@
 
 İsterseniz öğrenciler ve veliler kendi kodlarıyla girip fotoğrafı kendileri de yükleyebilir. Ancak bu isteğe bağlıdır; bunun için programın internete açık bir sunucuda çalışması gerekir.
 
+## Tek dosyalık sürüm (önerilen): `odev-kontrol.html`
+
+Kurulum gerekmez. `odev-kontrol.html` dosyasına çift tıklayın; **Chrome ya da Edge** ile açılır.
+
+- Bütün işlem tarayıcının içinde, bu bilgisayarda yapılır. Fotoğraflar hiçbir yere gönderilmez.
+- Veriler (sınıflar, öğrenciler, fotoğraflar, sonuçlar) tarayıcının içinde saklanır. Ana sayfadaki **"💾 Yedek al"** ile dosyaya kaydedin, **"📂 Yedekten yükle"** ile geri yükleyin. Tarayıcının "tüm site verilerini temizle" seçeneği bu verileri siler.
+- İlk açılışta resim işleme ve yazı okuma kütüphaneleri (yaklaşık 20 MB) internetten iner. Sonraki açılışlarda tarayıcı bunları hatırlar.
+- Eşikler dosyanın içindeki `const T = {…}` bölümündedir.
+
+Sunucu sürümü (`server/`, Node.js gerektirir) ileride kurulabilir programa çevirmek için durmaktadır.
+
 ## Nasıl çalışır
 
 1. **Öğretmen** ödev verirken öğrencilerin çözeceği sayfanın **boş** hâlinin fotoğrafını bir kez çeker. Program basılı yazıyı okur (Tesseract OCR) ve her sorunun yerini ve A/B/C/D şıklarının kutularını bulur. Bu yaklaşık 4 saniye sürer.

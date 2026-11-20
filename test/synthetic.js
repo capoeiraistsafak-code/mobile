@@ -24,13 +24,18 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
  * Sayfa düzeni: 2 sütun, her sütunda 4 soru. Şık düzenleri: yan yana, 2x2, alt alta.
  * @returns {{ questions: {number, options:{letter, x, y, w, h}[], work:{x,y,w,h}}[], svgBody: string }}
  */
-export function layoutPage(seed = 1) {
+/**
+ * @param {number} seed
+ * @param {{ header: string, questions: { lines: string[], options: string[] }[] }} [content]
+ *   Verilirse rastgele denklemler yerine bu başlık, soru metinleri ve şıklar kullanılır.
+ */
+export function layoutPage(seed = 1, content = null) {
   const r = rng(seed);
   const parts = [];
   const questions = [];
   const fs = 24;
   const lh = 32;
-  parts.push(`<text x="60" y="60" font-size="26" font-weight="bold" font-family="DejaVu Sans, sans-serif">Örnek Yayınları – 8. Sınıf Matematik – Test 3</text>`);
+  parts.push(`<text x="60" y="60" font-size="26" font-weight="bold" font-family="DejaVu Sans, sans-serif">${esc(content?.header || "Örnek Yayınları – 8. Sınıf Matematik – Test 3")}</text>`);
   parts.push(`<line x1="${W / 2}" y1="90" x2="${W / 2}" y2="${H - 60}" stroke="#999" stroke-width="2"/>`);
   const layouts = ["row", "grid", "col", "row", "grid", "col", "row", "grid"];
   let n = 1;
@@ -38,9 +43,12 @@ export function layoutPage(seed = 1) {
     const x0 = col === 0 ? 60 : W / 2 + 40;
     let y = 130;
     for (let k = 0; k < 4; k++, n++) {
-      const layout = layouts[(n + seed) % layouts.length];
+      const cq = content?.questions[n - 1];
+      // Şık uzunluğuna göre düzen: kısa şıklar yan yana, orta 2x2, uzun alt alta.
+      const longest = cq ? Math.max(...cq.options.map((o) => o.length)) : 0;
+      const layout = !cq ? layouts[(n + seed) % layouts.length] : longest <= 5 ? "row" : longest <= 13 ? "grid" : "col";
       parts.push(`<text x="${x0}" y="${y}" font-size="${fs}" font-weight="bold" font-family="DejaVu Sans, sans-serif">${n}.</text>`);
-      const lines = [
+      const lines = cq ? cq.lines : [
         `${2 + Math.floor(r() * 7)}x + ${Math.floor(r() * 20)} = ${20 + Math.floor(r() * 60)} denkleminde`,
         "x kaçtır?",
       ];
@@ -67,7 +75,7 @@ export function layoutPage(seed = 1) {
           oy = y + i * (lh + 10);
         }
         parts.push(
-          `<text x="${ox}" y="${oy}" font-size="${fs}" font-family="DejaVu Sans, sans-serif">${L}) ${vals[i]}</text>`
+          `<text x="${ox}" y="${oy}" font-size="${fs}" font-family="DejaVu Sans, sans-serif">${L}) ${esc(cq ? cq.options[i] : String(vals[i]))}</text>`
         );
         options.push({ letter: L, x: ox, y: oy - fs, w: 22, h: fs + 6 });
       });
