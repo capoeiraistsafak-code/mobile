@@ -227,6 +227,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .mod button.on{background:#f472b6;color:#1f232c}
 #palet .etk{font:800 15px Inter;color:#cbd5e1;padding:0 2px}
 #ciz.silgi{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='24' cy='24' r='21' fill='rgba(255,255,255,.25)' stroke='white' stroke-width='3'/%3E%3C/svg%3E") 24 24,cell}
+#sesRozet{position:absolute;right:30px;top:140px;z-index:9;background:#7f1d1d;color:#fff;font:800 26px Inter;padding:10px 18px;border-radius:14px;border:2px solid #fca5a5;pointer-events:none}
 #durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
 #bNot{width:auto;padding:0 18px;gap:8px;font:800 28px Inter;background:#1e3a8a!important;border-color:#60a5fa!important;color:#fff}
 #bNot.acik{background:#60a5fa!important;color:#0b1b3a!important}
@@ -413,6 +414,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button id="bCiz" title="Kalem / lazer ile çiz (K)">✏︎ Çiz</button><button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
+  <div id="sesRozet" class="hide">🔇 Ses için ekrana bir kez dokunun</div>
   <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
     <div class="nt-ic" id="ntIc"></div><div class="kay" id="ntKay" style="bottom:22px"><button id="ntY">▲</button><button id="ntA">▼</button></div></div>
   <div id="hizRozet" class="hide"></div>
@@ -1486,8 +1488,17 @@ const IC_DEV = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>';
 function oyunSesKanali(acik) { if (!AU.oyun) return; const g = AU.oyun.gain, t = AU.ctx.currentTime;
   g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(acik ? 1 : 0, t + 0.05); if (acik) sesUyandir(); }
 // tarayıcı ses motorunu askıya alırsa (tam ekran, uygulama değiştirme, tablet ekran kilidi…) ilk dokunuşta/geri dönüşte yeniden başlat
-function sesUyandir() { if (AU.ctx && AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {}); }
-['pointerdown', 'keydown', 'touchstart'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));
+// Android/Chrome: ses motoru ancak dokunma BİTTİĞİNDE (touchend/pointerup/click) açılabilir → her dokunuşta oluştur + uyandır + sessiz ses çal (kilit açma)
+function sesUyandir() {
+  if (!AU.ctx) { ac(); }
+  if (!AU.ctx) return;
+  if (AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {});
+  if (!AU.acildi) { try { const b = AU.ctx.createBuffer(1, 1, 22050), s = AU.ctx.createBufferSource(); s.buffer = b; s.connect(AU.ctx.destination); s.start(0); AU.acildi = true; } catch (e) {} }
+  sesRozet();
+}
+['pointerup', 'touchend', 'click', 'keydown'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));
+function sesRozet() { const r = $('sesRozet'); if (!r) return; const kapali = AU.ctx && AU.ctx.state !== 'running'; r.classList.toggle('hide', !(kapali && GAME.mode === 'game')); }
+setInterval(sesRozet, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sesUyandir(); });
 document.addEventListener('fullscreenchange', sesUyandir);
 function setDur(d) {
