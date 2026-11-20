@@ -1,6 +1,6 @@
 // Uygulamanın ana ekrana eklenebilmesi için basit service worker.
 // Arayüz dosyaları önbellekten, API istekleri her zaman ağdan gelir.
-const CACHE = "odev-kontrol-v1";
+const CACHE = "odev-kontrol-v2";
 const SHELL = ["/", "/index.html", "/style.css", "/app.js", "/icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

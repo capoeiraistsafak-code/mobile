@@ -1,7 +1,27 @@
-// Bir ödev fotoğrafının baştan sona işlenmesi.
-import { one, run } from "./db.js";
-import { readPage, solveQuestion, gradeAnswer, stepScoreOf } from "./ai.js";
-import { decideVerdict, findExistingQuestion, normalizeText, crowdCheckKey } from "./grading.js";
+// Fotoğrafların işlenmesi. Resim işleme işlemciyi meşgul ettiği için işler sırayla yapılır.
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
+import { one, all, run, db, UPLOAD_DIR } from "./db.js";
+import { readTemplate, readStudentPage, bestMatch } from "./vision.js";
+import { THRESHOLDS } from "./grading.js";
+
+let queue = Promise.resolve();
+/** İşi kuyruğa ekler; sırası gelince çalışır. */
+export function enqueue(fn) {
+  const p = queue.then(fn, fn);
+  queue = p.catch(() => {});
+  return p;
+}
+
+const file = (name) => path.join(UPLOAD_DIR, path.basename(name));
+export const saveFile = (buf, ext) => {
+  const name = `${crypto.randomUUID()}.${ext}`;
+  fs.writeFileSync(file(name), buf);
+  return name;
+};
+export const readFile = (name) => fs.readFileSync(file(name));
+export const removeFile = (name) => name && fs.rm(file(name), { force: true }, () => {});
 
 const parse = (s, d) => {
   try {
@@ -11,135 +31,144 @@ const parse = (s, d) => {
   }
 };
 
-/** Kayıttaki soru satırını anahtar nesnesine çevirir. */
-export function keyFromRow(r) {
-  return { ...r, options: parse(r.options_json, []), steps: parse(r.steps_json, []) };
+/** Bir sayfanın sorularını (şık kutularıyla) getirir. */
+export function pageQuestions(pageId) {
+  return all(`SELECT * FROM questions WHERE page_id=? ORDER BY number, id`, pageId).map((q) => ({
+    ...q,
+    region: parse(q.region_json, null),
+    options: parse(q.options_json, []),
+  }));
 }
 
-// Aynı soru aynı anda iki öğrenciden gelirse iki kez çözülmesin diye soru başına kilit.
-const locks = new Map();
-async function withLock(name, fn) {
-  const prev = locks.get(name) || Promise.resolve();
-  let release;
-  const mine = new Promise((r) => (release = r));
-  const chain = prev.then(() => mine);
-  locks.set(name, chain);
-  await prev;
+/**
+ * Öğretmenin çektiği boş sayfayı işler: basılı yazıyı okur, soruları ve şıkları bulur.
+ * Aynı sayfa havuzda zaten varsa yenisini silip eskisini (anahtarıyla birlikte) döner.
+ * @returns {Promise<number>} kullanılacak sayfa id'si
+ */
+export async function processPage(pageId) {
+  const page = one(`SELECT * FROM pages WHERE id=?`, pageId);
   try {
-    return await fn();
-  } finally {
-    release();
-    if (locks.get(name) === chain) locks.delete(name);
+    const photo = readFile(page.photo_file);
+
+    const pool = all(`SELECT id, template_file FROM pages WHERE status='ready' AND id!=? ORDER BY id DESC LIMIT 200`, pageId);
+    if (pool.length) {
+      const m = await bestMatch(
+        photo,
+        pool.map((p) => ({ id: p.id, png: readFile(p.template_file) }))
+      );
+      if (m.id && m.score >= THRESHOLDS.samePageMatch) {
+        removeFile(page.photo_file);
+        removeFile(page.template_file);
+        run(`DELETE FROM pages WHERE id=?`, pageId);
+        return m.id;
+      }
+    }
+
+    const t = await readTemplate(photo);
+    const tf = saveFile(t.png, "png");
+    db.exec("BEGIN");
+    try {
+      run(
+        `UPDATE pages SET template_file=?, width=?, height=?, status='ready', title=CASE WHEN title='' THEN ? ELSE title END WHERE id=?`,
+        tf,
+        t.width,
+        t.height,
+        t.headerText || "Adsız sayfa",
+        pageId
+      );
+      for (const q of t.questions) {
+        run(
+          `INSERT INTO questions (page_id, number, region_json, options_json) VALUES (?,?,?,?)`,
+          pageId,
+          q.number,
+          JSON.stringify(q.region),
+          JSON.stringify(q.options)
+        );
+      }
+      db.exec("COMMIT");
+    } catch (e) {
+      db.exec("ROLLBACK");
+      throw e;
+    }
+    if (!t.questions.length)
+      run(
+        `UPDATE pages SET error=? WHERE id=?`,
+        "Sayfada şık (A, B, C, D) bulunamadı. Sayfayı düz, gölgesiz ve yakından tekrar çekin.",
+        pageId
+      );
+    return pageId;
+  } catch (err) {
+    console.error(`Sayfa ${pageId} işlenemedi:`, err);
+    run(`UPDATE pages SET status='failed', error=? WHERE id=?`, String(err.message || err), pageId);
+    return pageId;
   }
 }
 
-function lockName(page, pq) {
-  if (page.publisher && pq.question_no) return `src:${page.publisher.toLocaleLowerCase("tr-TR")}|${pq.question_no}`;
-  return `txt:${normalizeText(pq.question_text).slice(0, 40)}`;
-}
-
-/** Sorunun cevap anahtarını bulur; yoksa çözer ve havuza ekler. */
-function getOrCreateKey(page, pq, userId) {
-  return withLock(lockName(page, pq), () => findOrSolve(page, pq, userId));
-}
-
-async function findOrSolve(page, pq, userId) {
-  const found = findExistingQuestion({
-    publisher: page.publisher,
-    page: page.page,
-    question_no: pq.question_no,
-    question_text: pq.question_text,
-  });
-  if (found) {
-    run(`UPDATE questions SET use_count = use_count + 1 WHERE id=?`, found.row.id);
-    return { key: keyFromRow(found.row), reused: true };
-  }
-
-  const solved = await solveQuestion({ ...pq });
-  const r = run(
-    `INSERT INTO questions (publisher, book, page, question_no, subject, grade, question_text, options_json, norm_text,
-                            topic, outcome_code, outcome_text, final_answer, steps_json, status, use_count, created_by)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,?)`,
-    page.publisher,
-    page.book,
-    page.page,
-    pq.question_no,
-    solved.subject || pq.subject,
-    solved.grade ?? pq.grade,
-    pq.question_text,
-    JSON.stringify(pq.options || []),
-    normalizeText(pq.question_text),
-    solved.topic,
-    solved.outcome_code,
-    solved.outcome_text,
-    solved.final_answer,
-    JSON.stringify(solved.steps),
-    // Yapay zekâ çözümüne az güveniyorsa doğrudan "şüpheli" başlar, öğretmen bakar.
-    solved.confidence < 0.6 ? "disputed" : "unverified",
-    userId
-  );
-  const row = one(`SELECT * FROM questions WHERE id=?`, r.lastInsertRowid);
-  return { key: keyFromRow(row), reused: false };
-}
-
-/** Tek bir sorunun öğrenci cevabını puanlar ve kaydeder. */
-async function gradeOne(submissionId, page, pq, userId) {
-  const { key } = await getOrCreateKey(page, pq, userId);
-  const hasWork = pq.has_student_work && !!(pq.student_work?.trim() || pq.student_final_answer?.trim());
-
-  let grade = null;
-  let stepScore = 0;
-  if (hasWork && pq.read_confidence >= 0.3) {
-    grade = await gradeAnswer(key, pq);
-    stepScore = stepScoreOf(grade, key.steps.length);
-  }
-  const { verdict, reason } = decideVerdict({
-    hasWork,
-    finalCorrect: !!grade?.final_correct,
-    stepScore,
-    readConfidence: pq.read_confidence,
-    isMultipleChoice: pq.is_multiple_choice,
-  });
-
-  run(
-    `INSERT INTO answers (submission_id, question_id, student_work, student_final, read_confidence,
-                          final_correct, step_score, verdict, reason, feedback, step_results_json)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-    submissionId,
-    key.id,
-    pq.student_work,
-    pq.student_final_answer,
-    pq.read_confidence,
-    grade ? (grade.final_correct ? 1 : 0) : null,
-    grade ? stepScore : null,
-    verdict,
-    reason,
-    grade?.feedback || null,
-    JSON.stringify(grade?.step_results || [])
-  );
-
-  if (grade?.final_correct) run(`UPDATE questions SET agree_count = agree_count + 1 WHERE id=?`, key.id);
-  crowdCheckKey(key.id);
-}
-
-/** Fotoğrafı okur, her soruyu puanlar. Hata olursa gönderimi "failed" işaretler. */
-export async function processSubmission(submissionId, imageBase64, mediaType) {
+/** Öğrencinin fotoğrafını adaylar arasından doğru sayfaya oturtur ve cevapları kaydeder. */
+export async function processSubmission(submissionId) {
   const sub = one(`SELECT * FROM submissions WHERE id=?`, submissionId);
   try {
-    const page = await readPage(imageBase64, mediaType);
-    const qs = page.questions.filter((q) => q.question_text?.trim());
-    if (!qs.length) throw new Error("Fotoğrafta soru bulunamadı. Sayfayı düz ve net çekip tekrar deneyin.");
+    // Aday sayfalar: seçilen ödevin sayfaları; ödev seçilmediyse sınıfın bütün ödev sayfaları.
+    const pages = sub.assignment_id
+      ? all(
+          `SELECT p.* FROM pages p JOIN assignment_pages ap ON ap.page_id=p.id WHERE ap.assignment_id=? AND p.status='ready'`,
+          sub.assignment_id
+        )
+      : all(
+          `SELECT DISTINCT p.* FROM pages p
+             JOIN assignment_pages ap ON ap.page_id=p.id
+             JOIN assignments a ON a.id=ap.assignment_id
+             JOIN users u ON u.class_id=a.class_id
+            WHERE u.id=? AND p.status='ready'
+            ORDER BY a.id DESC LIMIT 30`,
+          sub.student_id
+        );
+    if (!pages.length) throw new Error("Bu ödeve henüz sayfa eklenmemiş. Öğretmeninize haber verin.");
 
-    // Sorular sırayla işlenir: aynı sayfada aynı soru iki kez çıkarsa anahtar bir kez üretilir.
-    for (const pq of qs) await gradeOne(submissionId, page, pq, sub.student_id);
+    const templates = pages.map((p) => ({
+      id: p.id,
+      png: readFile(p.template_file),
+      questions: pageQuestions(p.id).map((q) => ({ key: q.id, region: q.region, options: q.options })),
+    }));
+    const r = await readStudentPage(readFile(sub.image_file), templates);
+    if (!r.matched)
+      throw new Error(
+        "Fotoğraf ödev sayfalarından hiçbirine benzemiyor. Doğru sayfayı, bütün sayfa görünecek şekilde, düz ve net çekin."
+      );
 
-    run(
-      `UPDATE submissions SET status='done', has_handwriting=? WHERE id=?`,
-      page.page_has_handwriting ? 1 : 0,
-      submissionId
-    );
+    const overlay = saveFile(await r.overlay, "jpg");
+    db.exec("BEGIN");
+    try {
+      for (const a of r.answers) {
+        run(
+          `INSERT INTO answers (submission_id, question_id, marked, state, share, option_ratios_json, work_ratio, has_work)
+           VALUES (?,?,?,?,?,?,?,?)`,
+          submissionId,
+          a.question_key,
+          a.marked,
+          a.state,
+          a.share,
+          JSON.stringify(a.option_ratios),
+          a.work_ratio,
+          a.has_work ? 1 : 0
+        );
+      }
+      run(
+        `UPDATE submissions SET status='done', page_id=?, overlay_file=?, match_score=?, page_ink=?, has_handwriting=? WHERE id=?`,
+        r.template_id,
+        overlay,
+        r.score,
+        r.page_ink,
+        r.page_ink >= THRESHOLDS.pageMinInk ? 1 : 0,
+        submissionId
+      );
+      db.exec("COMMIT");
+    } catch (e) {
+      db.exec("ROLLBACK");
+      throw e;
+    }
   } catch (err) {
-    console.error(`Gönderim ${submissionId} işlenemedi:`, err);
+    console.error(`Gönderim ${submissionId} işlenemedi:`, err.message);
     run(`UPDATE submissions SET status='failed', error=? WHERE id=?`, String(err.message || err), submissionId);
   }
 }
