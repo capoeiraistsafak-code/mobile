@@ -4,6 +4,8 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 
 **Açmak için:** `index.html` dosyasına çift tıklayın (internet gerekmez; `three.min.js` ve `logo.png` aynı klasörde olmalı).
 
+**Tablet için:** `oyunlar/fizik_oyunlari_tablet.html` her şeyi (3D kütüphane, logo, yazı tipleri) içinde taşıyan TEK dosyadır; tablete indirip açın, internet gerekmez. Oyun güncellenince bu dosya `python3 araclar/tek_dosya.py fizik_oyunlari <yazı-tipi.css> fizik_oyunlari_tablet.html` ile yeniden üretilir.
+
 ## Ana menü
 - Üstte **TYT / AYT** sekmeleri; altında o sınavın konuları ders kitabı sırasıyla, yanları yuvarlak düğmeler hâlinde.
 - Düğmenin sonundaki **yeşil daire** = oyunu hazır, **kırmızı daire** = yakında. Hazır konularda kazanılan yıldızlar da yazar.
