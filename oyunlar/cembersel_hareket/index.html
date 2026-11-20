@@ -16,7 +16,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 #top{position:absolute;left:24px;right:24px;top:20px;height:100px;display:flex;align-items:center;gap:22px;background:#2a303c;border:3px solid #F5A300;border-radius:22px;padding:0 18px 0 22px;z-index:5}
 .pill{display:inline-block;background:#D62828;color:#fff;font:900 30px Inter;padding:8px 20px;border-radius:12px;white-space:nowrap}
 #tTitle{font:800 40px/1.1 Inter;color:#F5C400;white-space:nowrap}
-#tTask{flex:1;min-width:0;font:600 26px/1.25 Inter;color:#e5e7eb}
+#tTask{flex:1;min-width:0;font:600 23px/1.22 Inter;color:#e5e7eb}
 .tb{flex:none;width:76px;height:76px;border-radius:18px;background:#3a4150;color:#fff;font:700 36px Inter;display:flex;align-items:center;justify-content:center;border:2px solid #556070}
 .tb:active{transform:scale(.94)}
 
@@ -91,6 +91,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 #sol .sl{font:700 1em/1.22 Caveat;color:#8ec5ff;clip-path:inset(-10px 100% -10px 0);animation:yaz 1s forwards}
 #sol .sl em{font-style:normal;color:#F5C400}
 #sol .sl .g{color:#4ade80}#sol .sl .p{color:#c084fc}#sol .sl .r{color:#f87171}#sol .sl .o{color:#fb923c}
+#sol .sl.yol{font:800 24px/1.2 Inter;color:#F5A300;letter-spacing:.5px;margin-top:10px;padding:4px 0;border-top:2px dashed #475569}
+#sol .sl.yol:nth-child(2){border-top:none;margin-top:0}
 #sol .bas{font:800 24px Inter;color:#94a3b8;letter-spacing:1px;margin-bottom:2px}
 @keyframes yaz{to{clip-path:inset(-10px -10px -10px 0)}}
 #qnext{align-self:flex-end;font:800 40px Inter;background:#22c55e;color:#0b2b16;border-radius:20px;padding:18px 40px;animation:nabiz 1.4s infinite}
@@ -118,7 +120,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .m-alt{margin-top:14px;font:700 40px Inter;color:#cbd5e1}
 .m-alt b{color:#F5C400}
 #cards{margin-top:46px;display:flex;gap:30px}
-.card{width:400px;height:430px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
+.card{width:400px;height:470px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
 .card:hover,.card:focus{border-color:#F5A300}
 .card:active{transform:scale(.97)}
 .c-ic{font-size:86px;line-height:1;font-family:"Noto Color Emoji",sans-serif}
@@ -127,6 +129,11 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .c-ac{margin-top:12px;font:600 26px/1.3 Inter;color:#cbd5e1;flex:1}
 .c-st{font:800 30px Inter;color:#4ade80}
 .c-st.yok{color:#94a3b8}
+.c-yil{margin-top:4px;font:400 30px/1 Inter;letter-spacing:2px;color:#F5C400;white-space:nowrap}.c-yil span{color:#556070}
+#bSifir{right:300px}
+#sifirSor{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.7)}
+#tYil{flex:none;font:900 32px Inter;color:#F5C400;background:#1f232c;border:2px solid #F5A300;border-radius:14px;padding:8px 16px;white-space:nowrap}
+#tYil.pop{animation:pop .6s}
 .m-not{margin-top:36px;font:600 28px Inter;color:#94a3b8;text-align:center;line-height:1.5}
 .m-not kbd{font:800 24px Inter;background:#3a4150;border:2px solid #556070;border-radius:8px;padding:2px 10px;color:#fff}
 .m-logo{position:absolute;left:40px;bottom:34px;display:flex;align-items:center;gap:18px;font:800 32px Inter;color:#fff}
@@ -151,6 +158,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="top" class="hide">
     <span class="pill" id="tNo">GÖREV 1</span>
+    <span id="tYil">★ 0 / 0</span>
     <div id="tTitle"></div>
     <div id="tTask"></div>
     <button id="bNot" class="tb" title="Notlar: neden böyle? (N)"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M6 2h9l5 5v15H6zM14 3v5h5M8 12h10v1.6H8zm0 4h10v1.6H8zm0-8h5v1.6H8z" fill-rule="evenodd"/></svg>Notlar</button>
@@ -189,7 +197,11 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir<br>
       Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>N</kbd> notlar · <kbd>↑</kbd>/<kbd>↓</kbd> kaydır · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
+    <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
+    <div id="sifirSor" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">☆</div><div class="ov-b" style="font-size:52px">Bütün yıldızlar silinsin mi?</div>
+      <div class="ov-t">Dört görevin yıldızları sıfırlanır. Bu işlem geri alınamaz.</div>
+      <div class="ov-dg"><button class="btn" id="sifirHayir">Vazgeç</button><button class="btn ana" style="background:#ef4444;border-color:#ef4444;color:#fff" id="sifirEvet">Evet, sıfırla</button></div></div></div>
   </div>
 </div>
 <script>
@@ -804,7 +816,8 @@ const MISSIONS = [M1, M2, M3, M4];
 
 // ======================= OYUN MOTORU =======================
 const GAME = { M: null, i: -1, wait: null, timer: 0, q: null, first: 0, total: 0, qn: 0, mode: 'menu' };
-let done = {}; try { done = JSON.parse(localStorage.getItem('ch_yildiz') || '{}'); } catch (e) {}
+let done = {}; try { done = JSON.parse(localStorage.getItem('ch_yildiz2') || '{}'); } catch (e) {}
+const yildizKaydet = () => { try { localStorage.setItem('ch_yildiz2', JSON.stringify(done)); } catch (e) {} };
 function sub(t) { $('sub').innerHTML = t || ''; }
 function board(k, v) { const d = document.createElement('div'); d.className = 'row f'; d.innerHTML = `${k}: <b>${v}</b>`; const bf = $('bFound'); bf.appendChild(d); while (bf.children.length > 5) bf.removeChild(bf.firstChild); $('bFoundH').classList.remove('hide'); }
 function goBtn(label) { $('go').textContent = label; $('go').classList.remove('hide'); }
@@ -815,7 +828,7 @@ function buildMenu() {
     const b = document.createElement('button'); b.className = 'card';
     const nq = M.steps.filter(s => s.q).length, y = done[M.no];
     b.innerHTML = `<div class="c-no">GÖREV ${M.no}</div><div class="c-ic">${M.icon}</div><div class="c-ad">${M.name}</div><div class="c-ac">${M.task}</div>
-      <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru` : `✓ Tamamlandı · ${'★'.repeat(y)}${'☆'.repeat(3 - y)}`}</div>`;
+      <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru · ${nq} yıldız` : `✓ ${y} / ${nq} yıldız`}</div><div class="c-yil">${'★'.repeat(y || 0)}<span>${'☆'.repeat(nq - (y || 0))}</span></div>`;
     b.onclick = () => { ac(); SFX.click(); startMission(M); };
     $('cards').appendChild(b);
   });
@@ -824,7 +837,7 @@ function buildMenu() {
 function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 
 function startMission(M) {
-  stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game';
+  stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
@@ -867,11 +880,11 @@ function answer(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true;
   const ok = k === Q.correctPos, btns = [...$('opts').children];
   btns.forEach((b, j) => { b.disabled = true; if (j === Q.correctPos) b.classList.add('ok'); else if (j === k) b.classList.add('no'); else b.classList.add('dim'); });
-  if (ok) { GAME.first++; SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
+  if (ok) { GAME.first++; yildizGoster(true); SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
   else { SFX.bad(); $('fb').className = 'no'; $('fb').textContent = '✗ Yanlış! Önce çözümü inceleyelim.'; }
   $('qc').classList.add('cev');
   const lines = Q.q.s, gap = ok ? 0.45 : 1.25;
-  $('sol').innerHTML = `<div class="bas">${ok ? 'ÇÖZÜM' : 'DOĞRU ÇÖZÜM'}</div>` + lines.map((l, i) => `<div class="sl" style="animation-delay:${(0.3 + i * gap).toFixed(2)}s">${l}</div>`).join('');
+  $('sol').innerHTML = `<div class="bas">${ok ? 'ÇÖZÜM' : 'DOĞRU ÇÖZÜM'}</div>` + lines.map((l, i) => `<div class="sl${l[0] === '§' ? ' yol' : ''}" style="animation-delay:${(0.3 + i * gap).toFixed(2)}s">${l[0] === '§' ? l.slice(1) : l}</div>`).join('');
   const sol = $('sol'); let fs = 44; sol.style.fontSize = fs + 'px'; sol.querySelectorAll('.sl').forEach(e => e.style.clipPath = 'none');
   while (sol.scrollHeight > sol.clientHeight + 2 && fs > 36) { fs -= 2; sol.style.fontSize = fs + 'px'; }
   sol.scrollTop = 0; kaySolGuncelle();
@@ -884,13 +897,15 @@ function qContinue() {
   if (Q.q.after) Q.q.after(GAME.M.S, GAME.M);
   next();
 }
+function yildizGoster(pop) { const nq = GAME.M ? GAME.M.steps.filter(s => s.q).length : 0; $('tYil').textContent = `★ ${GAME.first} / ${nq}`;
+  if (pop) { $('tYil').classList.remove('pop'); void $('tYil').offsetWidth; $('tYil').classList.add('pop'); } }
 function finish() {
-  const M = GAME.M, r = GAME.total ? GAME.first / GAME.total : 1, y = r >= 0.9 ? 3 : r >= 0.6 ? 2 : 1;
-  done[M.no] = Math.max(done[M.no] || 0, y); try { localStorage.setItem('ch_yildiz', JSON.stringify(done)); } catch (e) {}
+  const M = GAME.M, nq = GAME.total, y = GAME.first;                       // her soru: ilk denemede doğruysa 1 yıldız
+  done[M.no] = Math.max(done[M.no] || 0, y); yildizKaydet();
   setTimeout(() => SFX.win(), 200);
   const nx = MISSIONS[MISSIONS.indexOf(M) + 1];
   overlay(`<div class="ov-ic">🏆</div><div class="ov-b">GÖREV TAMAMLANDI!</div><div class="ov-t">${M.name}</div>
-    <div class="ov-y">${'★'.repeat(y)}${'☆'.repeat(3 - y)}</div><div class="ov-s">İlk denemede doğru: ${GAME.first} / ${GAME.total}</div>
+    <div class="ov-y" style="font-size:${nq > 6 ? 64 : 80}px">${'★'.repeat(y)}${'☆'.repeat(nq - y)}</div><div class="ov-s">${y} / ${nq} yıldız · her soruda ilk denemede doğru cevap 1 yıldız</div>
     <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar oyna</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki görev ▶</button>` : ''}</div>`);
   $('ovT').onclick = () => { SFX.click(); startMission(M); };
   $('ovM').onclick = () => { SFX.click(); toMenu(); };
@@ -911,6 +926,9 @@ $('bMenu').onclick = () => { SFX.click(); toMenu(); };
 $('bBas').onclick = () => { SFX.click(); if (GAME.M) startMission(GAME.M); };
 const fullscreen = () => { const d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); else document.exitFullscreen && document.exitFullscreen(); };
 $('bFs').onclick = fullscreen;
+$('bSifir').onclick = () => { SFX.click(); $('sifirSor').classList.remove('hide'); };
+$('sifirHayir').onclick = () => { SFX.click(); $('sifirSor').classList.add('hide'); };
+$('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { localStorage.removeItem('ch_yildiz'); } catch (e) {} $('sifirSor').classList.add('hide'); buildMenu(); };
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (k === 'f') return fullscreen();
@@ -1007,7 +1025,20 @@ $('solY').onclick = () => kaydir($('sol'), -1); $('solA').onclick = () => kaydir
 $('ntY').onclick = () => kaydir($('ntIc'), -1); $('ntA').onclick = () => kaydir($('ntIc'), 1);
 $('bNot').onclick = () => { SFX.click(); notAc(); };
 $('ntKapat').onclick = () => { SFX.click(); notAc(false); };
-MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (NOTLAR[M.no] || [])[i]; }));
+// birden fazla çözüm yolu olan sorular: '§' ile başlayan satır yol başlığıdır
+const V2_ = 'v<sup>2</sup>';
+const YOLLAR = {
+  1: { 1: [`§1. YOL · v = ω · r`, `v = 3 · 2 = <em>6 m/s</em> ✓`, `§2. YOL · bir turdaki yol ÷ periyot`, `v = ${F('2πr', 'T')} = ${F('2 · 3 · 2', '2')} = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
+       2: [`§1. YOL · a = v²/r`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')} = <em>18 m/s²</em> ✓`, `§2. YOL · a = ω² · r`, `a = 3<sup>2</sup> · 2 = 9 · 2 = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`] },
+  2: { 2: [`§1. YOL · a = v²/r`, `a = ${F('10<sup>2</sup>', '30')} = ${F('100', '30')} ≈ <em>3,3 m/s²</em> ✓`, `§2. YOL · a = ω · v`, `a = ${F('1', '3')} · 10 ≈ <em>3,3 m/s²</em> ✓`, `Kırmızı 10, yeşil 5 m/s² → r küçülünce a <em>BÜYÜR</em>`],
+       3: [`§1. YOL · T = 2πr / v`, `T = ${F('2 · 3 · 10', '10')} = <em>6 s</em> ✓`, `§2. YOL · T = 2π / ω`, `T = ${F('2 · 3', '1')} = <em>6 s</em> ✓`] },
+  3: { 2: [`§1. YOL · v²/r ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('2<sup>2</sup>', '1')} = 4 m/s² &lt; g = 10`, `Yer çekimi gerekenden fazla → su kovadan ayrılır`, `§2. YOL · en küçük hızla karşılaştır`, `v<sub>en küçük</sub> = ${SQ('g · r')} ≈ 3,2 m/s → 2 &lt; 3,2`, `Su <em>DÖKÜLÜR</em> ✗ (kova YAVAŞ dönüyor)`],
+       3: [`§1. YOL · v²/r ile g'yi karşılaştır`, `${F(V2_, 'r')} = ${F('4<sup>2</sup>', '1')} = 16 m/s² ≥ g = 10 → <span class="o">N</span> > 0`, `§2. YOL · en küçük hızla karşılaştır`, `4 m/s > 3,2 m/s`, `Su kovada kalır, <em>DÖKÜLMEZ</em> ✓ (kova HIZLI dönüyor)`] },
+  4: { 2: [`§1. YOL · a = v²/r`, `a = ${F('30<sup>2</sup>', '10')} = ${F('900', '10')} = <em>90 m/s²</em> ✓`, `§2. YOL · a = ω² · r`, `a = 3<sup>2</sup> · 10 = <em>90 m/s²</em> ✓`, `Yönü yukarı (merkeze): <span class="o">N</span> − <span class="r">mg</span> = m · a → <span class="o">N</span> > <span class="r">mg</span>`],
+       5: [`§1. YOL · başlangıç → tepe (enerji)`, `m · g · h = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 2 · 10 · (45 − 20) = <em>500</em> ✓`, `§2. YOL · dip → tepe (enerji)`, `${F('1', '2')} · m · v<sub>dip</sub><sup>2</sup> = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 900 − 2 · 10 · 20 = <em>500</em> ✓ → v ≈ 22,4 m/s`],
+       7: [`§1. YOL · ivme ile g'yi karşılaştır`, `${F(V2_, 'r')} = 50 ≥ g = 10 ✓`, `§2. YOL · hız ile en küçük hızı karşılaştır`, `v<sub>en küçük</sub> = ${SQ('g · r')} = ${SQ('100')} = 10 m/s → 22,4 ≥ 10 ✓`, `Ray treni iter: <span class="o">N</span> + <span class="r">mg</span> = m · a → <span class="o">N</span> = 4 · <span class="r">mg</span>`, `Ray trenin ÜSTÜNDE → <span class="o">N</span> AŞAĞI`] },
+};
+MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (NOTLAR[M.no] || [])[i]; const y = (YOLLAR[M.no] || {})[i]; if (y) st.q.s = y; }));
 
 // ======================= DURAKLAT / HIZ =======================
 const CTL = { dur: false, hiz: 1 };

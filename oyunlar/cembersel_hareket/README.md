@@ -14,7 +14,9 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 - Öğretmen **▶ Başlat / Treni sür** düğmesine basar, animasyon ilk durağa kadar gider ve soru sorar.
 - **Doğru cevap:** kısa çözüm görünür, Devam ile animasyon sürer.
 - **Yanlış cevap:** doğru çözüm adım adım yazılır, sonra devam edilir.
-- Görev sonunda ilk denemedeki doğrulara göre yıldız verilir.
+- Her soru 1 yıldız: ilk denemede doğru cevap yıldız kazandırır (üst bantta ★ sayacı). Menüdeki **☆ Yıldızları sıfırla** düğmesi bütün yıldızları siler.
+- Birden fazla çözüm yolu olan sorularda çözüm **1. YOL / 2. YOL** diye ayrı yazılır.
+- Üst banttaki **Notlar** düğmesi o sorudaki kuvvetlerin ve yönlerin NEDEN öyle olduğunu açıklar. Uzun çözüm ve notlar fare tekerleği, dokunma veya ▲/▼ ile kaydırılır.
 
 Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri **¼× · ½× · 1× · 2×** (yavaş çekimde ekranda "Yavaş çekim" yazar).
 
