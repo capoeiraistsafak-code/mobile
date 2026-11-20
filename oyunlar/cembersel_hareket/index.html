@@ -33,7 +33,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 
 /* alt yazı */
-#sub{position:absolute;left:1140px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:780px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
+#sub{position:absolute;left:1185px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:730px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
 #sub:empty{display:none}
 #sub.q{left:24px;bottom:120px;transform:none;max-width:700px;font-size:30px}
 
@@ -45,6 +45,19 @@ button{font-family:inherit;cursor:pointer;border:none}
 #bDur{width:190px}
 #bDur svg{flex:none;width:28px;height:28px;fill:currentColor}
 #bDur.dur{background:#22c55e;color:#0b2b16;border-color:#22c55e;animation:nabiz 1.4s infinite}
+#ciz{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:4;pointer-events:none;touch-action:none}
+#ciz.acik{pointer-events:auto;cursor:crosshair}
+#ciz.lazer{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='7' fill='%23ff2d2d' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 12 12,crosshair}
+#bCiz.on{background:#ec4899;border-color:#ec4899;color:#fff}
+#palet{position:absolute;left:516px;top:130px;z-index:7;display:flex;align-items:center;gap:6px;background:rgba(36,41,52,.97);border:3px solid #ec4899;border-radius:20px;padding:8px 12px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+#palet button{height:66px;min-width:58px;border-radius:14px;background:#3a4150;color:#fff;font:800 15px/1.1 Inter;border:2px solid #556070;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px}
+#palet button i{font-style:normal;font-size:26px;line-height:1}
+#palet button.on{background:#ec4899;border-color:#fff;color:#fff}
+#palet .renk{min-width:38px;width:38px;height:38px;border-radius:50%;padding:0;border:4px solid #1f232c}
+#palet .renk.on{border-color:#fff;box-shadow:0 0 0 3px #ec4899}
+#palet .ayr{width:2px;height:50px;background:#556070}
+#palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
+#durRozet.pal{top:226px}
 #durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
 #bNot{width:auto;padding:0 18px;gap:8px;font:800 28px Inter;background:#1e3a8a!important;border-color:#60a5fa!important;color:#fff}
 #bNot.acik{background:#60a5fa!important;color:#0b1b3a!important}
@@ -168,6 +181,21 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 <div id="stage">
   <canvas id="gl"></canvas>
   <div id="tags"></div>
+  <canvas id="ciz" width="1920" height="1080"></canvas>
+  <div id="palet" class="hide">
+    <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏</i>Kalem</button>
+    <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
+    <span class="ayr"></span>
+    <button class="renk on" data-r="#ef4444" style="background:#ef4444" title="Kırmızı"></button>
+    <button class="renk" data-r="#facc15" style="background:#facc15" title="Sarı"></button>
+    <button class="renk" data-r="#3b82f6" style="background:#3b82f6" title="Mavi"></button>
+    <button class="renk" data-r="#22c55e" style="background:#22c55e" title="Yeşil"></button>
+    <button class="renk" data-r="#ffffff" style="background:#ffffff" title="Beyaz"></button>
+    <span class="ayr"></span>
+    <button id="pTem" title="Çizimleri sil"><i>⌫</i>Temizle</button>
+    <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
+    <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
+  </div>
 
   <div id="top" class="hide">
     <span class="pill" id="tNo">GÖREV 1</span>
@@ -185,7 +213,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <button id="go" class="hide">▶ Başlat</button>
   <div id="ctl" class="hide">
     <button id="bDur" title="Duraklat / Devam et (P)"></button>
-    <button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
+    <button id="bCiz" title="Kalem / lazer ile çiz (K)">✏ Çiz</button><button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
   <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
@@ -210,7 +238,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="cards"></div>
     <div class="m-not">
       <div class="bil">Doğru cevapta devam · Yanlışta önce çözüm · Sahneyi sürükleyip döndürün, tekerlek / iki parmakla yakınlaştırın</div>
-      <div class="ks"><span><kbd>1</kbd>–<kbd>4</kbd> şık seç</span><span><kbd>Boşluk</kbd> devam</span><span><kbd>P</kbd> duraklat</span><span><kbd>O</kbd> ortala</span><span><kbd>N</kbd> notlar</span><span><kbd>↑</kbd><kbd>↓</kbd> kaydır</span><span><kbd>−</kbd><kbd>+</kbd> hız</span><span><kbd>M</kbd> ses</span><span><kbd>F</kbd> tam ekran</span></div>
+      <div class="ks"><span><kbd>1</kbd>–<kbd>4</kbd> şık seç</span><span><kbd>Boşluk</kbd> devam</span><span><kbd>P</kbd> duraklat</span><span><kbd>O</kbd> ortala</span><span><kbd>K</kbd> kalem</span><span><kbd>L</kbd> lazer</span><span><kbd>N</kbd> notlar</span><span><kbd>↑</kbd><kbd>↓</kbd> kaydır</span><span><kbd>−</kbd><kbd>+</kbd> hız</span><span><kbd>M</kbd> ses</span><span><kbd>F</kbd> tam ekran</span></div>
     </div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
@@ -889,7 +917,7 @@ function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
-  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); ortala(true); SON_Q = null; notAc(false);
+  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = '';
   $('board').innerHTML = `<div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
@@ -942,7 +970,7 @@ function answer(k) {
   setTimeout(() => { if (GAME.q === Q) { $('qnext').textContent = ok ? 'Devam ▶' : 'Anladım, devam ▶'; $('qnext').classList.remove('hide'); } }, (0.3 + lines.length * gap) * 1000 + (ok ? 0 : 300));
 }
 function qContinue() {
-  const Q = GAME.q; if (!Q || !Q.answered || $('qnext').classList.contains('hide')) return; SFX.click();
+  const Q = GAME.q; if (!Q || !Q.answered || $('qnext').classList.contains('hide')) return; SFX.click(); cizTemizle();
   GAME.q = null; $('qc').classList.add('hide'); $('sub').classList.remove('q'); subSigdir(); CAM.gvo = -200;
   if (Q.q.after) Q.q.after(GAME.M.S, GAME.M);
   next();
@@ -963,13 +991,14 @@ function finish() {
 }
 function toMenu() {
   stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
+  cizAc(false); cizTemizle();
   ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet', 'notlar'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
   buildMenu(); $('menu').classList.remove('hide'); menuScene();
 }
 function menuScene() { ortala(true); showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
 
 // düğmeler ve klavye
-$('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); if (CTL.dur) setDur(false); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
+$('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); cizTemizle(); if (CTL.dur) setDur(false); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
 $('qnext').onclick = qContinue;
 $('bSes').onclick = () => { ac(); setSes(!AU.on); };
 $('bMenu').onclick = () => { SFX.click(); toMenu(); };
@@ -992,6 +1021,9 @@ addEventListener('keydown', e => {
   if (k === 'm') { ac(); return setSes(!AU.on); }
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
   if (GAME.mode === 'game' && k === 'o') return ortala(false);
+  if (GAME.mode === 'game' && k === 'k') return cizAc();
+  if (GAME.mode === 'game' && k === 'l') { CZ.arac = 'lazer'; if (!CZ.acik) cizAc(true); return cizAracGuncelle(); }
+  if (k === 'escape' && CZ.acik) return cizAc(false);
   if (GAME.mode === 'game' && k === 'n') return notAc();
   if (GAME.mode === 'game' && (k === 'arrowdown' || k === 'arrowup' || k === 'pagedown' || k === 'pageup')) { e.preventDefault();
     const el = !$('notlar').classList.contains('hide') ? $('ntIc') : $('sol'); return kaydir(el, k.includes('down') ? 1 : -1); }
@@ -1099,11 +1131,75 @@ const YOLLAR = {
 };
 MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (NOTLAR[M.no] || [])[i]; const y = (YOLLAR[M.no] || {})[i]; if (y) st.q.s = y; }));
 
+// ======================= ÇİZİM: KALEM / LAZER =======================
+// Kalem çizimi kalır; lazer çizimi 1,2 s sonra solar. Animasyon yeniden başlayınca (Devam / Başlat / sonraki adım) bütün çizimler silinir.
+// "Yalnız kalem" açıkken parmak/el (touch) çizmez; tablet kalemi ve fare çizer.
+const CZ = { acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
+try { CZ.yalnizKalem = localStorage.getItem('ch_yalnizkalem') === '1'; } catch (e) {}
+const cizCtx = $('ciz').getContext('2d');
+const LAZER_OMUR = 1.2, LAZER_SOL = 0.6;
+function cizAc(ac2) {
+  CZ.acik = ac2 ?? !CZ.acik;
+  $('ciz').classList.toggle('acik', CZ.acik); $('palet').classList.toggle('hide', !CZ.acik); $('bCiz').classList.toggle('on', CZ.acik);
+  $('durRozet').classList.toggle('pal', CZ.acik);
+  if (CZ.acik && GAME.mode === 'game' && !CTL.dur) setDur(true);          // çizmeye başlarken animasyon durur
+  cizAracGuncelle();
+}
+function cizAracGuncelle() {
+  $('pKalem').classList.toggle('on', CZ.arac === 'kalem'); $('pLazer').classList.toggle('on', CZ.arac === 'lazer');
+  document.querySelectorAll('#palet .renk').forEach(b => b.classList.toggle('on', b.dataset.r === CZ.renk));
+  $('pDok').classList.toggle('on', CZ.yalnizKalem); $('pDok').innerHTML = '<i>✋</i>Yalnız kalem<br>' + (CZ.yalnizKalem ? 'AÇIK' : 'kapalı');
+  $('ciz').classList.toggle('lazer', CZ.arac === 'lazer');
+}
+function cizTemizle() { CZ.cizgiler = []; CZ.aktif.clear(); CZ.kirli = true; }
+const cizNokta = e => { const r = $('stage').getBoundingClientRect(); return { x: (e.clientX - r.left) / SCALE, y: (e.clientY - r.top) / SCALE }; };
+$('ciz').addEventListener('pointerdown', e => {
+  if (!CZ.acik) return;
+  if (CZ.yalnizKalem && e.pointerType === 'touch') return;                 // avuç/parmak yok sayılır
+  e.preventDefault(); try { $('ciz').setPointerCapture(e.pointerId); } catch (er) {}
+  const c = { arac: CZ.arac, renk: CZ.arac === 'lazer' ? '#ff2d2d' : CZ.renk, k: CZ.arac === 'lazer' ? 7 : (e.pointerType === 'pen' ? 4 + 6 * (e.pressure || 0.5) : 6), n: [cizNokta(e)], t: performance.now() / 1000 };
+  CZ.cizgiler.push(c); CZ.aktif.set(e.pointerId, c); CZ.kirli = true;
+});
+$('ciz').addEventListener('pointermove', e => { const c = CZ.aktif.get(e.pointerId); if (!c) return;
+  const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; (ev.length ? ev : [e]).forEach(x => c.n.push(cizNokta(x))); c.t = performance.now() / 1000; CZ.kirli = true; });
+const cizBitir = e => { const c = CZ.aktif.get(e.pointerId); if (c) { c.t = performance.now() / 1000; CZ.aktif.delete(e.pointerId); } };
+$('ciz').addEventListener('pointerup', cizBitir); $('ciz').addEventListener('pointercancel', cizBitir);
+$('ciz').addEventListener('contextmenu', e => e.preventDefault());
+function cizCiz() {
+  const now = performance.now() / 1000;
+  const lazerVar = CZ.cizgiler.some(c => c.arac === 'lazer');
+  if (!CZ.kirli && !lazerVar) return;
+  CZ.cizgiler = CZ.cizgiler.filter(c => c.arac !== 'lazer' || [...CZ.aktif.values()].includes(c) || now - c.t < LAZER_OMUR + LAZER_SOL);
+  const x = cizCtx; x.clearRect(0, 0, 1920, 1080); x.lineCap = x.lineJoin = 'round';
+  for (const c of CZ.cizgiler) {
+    let a = 1; if (c.arac === 'lazer' && ![...CZ.aktif.values()].includes(c)) a = clamp(1 - (now - c.t - LAZER_OMUR) / LAZER_SOL);
+    if (a <= 0 || !c.n.length) continue;
+    x.globalAlpha = a; x.strokeStyle = c.renk; x.lineWidth = c.k;
+    if (c.arac === 'lazer') { x.shadowColor = '#ff2d2d'; x.shadowBlur = 18; } else { x.shadowBlur = 0; }
+    x.beginPath(); x.moveTo(c.n[0].x, c.n[0].y);
+    if (c.n.length === 1) x.lineTo(c.n[0].x + 0.1, c.n[0].y);
+    for (let i = 1; i < c.n.length - 1; i++) { const m = { x: (c.n[i].x + c.n[i + 1].x) / 2, y: (c.n[i].y + c.n[i + 1].y) / 2 }; x.quadraticCurveTo(c.n[i].x, c.n[i].y, m.x, m.y); }
+    if (c.n.length > 1) { const L = c.n[c.n.length - 1]; x.lineTo(L.x, L.y); }
+    x.stroke();
+    if (c.arac === 'lazer') { x.strokeStyle = '#fff'; x.lineWidth = 2.5; x.shadowBlur = 0; x.stroke(); }
+  }
+  x.globalAlpha = 1; x.shadowBlur = 0; CZ.kirli = false;
+}
+$('bCiz').onclick = () => { SFX.click(); cizAc(); };
+$('pKap').onclick = () => { SFX.click(); cizAc(false); };
+$('pKalem').onclick = () => { SFX.click(); CZ.arac = 'kalem'; cizAracGuncelle(); };
+$('pLazer').onclick = () => { SFX.click(); CZ.arac = 'lazer'; cizAracGuncelle(); };
+document.querySelectorAll('#palet .renk').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
+$('pTem').onclick = () => { SFX.click(); cizTemizle(); };
+$('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
+cizAracGuncelle();
+
 // ======================= DURAKLAT / HIZ =======================
 const CTL = { dur: false, hiz: 1 };
 const IC_DUR = '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
 const IC_DEV = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>';
 function setDur(d) {
+  if (CTL.dur && !d) cizTemizle();                                        // tekrar başlatınca çizimler silinir
   CTL.dur = d; $('bDur').innerHTML = d ? IC_DEV + 'Devam' : IC_DUR + 'Duraklat'; $('bDur').classList.toggle('dur', d);
   $('durRozet').classList.toggle('hide', !d); hizRozet();
   if (d) AU.loops.forEach(l => l.set(0));
@@ -1134,9 +1230,9 @@ function frame(now) {
     cDot.visible = false; const a = menuT * 0.08; camGoal([-3 + Math.sin(a) * 15, 7, Math.cos(a) * 15], [-3, 2.2, 0], false);
   }
   for (const k in TAG) if (!TAG[k]._on) TAG[k].style.opacity = 0;
-  camStep(rdt); R3.render(scene, cam);
+  camStep(rdt); R3.render(scene, cam); cizCiz();
   requestAnimationFrame(frame);
 }
 fit(); setSes(AU.on); buildMenu(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
-window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL;
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length;
 </script></body></html>

@@ -22,6 +22,8 @@ Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri *
 
 **Ekranı gezme:** sahneyi fareyle sürükleyerek döndürün, tekerlekle yakınlaştırın, sağ tık (ya da Shift) + sürükle ile kaydırın. Tablet/akıllı tahtada: 1 parmak döndürür, 2 parmak yakınlaştırır ve kaydırır. **⌖ Ortala** düğmesi (ya da `O`) görüntüyü ilk haline döndürür. Görev içindeyken üst banttaki **Tam ekran / Küçült** düğmesi (ya da `F`) ekranı büyütüp küçültür.
 
+**Kalem / Lazer:** sol alttaki **✏ Çiz** (ya da `K`) çizim paletini açar ve animasyonu duraklatır. **Kalem** çizgisi kalır (5 renk), **Lazer** çizgisi 1–2 saniyede kaybolur (`L`). **Temizle** hepsini siler. Animasyon yeniden başlayınca (Devam / Treni sür / sonraki soru) çizimler kendiliğinden silinir. Fare ile de çizilir. **✋ Yalnız kalem** açıkken tablette el/parmak dokunuşu çizmez, yalnız kalem (ve fare) çizer.
+
 Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran.
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
