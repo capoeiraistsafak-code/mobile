@@ -50,6 +50,7 @@ body {
 .brand { font-weight: 700; color: var(--text); text-decoration: none; }
 #who { font-size: 14px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
 main { max-width: 820px; margin: 0 auto; padding: 16px; }
+@media (min-width: 1000px) { main { max-width: 1100px; padding: 24px; } }
 h1 { font-size: 22px; margin: 4px 0 12px; }
 h2 { font-size: 18px; margin: 20px 0 8px; }
 h3 { font-size: 16px; margin: 0 0 6px; }
@@ -131,3 +132,12 @@ th { color: var(--muted); font-weight: 600; }
 .fig .m-key { stroke: #1a7f37; stroke-dasharray: 10 6; }
 .keys button { min-width: 48px; font-weight: 700; }
 .b-nokey, .b-eksik { background: var(--mid-bg); color: var(--mid); }
+
+/* Toplu yükleme */
+.dropzone { border: 2px dashed var(--line); border-radius: 12px; padding: 24px 16px; text-align: center; color: var(--muted); }
+.dropzone.over { border-color: var(--primary); background: var(--bg); color: var(--primary); }
+.qgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.qitem { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: var(--bg); }
+.qitem img { width: 64px; height: 86px; object-fit: cover; border-radius: 6px; flex: none; }
+.qitem .stack { flex: 1; min-width: 0; }
+.qitem select { padding: 6px 8px; }

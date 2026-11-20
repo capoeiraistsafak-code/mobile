@@ -361,9 +361,15 @@ async function viewSubmission(id) {
     </table></div>
     <p class="muted small">"İşaret" yanındaki yüzde: işaretin o şıkta yoğunlaşma oranı (işaret benzerliği). (ç): anahtar öğretmen yerine öğrenci çoğunluğundan geldi.
     "İşlem yok" ama doğru olan sorular, çözülmeden işaretlenmiş olabilir.</p>
-    <details class="card"><summary>Gönderilen fotoğraf</summary><img class="thumb" src="${s.image_url}" alt="" loading="lazy" style="margin-top:8px"></details>`;
+    <details class="card"><summary>Gönderilen fotoğraf</summary><img class="thumb" src="${s.image_url}" alt="" loading="lazy" style="margin-top:8px"></details>
+    ${teacher ? `<button id="delsub" style="color:var(--bad)">Bu fotoğrafı sil (yanlış öğrenciye yüklendiyse)</button>` : ""}`;
 
   if (teacher) {
+    document.getElementById("delsub").onclick = async () => {
+      if (!confirm("Bu fotoğraf ve sonuçları silinsin mi?")) return;
+      await api(`/api/submissions/${id}`, { method: "DELETE" });
+      history.back();
+    };
     $app.querySelectorAll("[data-ov]").forEach((sel) => {
       sel.onchange = async () => {
         try {
@@ -569,7 +575,6 @@ async function tabOutcomes(c, el) {
 
 async function viewAssignment(id) {
   const [a, st] = await Promise.all([api(`/api/assignments/${id}`), api(`/api/assignments/${id}/status`)]);
-  const count = (s) => st.students.filter((x) => x.state === s).length;
   const processing = a.pages.some((p) => p.status === "processing");
   $app.innerHTML = `
     <a href="#/sinif/${a.class_id}" class="small">← Ödevler</a>
@@ -602,24 +607,18 @@ async function viewAssignment(id) {
       <div id="pgp"></div>
     </div>
 
-    <h2>Kim yaptı?</h2>
-    <div class="stats">
-      <div class="stat"><b>${count("yapti")}</b>Yaptı</div>
-      <div class="stat"><b>${count("eksik") + count("gec")}</b>Eksik / geç</div>
-      <div class="stat"><b>${count("bos")}</b>Boş sayfa</div>
-      <div class="stat"><b>${count("yapmadi")}</b>Yapmadı</div>
+    <h2>Öğrenci fotoğraflarını yükle</h2>
+    <div class="card stack" id="drop">
+      <input type="file" id="bulk" accept="image/*" multiple hidden />
+      <div class="dropzone" id="dz">📥 Öğrencilerin gönderdiği fotoğrafları buraya sürükleyin<br>
+        <button type="button" class="primary" id="bulk-pick" style="margin-top:10px">Fotoğrafları seç</button></div>
+      <p class="muted small">Her fotoğraf için öğrenciyi seçin, sonra "Kontrol et"e basın. Dosya adında öğrencinin adı geçiyorsa (ör. <i>ali-kaya-1.jpg</i>) program öğrenciyi kendisi seçer.
+      Bir öğrencinin fotoğraflarını yüklemek için aşağıdaki tablodan "Yükle" düğmesini de kullanabilirsiniz.</p>
+      <div id="queue"></div>
     </div>
-    <div class="card table-wrap"><table>
-      <tr><th>Öğrenci</th><th>Durum</th><th>Sayfa</th><th>D / Y / B</th><th>İşlemsiz doğru</th></tr>
-      ${st.students
-        .map(
-          (s) => `<tr><td><a href="#/ogrenci/${s.student_id}">${esc(s.name)}</a>${s.duplicate ? ` ${badge("wrong", "Kopya foto")}` : ""}${s.review ? ` ${badge("review", s.review + " kontrol")}` : ""}</td>
-          <td>${badge(s.state, STATE[s.state])}</td><td>${s.pages}/${st.page_count}</td>
-          <td>${s.n ? `${s.correct} / ${s.wrong} / ${s.blank}` : "–"}</td><td>${s.nowork || "–"}</td></tr>`
-        )
-        .join("")}
-    </table></div>
-    <p class="muted small">D: doğru, Y: yanlış, B: boş. "İşlemsiz doğru": doğru şık işaretlenmiş ama soru alanında işlem yok (tahmin ya da kopya olabilir).</p>
+
+    <h2>Kim yaptı?</h2>
+    <div id="whodid">${whoDidHtml(st)}</div>
     <button id="del" style="color:var(--bad)">Ödevi sil</button>`;
 
   $app.querySelectorAll("[data-unlink]").forEach((b) => {
@@ -635,6 +634,8 @@ async function viewAssignment(id) {
     location.hash = `#/sinif/${a.class_id}`;
   };
 
+  setupUploads(id, st.students);
+
   async function addPage(file) {
     const p = document.getElementById("pgp");
     p.innerHTML = `<p class="row small"><span class="spinner"></span> Yükleniyor…</p>`;
@@ -649,8 +650,173 @@ async function viewAssignment(id) {
 
   if (processing) {
     await sleep(2000);
-    if (location.hash === `#/odev/${id}`) viewAssignment(id);
+    if (location.hash === `#/odev/${id}` && !UPLOADING) viewAssignment(id);
   }
+}
+
+/** "Kim yaptı?" tablosu. */
+function whoDidHtml(st) {
+  const count = (s) => st.students.filter((x) => x.state === s).length;
+  return `
+    <div class="stats">
+      <div class="stat"><b>${count("yapti")}</b>Yaptı</div>
+      <div class="stat"><b>${count("eksik") + count("gec")}</b>Eksik / geç</div>
+      <div class="stat"><b>${count("bos")}</b>Boş sayfa</div>
+      <div class="stat"><b>${count("yapmadi")}</b>Yapmadı</div>
+    </div>
+    <div class="card table-wrap"><table>
+      <tr><th>Öğrenci</th><th>Durum</th><th>Sayfa</th><th>D / Y / B</th><th>İşlemsiz doğru</th><th></th></tr>
+      ${st.students
+        .map(
+          (s) => `<tr><td><a href="#/ogrenci/${s.student_id}">${esc(s.name)}</a>${s.duplicate ? ` ${badge("wrong", "Kopya foto")}` : ""}${s.review ? ` ${badge("review", s.review + " kontrol")}` : ""}</td>
+          <td>${badge(s.state, STATE[s.state])}</td><td>${s.pages}/${st.page_count}</td>
+          <td>${s.n ? `${s.correct} / ${s.wrong} / ${s.blank}` : "–"}</td><td>${s.nowork || "–"}</td>
+          <td><button class="small" data-up="${s.student_id}">📎 Yükle</button></td></tr>`
+        )
+        .join("")}
+    </table></div>
+    <p class="muted small">D: doğru, Y: yanlış, B: boş. "İşlemsiz doğru": doğru şık işaretlenmiş ama soru alanında işlem yok (tahmin ya da kopya olabilir).</p>
+`;
+}
+
+// ---------- Öğretmen: öğrenci fotoğraflarını toplu yükleme ----------
+
+let UPLOADING = false;
+const norm = (s) =>
+  s.toLocaleLowerCase("tr-TR").replace(/ı/g, "i").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+
+/** Dosya adından öğrenciyi tahmin eder: ad + soyad, yoksa tek eşleşen ad. */
+function guessStudent(fileName, students) {
+  const f = ` ${norm(fileName)} `;
+  const full = students.filter((s) => f.includes(` ${norm(s.name)} `));
+  if (full.length === 1) return full[0].student_id;
+  const first = students.filter((s) => f.includes(` ${norm(s.name).split(" ")[0]} `));
+  return first.length === 1 ? first[0].student_id : "";
+}
+
+function setupUploads(assignmentId, students) {
+  const queue = []; // { file, url, student, status, id, result }
+  let refreshTable = async () => {};
+  const box = document.getElementById("queue");
+  const bulk = document.getElementById("bulk");
+  const options = (sel) =>
+    `<option value="">— Öğrenci seçin —</option>` +
+    students.map((s) => `<option value="${s.student_id}" ${String(sel) === String(s.student_id) ? "selected" : ""}>${esc(s.name)}</option>`).join("");
+
+  const add = (files, studentId) => {
+    for (const f of files) {
+      if (!f.type.startsWith("image/")) continue;
+      queue.push({ file: f, url: URL.createObjectURL(f), student: studentId ?? guessStudent(f.name, students), status: "wait" });
+    }
+    draw();
+  };
+
+  function draw() {
+    if (!queue.length) return (box.innerHTML = "");
+    const waiting = queue.filter((q) => q.status === "wait");
+    box.innerHTML = `
+      <div class="qgrid">${queue
+        .map((q, i) => {
+          const st =
+            q.status === "wait"
+              ? `<select data-i="${i}">${options(q.student)}</select>`
+              : `<div><b>${esc(students.find((s) => String(s.student_id) === String(q.student))?.name || "")}</b></div>`;
+          const info =
+            q.status === "wait"
+              ? `<button class="link small" data-rm="${i}">Kaldır</button>`
+              : q.status === "busy"
+                ? `<span class="row small"><span class="spinner"></span> Okunuyor…</span>`
+                : q.status === "error"
+                  ? `<span class="small" style="color:var(--bad)">⚠ ${esc(q.error)}</span>`
+                  : `<div><a class="small" href="#/gonderim/${q.id}">${q.result}</a></div>`;
+          return `<div class="qitem"><img src="${q.url}" alt="" /><div class="stack">${st}${info}</div></div>`;
+        })
+        .join("")}</div>
+      ${waiting.length ? `<button class="primary big" id="go" ${UPLOADING ? "disabled" : ""}>✔ ${waiting.length} fotoğrafı kontrol et</button>` : ""}
+      ${!UPLOADING && !waiting.length ? `<button id="clear">Listeyi temizle</button>` : ""}`;
+    box.querySelectorAll("select[data-i]").forEach((sel) => (sel.onchange = () => (queue[sel.dataset.i].student = sel.value)));
+    box.querySelectorAll("[data-rm]").forEach((b) => (b.onclick = () => (queue.splice(Number(b.dataset.rm), 1), draw())));
+    const go = document.getElementById("go");
+    if (go) go.onclick = run;
+    const clear = document.getElementById("clear");
+    if (clear) clear.onclick = () => viewAssignment(assignmentId);
+  }
+
+  async function run() {
+    const todo = queue.filter((q) => q.status === "wait");
+    if (todo.some((q) => !q.student)) return toast("Her fotoğraf için öğrenci seçin.");
+    UPLOADING = true;
+    for (const q of todo) {
+      q.status = "busy";
+      draw();
+      try {
+        const image = await compressImage(q.file);
+        const r = await api("/api/submissions", { body: { image, assignment_id: Number(assignmentId), student_id: Number(q.student) } });
+        q.id = r.id;
+      } catch (e) {
+        q.status = "error";
+        q.error = e.message;
+        draw();
+      }
+    }
+    // Sonuçları bekle (sunucu sırayla okur).
+    for (const q of todo.filter((x) => x.id)) {
+      try {
+        const s = await waitFor(`/api/submissions/${q.id}`);
+        if (s.status === "failed") {
+          q.status = "error";
+          q.error = s.error;
+        } else {
+          q.status = "done";
+          const c = s.counts;
+          q.result = !s.has_handwriting ? "Boş sayfa →" : c.nokey === c.n ? "Anahtar yok →" : `${c.correct}/${c.n} doğru →`;
+        }
+      } catch (e) {
+        q.status = "error";
+        q.error = e.message;
+      }
+      draw();
+    }
+    UPLOADING = false;
+    draw();
+    await refreshTable().catch(() => {});
+    toast("Kontrol bitti.");
+  }
+
+  document.getElementById("bulk-pick").onclick = () => {
+    bulk.dataset.student = "";
+    bulk.click();
+  };
+  bulk.onchange = () => {
+    add([...bulk.files], bulk.dataset.student || undefined);
+    bulk.value = "";
+    if (bulk.dataset.student) document.getElementById("drop").scrollIntoView({ behavior: "smooth" });
+  };
+  const bindRowButtons = () =>
+    $app.querySelectorAll("[data-up]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          bulk.dataset.student = b.dataset.up;
+          bulk.click();
+        })
+    );
+  bindRowButtons();
+  // Kontrol bitince tabloyu yenile.
+  refreshTable = async () => {
+    document.getElementById("whodid").innerHTML = whoDidHtml(await api(`/api/assignments/${assignmentId}/status`));
+    bindRowButtons();
+  };
+  const dz = document.getElementById("dz");
+  dz.ondragover = (e) => {
+    e.preventDefault();
+    dz.classList.add("over");
+  };
+  dz.ondragleave = () => dz.classList.remove("over");
+  dz.ondrop = (e) => {
+    e.preventDefault();
+    dz.classList.remove("over");
+    add([...e.dataTransfer.files]);
+  };
 }
 
 async function viewPageEditor(id) {

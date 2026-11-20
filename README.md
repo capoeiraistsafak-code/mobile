@@ -1,6 +1,6 @@
 # Ödev Kontrol
 
-Öğrenciler test kitabının üstünde soruları çözer, cevabı şıkkı daire içine alarak işaretler ve sayfanın fotoğrafını telefonla çeker. Program şunları yapar:
+Öğrenciler test kitabının üstünde soruları çözer, cevabı şıkkı daire içine alarak işaretler ve sayfanın fotoğrafını öğretmene gönderir (ör. WhatsApp ile). Öğretmen fotoğrafları bilgisayarındaki programa sürükleyip bırakır. Program şunları yapar:
 
 - Basılı yazıyı ve öğrencinin el yazısını birbirinden ayırır.
 - Hangi şıkkın işaretlendiğini bulur ve cevap anahtarıyla karşılaştırır.
@@ -8,13 +8,15 @@
 - Hangi öğrencinin ödevi yaptığını, yapmadığını ya da boş sayfa gönderdiğini gösterir.
 - Eksik kazanımları çıkarır.
 
-**Ücretli yapay zekâ servisi kullanmaz.** Bütün işlem sunucuda, internetsiz çalışır. Bir öğrenci sayfası yaklaşık 1,5 saniyede okunur.
+**Program öğretmenin bilgisayarında çalışır.** Ücretli yapay zekâ servisi kullanmaz, internetsiz çalışır. Bir sayfa yaklaşık 1,5 saniyede kontrol edilir.
+
+İsterseniz öğrenciler ve veliler kendi kodlarıyla girip fotoğrafı kendileri de yükleyebilir. Ancak bu isteğe bağlıdır; bunun için programın internete açık bir sunucuda çalışması gerekir.
 
 ## Nasıl çalışır
 
 1. **Öğretmen** ödev verirken öğrencilerin çözeceği sayfanın **boş** hâlinin fotoğrafını bir kez çeker. Program basılı yazıyı okur (Tesseract OCR) ve her sorunun yerini ve A/B/C/D şıklarının kutularını bulur. Bu yaklaşık 4 saniye sürer.
 2. **Öğretmen** cevap anahtarını girer: "1C 2A 3D…" ya da sırayla "CAD…". Girmezse **öğrenci çoğunluğu** geçici anahtar olur: en az 3 öğrencinin en az %60'ı aynı şıkkı seçtiyse. Konu ve kazanım da bu ekrandan girilir.
-3. **Öğrenci** fotoğraf çeker. Program fotoğrafı **resim benzerliği** ile boş sayfaya oturtur (OpenCV, ORB özellik noktaları ve homografi). Fotoğraf eğik, gölgeli ya da uzaktan çekilmiş olsa da çalışır.
+3. **Öğrencinin fotoğrafı** yüklenince program fotoğrafı **resim benzerliği** ile boş sayfaya oturtur (OpenCV, ORB özellik noktaları ve homografi). Fotoğraf eğik, gölgeli ya da uzaktan çekilmiş olsa da çalışır.
 4. Oturtulmuş fotoğrafta **boş sayfada olmayan her iz el yazısıdır.** Böylece basılı yazı ile el yazısı ayrılır; sonuç ekranında el yazısı maviyle gösterilir.
 5. Her soru için:
    - **İşaretlenen şık:** Şık kutularındaki el yazısı miktarına bakılır. En çok iz olan şık, eşiği geçiyor ve rakiplerinden belirgin biçimde fazlaysa işaretli sayılır.
@@ -59,9 +61,15 @@ Bütün eşikler `server/grading.js` dosyasının başındaki `THRESHOLDS` böl�
 | `crowdMinStudents`, `crowdMinShare` | 3, 0.6 | Öğrenci çoğunluğundan anahtar çıkarma koşulu |
 | `weakOutcomeRate` | 0.6 | Bir kazanımda başarı %60'ın altındaysa "eksik" sayılır |
 
-## Kurulum
+## Kurulum (bir kez)
 
-Node.js 22.13 veya üstü gerekir.
+1. https://nodejs.org adresinden **LTS** sürümünü indirip kurun.
+2. Programı indirip bir klasöre çıkarın.
+3. **Windows:** `baslat.bat` dosyasına çift tıklayın. **Mac:** `baslat.command` dosyasına sağ tıklayıp "Aç" deyin.
+
+İlk açılışta gerekli parçalar internetten indirilir; bu birkaç dakika sürer. Sonra tarayıcıda program kendiliğinden açılır (http://localhost:3000). Siyah komut penceresi açık kaldığı sürece program çalışır. Sonraki açılışlarda yine aynı dosyaya çift tıklamanız yeterli.
+
+Komut satırından da çalıştırabilirsiniz:
 
 ```bash
 npm install
@@ -71,21 +79,28 @@ npm install
 npm start
 ```
 
-Tarayıcıda http://localhost:3000 adresini açın. İsterseniz `.env.example` dosyasını `.env` adıyla kopyalayıp ayarları değiştirebilirsiniz.
+## Kullanım
+
+1. **Öğretmen hesabı açın**, sınıf ekleyin ve öğrenci adlarını alt alta yapıştırın.
+2. **Ödev verin.** Öğrencilerin çözeceği sayfaların **boş** hâlinin fotoğrafını ekleyin. Sonra "Anahtar ve konuları gir" ekranından anahtarı yazın ("1C 2A 3D…" ya da sırayla "CAD…"), isterseniz konu ve kazanım da ekleyin.
+3. **Öğrencilerden gelen fotoğrafları yükleyin.** Ödev ekranındaki "Öğrenci fotoğraflarını yükle" alanına fotoğrafları sürükleyin ya da "Fotoğrafları seç" deyin.
+   - Her fotoğrafın yanında öğrenciyi seçin.
+   - Dosya adında öğrencinin adı geçiyorsa (ör. `ali-kaya-1.jpg`) öğrenci kendiliğinden seçilir.
+   - Bir öğrencinin fotoğraflarını tablodaki **"📎 Yükle"** düğmesiyle de ekleyebilirsiniz; o zaman öğrenci zaten seçili gelir.
+4. **"Kontrol et"e basın.** Sonuçlar birkaç saniyede gelir ve "Kim yaptı?" tablosu güncellenir. Bir öğrencinin adına tıklayarak sayfalarını ve eksik kazanımlarını görürsünüz.
+5. Yanlış öğrenciye yüklenen bir fotoğrafı, sonuç sayfasının altındaki **"Bu fotoğrafı sil"** düğmesiyle silebilirsiniz.
+
+Aynı fotoğraf iki ayrı öğrenciye yüklenirse tabloda **"Kopya foto"** uyarısı çıkar.
+
+**Verileriniz** program klasöründeki `data` klasöründe durur (veritabanı ve fotoğraflar). Bu klasörü silmeyin, ara sıra yedekleyin.
+
+## Test
 
 ```bash
 npm test
 ```
 
 Bu komut doğruluk testini çalıştırır; yaklaşık 40 saniye sürer.
-
-## Kullanım
-
-1. **Öğretmen** hesap açar, sınıf ekler ve öğrenci adlarını alt alta yapıştırır. Program her öğrenciye ve veliye 6 haneli giriş kodu üretir.
-2. **Öğretmen** ödev verir ve öğrencilerin çözeceği sayfaların boş hâlinin fotoğrafını çeker. Sonra "Anahtar ve konuları gir" ekranından anahtarı, konuyu ve kazanımı girer.
-3. **Öğrenci** koduyla girer, ödevi seçer ve her sayfanın fotoğrafını çeker. Sonuç birkaç saniyede gelir.
-4. **Öğretmen** ödev ekranında kimin yaptığını ve kimin yapmadığını görür; sınıf ekranında eksik kazanımları görür.
-5. **Veli** koduyla girer ve çocuğunun raporunu görür.
 
 ## Bilinen sınırlar
 

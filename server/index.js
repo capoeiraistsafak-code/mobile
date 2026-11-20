@@ -510,26 +510,42 @@ app.get(
 
 // ---------- Öğrenci fotoğrafı ve sonuçlar ----------
 
+/**
+ * Fotoğraf yükleme. İki yol:
+ *  - Öğretmen: öğrencinin gönderdiği fotoğrafı (ör. WhatsApp'tan) kendisi yükler; student_id ve assignment_id verir.
+ *  - Öğrenci: kendi koduyla girip kendisi yükler.
+ */
 app.post(
   "/api/submissions",
-  need("student"),
+  need("student", "teacher"),
   h((req, res) => {
     const { image, assignment_id } = req.body || {};
     const { buf, ext } = decodeImage(image);
-    const today = one(`SELECT count(*) AS n FROM submissions WHERE student_id=? AND date(created_at)=date('now')`, req.user.id).n;
-    if (today >= DAILY_UPLOAD_LIMIT) fail(429, `Günlük ${DAILY_UPLOAD_LIMIT} fotoğraf sınırına ulaştınız.`);
-    if (assignment_id && !one(`SELECT 1 FROM assignments WHERE id=? AND class_id=?`, assignment_id, req.user.class_id))
-      fail(400, "Ödev bulunamadı.");
+    let studentId;
+    if (req.user.role === "teacher") {
+      studentId = Number(req.body?.student_id);
+      if (!studentId) fail(400, "Öğrenci seçin.");
+      assertCanSeeStudent(req.user, studentId);
+      if (!assignment_id) fail(400, "Ödev seçin.");
+      const st = one(`SELECT class_id FROM users WHERE id=?`, studentId);
+      if (!one(`SELECT 1 FROM assignments WHERE id=? AND class_id=?`, assignment_id, st.class_id)) fail(400, "Ödev bulunamadı.");
+    } else {
+      studentId = req.user.id;
+      const today = one(`SELECT count(*) AS n FROM submissions WHERE student_id=? AND date(created_at)=date('now')`, studentId).n;
+      if (today >= DAILY_UPLOAD_LIMIT) fail(429, `Günlük ${DAILY_UPLOAD_LIMIT} fotoğraf sınırına ulaştınız.`);
+      if (assignment_id && !one(`SELECT 1 FROM assignments WHERE id=? AND class_id=?`, assignment_id, req.user.class_id))
+        fail(400, "Ödev bulunamadı.");
+    }
 
     // Aynı fotoğraf daha önce yüklendi mi? (kopya kontrolü)
     const hash = crypto.createHash("sha256").update(buf).digest("hex");
-    if (one(`SELECT 1 FROM submissions WHERE image_hash=? AND student_id=? AND status!='failed'`, hash, req.user.id))
-      fail(409, "Bu fotoğrafı zaten yüklediniz.");
-    const dupOther = one(`SELECT id FROM submissions WHERE image_hash=? AND student_id!=?`, hash, req.user.id);
+    if (one(`SELECT 1 FROM submissions WHERE image_hash=? AND student_id=? AND status!='failed'`, hash, studentId))
+      fail(409, "Bu fotoğraf bu öğrenci için zaten yüklenmiş.");
+    const dupOther = one(`SELECT id FROM submissions WHERE image_hash=? AND student_id!=?`, hash, studentId);
 
     const r = run(
       `INSERT INTO submissions (student_id, assignment_id, image_file, image_hash, duplicate_of) VALUES (?,?,?,?,?)`,
-      req.user.id,
+      studentId,
       assignment_id || null,
       saveFile(buf, ext),
       hash,
@@ -538,6 +554,21 @@ app.post(
     const id = Number(r.lastInsertRowid);
     enqueue(() => processSubmission(id));
     res.json({ id, status: "processing" });
+  })
+);
+
+/** Öğretmen yanlış öğrenciye yüklenen fotoğrafı siler. */
+app.delete(
+  "/api/submissions/:id",
+  need("teacher"),
+  h((req, res) => {
+    const s = one(`SELECT * FROM submissions WHERE id=?`, req.params.id);
+    if (!s) fail(404, "Bulunamadı.");
+    assertCanSeeStudent(req.user, s.student_id);
+    run(`DELETE FROM submissions WHERE id=?`, s.id);
+    removeFile(s.image_file);
+    removeFile(s.overlay_file);
+    res.json({ ok: true });
   })
 );
 
