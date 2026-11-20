@@ -9,7 +9,9 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#1f232c;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 button{font-family:inherit;cursor:pointer;border:none}
 #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:radial-gradient(circle at 50% 45%,#3a4150,#1f232c);overflow:hidden}
-#gl{position:absolute;left:0;top:0;width:1920px;height:1080px}
+#gl{position:absolute;left:0;top:0;width:1920px;height:1080px;touch-action:none;cursor:grab}
+#gl.surukle{cursor:grabbing}
+#bOrt.on{background:#F5A300;color:#1f232c;border-color:#F5A300;animation:nabiz 1.4s infinite}
 .hide{display:none!important}
 
 /* üst bant */
@@ -30,13 +32,13 @@ button{font-family:inherit;cursor:pointer;border:none}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 
 /* alt yazı */
-#sub{position:absolute;left:1040px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:880px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
+#sub{position:absolute;left:1140px;bottom:26px;transform:translateX(-50%);width:max-content;max-width:780px;background:rgba(10,12,18,.84);border-radius:16px;padding:14px 30px;font:600 34px/1.3 Inter;text-align:center;color:#fff;z-index:4;transition:left .4s}
 #sub:empty{display:none}
-#sub.q{left:875px;max-width:580px;font-size:30px}
+#sub.q{left:24px;bottom:120px;transform:none;max-width:700px;font-size:30px}
 
 /* devam düğmesi */
 #ctl{position:absolute;left:24px;bottom:24px;z-index:6;display:flex;gap:10px;align-items:center;background:rgba(36,41,52,.94);border:3px solid #4b5566;border-radius:20px;padding:8px}
-#ctl button{height:68px;min-width:68px;border-radius:14px;background:#3a4150;color:#fff;font:800 26px Inter;border:2px solid #556070;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px}
+#ctl button{height:68px;min-width:64px;border-radius:14px;background:#3a4150;color:#fff;font:800 26px Inter;border:2px solid #556070;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px}
 #ctl button.on{background:#F5A300;color:#1f232c;border-color:#F5A300}
 #ctl button:active{transform:scale(.94)}
 #bDur{width:190px}
@@ -171,7 +173,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <button id="go" class="hide">▶ Başlat</button>
   <div id="ctl" class="hide">
     <button id="bDur" title="Duraklat / Devam et (P)"></button>
-    <button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
+    <button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
   <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
@@ -194,8 +196,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="m-bas">ÇEMBERSEL HAREKET</div>
     <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
     <div id="cards"></div>
-    <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir<br>
-      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>N</kbd> notlar · <kbd>↑</kbd>/<kbd>↓</kbd> kaydır · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
+    <div class="m-not">Doğru cevapta animasyon devam eder · Yanlış cevapta önce çözüm gösterilir · Sahneyi sürükleyerek döndürün, tekerlek / iki parmakla yakınlaştırın<br>
+      Kısayollar: <kbd>1</kbd>–<kbd>4</kbd> şık seç · <kbd>Boşluk</kbd> devam · <kbd>P</kbd> duraklat · <kbd>O</kbd> ortala · <kbd>N</kbd> notlar · <kbd>↑</kbd>/<kbd>↓</kbd> kaydır · <kbd>−</kbd>/<kbd>+</kbd> hız · <kbd>M</kbd> ses · <kbd>F</kbd> tam ekran</div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bSifir">☆ Yıldızları sıfırla</button>
     <button class="m-fs" id="bFs">⛶ Tam ekran</button>
@@ -345,11 +347,36 @@ function textSprite(txt, w, h, bg, fg) {
 // kamera (yumuşak takip) + soru kartına göre görüntü kaydırma
 const CAM = { p: V3(0, 8, 12), l: V3(), gp: V3(0, 8, 12), gl: V3(), vo: 0, gvo: 0 };
 function camGoal(p, l, snap) { CAM.gp.set(...p); CAM.gl.set(...l); if (snap) { CAM.p.copy(CAM.gp); CAM.l.copy(CAM.gl); } }
+// kullanıcının ekranı döndürmesi / yakınlaştırması / kaydırması (fare: sürükle, sağ tık ya da Shift + sürükle, tekerlek; dokunma: 1 parmak döndür, 2 parmak yakınlaştır + kaydır)
+const USR = { yaw: 0, pitch: 0, zoom: 1, pan: V3(), t: { yaw: 0, pitch: 0, zoom: 1, pan: V3() } };
+const usrDegisti = () => Math.abs(USR.t.yaw) > 1e-3 || Math.abs(USR.t.pitch) > 1e-3 || Math.abs(USR.t.zoom - 1) > 1e-3 || USR.t.pan.lengthSq() > 1e-6;
+function ortala(ani) { USR.t.yaw = USR.t.pitch = 0; USR.t.zoom = 1; USR.t.pan.set(0, 0, 0); if (ani) { USR.yaw = USR.pitch = 0; USR.zoom = 1; USR.pan.set(0, 0, 0); } }
 function camStep(dt) {
   const k = 1 - Math.exp(-2.2 * dt); CAM.p.lerp(CAM.gp, k); CAM.l.lerp(CAM.gl, k);
   CAM.vo += (CAM.gvo - CAM.vo) * (1 - Math.exp(-5 * dt));
-  cam.position.copy(CAM.p); cam.lookAt(CAM.l); cam.setViewOffset(1920, 1080, CAM.vo, 0, 1920, 1080); cam.updateMatrixWorld();
+  const u = 1 - Math.exp(-14 * dt); USR.yaw += (USR.t.yaw - USR.yaw) * u; USR.pitch += (USR.t.pitch - USR.pitch) * u; USR.zoom += (USR.t.zoom - USR.zoom) * u; USR.pan.lerp(USR.t.pan, u);
+  const d = CAM.p.clone().sub(CAM.l), r = d.length(), th = Math.atan2(d.x, d.z) + USR.yaw, ph = clamp(Math.acos(clamp(d.y / r, -1, 1)) - USR.pitch, 0.06, 1.55), rr = r * USR.zoom;
+  const look = CAM.l.clone().add(USR.pan);
+  cam.position.set(look.x + rr * Math.sin(ph) * Math.sin(th), look.y + rr * Math.cos(ph), look.z + rr * Math.sin(ph) * Math.cos(th));
+  cam.lookAt(look); cam.setViewOffset(1920, 1080, CAM.vo, 0, 1920, 1080); cam.updateMatrixWorld();
+  const b = $('bOrt'); if (b) b.classList.toggle('on', usrDegisti());
 }
+{ const gl = $('gl'), P = new Map(); let son = null;
+  const mesafe = () => { const a = [...P.values()]; return Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); };
+  const orta = () => { const a = [...P.values()]; return { x: (a[0].x + a[1].x) / 2, y: (a[0].y + a[1].y) / 2 }; };
+  const kaydir = (dx, dy) => { const r = cam.position.distanceTo(CAM.l.clone().add(USR.pan)), sg = V3().setFromMatrixColumn(cam.matrixWorld, 0), yk = V3().setFromMatrixColumn(cam.matrixWorld, 1), f = r * 0.0011;
+    USR.t.pan.add(sg.multiplyScalar(-dx * f)).add(yk.multiplyScalar(dy * f)); };
+  const zum = c => { USR.t.zoom = clamp(USR.t.zoom * c, 0.3, 2.6); };
+  gl.addEventListener('pointerdown', e => { if (GAME.mode !== 'game') return; gl.setPointerCapture(e.pointerId); P.set(e.pointerId, { x: e.clientX, y: e.clientY, pan: e.button === 2 || e.shiftKey });
+    gl.classList.add('surukle'); son = P.size === 2 ? { d: mesafe(), m: orta() } : null; });
+  gl.addEventListener('pointermove', e => { const q = P.get(e.pointerId); if (!q) return; const dx = (e.clientX - q.x) / SCALE, dy = (e.clientY - q.y) / SCALE;
+    if (P.size === 1) { if (q.pan) kaydir(dx, dy); else { USR.t.yaw -= dx * 0.005; USR.t.pitch = clamp(USR.t.pitch + dy * 0.004, -1.2, 1.2); } }
+    q.x = e.clientX; q.y = e.clientY;
+    if (P.size === 2 && son) { const d = mesafe(), m = orta(); if (d > 10) zum(son.d / d); kaydir((m.x - son.m.x) / SCALE, (m.y - son.m.y) / SCALE); son = { d, m }; } });
+  const bitir = e => { P.delete(e.pointerId); son = P.size === 2 ? { d: mesafe(), m: orta() } : null; if (!P.size) gl.classList.remove('surukle'); };
+  gl.addEventListener('pointerup', bitir); gl.addEventListener('pointercancel', bitir);
+  gl.addEventListener('wheel', e => { if (GAME.mode !== 'game') return; e.preventDefault(); zum(Math.exp(e.deltaY * 0.0012)); }, { passive: false });
+  gl.addEventListener('contextmenu', e => e.preventDefault()); }
 
 // 3B'ye bağlı etiketler
 const TAG = {};
@@ -839,7 +866,7 @@ function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 function startMission(M) {
   stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
-  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); SON_Q = null; notAc(false);
+  $('menu').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = M.task;
   $('board').innerHTML = `<h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); sub(''); CAM.gvo = -200; CAM.vo = -200;
@@ -916,7 +943,7 @@ function toMenu() {
   ['top', 'board', 'qc', 'go', 'ctl', 'durRozet', 'hizRozet', 'notlar'].forEach(id => $(id).classList.add('hide')); CTL.dur = false; sub(''); $('sub').classList.remove('q');
   buildMenu(); $('menu').classList.remove('hide'); menuScene();
 }
-function menuScene() { showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
+function menuScene() { ortala(true); showOnly(M4); M4.S = { s: ROLL.sTop, run: false, stop: 'x', cx: 0, tc: -1 }; setPlate(27, 9, -2.4, -0.4); CAM.gvo = CAM.vo = 0; }
 
 // düğmeler ve klavye
 $('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); if (CTL.dur) setDur(false); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
@@ -934,6 +961,7 @@ addEventListener('keydown', e => {
   if (k === 'f') return fullscreen();
   if (k === 'm') { ac(); return setSes(!AU.on); }
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
+  if (GAME.mode === 'game' && k === 'o') return ortala(false);
   if (GAME.mode === 'game' && k === 'n') return notAc();
   if (GAME.mode === 'game' && (k === 'arrowdown' || k === 'arrowup' || k === 'pagedown' || k === 'pageup')) { e.preventDefault();
     const el = !$('notlar').classList.contains('hide') ? $('ntIc') : $('sol'); return kaydir(el, k.includes('down') ? 1 : -1); }
@@ -1055,6 +1083,7 @@ function setHiz(h) {
 function hizRozet() { const r = $('hizRozet'); const t = { 0.25: 'Yavaş çekim ¼×', 0.5: 'Yavaş çekim ½×', 2: 'Hızlı 2×' }[CTL.hiz];
   r.textContent = t || ''; r.classList.toggle('hide', !t || CTL.dur || GAME.mode !== 'game'); }
 $('bDur').onclick = () => { SFX.click(); setDur(!CTL.dur); };
+$('bOrt').onclick = () => { SFX.click(); ortala(false); };
 document.querySelectorAll('#ctl button[data-h]').forEach(b => b.onclick = () => { SFX.click(); setHiz(+b.dataset.h); });
 setDur(false);
 

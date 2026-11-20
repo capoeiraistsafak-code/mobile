@@ -20,6 +20,8 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 
 Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri **¼× · ½× · 1× · 2×** (yavaş çekimde ekranda "Yavaş çekim" yazar).
 
+**Ekranı gezme:** sahneyi fareyle sürükleyerek döndürün, tekerlekle yakınlaştırın, sağ tık (ya da Shift) + sürükle ile kaydırın. Tablet/akıllı tahtada: 1 parmak döndürür, 2 parmak yakınlaştırır ve kaydırır. **⌖ Ortala** düğmesi (ya da `O`) görüntüyü ilk haline döndürür.
+
 Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran.
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
