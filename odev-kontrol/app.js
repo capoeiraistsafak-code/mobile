@@ -14,6 +14,9 @@ const VARSAYILAN_AYARLAR = {
   eksikEnAzSoru: 2, // * eksik demek için o kazanımdan en az kaç soru
   cogunlukOgrenci: 3, // * anahtar girilmediyse: en az bu kadar öğrenci...
   cogunlukOran: 60, // * ...bu yüzdesi aynı şıkkı seçtiyse o şık anahtar olur
+  yzKullan: true, // * şıkları sinir ağı okusun (kapalıysa eşik kuralı)
+  yzKendiOgren: true, // * ağ ve kural çok emin ve aynı fikirdeyse o okumadan da öğrensin
+  yzOtoEgit: 10, // * bu kadar yeni öğretmen düzeltmesi birikince kendiliğinden eğit (0 = kapalı)
 };
 // Yapay test sayfalarıyla ayarlanmış okuma eşikleri (gerçek ödevlerle yeniden bakılmalı).
 const T = {
@@ -35,16 +38,17 @@ let A = { ...VARSAYILAN_AYARLAR }; // geçerli ayarlar
 // ---------------------------------------------------------------------------
 // Kalıcı depolama (tarayıcının IndexedDB'si)
 // ---------------------------------------------------------------------------
-const STORES = ["siniflar", "ogrenciler", "kazanimlar", "kaynaklar", "odevler", "sayfalar", "gonderimler"];
+const STORES = ["siniflar", "ogrenciler", "kazanimlar", "kaynaklar", "odevler", "sayfalar", "gonderimler", "yzOrnekler"];
 const D = Object.fromEntries(STORES.map((s) => [s, new Map()]));
 const DB = {
   db: null,
   async open() {
     this.db = await new Promise((res, rej) => {
-      const r = indexedDB.open("odev-kontrol", 1);
+      const r = indexedDB.open("odev-kontrol", 2);
       r.onupgradeneeded = () => {
-        for (const s of STORES) r.result.createObjectStore(s, { keyPath: "id", autoIncrement: true });
-        r.result.createObjectStore("kv");
+        const var_ = r.result.objectStoreNames;
+        for (const s of STORES) if (!var_.contains(s)) r.result.createObjectStore(s, { keyPath: "id", autoIncrement: true });
+        if (!var_.contains("kv")) r.result.createObjectStore("kv");
       };
       r.onsuccess = () => res(r.result);
       r.onerror = () => rej(r.error);
@@ -891,7 +895,16 @@ async function ogrenciSayfasiOku(foto, sayfalar) {
     cv.morphologyEx(ink, ink, cv.MORPH_OPEN, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2))));
     const sayfaMurekkep = cv.countNonZero(ink) / (ink.rows * ink.cols);
 
+    // Yapay zekâ için: her şıkkın görüntüsü ve yazılı cevap alanlarındaki rakamlar.
+    const yzVeri = window.YapayZeka
+      ? p.sorular.map((q) =>
+          q.tip === "yazili"
+            ? { no: q.no, kelime: kelimeSorusu(q), parcalar: (kelimeSorusu(q) ? YapayZeka.harfleriBul : YapayZeka.rakamlariBul)(ink.data, ink.cols, ink.rows, q.bolge) }
+            : { no: q.no, kirp: Object.fromEntries(q.siklar.map((o) => [o.letter, YapayZeka.isaretKirp(ink.data, ink.cols, ink.rows, o.box)])) }
+        )
+      : [];
     const cevaplar = p.sorular.map((q) => {
+      if (q.tip === "yazili") return { no: q.no, tip: "yazili", okunan: "", guven: 0, parcalar: [] };
       const opt = q.siklar.map((o) => {
         const n = murekkep(ink, o.box);
         // İz, şık harfinin boyuna göre sabit bir alana oranlanır (uzun şık metni oranı düşürmesin; tik de okunsun).
@@ -909,8 +922,15 @@ async function ogrenciSayfasiOku(foto, sayfalar) {
           isaret = bir.harf;
         }
       }
-      const bolgeAlani = alan(q.bolge) - q.siklar.reduce((s, o) => s + alan(o.box), 0);
-      const islemOrani = Math.max(0, murekkep(ink, q.bolge) - toplam) / Math.max(1, bolgeAlani);
+      // Soru alanının üstünde aynı sütunda yazılı cevap sorusu varsa, onun alanı ve üstü bu sorudan sayılmaz.
+      const bolge = { ...q.bolge };
+      const sikUst = Math.min(...q.siklar.map((o) => o.box.y0));
+      for (const y of p.sorular.filter((x) => x.tip === "yazili")) {
+        const yatayOrtak = Math.min(y.bolge.x1, bolge.x1) - Math.max(y.bolge.x0, bolge.x0);
+        if (yatayOrtak > 0 && y.bolge.y1 <= sikUst && y.bolge.y1 > bolge.y0) bolge.y0 = y.bolge.y1 + 4;
+      }
+      const bolgeAlani = alan(bolge) - q.siklar.reduce((s, o) => s + alan(o.box), 0);
+      const islemOrani = Math.max(0, murekkep(ink, bolge) - toplam) / Math.max(1, bolgeAlani);
       return {
         no: q.no,
         isaret,
@@ -932,11 +952,224 @@ async function ogrenciSayfasiOku(foto, sayfalar) {
         d[i * 4 + 1] = 90;
         d[i * 4 + 2] = 230;
       }
-    return { eslesti: true, sayfaId: p.id, puan: h.inliers, sayfaMurekkep, cevaplar, tuval: matTuval(rgba) };
+    return { eslesti: true, sayfaId: p.id, puan: h.inliers, sayfaMurekkep, cevaplar, yzVeri, sorular: p.sorular, tuval: matTuval(rgba) };
   });
-  if (r.eslesti) r.kaplama = await tuvalBlob(r.tuval, "image/jpeg", 0.8);
+  if (r.eslesti) {
+    r.kaplama = await tuvalBlob(r.tuval, "image/jpeg", 0.8);
+    await yzOku(r);
+  }
   delete r.tuval;
   return r;
+}
+
+// ---------------------------------------------------------------------------
+// YAPAY ZEKÂ: sinir ağları (YapayZeka klasörü). Okur, öğretmen düzelttikçe kendini eğitir.
+// ---------------------------------------------------------------------------
+const YZ = { isaret: null, rakam: null, harf: null, bilgi: null, hazir: false, egitimde: false, ilerleme: "", hata: null };
+const AG_ADI = { isaret: "İşaret", rakam: "Rakam", harf: "Harf" };
+const yzVar = () => !!(window.YapayZeka && window.tf && window.YZ_BASLANGIC);
+
+/** Kayıtlı modeli (yoksa başlangıç modelini) yükler. */
+async function yzYukle() {
+  if (!yzVar()) return;
+  try {
+    const kayit = await DB.req("kv", "readonly", (st) => st.get("yzModel"));
+    const kaynak = kayit?.isaret ? kayit : window.YZ_BASLANGIC;
+    YZ.isaret?.dispose?.();
+    YZ.rakam?.dispose?.();
+    YZ.harf?.dispose?.();
+    YZ.isaret = await YapayZeka.modelAc(kaynak.isaret);
+    YZ.rakam = await YapayZeka.modelAc(kaynak.rakam);
+    // Harf ağı sonradan eklendi: eski kayıtlarda yoksa başlangıç modelindeki kullanılır.
+    const harfKaynak = kaynak.harf || window.YZ_BASLANGIC.harf;
+    YZ.harf = harfKaynak ? await YapayZeka.modelAc(harfKaynak) : null;
+    YZ.bilgi = kayit?.isaret ? kayit : { surum: 0, gecmis: [], baslangic: true };
+    YZ.hazir = true;
+    YZ.hata = null;
+  } catch (e) {
+    console.error(e);
+    YZ.hata = e.message;
+  }
+  motorDurumu();
+}
+async function yzKaydet(isaretAgi, rakamAgi, harfAgi, gecmisEk) {
+  const eski = YZ.bilgi?.baslangic ? { gecmis: [] } : YZ.bilgi || { gecmis: [] };
+  const kayit = {
+    surum: (eski.surum || 0) + 1,
+    tarih: simdi(),
+    isaret: await YapayZeka.modelPaketle(isaretAgi),
+    rakam: await YapayZeka.modelPaketle(rakamAgi),
+    harf: harfAgi ? await YapayZeka.modelPaketle(harfAgi) : null,
+    gecmis: [...(eski.gecmis || []), ...(gecmisEk ? [gecmisEk] : [])],
+    sonDuzeltmeSayisi: list("yzOrnekler", (o) => o.kaynak === "ogretmen").length,
+  };
+  await DB.req("kv", "readwrite", (st) => st.put(kayit, "yzModel"));
+  YZ.bilgi = kayit;
+}
+
+/** Okunan sayfaya sinir ağlarının görüşünü ekler. */
+async function yzOku(r) {
+  if (!YZ.hazir || !r.yzVeri?.length) return;
+  for (const v of r.yzVeri) {
+    const c = r.cevaplar.find((x) => x.no === v.no);
+    if (!c) continue;
+    if (v.parcalar && v.kelime) {
+      // Kelime cevabı: harf ağı okur, doğru cevaba benzerliği hesaplanır.
+      if (!YZ.harf) continue;
+      const q = r.sorular?.find((x) => x.no === v.no);
+      const o = await YapayZeka.kelimeOku(YZ.harf, v.parcalar, q?.dogruCevap || "");
+      Object.assign(c, { tur: "kelime", parcalar: o.harfler, okunan: o.metin, guven: o.guven, benzerlik: o.benzerlik, islem: !!o.harfler.length });
+    } else if (v.parcalar) {
+      // Sayı cevabı: her parçayı rakam ağı okur.
+      const o = await YapayZeka.sayiOku(YZ.rakam, v.parcalar);
+      c.parcalar = o.rakamlar;
+      c.okunan = o.metin;
+      c.guven = o.guven;
+      c.islem = !!o.rakamlar.length;
+    } else {
+      const harfler = Object.keys(v.kirp);
+      const p = await YapayZeka.isaretTahmin(YZ.isaret, harfler.map((h) => v.kirp[h]));
+      c.kirp = v.kirp;
+      c.yz = Object.fromEntries(harfler.map((h, i) => [h, Math.round(p[i] * 1000) / 1000]));
+      c.kural = { durum: c.durum, isaret: c.isaret };
+      if (A.yzKullan) {
+        // İki yöntem (sinir ağı ve eşik kuralı) aynı şeyi okursa kesin; farklıysa öğretmen baksın.
+        const isaretli = harfler.filter((h) => c.yz[h] >= 0.5);
+        const yzDurum = isaretli.length === 0 ? "none" : isaretli.length === 1 ? "ok" : "multi";
+        const yzIsaret = isaretli.length === 1 ? isaretli[0] : null;
+        c.okuyan = "yz";
+        if (yzDurum === c.kural.durum && yzIsaret === c.kural.isaret) {
+          if (yzIsaret) c.pay = c.yz[yzIsaret];
+        } else {
+          c.durum = "farkli";
+          c.isaret = null;
+          c.yzOkuma = { durum: yzDurum, isaret: yzIsaret };
+        }
+      }
+    }
+  }
+}
+
+/** Kendi kendine öğrenme: ağ ve kural çok emin ve aynı fikirdeyse bu okumadan örnek çıkar. */
+async function yzOtomatikOrnekler(g) {
+  if (!A.yzKendiOgren || !YZ.hazir) return;
+  for (const c of g.cevaplar) {
+    if (!c.yz || !c.kural) continue;
+    const eminYz = Object.values(c.yz).every((p) => p > 0.95 || p < 0.05);
+    const ayni = c.kural.durum === c.durum && c.kural.isaret === c.isaret;
+    if (!eminYz || !ayni || c.durum === "multi") continue;
+    for (const [h, x] of Object.entries(c.kirp)) await DB.put("yzOrnekler", { tur: "isaret", x, y: c.yz[h] >= 0.5 ? 1 : 0, kaynak: "otomatik", gonderimId: g.id, no: c.no, tarih: simdi() });
+  }
+  // Otomatik örnekler sınırsız büyümesin: en yeni 3000 kalsın.
+  const oto = list("yzOrnekler", (o) => o.kaynak === "otomatik").sort((a, b) => a.id - b.id);
+  for (const o of oto.slice(0, Math.max(0, oto.length - 3000))) await DB.del("yzOrnekler", o.id);
+}
+
+/** Öğretmen düzeltmesi → eğitim örnekleri (aynı soru için eskileri silinir). */
+async function yzDuzeltmeKaydet(g, c) {
+  for (const o of list("yzOrnekler", (o) => o.gonderimId === g.id && o.no === c.no)) await DB.del("yzOrnekler", o.id);
+  if (c.tip === "yazili" && c.tur === "kelime") {
+    const yazi = YapayZeka.sadeKelime(c.duzeltmeYazi ?? "");
+    if (c.duzeltmeYazi != null && yazi.length === c.parcalar.length)
+      for (let i = 0; i < yazi.length; i++) await DB.put("yzOrnekler", { tur: "harf", x: c.parcalar[i].x, y: YapayZeka.harfSinifi(yazi[i]), kaynak: "ogretmen", gonderimId: g.id, no: c.no, tarih: simdi() });
+  } else if (c.tip === "yazili") {
+    const yazi = String(c.duzeltmeYazi ?? "").replace(/\D/g, "");
+    if (c.duzeltmeYazi != null && yazi.length === c.parcalar.length)
+      for (let i = 0; i < yazi.length; i++) await DB.put("yzOrnekler", { tur: "rakam", x: c.parcalar[i].x, y: +yazi[i], kaynak: "ogretmen", gonderimId: g.id, no: c.no, tarih: simdi() });
+  } else if (c.duzeltme && c.kirp) {
+    for (const [h, x] of Object.entries(c.kirp)) await DB.put("yzOrnekler", { tur: "isaret", x, y: h === c.duzeltme ? 1 : 0, kaynak: "ogretmen", gonderimId: g.id, no: c.no, tarih: simdi() });
+  }
+  const yeni = list("yzOrnekler", (o) => o.kaynak === "ogretmen").length - (YZ.bilgi?.sonDuzeltmeSayisi || 0);
+  if (A.yzOtoEgit > 0 && yeni >= A.yzOtoEgit) yzEgit("otomatik");
+}
+
+/** Ağları öğretmenin düzeltmeleriyle (ve emin okumalarla) yeniden eğitir. Kötüleşirse eskisini korur. */
+async function yzEgit(neden = "elle") {
+  if (!YZ.hazir || YZ.egitimde) return;
+  YZ.egitimde = true;
+  YZ.ilerleme = "Hazırlanıyor…";
+  yenidenCiz();
+  const sonuc = { tarih: simdi(), neden, turler: {} };
+  try {
+    const yeniAglar = {};
+    for (const tur of ["isaret", "rakam", "harf"]) {
+      const eski = YZ[tur];
+      if (!eski) continue;
+      const ogretmen = list("yzOrnekler", (o) => o.tur === tur && o.kaynak === "ogretmen").sort(() => Math.random() - 0.5);
+      const otomatik = list("yzOrnekler", (o) => o.tur === tur && o.kaynak === "otomatik");
+      if (!ogretmen.length && !otomatik.length) {
+        yeniAglar[tur] = eski;
+        continue;
+      }
+      const sinamaSayisi = ogretmen.length >= 10 ? Math.ceil(ogretmen.length * 0.2) : 0;
+      const sinama = ogretmen.slice(0, sinamaSayisi);
+      const tekrar = (window.YZ_BASLANGIC.tekrar[tur] || []).map(([x, y]) => ({ x: YapayZeka.b64.oku(x), y }));
+      const egitim = [...ogretmen.slice(sinamaSayisi).map((o) => ({ ...o, agirlik: 3 })), ...otomatik, ...tekrar];
+      const yeni = await YapayZeka.modelAc(await YapayZeka.modelPaketle(eski));
+      const once = { sinama: await YapayZeka.dogruluk(eski, tur, sinama), tekrar: await YapayZeka.dogruluk(eski, tur, tekrar) };
+      await YapayZeka.egit(yeni, tur, egitim, {
+        epoch: 6,
+        ogrenmeOrani: 0.0005,
+        ilerleme: async (e, n) => {
+          YZ.ilerleme = `${AG_ADI[tur]} ağı eğitiliyor: ${e}/${n}`;
+          motorDurumu();
+          if (G.tab === "yz") yenidenCiz();
+          await new Promise((r) => setTimeout(r, 0));
+        },
+      });
+      const sonra = { sinama: await YapayZeka.dogruluk(yeni, tur, sinama), tekrar: await YapayZeka.dogruluk(yeni, tur, tekrar) };
+      // Koruma: ayrılan öğretmen örneklerinde kötüleşirse ya da eski bilgisini unutursa kabul etme.
+      const kabul = (sonra.sinama == null || sonra.sinama >= once.sinama) && sonra.tekrar >= once.tekrar - 0.03;
+      sonuc.turler[tur] = { ogretmen: ogretmen.length, otomatik: otomatik.length, once, sonra, kabul };
+      if (kabul) yeniAglar[tur] = yeni;
+      else {
+        yeni.dispose();
+        yeniAglar[tur] = eski;
+      }
+    }
+    const degisti = Object.values(sonuc.turler).some((t) => t.kabul);
+    sonuc.kabul = degisti;
+    for (const tur of ["isaret", "rakam", "harf"]) if (!yeniAglar[tur]) yeniAglar[tur] = YZ[tur];
+    await yzKaydet(yeniAglar.isaret, yeniAglar.rakam, yeniAglar.harf, sonuc);
+    for (const tur of ["isaret", "rakam", "harf"]) if (yeniAglar[tur] && yeniAglar[tur] !== YZ[tur]) { YZ[tur].dispose(); YZ[tur] = yeniAglar[tur]; }
+    const ozet = Object.entries(sonuc.turler).map(([t, v]) => `${AG_ADI[t]} ağı: ${v.kabul ? "güncellendi" : "eskisi korundu (yeni eğitim daha iyi değildi)"}${v.sonra.sinama != null ? `, sınama %${Math.round(v.once.sinama * 100)} → %${Math.round(v.sonra.sinama * 100)}` : ""}`);
+    sonucKarti(true, Object.keys(sonuc.turler).length ? "Yapay zekâ eğitildi" : "Eğitilecek örnek yok", ozet.length ? ozet : ["Önce sonuç ekranında birkaç okumayı düzeltin."]);
+  } catch (e) {
+    console.error(e);
+    sonucKarti(false, "Yapay zekâ eğitilemedi", [e.message]);
+  } finally {
+    YZ.egitimde = false;
+    YZ.ilerleme = "";
+    yenidenCiz();
+  }
+}
+
+/** Eğitimi (ağların öğrendikleri + eğitim örnekleri) tek dosyaya kaydeder. */
+async function yzDisaAktar() {
+  const kayit = (await DB.req("kv", "readonly", (st) => st.get("yzModel"))) || null;
+  const veri = {
+    program: "odev-kontrol-yapay-zeka",
+    surum: 1,
+    tarih: simdi(),
+    model: kayit, // null: henüz eğitilmedi (başlangıç modeli kullanılıyor)
+    ornekler: list("yzOrnekler").map((o) => ({ tur: o.tur, x: YapayZeka.b64.yaz(o.x), y: o.y, kaynak: o.kaynak, tarih: o.tarih })),
+  };
+  indir(new Blob([JSON.stringify(veri)], { type: "application/json" }), `OdevKontrol_YapayZeka_${new Date().toISOString().slice(0, 10)}.json`);
+}
+async function yzIceAktar(dosya) {
+  const veri = JSON.parse(await dosya.text());
+  if (veri.program !== "odev-kontrol-yapay-zeka") throw new Error("Bu dosya bir Ödev Kontrol yapay zekâ yedeği değil.");
+  if (veri.model) await YapayZeka.modelAc(veri.model.isaret); // bozuk dosyayı yüklemeden önce yakala
+  for (const o of list("yzOrnekler")) await DB.del("yzOrnekler", o.id);
+  for (const o of veri.ornekler || []) await DB.put("yzOrnekler", { ...o, x: YapayZeka.b64.oku(o.x) });
+  if (veri.model) await DB.req("kv", "readwrite", (st) => st.put(veri.model, "yzModel"));
+  else await DB.req("kv", "readwrite", (st) => st.delete("yzModel"));
+  await yzYukle();
+  return { ornek: (veri.ornekler || []).length, surum: veri.model?.surum || 0 };
+}
+async function yzBaslangicaDon() {
+  await DB.req("kv", "readwrite", (st) => st.delete("yzModel"));
+  await yzYukle();
 }
 
 // ---------------------------------------------------------------------------
@@ -973,7 +1206,7 @@ async function sayfaIsle(sayfa) {
       yukseklik: t.yukseklik,
       durum: "hazir",
       baslik: sayfa.baslik || t.baslik || "Adsız sayfa",
-      sorular: t.sorular.map((q) => ({ no: q.number, bolge: q.region, siklar: q.options, anahtar: null, kazanimKod: "", konu: "" })),
+      sorular: t.sorular.map((q) => ({ no: q.number, tahmin: !!q.numberGuessed, bolge: q.region, siklar: q.options, anahtar: null, kazanimKod: "", konu: "" })),
       hata: t.sorular.length ? null : "Sayfada şık (A, B, C, D) bulunamadı. Sayfayı düz, gölgesiz ve yakından tekrar çekin.",
     });
     delete sayfa.foto;
@@ -997,7 +1230,8 @@ async function gonderimIsle(g) {
     if (!sayfalar.length) throw new Error("Bu ödeve henüz boş sayfa eklenmemiş.");
     const r = await ogrenciSayfasiOku(g.foto, sayfalar);
     if (!r.eslesti) throw new Error("Fotoğraf bu ödevin sayfalarına benzemiyor. Doğru sayfa mı? Bütün sayfa görünüyor mu?");
-    Object.assign(g, { durum: "bitti", hata: null, sayfaId: r.sayfaId, kaplama: r.kaplama, eslesme: r.puan, murekkep: r.sayfaMurekkep, yazili: r.sayfaMurekkep >= T.pageMinInk || r.cevaplar.some((c) => c.durum !== "none"), cevaplar: r.cevaplar });
+    Object.assign(g, { durum: "bitti", hata: null, sayfaId: r.sayfaId, kaplama: r.kaplama, eslesme: r.puan, murekkep: r.sayfaMurekkep, yazili: r.sayfaMurekkep >= T.pageMinInk || r.cevaplar.some((c) => (c.tip === "yazili" ? c.parcalar.length : c.durum !== "none")), cevaplar: r.cevaplar });
+    await yzOtomatikOrnekler(g);
   } catch (e) {
     console.error(e);
     g.durum = "hata";
@@ -1025,8 +1259,9 @@ function oylar(sayfaId, no) {
   const by = {};
   const gordum = new Set();
   for (const g of list("gonderimler", (x) => x.sayfaId === sayfaId && x.durum === "bitti")) {
-    const c = g.cevaplar.find((x) => x.no === no);
-    if (!c || c.durum !== "ok" || gordum.has(`${g.ogrenciId}:${c.isaret}`)) continue;
+    const c0 = g.cevaplar.find((x) => x.no === no);
+    const c = c0 && duzeltilmis(c0);
+    if (!c || c.tip === "yazili" || c.durum !== "ok" || gordum.has(`${g.ogrenciId}:${c.isaret}`)) continue;
     gordum.add(`${g.ogrenciId}:${c.isaret}`);
     by[c.isaret] = (by[c.isaret] || 0) + 1;
   }
@@ -1041,9 +1276,43 @@ function anahtar(sayfa, q) {
   if (top >= A.cogunlukOgrenci && n / top >= A.cogunlukOran / 100) return { harf, kaynak: "cogunluk" };
   return { harf: null, kaynak: null };
 }
-function karar(c, k) {
+/** Doğru cevabında harf varsa kelime sorusudur (harf ağı okur), yoksa sayı sorusu (rakam ağı). */
+const kelimeSorusu = (q) => /[a-zçğıöşüA-ZÇĞİÖŞÜ]/.test(q?.dogruCevap || "");
+
+/** Öğretmenin "öğrenci aslında şunu işaretledi / yazdı" düzeltmesini uygular. */
+function duzeltilmis(c) {
+  if (c.tip === "yazili") return c.duzeltmeYazi != null ? { ...c, okunan: c.duzeltmeYazi, guven: 1 } : c;
+  if (!c.duzeltme) return c;
+  return c.duzeltme === "yok" ? { ...c, durum: "none", isaret: null } : { ...c, durum: "ok", isaret: c.duzeltme };
+}
+const sadeCevap = (s) => String(s ?? "").replace(/\s+/g, "").replace(/,/g, ".").toLocaleLowerCase("tr-TR");
+function karar(c, k, q) {
   if (c.karar) return { sonuc: c.karar, neden: "Öğretmen kararı." };
+  if (c.tip === "yazili" && kelimeSorusu(q)) {
+    if (!c.okunan) return { sonuc: "bos", neden: "Cevap yazılmamış." };
+    if (c.duzeltmeYazi != null)
+      return YapayZeka.sadeKelime(c.duzeltmeYazi) === YapayZeka.sadeKelime(q.dogruCevap) ? { sonuc: "dogru", neden: `"${c.duzeltmeYazi}" yazılmış.` } : { sonuc: "yanlis", neden: `"${c.duzeltmeYazi}" yazılmış, doğrusu ${q.dogruCevap}.` };
+    const b = Math.round((c.benzerlik ?? 0) * 100);
+    if (b >= 80) return { sonuc: "dogru", neden: `"${c.okunan}" okundu; doğru cevaba benzerlik %${b}.` };
+    if (b >= 50) return { sonuc: "kontrol", neden: `"${c.okunan}" okundu; doğru cevaba benzerlik %${b}, öğretmen baksın.` };
+    // Harflerin çoğu bulunamadıysa (ör. bitişik yazı) yanlış demek yerine öğretmene bırak.
+    const harfSayisi = [...YapayZeka.sadeKelime(c.okunan)].length, beklenen = [...YapayZeka.sadeKelime(q.dogruCevap)].length;
+    if (harfSayisi < beklenen * 0.6) return { sonuc: "kontrol", neden: `"${c.okunan}" okundu; harflerin bir kısmı okunamadı, öğretmen baksın.` };
+    return { sonuc: "yanlis", neden: `"${c.okunan}" okundu; doğru cevaba benzerlik %${b}.` };
+  }
+  if (c.tip === "yazili") {
+    if (!c.okunan) return { sonuc: "bos", neden: "Cevap yazılmamış." };
+    if (!q?.dogruCevap) return { sonuc: "anahtaryok", neden: "Doğru cevap girilmemiş." };
+    if (c.guven < 0.6) return { sonuc: "kontrol", neden: `El yazısı tam okunamadı ("${c.okunan}" okundu).` };
+    return sadeCevap(c.okunan) === sadeCevap(q.dogruCevap)
+      ? { sonuc: "dogru", neden: `"${c.okunan}" yazılmış.` }
+      : { sonuc: "yanlis", neden: `"${c.okunan}" yazılmış, doğrusu ${q.dogruCevap}.` };
+  }
   if (c.durum === "multi") return { sonuc: "kontrol", neden: "Birden fazla şık işaretlenmiş gibi görünüyor." };
+  if (c.durum === "farkli") {
+    const yaz = (d, h) => (d === "ok" ? h : d === "none" ? "işaretsiz" : "birden fazla");
+    return { sonuc: "kontrol", neden: `Yapay zekâ "${yaz(c.yzOkuma.durum, c.yzOkuma.isaret)}", kural "${yaz(c.kural.durum, c.kural.isaret)}" okudu.` };
+  }
   if (c.durum === "none") return c.islem ? { sonuc: "kontrol", neden: "İşlem yazılmış ama şık işaretlenmemiş." } : { sonuc: "bos", neden: "Boş bırakılmış." };
   if (!k.harf) return { sonuc: "anahtaryok", neden: "Cevap anahtarı yok." };
   if (c.isaret === k.harf) return { sonuc: "dogru", neden: c.islem ? "Doğru." : "Doğru ama işlem görünmüyor.", islemsiz: !c.islem };
@@ -1057,10 +1326,11 @@ const sonucCip = (s) => `<span class="chip ${SONUC_RENK[s]}">${SONUC[s]}</span>`
 function degerlendir(g) {
   const p = D.sayfalar.get(g.sayfaId);
   if (!p || g.durum !== "bitti") return [];
-  return g.cevaplar.map((c) => {
+  return g.cevaplar.map((c0) => {
+    const c = duzeltilmis(c0);
     const q = p.sorular.find((x) => x.no === c.no) || { siklar: [] };
-    const k = anahtar(p, q);
-    return { ...c, q, sayfa: p, ogrenciId: g.ogrenciId, anahtarHarf: k.harf, anahtarKaynak: k.kaynak, ...karar(c, k) };
+    const k = q.tip === "yazili" ? { harf: q.dogruCevap || null, kaynak: "ogretmen" } : anahtar(p, q);
+    return { ...c, q, sayfa: p, ogrenciId: g.ogrenciId, anahtarHarf: k.harf, anahtarKaynak: k.kaynak, ...karar(c, k, q) };
   });
 }
 function say(satirlar) {
@@ -1239,7 +1509,8 @@ document.addEventListener("focusout", () => {
 function motorDurumu() {
   const el = document.getElementById("motor");
   if (!el) return;
-  el.innerHTML = sirada ? `<span class="spinner"></span> ${sirada} iş sırada` : cv ? "● Hazır" : `<span class="spinner"></span> Hazırlanıyor…`;
+  const yz = YZ.egitimde ? ` · <span class="spinner"></span> 🧠 ${esc(YZ.ilerleme)}` : YZ.hazir ? " · 🧠" : "";
+  el.innerHTML = (sirada ? `<span class="spinner"></span> ${sirada} iş sırada` : cv ? "● Hazır" : `<span class="spinner"></span> Hazırlanıyor…`) + yz;
 }
 
 const sinifSecenekleri = (secili, bos = "Sınıf seçin") =>
@@ -1485,7 +1756,7 @@ function odevEkrani(el, o) {
     <h2>Boş sayfalar ve cevap anahtarı</h2>
     ${sayfalar.map((p) => {
       const eksik = p.durum === "hazir" ? eksikNumaralar(p) : [];
-      const anahtarSayi = p.durum === "hazir" ? p.sorular.filter((q) => anahtar(p, q).harf).length : 0;
+      const anahtarSayi = p.durum === "hazir" ? p.sorular.filter((q) => (q.tip === "yazili" ? q.dogruCevap : anahtar(p, q).harf)).length : 0;
       const kzSayi = p.durum === "hazir" ? p.sorular.filter((q) => q.kazanimKod || q.konu).length : 0;
       return `<div class="card">
         <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><b>${esc(p.baslik || "Sayfa")}</b>
@@ -1555,22 +1826,26 @@ function odevEkrani(el, o) {
 
 const kutu = (b, cls, yazi = "") =>
   `<rect class="${cls}" x="${b.x0}" y="${b.y0}" width="${b.x1 - b.x0}" height="${b.y1 - b.y0}" rx="6" />` + (yazi ? `<text class="${cls}-t" x="${b.x0 + 8}" y="${b.y0 + 34}">${esc(yazi)}</text>` : "");
-const sekil = (blob, W, H, icerik) => `<div class="fig"><img src="${adresi(blob)}" alt="Sayfa"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${icerik}</svg></div>`;
+const sekil = (blob, W, H, icerik) => `<div class="fig"><img src="${adresi(blob)}" alt="Sayfa" draggable="false"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${icerik}</svg></div>`;
 
+let YAZILI_CIZIM = false;
 function sayfaEkrani(el, p) {
   const odev = D.odevler.get(G.odev.id);
   const kzler = list("kazanimlar", (k) => !!k.ornek === !!p.ornek && (!p.ders || !odev?.ders || sadelestir(k.ders) === sadelestir(p.ders || odev.ders))).sort((a, b) => trSirala(a.kod, b.kod));
   const tumKz = kzler.length ? kzler : list("kazanimlar");
   const eksik = eksikNumaralar(p);
-  const icerik = p.sorular.map((q) => kutu(q.bolge, "q-reg", String(q.no)) + q.siklar.map((o) => kutu(o.box, anahtar(p, q).harf === o.letter ? "m-ok" : "opt")).join("")).join("");
+  const icerik = p.sorular.map((q) => (q.tip === "yazili" ? kutu(q.bolge, "m-yz", `✍${q.no}`) : kutu(q.bolge, "q-reg", String(q.no)) + q.siklar.map((o) => kutu(o.box, anahtar(p, q).harf === o.letter ? "m-ok" : "opt")).join(""))).join("");
   el.innerHTML = `
     <div class="yolu"><a href="#" id="geri">← ${esc(odev?.baslik || "Ödev")}</a></div>
     <h1>🔑 Anahtar ve kazanımlar</h1>
+    ${p.sorular.some((q) => q.tahmin) ? `<div class="card dikkat">Bazı soru numaraları okunamadı ve sırasına göre tahmin edildi (turuncu etiketli). Resimle karşılaştırıp yanlışsa numarayı düzeltin.</div>` : ""}
     ${eksik.length ? `<div class="card uyari">⚠ <b>${eksik.join(", ")}. soru bulunamadı.</b> Bu sorular kontrol edilemez. Sayfayı daha düz, yakın ve gölgesiz çekip yeniden ekleyin.</div>` : ""}
     <datalist id="kzListe">${tumKz.map((k) => `<option value="${esc(k.kod)}">${esc(k.kod)} — ${esc(k.konu ? k.konu + ": " : "")}${esc(k.metin.slice(0, 90))}</option>`).join("")}</datalist>
     <div class="yanyana">
       <div>${sekil(p.sablon, p.genislik, p.yukseklik, icerik)}
-        <p class="muted small">Turuncu: soru alanı · gri: şık kutusu · yeşil: doğru şık. Program ${p.sorular.length} soru buldu.</p></div>
+        <p class="muted small">Turuncu: soru alanı · gri: şık kutusu · yeşil: doğru şık · mor: yazılı cevap alanı. Program ${p.sorular.filter((q) => q.tip !== "yazili").length} şıklı soru buldu.</p>
+        <div class="card"><h2 style="margin:0 0 6px">✍️ Yazılı cevap sorusu</h2><p class="muted small" style="margin:0 0 8px">Öğrencinin cevabı elle yazdığı sorular için: düğmeye basın, sonra resimde cevabın yazılacağı yeri fareyle çerçeve içine alın. Doğru cevap sayıysa yapay zekâ rakamları okur; kelimeyse Türkçe harfleri okuyup doğru cevaba benzerliğine bakar (%80 ve üstü doğru, %50–80 öğretmen baksın).</p>
+          <button class="btn" id="yaziliCiz">${YAZILI_CIZIM ? "✖ Çizmekten vazgeç" : "✍️ Yazılı cevap alanı çiz"}</button></div></div>
       <div>
         <div class="card"><div class="form-grid">
           <label style="grid-column:1/-1">Sayfanın adı (yayın, kitap, sayfa)<input id="sB" value="${esc(p.baslik)}"></label>
@@ -1579,11 +1854,15 @@ function sayfaEkrani(el, p) {
           <label style="grid-column:1/-1">Toplu kazanım ("1-4 TT.8.A.2" — her satıra bir aralık)<textarea id="sK" style="min-height:60px" placeholder="1-4 TT.8.A.2&#10;5-8 TT.8.B.1"></textarea></label>
           </div><p style="margin-bottom:0"><button class="btn primary" id="sKaydet">💾 Kaydet</button></p></div>
         ${p.sorular.map((q, i) => {
+          if (q.tip === "yazili")
+            return `<div class="soru-kart" data-q="${i}">
+              <div class="ust"><b>Soru ${q.no} <span class="chip" style="background:var(--pink-soft)">✍️ Yazılı cevap</span></b><button class="link danger" data-sil="${i}">Sil</button></div>
+              <div class="form-grid"><label>Doğru cevap (sayı ya da kelime)<input name="dogruCevap" value="${esc(q.dogruCevap || "")}" placeholder="ör. 96 ya da patent"></label><label>Kazanım kodu<input name="kazanimKod" list="kzListe" value="${esc(q.kazanimKod)}"></label><label>Konu<input name="konu" value="${esc(q.konu || "")}"></label></div></div>`;
           const v = oylar(p.id, q.no);
           const k = anahtar(p, q);
           const kz = kazanimBul(q.kazanimKod, p.ornek);
           return `<div class="soru-kart" data-q="${i}">
-            <div class="ust"><b>Soru ${q.no}</b><span class="muted small">${Object.keys(v).length ? "Öğrenciler: " + Object.entries(v).map(([h, n]) => `${h} ${n}`).join(", ") : ""}</span></div>
+            <div class="ust"><span><b>Soru</b> <input type="number" min="1" max="200" data-no="${i}" value="${q.no}" style="width:70px;padding:4px 8px" title="Program numarayı yanlış okuduysa düzeltin">${q.tahmin ? ` <span class="chip orange" title="Soru numarası okunamadı; sırasına göre tahmin edildi">numara tahmini — kontrol edin</span>` : ""}</span><span class="muted small">${Object.keys(v).length ? "Öğrenciler: " + Object.entries(v).map(([h, n]) => `${h} ${n}`).join(", ") : ""}</span></div>
             <div class="harfler">${q.siklar.map((o) => `<button class="harf ${q.anahtar === o.letter ? "sec" : ""}" data-h="${o.letter}">${o.letter}</button>`).join("")}
               ${q.anahtar ? `<button class="link" data-h="">Temizle</button>` : k.kaynak === "cogunluk" ? `<span class="small muted">Öğrenci çoğunluğu: <b>${k.harf}</b></span>` : `<span class="small muted">Anahtar yok</span>`}</div>
             <div class="form-grid"><label>Kazanım kodu<input name="kazanimKod" list="kzListe" value="${esc(q.kazanimKod)}" placeholder="Kod yazın ya da seçin"></label><label>Konu<input name="konu" value="${esc(q.konu || "")}" placeholder="${esc(kz?.konu || "")}"></label></div>
@@ -1602,8 +1881,9 @@ function sayfaEkrani(el, p) {
     p.ders = document.getElementById("sD").value.trim();
     const a = document.getElementById("sA").value.toUpperCase();
     const ciftler = [...a.matchAll(/(\d+)\s*[-.:)]?\s*([A-E])/g)];
-    if (ciftler.length) for (const [, n, h] of ciftler) { const q = p.sorular.find((x) => x.no === +n); if (q) q.anahtar = h; }
-    else a.replace(/[^A-E]/g, "").split("").forEach((h, i) => { const q = p.sorular.find((x) => x.no === i + 1); if (q) q.anahtar = h; });
+    const sikli = (n) => p.sorular.find((x) => x.no === n && x.tip !== "yazili");
+    if (ciftler.length) for (const [, n, h] of ciftler) { const q = sikli(+n); if (q) q.anahtar = h; }
+    else a.replace(/[^A-E]/g, "").split("").forEach((h, i) => { const q = sikli(i + 1); if (q) q.anahtar = h; });
     for (const satir of document.getElementById("sK").value.split(/\n/)) {
       const m = /^\s*(\d+)\s*(?:-\s*(\d+))?\s+(\S+)\s*(.*)$/.exec(satir);
       if (!m) continue;
@@ -1618,10 +1898,81 @@ function sayfaEkrani(el, p) {
     await kaydet();
     ciz();
   };
+  // Yazılı cevap alanı çizme (fareyle çerçeve)
+  el.querySelector("#yaziliCiz").onclick = () => ((YAZILI_CIZIM = !YAZILI_CIZIM), ciz());
+  const fig = el.querySelector(".fig");
+  if (YAZILI_CIZIM) {
+    fig.style.cursor = "crosshair";
+    fig.style.outline = "3px dashed var(--pink)";
+    const svg = fig.querySelector("svg");
+    let bas = null;
+    let gecici = null;
+    const nokta = (e) => {
+      const r = fig.getBoundingClientRect();
+      return { x: ((e.clientX - r.left) / r.width) * p.genislik, y: ((e.clientY - r.top) / r.height) * p.yukseklik };
+    };
+    fig.ondragstart = (e) => e.preventDefault();
+    fig.onpointerdown = (e) => {
+      e.preventDefault();
+      fig.setPointerCapture?.(e.pointerId);
+      bas = nokta(e);
+      gecici = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      gecici.setAttribute("class", "m-yz");
+      svg.append(gecici);
+    };
+    fig.onpointermove = (e) => {
+      if (!bas) return;
+      const n = nokta(e);
+      gecici.setAttribute("x", Math.min(bas.x, n.x));
+      gecici.setAttribute("y", Math.min(bas.y, n.y));
+      gecici.setAttribute("width", Math.abs(n.x - bas.x));
+      gecici.setAttribute("height", Math.abs(n.y - bas.y));
+    };
+    fig.onpointerup = async (e) => {
+      if (!bas) return;
+      const n = nokta(e);
+      const bolge = { x0: Math.round(Math.min(bas.x, n.x)), y0: Math.round(Math.min(bas.y, n.y)), x1: Math.round(Math.max(bas.x, n.x)), y1: Math.round(Math.max(bas.y, n.y)) };
+      bas = null;
+      if (bolge.x1 - bolge.x0 < 20 || bolge.y1 - bolge.y0 < 15) return gecici.remove();
+      const enBuyuk = Math.max(0, ...p.sorular.map((q) => q.no));
+      const v = await pencere("Yazılı cevap sorusu", `<div class="form-grid"><label>Soru numarası<input id="yNo" type="number" value="${enBuyuk + 1}"></label><label>Doğru cevap (sayı ya da kelime)<input id="yCvp" placeholder="ör. 96 ya da patent"></label><label>Kazanım kodu<input id="yKz" list="kzListe"></label></div>`, [
+        { yazi: "Vazgeç", deger: null },
+        { yazi: "Ekle", sinif: "primary", deger: () => ({ no: +document.getElementById("yNo").value || enBuyuk + 1, dogruCevap: document.getElementById("yCvp").value.trim(), kazanimKod: document.getElementById("yKz").value.trim() }) },
+      ]);
+      YAZILI_CIZIM = false;
+      if (v) {
+        if (p.sorular.some((q) => q.no === v.no && q.tip !== "yazili")) toast(`Uyarı: ${v.no}. numarada şıklı bir soru da var; numarasını düzeltin.`);
+        p.sorular = p.sorular.filter((q) => q.no !== v.no || q.tip !== "yazili");
+        p.sorular.push({ no: v.no, tip: "yazili", bolge, siklar: [], dogruCevap: v.dogruCevap, kazanimKod: v.kazanimKod, konu: kazanimBul(v.kazanimKod, p.ornek)?.konu || "", anahtar: null });
+        p.sorular.sort((a, b) => a.no - b.no);
+        await kaydet("Yazılı cevap sorusu eklendi.");
+      }
+      ciz();
+    };
+  }
+  el.querySelectorAll("[data-no]").forEach((inp) => (inp.onchange = async () => {
+    const q = p.sorular[+inp.dataset.no];
+    const yeni = +inp.value;
+    if (!yeni || p.sorular.some((x) => x !== q && x.no === yeni)) {
+      toast("Bu numara başka bir soruda var.");
+      return ciz();
+    }
+    q.no = yeni;
+    q.tahmin = false;
+    p.sorular.sort((a, b) => a.no - b.no);
+    await kaydet("Soru numarası düzeltildi.");
+    ciz();
+  }));
+  el.querySelectorAll("[data-sil]").forEach((b) => (b.onclick = async () => {
+    if (!confirm("Bu yazılı cevap sorusu silinsin mi?")) return;
+    p.sorular.splice(+b.dataset.sil, 1);
+    await kaydet("Silindi.");
+    ciz();
+  }));
   el.querySelectorAll("[data-q]").forEach((kart) => {
     const q = p.sorular[+kart.dataset.q];
     kart.querySelectorAll("[data-h]").forEach((b) => (b.onclick = async () => { q.anahtar = b.dataset.h || null; await kaydet(); ciz(); }));
-    kart.querySelectorAll("input").forEach((inp) => (inp.onchange = async () => {
+    kart.querySelectorAll("input[name]").forEach((inp) => (inp.onchange = async () => {
       q[inp.name] = inp.value.trim();
       if (inp.name === "kazanimKod" && !q.konu) q.konu = kazanimBul(q.kazanimKod, p.ornek)?.konu || "";
       await kaydet();
@@ -1751,6 +2102,7 @@ function sonucEkrani(el, g) {
     const p = D.sayfalar.get(g.sayfaId);
     const c = say(satirlar);
     const icerik = satirlar.map((r) => {
+      if (r.tip === "yazili") return kutu(r.q.bolge, r.sonuc === "dogru" ? "m-ok" : r.sonuc === "yanlis" ? "m-bad" : "m-mid", `✍${r.no}`) + (r.parcalar || []).map((p) => kutu(p.kutu, "m-yz")).join("");
       let s = `<text class="qn" x="${r.q.bolge.x0 + 8}" y="${r.q.bolge.y0 + 30}">${r.no}</text>`;
       for (const op of r.q.siklar) {
         if (r.isaret === op.letter) s += kutu(op.box, r.sonuc === "dogru" ? "m-ok" : r.sonuc === "yanlis" ? "m-bad" : "m-mid");
@@ -1768,13 +2120,32 @@ function sonucEkrani(el, g) {
           ${satirlar.map((r, i) => {
             const kz = kazanimBul(r.q.kazanimKod, p.ornek);
             return `<tr><td><b>${r.no}</b>${r.q.kazanimKod || r.q.konu ? `<br><span class="muted small">${esc(r.q.kazanimKod || "")} ${esc(r.q.konu || kz?.konu || "")}</span>` : ""}</td>
-              <td>${r.isaret ? `<b>${r.isaret}</b> <span class="muted small" title="İşaretin bu şıkta yoğunlaşma oranı">%${Math.round(r.pay * 100)}</span>` : r.durum === "multi" ? "Birden fazla" : "–"}</td>
+              <td>${r.tip === "yazili"
+                ? `${r.okunan ? `<b>${esc(r.okunan)}</b> ${r.tur === "kelime" && r.duzeltmeYazi == null ? `<span class="muted small" title="Doğru cevaba benzerlik">≈%${Math.round((r.benzerlik ?? 0) * 100)}</span>` : `<span class="muted small" title="Yapay zekânın okuma güveni">%${Math.round(r.guven * 100)}</span>`}` : "–"}<br><span class="small"><input data-yazi="${i}" value="${esc(g.cevaplar[i].duzeltmeYazi ?? "")}" placeholder="Düzelt" style="width:80px;padding:3px 6px"></span>`
+                : `${r.isaret ? `<b>${r.isaret}</b> <span class="muted small" title="${r.okuyan === "yz" ? "Yapay zekânın güveni" : "İşaretin bu şıkta yoğunlaşma oranı"}">%${Math.round(r.pay * 100)}</span>` : r.durum === "multi" ? "Birden fazla" : r.durum === "farkli" ? `<span class="small" title="${esc(r.neden)}">🧠 ${r.yzOkuma.isaret || (r.yzOkuma.durum === "none" ? "–" : "çok")} / 📏 ${r.kural.isaret || (r.kural.durum === "none" ? "–" : "çok")}</span>` : "–"}${r.okuyan === "yz" && r.durum !== "farkli" ? ` <span title="Yapay zekâ ve kural aynı okudu">🧠</span>` : ""}
+                  <br><select data-duzelt="${i}" class="small" style="padding:3px 6px;margin-top:4px" title="Öğrenci aslında hangi şıkkı işaretledi? (Yapay zekâ bundan öğrenir)"><option value="">Doğru okundu</option>${r.q.siklar.map((o) => `<option value="${o.letter}" ${g.cevaplar[i].duzeltme === o.letter ? "selected" : ""}>Aslında ${o.letter}</option>`).join("")}<option value="yok" ${g.cevaplar[i].duzeltme === "yok" ? "selected" : ""}>Aslında işaretsiz</option></select>`}</td>
               <td>${r.anahtarHarf ? `<b>${r.anahtarHarf}</b>${r.anahtarKaynak === "cogunluk" ? ` <span class="muted small" title="Öğrenci çoğunluğundan">(ç)</span>` : ""}` : "?"}</td>
               <td>${sonucCip(r.sonuc)}<br><select data-karar="${i}" class="small" style="padding:3px 6px;margin-top:4px"><option value="">Otomatik</option>${["dogru", "yanlis", "bos"].map((x) => `<option value="${x}" ${r.karar === x ? "selected" : ""}>${SONUC[x]}</option>`).join("")}</select></td>
               <td>${r.islem ? "✓ var" : `<span class="muted">yok</span>`}</td></tr>`;
           }).join("")}</table></div>
-          <p class="muted small">(ç): anahtar öğrenci çoğunluğundan geldi. Program yanlış okuduysa "Otomatik" kutusundan sonucu değiştirebilirsin.</p></div>
+          <p class="muted small">🧠: yapay zekâ ve eşik kuralı aynı okudu. "🧠 A / 📏 B": ikisi farklı okudu; öğretmen baksın. Program yanlış okuduysa <b>"Doğru okundu"</b> kutusundan öğrencinin aslında işaretlediği şıkkı, yazılı cevaplarda <b>"Düzelt"</b> kutusuna öğrencinin yazdığını seç/yaz: sonuç düzelir ve yapay zekâ bundan öğrenir. "Otomatik" kutusu yalnızca sonucu değiştirir. (ç): anahtar öğrenci çoğunluğundan geldi.</p></div>
       </div>` + alt;
+    el.querySelectorAll("[data-duzelt]").forEach((s) => (s.onchange = async () => {
+      const c = g.cevaplar[+s.dataset.duzelt];
+      c.duzeltme = s.value || null;
+      await DB.put("gonderimler", g);
+      await yzDuzeltmeKaydet(g, c);
+      toast(s.value ? "Düzeltildi; yapay zekâ bundan öğrenecek." : "Düzeltme kaldırıldı.");
+      ciz();
+    }));
+    el.querySelectorAll("[data-yazi]").forEach((inp) => (inp.onchange = async () => {
+      const c = g.cevaplar[+inp.dataset.yazi];
+      c.duzeltmeYazi = inp.value.trim() === "" ? null : inp.value.trim();
+      await DB.put("gonderimler", g);
+      await yzDuzeltmeKaydet(g, c);
+      toast(c.duzeltmeYazi != null ? "Düzeltildi; yapay zekâ bundan öğrenecek." : "Düzeltme kaldırıldı.");
+      ciz();
+    }));
     el.querySelectorAll("[data-karar]").forEach((s) => (s.onchange = async () => {
       g.cevaplar[+s.dataset.karar].karar = s.value || null;
       await DB.put("gonderimler", g);
@@ -1882,17 +2253,113 @@ EKRAN.sinifanaliz = (el) => {
 };
 
 // ---------------------------------------------------------------------------
+// YAPAY ZEKÂ sekmesi
+// ---------------------------------------------------------------------------
+EKRAN.yz = (el) => {
+  if (!yzVar()) {
+    el.innerHTML = `<h1>🧠 Yapay Zekâ</h1><div class="card uyari">Yapay zekâ dosyaları bulunamadı (YapayZeka klasörü ya da vendor/tf.min.js eksik). Program eşik kuralıyla çalışmaya devam ediyor.</div>`;
+    return;
+  }
+  const b = window.YZ_BASLANGIC;
+  const ornek = (tur, kaynak) => list("yzOrnekler", (o) => o.tur === tur && o.kaynak === kaynak).length;
+  const ogretmen = ornek("isaret", "ogretmen") + ornek("rakam", "ogretmen") + ornek("harf", "ogretmen");
+  const yeni = list("yzOrnekler", (o) => o.kaynak === "ogretmen").length - (YZ.bilgi?.sonDuzeltmeSayisi || 0);
+  const gecmis = [...(YZ.bilgi?.gecmis || [])].reverse();
+  const yuzde = (v) => (v == null ? "–" : `%${Math.round(v * 100)}`);
+  el.innerHTML = `
+    <h1>🧠 Yapay Zekâ</h1>
+    <div class="hero" style="margin-bottom:16px"><div class="logo-buyuk" aria-hidden="true">🧠</div><div>
+      <h2 style="margin:0 0 4px">Kendini eğiten el yazısı okuyucu</h2>
+      <p>Üç küçük sinir ağı (TensorFlow.js) bu bilgisayarda çalışır: <b>işaret ağı</b> şıklardaki daire, tik, çarpı gibi işaretleri; <b>rakam ağı</b> elle yazılmış sayıları; <b>harf ağı</b> Türkçe harfleri (ç, ğ, ı, i, ö, ş, ü dahil) okur.
+      Sonuç ekranında yanlış okunanları düzelttikçe örnekler birikir ve ağ kendini yeniden eğitir. Yeni eğitim eskisinden kötüyse kabul edilmez.</p></div></div>
+    ${YZ.hata ? `<div class="card uyari">⚠ Model yüklenemedi: ${esc(YZ.hata)}</div>` : ""}
+    <div class="stats">
+      <div class="stat"><b>${YZ.bilgi?.baslangic ? "Başlangıç" : `${YZ.bilgi?.surum}. sürüm`}</b>Model</div>
+      <div class="stat"><b>${ornek("isaret", "ogretmen")}</b>İşaret düzeltmesi</div>
+      <div class="stat"><b>${ornek("rakam", "ogretmen")}</b>Rakam düzeltmesi</div>
+      <div class="stat"><b>${ornek("harf", "ogretmen")}</b>Harf düzeltmesi</div>
+      <div class="stat"><b>${ornek("isaret", "otomatik")}</b>Kendi öğrendiği örnek</div>
+      <div class="stat"><b>${Math.max(0, yeni)}</b>Eğitimi bekleyen düzeltme</div>
+    </div>
+    <div class="yanyana">
+      <div>
+        <div class="card"><h2>Eğitim</h2>
+          ${YZ.egitimde ? `<p><span class="spinner"></span> ${esc(YZ.ilerleme)}</p>` : `<p class="muted small" style="margin-top:0">${ogretmen ? `${ogretmen} öğretmen düzeltmesi var.` : "Henüz düzeltme yok. Ödev Kontrol'de bir sayfanın sonucunu açıp yanlış okunanları düzeltin."}</p>`}
+          <div class="toolbar"><button class="btn primary" id="yzEgit" ${YZ.egitimde || !YZ.hazir ? "disabled" : ""}>🧠 Şimdi eğit</button></div>
+          <div class="form-grid">
+            <label>Şıkları yapay zekâ okusun<select id="yzKullan"><option value="1" ${A.yzKullan ? "selected" : ""}>Evet</option><option value="0" ${!A.yzKullan ? "selected" : ""}>Hayır (eşik kuralı)</option></select></label>
+            <label>Kendi kendine öğrensin<select id="yzKendi"><option value="1" ${A.yzKendiOgren ? "selected" : ""}>Evet (çok emin olduğu okumalardan)</option><option value="0" ${!A.yzKendiOgren ? "selected" : ""}>Hayır (sadece düzeltmelerden)</option></select></label>
+            <label>Kendiliğinden eğit: her … düzeltmede<input type="number" id="yzOto" min="0" max="500" value="${A.yzOtoEgit}"></label>
+          </div>
+          <p class="muted small">0 yazarsanız kendiliğinden eğitmez; "Şimdi eğit" ile siz başlatırsınız.</p>
+          <button class="btn" id="yzAyar">💾 Kaydet</button></div>
+        <div class="card"><h2>Yedek</h2>
+          <p class="muted small" style="margin-top:0">Yapay zekânın öğrendikleri (ağlar ve bütün eğitim örnekleri) tek bir dosyaya kaydedilir. Başka bir bilgisayara taşıyabilir ya da sonra geri yükleyebilirsiniz. (Ayarlar'daki genel yedek de yapay zekâyı içerir.)</p>
+          <div class="toolbar"><button class="btn primary" id="yzDisa">📤 Eğitimi dışa aktar</button><label class="btn">📥 Eğitimi içe aktar<input type="file" id="yzIce" accept=".json" class="dosya-input"></label></div>
+          <div class="toolbar"><button class="btn small danger" id="yzSifirla">↩️ Başlangıç modeline dön</button><button class="btn small danger" id="yzOrnekSil">🗑️ Eğitim örneklerini sil</button></div></div>
+      </div>
+      <div>
+        <div class="card"><h2>Eğitim geçmişi</h2>
+          ${gecmis.length ? `<div class="tablewrap"><table><tr><th>Tarih</th><th>Ağ</th><th class="sag">Örnek</th><th>Sınama doğruluğu</th><th>Sonuç</th></tr>
+            ${gecmis.flatMap((g) => Object.entries(g.turler || {}).map(([t, v]) => `<tr><td class="small">${tarihYaz(g.tarih)}${g.neden === "otomatik" ? " (oto)" : ""}</td><td>${AG_ADI[t]}</td><td class="sag">${v.ogretmen}+${v.otomatik}</td><td>${yuzde(v.once.sinama)} → ${yuzde(v.sonra.sinama)}</td><td>${v.kabul ? `<span class="chip green">Güncellendi</span>` : `<span class="chip orange">Eskisi korundu</span>`}</td></tr>`)).join("")}</table></div>`
+            : `<p class="muted">Henüz eğitim yapılmadı; başlangıç modeli kullanılıyor.</p>`}</div>
+        <div class="card"><h2>Başlangıç modeli</h2><p class="small muted" style="margin-top:0">${esc(b.aciklama)}</p>
+          <table><tr><td>İşaret ağı (denenmemiş sayfalarda)</td><td class="sag"><b>${yuzde(b.olcum.isaretDeneme)}</b></td></tr>
+          <tr><td>Fotoğraftaki el yazısı rakamlar</td><td class="sag"><b>${yuzde(b.olcum.rakamFotograf)}</b></td></tr>
+          <tr><td>Yazılı cevap (bütün sayı)</td><td class="sag"><b>${esc(b.olcum.yaziliCevap)}</b></td></tr>
+          ${b.olcum.harf != null ? `<tr><td>Türkçe harfler (hiç görülmemiş yazı tiplerinde)</td><td class="sag"><b>${yuzde(b.olcum.harf)}</b></td></tr>
+          <tr><td>Doğru yazılmış kelimeyi "doğru" sayma</td><td class="sag"><b>${esc(b.olcum.kelimeDogruKabul)}</b></td></tr>
+          <tr><td>Başka kelimeyi "yanlış" sayma</td><td class="sag"><b>${esc(b.olcum.kelimeYanlisRed)}</b></td></tr>` : ""}</table>
+          <p class="small muted">Bu ölçümler bilgisayarda üretilmiş sayfalarla yapıldı. Gerçek öğrenci yazısında ilk başta daha düşük olabilir; düzelttikçe artar.</p></div>
+      </div>
+    </div>`;
+  el.querySelector("#yzEgit").onclick = () => yzEgit("elle");
+  el.querySelector("#yzAyar").onclick = async () => {
+    A.yzKullan = el.querySelector("#yzKullan").value === "1";
+    A.yzKendiOgren = el.querySelector("#yzKendi").value === "1";
+    A.yzOtoEgit = Math.max(0, Math.min(500, +el.querySelector("#yzOto").value || 0));
+    await DB.saveAyarlar();
+    sonucKarti(true, "Yapay zekâ ayarları kaydedildi");
+    ciz();
+  };
+  el.querySelector("#yzDisa").onclick = () => yzDisaAktar().catch((e) => sonucKarti(false, "Dışa aktarılamadı", [e.message]));
+  el.querySelector("#yzIce").onchange = async (e) => {
+    const f = e.target.files[0];
+    e.target.value = "";
+    if (!f || !confirm("Yapay zekânın şu anki eğitimi silinip dosyadaki eğitim yüklenecek. Devam edilsin mi?")) return;
+    try {
+      const r = await yzIceAktar(f);
+      sonucKarti(true, "Yapay zekâ eğitimi yüklendi", [`${r.ornek} eğitim örneği`, r.surum ? `${r.surum}. sürüm model` : "Başlangıç modeli"]);
+    } catch (err) {
+      sonucKarti(false, "İçe aktarılamadı", [err.message]);
+    }
+    ciz();
+  };
+  el.querySelector("#yzSifirla").onclick = async () => {
+    if (!confirm("Ağ başlangıç modeline dönsün mü? Eğitim örnekleri silinmez; istediğinizde yeniden eğitebilirsiniz.")) return;
+    await yzBaslangicaDon();
+    sonucKarti(true, "Başlangıç modeline dönüldü");
+    ciz();
+  };
+  el.querySelector("#yzOrnekSil").onclick = async () => {
+    if (!confirm("Bütün eğitim örnekleri silinsin mi? (Ağın şu ana kadar öğrendikleri kalır.)")) return;
+    for (const o of list("yzOrnekler")) await DB.del("yzOrnekler", o.id);
+    ciz();
+  };
+};
+
+// ---------------------------------------------------------------------------
 // AYARLAR / YEDEK
 // ---------------------------------------------------------------------------
 async function yedekAl() {
-  const veri = { program: "odev-kontrol", surum: 1, tarih: simdi(), ayarlar: A };
+  const veri = { program: "odev-kontrol", surum: 1, tarih: simdi(), ayarlar: A, yzModel: (await DB.req("kv", "readonly", (st) => st.get("yzModel"))) || null };
   const dataUrl = (b) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
   for (const s of STORES) {
     veri[s] = [];
     for (const o of D[s].values()) {
       const c = { ...o };
       for (const k of Object.keys(c)) if (c[k] instanceof Blob) c[k] = { $blob: await dataUrl(c[k]) };
-      veri[s].push(c);
+      veri[s].push(JSON.parse(JSON.stringify(c, (k, v) => (v instanceof Uint8Array ? { $u8: YapayZeka.b64.yaz(v) } : v))));
     }
   }
   indir(new Blob([JSON.stringify(veri)], { type: "application/json" }), `OdevKontrol_Yedek_${new Date().toISOString().slice(0, 10)}.json`);
@@ -1902,13 +2369,16 @@ async function yedektenYukle(dosya) {
   if (veri.program !== "odev-kontrol") throw new Error("Bu dosya bir Ödev Kontrol yedeği değil.");
   await DB.clearAll();
   for (const s of STORES)
-    for (const o of veri[s] || []) {
+    for (const o0 of veri[s] || []) {
+      const o = JSON.parse(JSON.stringify(o0), (k, v) => (v && typeof v === "object" && v.$u8 != null ? YapayZeka.b64.oku(v.$u8) : v));
       for (const k of Object.keys(o)) if (o[k]?.$blob) o[k] = await (await fetch(o[k].$blob)).blob();
       await DB.put(s, o);
     }
+  if (veri.yzModel) await DB.req("kv", "readwrite", (st) => st.put(veri.yzModel, "yzModel"));
   A = { ...VARSAYILAN_AYARLAR, ...(veri.ayarlar || {}) };
   await DB.saveAyarlar();
   temaUygula();
+  await yzYukle();
 }
 function temaUygula() {
   document.documentElement.dataset.tema = A.tema === "koyu" ? "koyu" : "acik";
@@ -1966,6 +2436,7 @@ EKRAN.ayar = (el) => {
     await DB.clearAll();
     kuyruk.length = 0;
     temaUygula();
+    await yzYukle();
     sonucKarti(true, "Program ilk hâline döndü");
     git("panel");
   };
@@ -1984,6 +2455,7 @@ document.querySelectorAll("#tabs button").forEach((b) => (b.onclick = () => git(
   }
   temaUygula();
   motorDurumu();
+  await yzYukle();
   cvHazir.then(motorDurumu, (e) => (document.getElementById("motor").innerHTML = `⚠ ${esc(e.message)}`));
   // Yarım kalan işleri yeniden sıraya al.
   for (const p of list("sayfalar", (x) => x.durum === "isleniyor" && x.foto)) siraya(() => sayfaIsle(p));

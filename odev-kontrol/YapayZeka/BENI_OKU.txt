@@ -1,0 +1,59 @@
+ÖDEV KONTROL – YAPAY ZEKÂ KLASÖRÜ
+=================================
+
+Bu klasörde programın yapay zekâsı durur. Üç küçük sinir ağı (evrişimli sinir ağı, CNN)
+TensorFlow.js ile bu bilgisayarda, internetsiz çalışır:
+
+  1. İşaret ağı : Bir şıkkın çevresindeki el yazısına bakıp şıkkın işaretli olup olmadığını
+                  söyler (daire, tik, çarpı, altını çizme, içini doldurma...).
+                  Eşik kuralıyla birlikte çalışır: ikisi aynı okursa kesin, farklı okursa
+                  soru "öğretmen baksın" olur.
+  2. Rakam ağı  : Öğrencinin elle yazdığı sayıları okur ("cevabı yazınız" soruları).
+                  Bitişik yazılmış rakamları ayırmayı dener; emin değilse öğretmene bırakır.
+  3. Harf ağı   : Türkçe harfleri okur (ç, ğ, ı, i, ö, ş, ü dahil; büyük/küçük harf).
+                  Kelime cevaplarında öğrencinin yazdığı kelimenin doğru cevaba benzerliğine
+                  bakılır: %80 ve üstü doğru, %50-80 "öğretmen baksın", altı yanlış.
+                  Harflerin çoğu okunamadıysa "yanlış" demez, "öğretmen baksın" der.
+
+DOSYALAR
+  yapay-zeka.js        Ağların yapısı, görüntü hazırlama, eğitim, okuma, kaydetme.
+  baslangic-modeli.js  Başlangıç eğitimi. Programı ilk açtığınızda bu kullanılır.
+                         - İşaret ağı: bilgisayarda üretilmiş, "telefonla çekilmiş" test sayfaları
+                         - Rakam ağı : MNIST (Google/Keras'ın yayımladığı 70.000 gerçek el yazısı rakam)
+                         - Harf ağı  : 27 açık lisanslı el yazısı tarzı yazı tipi (Google Fonts,
+                                       16'sı Türkçe harfli), farklı boyut/eğim/kalınlıkta çizilerek
+                       (Elle değiştirmeyin; geliştirici test/yz-egit.mjs ve test/harf-egit.mjs ile üretir.)
+  ../vendor/tf.min.js  TensorFlow.js kütüphanesi.
+
+KENDİNİ NASIL EĞİTİR?
+  - Ödev Kontrol'de bir sayfanın sonucunu açın. Program bir şıkkı yanlış okuduysa
+    "Doğru okundu" kutusundan öğrencinin aslında işaretlediğini seçin; yazılı cevapta
+    (sayı ya da kelime) "Düzelt" kutusuna öğrencinin yazdığını yazın. Her düzeltme bir
+    eğitim örneğidir; kelimelerde her harf ayrı bir örnek olur.
+  - Ağ ve eski kural ikisi de çok emin ve aynı fikirdeyse, program o okumadan da
+    kendi kendine örnek çıkarır (Yapay Zekâ sekmesinden kapatılabilir).
+  - Yeterli düzeltme birikince (varsayılan: 10) ağ kendiliğinden eğitilir; Yapay Zekâ
+    sekmesindeki "Şimdi eğit" ile siz de başlatabilirsiniz.
+  - Koruma: Düzeltmelerin bir kısmı sınama için ayrılır. Yeni eğitim bu sınamada eskisinden
+    kötü sonuç verirse ya da eski bilgisini unutursa kabul edilmez, eski ağ kalır.
+
+YEDEKLEME (eğitimler kaybolmasın)
+  Yapay Zekâ sekmesi > "Eğitimi dışa aktar": ağların öğrendikleri ve bütün eğitim örnekleri
+  tek bir dosyaya (OdevKontrol_YapayZeka_TARİH.json) kaydedilir.
+  "Eğitimi içe aktar" ile o dosyayı geri yükleyebilir ya da başka bir bilgisayara
+  taşıyabilirsiniz. Ayarlar'daki genel yedek de yapay zekâyı içerir.
+
+SINIRLAR
+  - İşaretleri, sayıları ve tek kelimelik cevapları okur. Uzun cümleleri ve paragrafları
+    okuyamaz.
+  - Harfleri ayrı ayrı yazılmış kelimelerde daha iyidir; bitişik (el yazısı) yazıda harfleri
+    ayırmakta zorlanabilir, o zaman "öğretmen baksın" der.
+  - Başlangıç eğitimi bilgisayarda üretilmiş sayfalar, MNIST rakamları ve yazı tipleriyle
+    yapıldı. Gerçek öğrenci yazısında ilk başta daha az doğru olabilir; düzelttikçe öğrenir.
+
+BAŞLANGIÇ ÖLÇÜMLERİ (eğitimde hiç görülmemiş verilerle)
+  İşaret ağı: şıkların %99,1'i doğru
+  Rakam ağı : MNIST testinde %98,8; fotoğraftaki rakamlarda 74/74; bütün sayı 39/40
+  Harf ağı  : Türkçe harflerin %95,7'si doğru (görülmemiş 4 yazı tipinde)
+              Doğru yazılmış 120 kelimenin 80'i "doğru", 32'si "öğretmen baksın", 8'i "yanlış";
+              başka kelime yazılmış 120 cevabın hiçbiri "doğru" sayılmadı.

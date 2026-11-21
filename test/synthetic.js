@@ -1,5 +1,6 @@
 // Test için yapay test sayfası, öğrenci işaretleri ve "telefonla çekilmiş" görünüm üretir.
 import sharp from "sharp";
+import zlib from "node:zlib";
 import cvModule from "@techstark/opencv-js";
 
 const W = 1240; // A4, 150 dpi
@@ -45,7 +46,7 @@ export function layoutPage(seed = 1, content = null) {
     for (let k = 0; k < 4; k++, n++) {
       const cq = content?.questions[n - 1];
       // Şık uzunluğuna göre düzen: kısa şıklar yan yana, orta 2x2, uzun alt alta.
-      const longest = cq ? Math.max(...cq.options.map((o) => o.length)) : 0;
+      const longest = cq?.options ? Math.max(...cq.options.map((o) => o.length)) : 0;
       const layout = !cq ? layouts[(n + seed) % layouts.length] : longest <= 5 ? "row" : longest <= 13 ? "grid" : "col";
       parts.push(`<text x="${x0}" y="${y}" font-size="${fs}" font-weight="bold" font-family="DejaVu Sans, sans-serif">${n}.</text>`);
       const lines = cq ? cq.lines : [
@@ -59,6 +60,14 @@ export function layoutPage(seed = 1, content = null) {
       // Öğrencinin işlem yapacağı boşluk.
       const work = { x: x0 + 40, y: y, w: W / 2 - 160, h: 120 };
       y += work.h + 10;
+      if (cq?.yazili) {
+        // "Cevabı yazınız" sorusu: şık yok, cevap çizgisi var.
+        parts.push(`<text x="${x0 + 40}" y="${y + 30}" font-size="${fs}" font-family="DejaVu Sans, sans-serif">Cevap:</text>`);
+        parts.push(`<line x1="${x0 + 140}" y1="${y + 34}" x2="${x0 + 380}" y2="${y + 34}" stroke="#222" stroke-width="2"/>`);
+        y += 80;
+        questions.push({ number: n, options: [], work, cevap: { x: x0 + 140, y: y - 80 - 30, w: 240, h: 66 } });
+        continue;
+      }
       const vals = Array.from({ length: 4 }, () => Math.floor(r() * 30) + 1);
       const options = [];
       "ABCD".split("").forEach((L, i) => {
@@ -111,11 +120,32 @@ export function studentInk(layout, answers, seed = 7) {
         parts.push(`<path d="${d}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round"/>`);
       }
     }
+    if (a.kelimePng && q.cevap) {
+      // Önceden çizilmiş el yazısı kelime (saydam PNG); cevap çizgisinin üstüne konur.
+      const { b64, w, h } = a.kelimePng;
+      const boy = 46 + r() * 8;
+      const gen = (w / h) * boy;
+      parts.push(`<image x="${q.cevap.x + 8 + r() * 12}" y="${q.cevap.y + q.cevap.h - boy - 2}" width="${gen}" height="${boy}" href="data:image/png;base64,${b64}"/>`);
+    }
+    if (a.rakamlar && q.cevap) {
+      let x = q.cevap.x + 10 + r() * 20;
+      for (const img of a.rakamlar) {
+        const boy = 44 + r() * 10;
+        parts.push(`<image x="${x}" y="${q.cevap.y + q.cevap.h - boy - 4}" width="${boy}" height="${boy}" href="data:image/png;base64,${rakamPng(img, color)}"/>`);
+        x += boy * (0.62 + r() * 0.2);
+      }
+    }
     if (a.mark) {
       const o = q.options.find((x) => x.letter === a.mark);
       const cx = o.x + o.w / 2 + (r() - 0.5) * 6;
       const cy = o.y + o.h / 2 + (r() - 0.5) * 6;
-      if (a.style === "tick") {
+      if (a.style === "cross") {
+        parts.push(`<path d="M ${o.x - 4} ${o.y + 2} L ${o.x + o.w + 6} ${o.y + o.h - 2} M ${o.x + o.w + 6} ${o.y + 2} L ${o.x - 4} ${o.y + o.h - 2}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`);
+      } else if (a.style === "underline") {
+        parts.push(`<path d="M ${o.x - 4} ${o.y + o.h + 3} Q ${o.x + 40} ${o.y + o.h + 6} ${o.x + 70 + r() * 30} ${o.y + o.h + 2}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`);
+      } else if (a.style === "fill") {
+        parts.push(`<ellipse cx="${cx}" cy="${cy}" rx="${o.w * 0.7}" ry="${o.h * 0.6}" fill="${color}" fill-opacity="0.55" stroke="${color}" stroke-width="2"/>`);
+      } else if (a.style === "tick") {
         parts.push(
           `<path d="M ${o.x - 6} ${cy} L ${o.x + 6} ${cy + 12} L ${o.x + 26} ${cy - 16}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`
         );
@@ -133,6 +163,53 @@ export function studentInk(layout, answers, seed = 7) {
     }
   }
   return parts.join("\n");
+}
+
+/** 28x28 MNIST rakamını kalem renginde, saydam zeminli küçük bir PNG yapar (SVG içine gömmek için). */
+const PNG_CACHE = new Map();
+function rakamPng(img, color) {
+  const key = color + ":" + Buffer.from(img).toString("base64");
+  if (PNG_CACHE.has(key)) return PNG_CACHE.get(key);
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16));
+  const rgba = Buffer.alloc(28 * 28 * 4);
+  for (let i = 0; i < 784; i++) {
+    rgba[i * 4] = r;
+    rgba[i * 4 + 1] = g;
+    rgba[i * 4 + 2] = b;
+    rgba[i * 4 + 3] = img[i];
+  }
+  const v = pngYaz(28, 28, rgba).toString("base64");
+  PNG_CACHE.set(key, v);
+  return v;
+}
+/** Küçük, bağımlılıksız PNG yazıcı (zlib ile). */
+function pngYaz(w, h, rgba) {
+  const crcTablo = Array.from({ length: 256 }, (_, n) => {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    return c >>> 0;
+  });
+  const crc = (buf) => {
+    let c = 0xffffffff;
+    for (const x of buf) c = crcTablo[(c ^ x) & 255] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  const parca = (tip, veri) => {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(veri.length);
+    const tv = Buffer.concat([Buffer.from(tip), veri]);
+    const c = Buffer.alloc(4);
+    c.writeUInt32BE(crc(tv));
+    return Buffer.concat([len, tv, c]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 6;
+  const satirlar = Buffer.alloc((w * 4 + 1) * h);
+  for (let y = 0; y < h; y++) rgba.copy(satirlar, y * (w * 4 + 1) + 1, y * w * 4, (y + 1) * w * 4);
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), parca("IHDR", ihdr), parca("IDAT", zlib.deflateSync(satirlar)), parca("IEND", Buffer.alloc(0))]);
 }
 
 export async function renderPage(layout, ink = "") {
@@ -181,3 +258,33 @@ export async function photograph(pngBuf, seed = 3, strength = 1) {
   [src, from, to, M, out].forEach((m) => m.delete());
   return jpg;
 }
+
+/** Yazılı cevaplı örnek matematik sayfası (4 şıklı + 4 "cevabı yazınız" sorusu). Anahtar: 1B 3C 6C 8C; 2: 96, 4: 180, 5: 82, 7: 7 */
+export const YAZILI_SAYFA = {
+  header: "Matematik – Yazılı Cevaplı Test",
+  questions: [
+    { lines: ["3x + 6 = 21 denkleminde", "x kaçtır?"], options: ["3", "5", "7", "9"] },
+    { yazili: true, lines: ["12 · 8 işleminin sonucunu", "yazınız."] },
+    { lines: ["2x − 4 = 10 denkleminde", "x kaçtır?"], options: ["5", "6", "7", "8"] },
+    { yazili: true, lines: ["Bir üçgenin iç açıları toplamı", "kaç derecedir?"] },
+    { yazili: true, lines: ["45 + 37 işleminin sonucunu", "yazınız."] },
+    { lines: ["5x = 35 denkleminde", "x kaçtır?"], options: ["5", "6", "7", "8"] },
+    { yazili: true, lines: ["Bir haftada kaç gün vardır?", ""] },
+    { lines: ["x + 9 = 20 denkleminde", "x kaçtır?"], options: ["9", "10", "11", "12"] },
+  ],
+};
+
+/** Kelime cevaplı Teknoloji ve Tasarım sayfası. Anahtar: 1B 3D 5C 7D; 2 ergonomi, 4 patent, 6 telif, 8 marka */
+export const KELIME_SAYFA = {
+  header: "Teknoloji ve Tasarım – Yazılı Cevaplı Test",
+  questions: [
+    { lines: ["Tasarım sürecinin ilk aşaması", "hangisidir?"], options: ["Eskiz", "Problem", "Satış", "Test"] },
+    { yazili: true, lines: ["Ürünlerin insan vücuduna uygunluğunu", "inceleyen bilim dalı nedir?"] },
+    { lines: ["Öğelerin görsel ağırlığının eşit", "dağılmasına ne denir?"], options: ["Ritim", "Vurgu", "Zıtlık", "Denge"] },
+    { yazili: true, lines: ["Yeni bir buluşu koruyan", "fikrî hak nedir?"] },
+    { lines: ["Kullanılmış ürünün hammaddeye", "dönüşmesine ne denir?"], options: ["Üretim", "Tüketim", "Geri dönüşüm", "Dağıtım"] },
+    { yazili: true, lines: ["Kitap ve şarkıları koruyan", "hak nedir?"] },
+    { lines: ["Tasarımın ilk çalışan modeli", "hangisidir?"], options: ["Eskiz", "Afiş", "Rapor", "Prototip"] },
+    { yazili: true, lines: ["Firmanın ürününü diğerlerinden", "ayıran işaret nedir?"] },
+  ],
+};

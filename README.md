@@ -27,3 +27,25 @@ npm run build
 ```
 
 Bu komut, tek dosyalık `odev-kontrol/OdevKontrol.html` dosyasını üretir.
+
+Yapay zekânın başlangıç eğitimi `odev-kontrol/YapayZeka/baslangic-modeli.js` dosyasını üretir. Önce işaret ve rakam ağları eğitilir. Bu adım MNIST klasörünü ister (Keras'ın mnist.npz dosyası açılmış hâlde):
+
+```bash
+node test/yz-egit.mjs <mnist-klasörü>
+```
+
+Ardından harf ağı eğitilir. Bu adım, @fontsource el yazısı yazı tiplerinin kurulu olduğu node_modules klasörünü ister:
+
+```bash
+node test/harf-egit.mjs <node_modules>
+```
+
+Deneme fotoğraflarını üretmek için:
+
+```bash
+node test/yazili-uret.mjs <mnist-klasörü>
+```
+
+```bash
+node test/kelime-uret.mjs <node_modules>
+```

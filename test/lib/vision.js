@@ -7,11 +7,14 @@ import cvModule from "@techstark/opencv-js";
 import Tesseract from "tesseract.js";
 import sharp from "sharp";
 import { createRequire } from "node:module";
+import { yzYukle } from "./yz-yukle.js";
 import { detectQuestions } from "./layout.js";
 // Okuma eşikleri (odev-kontrol/app.js içindeki T ile aynı tutulmalı).
 const THRESHOLDS = { minPageMatch: 40, inkDarkness: 55, printTolerancePx: 5, markMinRatio: 0.008, markMultiMin: 0.035, markRivalRatio: 0.5, workMinRatio: 0.004 };
 
 const require = createRequire(import.meta.url);
+// Yapay zekâ ile aynı görüntü hazırlama (sinir ağı eğitimde ve programda aynı görüntüyü görsün).
+const YZ = yzYukle();
 /** Boş sayfa bu genişliğe getirilir; bütün koordinatlar bu ölçektedir. */
 export const PAGE_WIDTH = 1400;
 const STUDENT_MAX_SIDE = 1800;
@@ -245,6 +248,9 @@ export async function readStudentPage(photoBuf, templates) {
     const pageInk = cv.countNonZero(ink) / (ink.rows * ink.cols);
 
     // Her soru: şıklardaki iz + soru alanındaki işlem izi.
+    // Sinir ağı için: her şıkkın görüntüsü ve yazılı cevap alanlarındaki rakamlar.
+    const yzKirp = Object.fromEntries(tp.questions.map((q) => [q.key, Object.fromEntries(q.options.map((o) => [o.letter, YZ.isaretKirp(ink.data, ink.cols, ink.rows, o.box)]))]));
+    const yazililar = (tp.yazili || []).map((y) => ({ key: y.key, rakamlar: YZ.rakamlariBul(ink.data, ink.cols, ink.rows, y.rect) }));
     const answers = tp.questions.map((q) => {
       const opt = q.options.map((o) => {
         const n = inkIn(ink, o.box);
@@ -294,6 +300,8 @@ export async function readStudentPage(photoBuf, templates) {
     }
     return {
       matched: true,
+      yzKirp,
+      yazililar,
       template_id: tp.id,
       score: h.inliers,
       page_ink: pageInk,

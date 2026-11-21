@@ -42,6 +42,34 @@ Fotoğraflar programın kendi okuma motoruyla, sizin fotoğraflarınız gibi oku
 - Kendi Excel'inizi yükleyince örnekler silinmez ve sizin kayıtlarınızla karışmaz; aynı sınıf adı ya da aynı kazanım kodu olsa bile.
 - **Örnekleri kaldır** yalnızca örnekleri siler.
 
+## 🧠 Yapay Zekâ (kendini eğiten el yazısı okuyucu)
+
+Program bu bilgisayarda, internetsiz çalışan üç küçük sinir ağı (TensorFlow.js) kullanır:
+
+- **İşaret ağı:** Şıklardaki daire, tik, çarpı, altını çizme ve doldurma işaretlerini tanır. Eşik kuralıyla birlikte çalışır: ikisi aynı okursa sonuç kesin sayılır, farklı okursa soru "öğretmen baksın" olur.
+- **Rakam ağı:** "Cevabı yazınız" sorularında öğrencinin elle yazdığı sayıları okur. MNIST ile eğitildi; MNIST, Google/Keras'ın yayımladığı 70.000 gerçek el yazısı rakamdan oluşan veri seti.
+- **Harf ağı:** Türkçe harfleri okur (ç, ğ, ı, i, ö, ş, ü dahil). Kelime cevaplarında yazılan kelimenin doğru cevaba benzerliğine bakılır: %80 ve üstü doğru, %50–80 "öğretmen baksın", altı yanlış. Harflerin çoğu okunamadıysa "yanlış" yerine "öğretmen baksın" der.
+
+**Yazılı cevap sorusu nasıl eklenir:** Anahtar ekranında **✍️ Yazılı cevap alanı çiz** düğmesine basın. Resimde cevabın yazılacağı yeri fareyle çerçeveye alın, sonra doğru cevabı (sayı ya da kelime) yazın.
+
+**Kendini eğitme:**
+
+1. Sonuç ekranında program yanlış okuduysa öğrencinin aslında işaretlediğini ya da yazdığını düzeltin.
+2. Her düzeltme bir eğitim örneği olur. Ağ ve kural çok emin olduğu okumalardan kendi kendine de örnek çıkarır.
+3. Yeterli düzeltme birikince (varsayılan 10) ağ kendiliğinden eğitilir. **Yapay Zekâ** sekmesindeki **Şimdi eğit** düğmesiyle siz de başlatabilirsiniz.
+4. Yeni eğitim, ayrılan sınama örneklerinde eskisinden kötü sonuç verirse kabul edilmez.
+
+**Yedek:** Yapay Zekâ sekmesindeki **Eğitimi dışa aktar** düğmesi, ağların öğrendiklerini ve bütün eğitim örneklerini tek dosyaya kaydeder. **Eğitimi içe aktar** ile geri yüklenir. Ayarlar'daki genel yedek de yapay zekâyı içerir.
+
+Ayrıntılar ve başlangıç ölçümleri: `YapayZeka/BENI_OKU.txt`
+
+Deneme dosyaları:
+
+- `Test_Fotograflari/Yazili_Cevapli/`: sayı cevapları
+- `Test_Fotograflari/Kelime_Cevapli/`: Türkçe kelime cevapları
+
+Her birinin içinde `OKU_BENI.txt` var.
+
 ## Kullanım sırası
 
 1. **Öğrencileri yükle** (Ana Sayfa 1. adım ya da Öğrenciler sekmesi): Öğrenci listesinin Excel'ini seçin. Sütunlar kendiliğinden tanınır; K12 listeleri de olur.
@@ -101,7 +129,7 @@ Bu değerler Ayarlar'dan değiştirilebilir.
 ## Bilinen sınırlar
 
 - **Şıklar "A)", "A.", "(A)" biçiminde basılmış olmalı.** Optik formdaki gibi daire içinde harf olan şıklar şu an tanınmaz. Bir soru bulunamazsa anahtar ekranında "X. soru bulunamadı" uyarısı çıkar; sayfayı daha düz ve net çekip yeniden ekleyin.
-- **Sadece işaretlenen şık değerlendirilir.** Yazılan çözümün doğruluğu okunmaz; çözüm için sadece "yazı var / yok" bilgisi verilir.
+- **Çözüm adımları okunmaz.** Şıklı sorularda işaretlenen şık, yazılı cevap sorularında sayı ya da tek kelimelik cevap değerlendirilir. Uzun cümleler ve paragraflar okunmaz.
 - **İşaretler şıkkın harfinin üstüne ya da çevresine yapılmalı.** Daire içine almak ve tik atmak çalışır. Karalayıp silmek "iki şık işaretli" görünebilir; bu sorular öğretmene bırakılır.
 - **Okuma eşikleri yapay test sayfalarıyla ayarlandı.** Bu sayfalarda 16/16 soru bulundu ve 128/128 şık doğru okundu. Gerçek kitap sayfaları ve gerçek el yazısıyla henüz ölçülmedi.
 - **Örnek kazanım kodları uydurmadır.** Resmî liste için K12'den aldığınız dosyayı kullanın.

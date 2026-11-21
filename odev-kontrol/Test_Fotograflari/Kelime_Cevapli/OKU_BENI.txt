@@ -1,0 +1,23 @@
+KELİME CEVAPLI DENEME (yapay zekânın Türkçe el yazısı okuması)
+==============================================================
+
+Bos_Sayfa.png : Teknoloji ve Tasarım testi. 1, 3, 5, 7 şıklı; 2, 4, 6, 8 "yazınız" sorusu.
+
+Nasıl denenir:
+  1. Öğrenci listesi: Ogretici/Ornek_Ogrenci_Listesi_8-A.xlsx
+  2. Ödevler: 8-A için yeni ödev, "Boş sayfa ekle" ile Bos_Sayfa.png
+  3. "Anahtar ve kazanımları gir":
+       Soru numaraları okunamadıysa turuncu etiketli numaraları 1, 3, 5, 7 olarak düzeltin.
+       Hızlı anahtar: 1B 3D 5C 7D
+       "Yazılı cevap alanı çiz" ile her yazılı sorunun "Cevap: ____" çizgisini çerçeveye alın:
+         2 → ergonomi,  4 → patent,  6 → telif,  8 → marka
+  4. Ödev Kontrol: bu klasördeki 3 fotoğrafı yükleyip "Kontrol et".
+
+Beklenen:
+  101 Ali Kaya.jpg     Hepsi doğru
+  102 Buse Er.jpg      8. soruya "logo" yazmış (yanlış), 3. soruda A işaretlemiş (yanlış)
+  103 Can Demir.jpg    2. soruya "ergonami" yazmış (küçük yazım hatası: benzerlik yüksek), 6. soru boş
+
+Kelimeler harf harf okunur ve doğru cevaba benzerliğe bakılır: %80 ve üstü doğru,
+%50-80 "öğretmen baksın", altı yanlış. Program yanlış okursa "Düzelt" kutusuna öğrencinin
+yazdığını yazın: yapay zekâ bundan öğrenir.
