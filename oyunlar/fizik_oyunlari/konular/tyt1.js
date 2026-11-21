@@ -9,12 +9,12 @@
   const BL = [ // [ad, birim, temel mi, vektörel mi, renk]
     ['Kütle', 'kg', 1, 0, 0xef4444], ['Uzunluk', 'm', 1, 0, 0xf59e0b], ['Zaman', 's', 1, 0, 0x22c55e], ['Akım', 'A', 1, 0, 0x3b82f6],
     ['Hız', 'm/s', 0, 1, 0x8b5cf6], ['Kuvvet', 'N', 0, 1, 0xec4899], ['Enerji', 'J', 0, 0, 0x14b8a6], ['Sıcaklık', 'K', 1, 0, 0xf97316]];
-  const s1 = sahne({ icon: '📏', cam: [[0, 8.5, 15], [0, 0.6, 0.3]], plate: [16, 10, 0, 0],
+  const s1 = sahne({ icon: '📏', cam: [[0, 9.5, 17], [0, 0.6, 0.3]], plate: [16, 10, 0, 0],
     data: [['SI temel büyüklük', '7 tane'], ['Türetilmiş', 'temellerden elde edilir']],
     S0: () => ({ ayir: 0, vek: 0, isik: -1 }),
     kur(g) {
-      const kutular = BL.map((b, i) => { const m = kutu(g, 1.5, 0.8, 0.8, b[4], 0, 0.4, 0); m.userData.ev = V3(-6.3 + i * 1.8, 0.4, 3);
-        const y = FZ.textSprite(`${b[0]} (${b[1]})`, 1.45, 0.42, '#111827', '#ffffff'); y.position.set(0, 0, 0.41); m.add(y); return m; });
+      const kutular = BL.map((b, i) => { const m = kutu(g, 1.4, 0.8, 0.8, b[4], 0, 0.4, 0); m.userData.ev = V3(-5.25 + i * 1.5, 0.4, 3);
+        const y = FZ.textSprite(`${b[0]} (${b[1]})`, 1.35, 0.42, '#111827', '#ffffff'); y.position.set(0, 0, 0.41); m.add(y); return m; });
       kutu(g, 6.2, 0.2, 3.2, 0x2563eb, -3.6, 0.1, -1.4); levha(g, 'TEMEL', 2.6, 0.55, '#1e3a8a', '#fff', -3.6, 1.0, -3.1);
       kutu(g, 6.2, 0.2, 3.2, 0x7c3aed, 3.6, 0.1, -1.4); levha(g, 'TÜRETİLMİŞ', 3.4, 0.55, '#4c1d95', '#fff', 3.6, 1.0, -3.1);
       etiket('f1b5', 'Kuvvet', '#ec4899');
@@ -129,7 +129,7 @@
   // =====================================================================
   const s3 = sahne({ icon: '🚗', ses: 'engine', cam: [[2, 5, 15], [2, 0.8, 0]], plate: [26, 6, 3, 0],
     data: [['Sürtünme', 'görevde verilir']],
-    cam2: S => [[S.x / 4 - 2, 5, 15], [S.x / 4 - 2, 0.8, 0]],
+    cam2: S => { const X = -8 + S.x / 4; return [[X + 3, 5, 15], [X + 3, 0.8, 0]]; },
     S0: () => ({ x: 0, v: 0, a: 0, F: 0, f: 0, kos: 0, sure: -1, m: 1000 }),
     kur(g) {
       for (let i = 0; i <= 10; i++) { kutu(g, 0.06, 0.02, 3, 0xffffff, -8 + i * 2.5, 0.02, 0, { edge: false, cast: false }); etiket('f3m' + i, `${i * 10} m`, '#1f232c'); }
@@ -145,7 +145,7 @@
       for (let i = 0; i <= 10; i++) FZ.show('f3m' + i, V3(-8 + i * 2.5, 0.05, 1.8), 1, 0, 20);
       const b = V3(X, 0.6, 0.6);
       if (S.F > 0) { FZ.setArrow(o.oF, b.clone().add(V3(0.9, 0, 0)), V3(1, 0, 0), S.F / 1000); FZ.show('f3F', b.clone().add(V3(0.9 + S.F / 1000 + 0.3, 0, 0)), 1); }
-      if (S.f > 0 && (S.v > 0 || S.F > 0)) { FZ.setArrow(o.of, b.clone().add(V3(-0.9, -0.2, 0)), V3(-1, 0, 0), S.f / 1000); FZ.show('f3f', b.clone().add(V3(-0.9 - S.f / 1000 - 0.3, -0.2, 0)), 1); }
+      if (S.f > 0 && (S.v > 0 || S.F > 0)) { FZ.setArrow(o.of, b.clone().add(V3(-0.85, -0.45, 0.2)), V3(-1, 0, 0), S.f / 1000); FZ.show('f3f', b.clone().add(V3(-0.85 - S.f / 1000 - 0.3, -0.45, 0.2)), 1); }
       if (S.v > 0.05) { FZ.setArrow(o.ov, b.clone().add(V3(0, 0.7, 0)), V3(1, 0, 0), S.v / 8); FZ.show('f3v', b.clone().add(V3(S.v / 8 + 0.3, 0.7, 0)), 1); }
       FZ.setTag('f3t', `t = ${fs(Math.max(0, S.sure))} s · v = ${fs(S.v)} m/s · x = ${fs(S.x)} m`); FZ.show('f3t', V3(X, 2.2, 0), S.sure >= 0 ? 1 : 0);
       S.ses = S.kos ? [0.06 + S.v / 300, S.v / 20] : [0, 0];
