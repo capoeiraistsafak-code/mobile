@@ -59,7 +59,12 @@
       kutu(g, 16, 0.05, 6, 0x1d4ed8, 0, 0.03, 0, { op: 0.6, edge: false, cast: false });
       kutu(g, 16, 0.3, 1.5, 0x16a34a, 0, 0.15, 3.75); kutu(g, 16, 0.3, 1.5, 0x16a34a, 0, 0.15, -3.75);
       const cizg = []; for (let i = 0; i < 14; i++) cizg.push(kutu(g, 0.8, 0.02, 0.06, 0x93c5fd, -7 + i * 1.1, 0.08, -2.2 + (i % 5) * 1.1, { edge: false, cast: false }));
-      const kayik = new THREE.Group(); g.add(kayik); kutu(kayik, 0.5, 0.25, 1, 0xf59e0b, 0, 0.2, 0);
+      const kayik = new THREE.Group(); g.add(kayik);
+      { kutu(kayik, 0.5, 0.22, 0.8, 0xb45309, 0, 0.16, 0.05); kutu(kayik, 0.42, 0.05, 0.72, 0xfde68a, 0, 0.26, 0.05, { edge: false });   // gövde ve içi (−z: burun)
+        const burun = FZ.mesh(new THREE.ConeGeometry(0.25, 0.4, 4), 0xb45309); burun.rotation.set(-Math.PI / 2, Math.PI / 4, 0); burun.scale.set(1, 1, 0.9); burun.position.set(0, 0.16, -0.55); kayik.add(burun);
+        kutu(kayik, 0.5, 0.04, 0.12, 0x78350f, 0, 0.3, 0.15, { edge: false });                       // oturak
+        FZ.silindir(kayik, 0.09, 0.11, 0.26, 0xdc2626, 0, 0.45, 0.15); FZ.top(kayik, 0.08, 0xf5c09a, 0, 0.66, 0.15, { edge: false });   // kürekçi (can yeleği kırmızı)
+        const kurek = FZ.silindir(kayik, 0.02, 0.02, 1.1, 0x92400e, 0, 0.42, 0.1, { edge: false }); kurek.rotation.z = Math.PI / 2; }
       const iz = FZ.cizgi(g, 0xfacc15);
       etiket('b2k', 'v<sub>kayık</sub>', '#dc2626'); etiket('b2a', 'v<sub>akıntı</sub>', '#2563eb'); etiket('b2y', 'v<sub>yere göre</sub>', '#16a34a'); kart('b2t', '', '#F5C400');
       return { cizg, kayik, iz, ok_: ok(0xef4444, 'b2k'), oa: ok(0x3b82f6, 'b2a'), oy: ok(0x22c55e, 'b2y') };
@@ -169,7 +174,7 @@
     S0: () => ({ x: 0, v: 20, a: -5, kos: 0, tt: 0, iz: [] }),
     kur(g) {
       for (let i = 0; i <= 12; i++) { kutu(g, 0.06, 0.02, 3, 0xffffff, -9 + i * 2, 0.02, 0, { edge: false, cast: false }); etiket('a4m' + i, `${i * 10} m`, '#1f232c'); }
-      const araba = new THREE.Group(); g.add(araba); kutu(araba, 1.6, 0.45, 0.9, 0x22c55e, 0, 0.4, 0); kutu(araba, 0.8, 0.4, 0.8, 0xe5e7eb, -0.15, 0.82, 0);
+      const araba = FZ.araba(g, 0x16a34a);
       const pano = kutu(g, 7, 4, 0.1, 0x111827, 9, 3, -2.5, { cast: false });
       const grafik = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x22c55e })); g.add(grafik);
       levha(g, 'v', 0.4, 0.4, '#111827', '#fff', 5.8, 4.8, -2.4); levha(g, 't', 0.4, 0.4, '#111827', '#fff', 12.3, 1.2, -2.4);
@@ -179,7 +184,7 @@
     },
     tick(S, dt, o) {
       if (S.kos) { const dv = S.a * dt; if (S.v + dv <= 0 && S.a < 0) { S.x += S.v * S.v / (-2 * S.a); S.v = 0; S.kos = 0; } else { S.x += S.v * dt + 0.5 * S.a * dt * dt; S.v += dv; } S.tt += dt; S.iz.push([S.tt, S.v]); }
-      const X = -9 + S.x / 5; o.araba.position.x = X;
+      const X = -9 + S.x / 5; FZ.tekerDondur(o.araba, X - o.araba.position.x); o.araba.position.x = X;
       for (let i = 0; i <= 12; i++) FZ.show('a4m' + i, V3(-9 + i * 2, 0.05, 1.8), 1, 0, 20);
       if (S.v > 0.1) { FZ.setArrow(o.ov, V3(X, 1.3, 0.5), V3(1, 0, 0), S.v / 8); FZ.show('a4v', V3(X + S.v / 8 + 0.3, 1.3, 0.5), 1); }
       o.grafik.geometry.setFromPoints(S.iz.length ? S.iz.map(([t, v]) => V3(6 + t * 0.6, 1.2 + v * 0.12, -2.38)) : [V3(6, 1.2, -2.38), V3(6, 1.2, -2.38)]);

@@ -74,9 +74,9 @@
     data: [['Gelen foton', 'λ = 20 pm (X ışını)'], ['h/(m<sub>e</sub>c)', '2,43 pm']],
     S0: () => ({ th: 90, faz: 0, kos: 0, lam: 20 }),
     kur(g) {
-      const e = top(g, 0.25, 0x3b82f6, 0, 0.4, 0), gel = duz(g, 0x7c3aed), sac = duz(g, 0xdc2626);
-      etiket('cpe', 'e⁻', '#2563eb'); etiket('cpth', 'θ', '#334155'); kart('cpt', '', '#F5C400'); etiket('cpg', 'λ', '#7c3aed'); etiket('cps', 'λ′', '#dc2626');
-      return { e, gel, sac, oe: ok(0x3b82f6, 'cpe') };
+      const e = top(g, 0.25, 0xef4444, 0, 0.4, 0), gel = duz(g, 0x7c3aed), sac = duz(g, 0xdc2626);
+      etiket('cpe', 'e⁻', '#dc2626'); etiket('cpth', 'θ', '#334155'); kart('cpt', '', '#F5C400'); etiket('cpg', 'λ', '#7c3aed'); etiket('cps', 'λ′', '#dc2626');
+      return { e, gel, sac, oe: ok(0xef4444, 'cpe') };
     },
     tick(S, dt, o) {
       if (S.kos) S.faz = Math.min(2, S.faz + dt * 0.6);
@@ -184,8 +184,8 @@
       kutu(g, 2.5, 0.4, 1.2, 0x3b82f6, -0.5, -0.05, 0); kutu(g, 2.5, 0.4, 1.2, 0xef4444, -0.5, 2.55, 0);
       const perde = kutu(g, 0.1, 3, 2, 0xf8fafc, 5, 0.9, 0);
       const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(1500 * 3), 3)); geo.setDrawRange(0, 0);
-      const nk = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0x1d4ed8, size: 0.06 })); nk.frustumCulled = false; g.add(nk);
-      const isin = []; for (let i = 0; i < 20; i++) isin.push(top(g, 0.06, 0x94a3b8, 0, -5, 0, { edge: false }));
+      const nk = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xdc2626, size: 0.07 })); nk.frustumCulled = false; g.add(nk);
+      const isin = []; for (let i = 0; i < 20; i++) isin.push(top(g, 0.07, 0xef4444, 0, -5, 0, { edge: false }));
       kart('sgN', 'N', '#dc2626'); kart('sgS', 'S', '#2563eb'); kart('sgt', '', '#F5C400'); kart('sgf', 'Fırın', '#7c2d12');
       return { nk, isin, hiz: [] };
     },

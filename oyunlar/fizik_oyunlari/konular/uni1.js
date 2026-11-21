@@ -14,22 +14,22 @@
   const siddet = (y, S) => { const L = S.L * 1000, lam = S.lam * 1e-6, b = Math.PI * a_mm * y / (lam * L), zarf = b === 0 ? 1 : (Math.sin(b) / b) ** 2;
     return S.olc ? zarf : zarf * Math.cos(Math.PI * S.d * y / (lam * L)) ** 2; };
   const W = (x, y, z) => V3(z, y, -x); // yerel (yatay) → dünya
-  const sY = sahne({ icon: '🌈', cam: [[2.2, 10, 8], [2.2, 0.6, -3]], plate: [11, 13, 0, -0.5],
+  const sY = sahne({ icon: '🌈', cam: [[5, 10.5, 15.5], [1.2, 0.8, 0.8]], plate: [11, 13, 0, -0.5],
     data: [['Yarık genişliği', 'a = 0,05 mm'], ['Perde uzaklığı', 'L = 1,5 m']],
     S0: () => ({ lam: 600, d: 0.25, L: 1.5, mod: 'isik', olc: 0, say: 0, zam: 0 }),
     kur(g0) {
       const g = new THREE.Group(); g.rotation.y = Math.PI / 2; g0.add(g); // perde arkada, karşıdan görünsün
-      const kay = kutu(g, 1, 0.7, 0.7, 0x1f2937, -5.5, 1, 0);
+      const kay = new THREE.Group(); kay.position.set(-5.75, 1, 0); g.add(kay); const lazer = FZ.lazerCihazi(kay), tabanca = FZ.elektronTabancasi(kay); tabanca.visible = false;
       kutu(g, 0.15, 2, 2.6, 0x475569, 0, 1, -1.5); kutu(g, 0.15, 2, 2.6, 0x475569, 0, 1, 1.5); kutu(g, 0.15, 2, 0.3, 0x475569, 0, 1, 0);
       const perde = kutu(g, 0.12, 2.4, 9.5, 0xf8fafc, 6, 1.2, 0);
       const isin = FZ.mesh(new THREE.BoxGeometry(5, 0.05, 0.5), 0xef4444, { edge: false, op: 0.35 }); isin.position.set(-2.6, 1, 0); g.add(isin);
-      const egri = duz(g, 0x111827), nk = noktalar(g, 0x2563eb, 3000, 0.07), dedektor = kutu(g, 0.3, 0.3, 0.3, 0xf59e0b, 0.3, 1.9, -0.2);
+      const egri = duz(g, 0x111827), nk = noktalar(g, 0xdc2626, 3000, 0.08), dedektor = FZ.dedektor(g, 0.6); dedektor.position.set(0.6, 2.55, 0.55); dedektor.rotation.set(0, -0.7, -0.5);
       const bantlar = []; for (let i = 0; i < 160; i++) { const m = FZ.mesh(new THREE.BoxGeometry(0.04, 2.2, 9.5 / 160), 0xffffff, { edge: false, cast: false }); m.position.set(5.92, 1.2, -4.75 + (i + 0.5) * 9.5 / 160); g.add(m); bantlar.push(m); }
       kart('y1t', '', '#F5C400'); etiket('y1d', 'd', '#334155'); kart('y1k', 'Kaynak', '#1f2937'); kart('y1o', 'Dedektör: hangi yarık?', '#d97706');
-      return { kay, perde, isin, egri, nk, dedektor, bantlar };
+      return { kay, lazer, tabanca, perde, isin, egri, nk, dedektor, bantlar };
     },
     tick(S, dt, o) {
-      const isik = S.mod === 'isik', c = isik ? renkNm(S.lam) : new THREE.Color(0x60a5fa);
+      const isik = S.mod === 'isik', c = isik ? renkNm(S.lam) : new THREE.Color(0xef4444); o.lazer.visible = isik; o.tabanca.visible = !isik;
       o.isin.material.color.copy(c); o.dedektor.visible = !!S.olc;
       let maxI = 0; const ys = []; for (let i = 0; i < 160; i++) { const zz = -4.75 + (i + 0.5) * 9.5 / 160, I = siddet(zz / YS, S); ys.push(I); }
       o.bantlar.forEach((m, i) => { m.visible = isik; m.material.color.copy(c).multiplyScalar(0.08 + 0.92 * ys[i]); });
@@ -39,7 +39,7 @@
           pos.setXYZ(S.say, 5.9, 0.1 + Math.random() * 2.2, zz); S.say++; }
         pos.needsUpdate = true; o.nk.geometry.setDrawRange(0, S.say); }
       o.nk.visible = !isik;
-      FZ.show('y1k', W(-5.5, 1.9, 0), 1); FZ.show('y1d', W(-0.4, 2.3, 0), 1); FZ.show('y1o', W(0.3, 2.7, -0.2), S.olc ? 1 : 0);
+      FZ.show('y1k', W(-5.5, 1.9, 0), 1); FZ.show('y1d', W(-0.4, 2.3, 0), 1); FZ.show('y1o', W(0.6, 3.4, 0.55), S.olc ? 1 : 0);
       const dy = S.lam * 1e-6 * S.L * 1000 / S.d;
       FZ.setTag('y1t', isik ? `λ = ${S.lam} nm · d = ${fs(S.d)} mm · L = ${fs(S.L)} m<br>Δy = ${F('λ L', 'd')} = ${fs(dy)} mm` : `Gönderilen elektron: ${S.say}${S.olc ? ' · yarık ölçülüyor' : ''}`);
       FZ.show('y1t', W(2.6, 3.4, 3.2), 1);
@@ -140,7 +140,7 @@
     S0: () => ({ a: 0.25, ph: 0, kuant: 1, par: [], zam: 0, gec: 0, top: 0 }),
     kur(g) {
       const engel = kutu(g, 1, 2.4, 1.4, 0x7c3aed, 0, 1.2, 0, { op: 0.55 });
-      const psi = duz(g, 0x2563eb), parc = []; for (let i = 0; i < 40; i++) parc.push(top(g, 0.08, 0xf97316, 0, -5, 0, { edge: false }));
+      const psi = duz(g, 0x2563eb), parc = []; for (let i = 0; i < 40; i++) parc.push(top(g, 0.09, 0xef4444, 0, -5, 0, { edge: false }));
       const ey = duz(g, 0x16a34a); FZ.setLine(ey, [V3(-5.5, 1.8, -0.8), V3(5.5, 1.8, -0.8)]);
       kart('t3t', '', '#F5C400'); etiket('t3E', 'E = 3 eV', '#16a34a'); etiket('t3V', 'V₀ = 4 eV', '#7c3aed'); etiket('t3p', 'Re ψ', '#2563eb');
       return { engel, psi, parc };
@@ -158,7 +158,7 @@
       if (S.kos) { S.zam += dt * 6; while (S.zam > 1) { S.zam -= 1; S.par.push({ x: -5.5, z: (Math.random() - 0.5) * 1, ge: Math.random() < T, yon: 1 }); S.top++; } }
       S.par.forEach(p => { p.x += p.yon * dt * 2.2; if (p.yon > 0 && p.x > -gen / 2 - 0.1 && !p.ge) p.yon = -1; if (p.ge && p.yon > 0 && p.x > gen / 2 && !p.say) { p.say = 1; S.gec++; } });
       S.par = S.par.filter(p => p.x > -5.6 && p.x < 5.6).slice(-40);
-      o.parc.forEach((m, i) => { const p = S.par[i]; if (!p) { m.visible = false; return; } m.visible = true; m.position.set(p.x, 0.3, p.z); m.material.color.setHex(p.ge ? 0x22c55e : 0xf97316); });
+      o.parc.forEach((m, i) => { const p = S.par[i]; if (!p) { m.visible = false; return; } m.visible = true; m.position.set(p.x, 0.3, p.z); m.material.color.setHex(p.ge ? 0x22c55e : 0xef4444); });
       FZ.show('t3E', V3(-3.8, 1.8, -0.8), 1); FZ.show('t3V', V3(0, 2.75, 0), 1); FZ.show('t3p', V3(-4.6, 3.6, 0), 1);
       FZ.setTag('t3t', `a = ${fs(S.a)} nm · T ≈ e<sup>−2κa</sup> = ${(T * 100).toFixed(T < 0.01 ? 3 : 1).replace('.', ',')} %<br>geçen: ${S.gec} / ${S.top}`); FZ.show('t3t', V3(2.4, 4.3, 0), 1);
     },

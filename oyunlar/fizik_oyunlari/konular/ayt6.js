@@ -131,8 +131,8 @@
     kur(g) {
       const lev = kutu(g, 0.2, 2.4, 1.6, 0x9ca3af, 0, 1.6, 0);
       const lamba = silindir(g, 0.3, 0.45, 0.8, 0x334155, -3.4, 3.4, 0); lamba.rotation.z = Math.PI / 2 + 0.5;
-      const fot = [], ele = []; for (let i = 0; i < 30; i++) { fot.push(top(g, 0.07, 0xffffff, 0, -5, 0, { edge: false })); ele.push(top(g, 0.09, 0x3b82f6, 0, -5, 0, { edge: false })); }
-      kart('p22t', '', '#F5C400'); kart('p22m', 'Metal', '#475569'); etiket('p22e', 'e⁻', '#2563eb');
+      const fot = [], ele = []; for (let i = 0; i < 30; i++) { fot.push(top(g, 0.07, 0xffffff, 0, -5, 0, { edge: false })); ele.push(top(g, 0.1, 0xef4444, 0, -5, 0, { edge: false })); }
+      kart('p22t', '', '#F5C400'); kart('p22m', 'Metal', '#475569'); etiket('p22e', 'e⁻', '#dc2626');
       return { fot, ele };
     },
     tick(S, dt, o) {
@@ -186,8 +186,8 @@
       const kub = FZ.mesh(new THREE.SphereGeometry(0.6, 28, 16, 0, Math.PI * 2, 0, Math.PI / 2), 0xffffff, { op: 0.85 }); kub.position.y = 1.2; led.add(kub);
       kutu(led, 1.2, 0.2, 1.2, 0x334155, 0, 1.1, 0); kutu(led, 0.06, 1, 0.06, 0x9ca3af, -0.25, 0.5, 0, { edge: false }); kutu(led, 0.06, 1, 0.06, 0x9ca3af, 0.25, 0.5, 0, { edge: false });
       const isik = new THREE.PointLight(0xffffff, 2, 5); isik.position.set(0, 2, 0.5); led.add(isik);
-      const laz = new THREE.Group(); laz.position.set(-3, 1.6, 0); g.add(laz); kutu(laz, 1.6, 0.6, 0.6, 0x1f2937, 0, 0, 0);
-      const isin = silindir(laz, 0.05, 0.05, 6, 0xef4444, 3.8, 0, 0, { edge: false }); isin.rotation.z = Math.PI / 2;
+      const laz = new THREE.Group(); laz.position.set(-3, 1.6, 0); g.add(laz); FZ.lazerCihazi(laz);
+      const isin = silindir(laz, 0.05, 0.05, 6, 0xef4444, 3.95, 0, 0, { edge: false }); isin.rotation.z = Math.PI / 2; isin.material.emissive = new THREE.Color(0xff0000); isin.material.emissiveIntensity = 0.8;
       const ekran = kutu(g, 0.1, 2, 2, 0xe5e7eb, 4, 1.6, 0); const nokta = top(g, 0.12, 0xef4444, 3.9, 1.6, 0, { edge: false });
       kart('u23t', '', '#F5C400');
       return { led, kub, isik, laz, isin, ekran, nokta };

@@ -130,7 +130,7 @@
     S0: () => ({ m1: 2, m2: 1, v1: 6, v2: 0, x1: -5, x2: 1, kos: 0, yapis: 1, carpti: 0 }),
     kur(g) {
       kutu(g, 16, 0.1, 0.12, 0x64748b, 0, 0.05, 0.4); kutu(g, 16, 0.1, 0.12, 0x64748b, 0, 0.05, -0.4);
-      const A = kutu(g, 1.2, 0.7, 1, 0x3b82f6, 0, 0.45, 0), B = kutu(g, 1, 0.6, 1, 0xef4444, 0, 0.4, 0);
+      const A = FZ.labArabasi(g, 0x2563eb, 1.2), B = FZ.labArabasi(g, 0xdc2626, 1.0); A.position.y = B.position.y = 0.1;
       etiket('m7a', 'v<sub>1</sub>', '#2563eb'); etiket('m7b', 'v<sub>2</sub>', '#dc2626'); kart('m7t', '', '#F5C400');
       return { A, B, oa: ok(0x3b82f6, 'm7a'), ob: ok(0xef4444, 'm7b') };
     },
@@ -139,7 +139,7 @@
         if (!S.carpti && S.x1 + 0.6 >= S.x2 - 0.5) { S.carpti = 1; FZ.SFX.clack(); const p = S.m1 * S.v1 + S.m2 * S.v2;
           if (S.yapis) { S.v1 = S.v2 = p / (S.m1 + S.m2); } else { const u1 = S.v1, u2 = S.v2, M = S.m1 + S.m2; S.v1 = ((S.m1 - S.m2) * u1 + 2 * S.m2 * u2) / M; S.v2 = ((S.m2 - S.m1) * u2 + 2 * S.m1 * u1) / M; } }
         if (S.x2 > 7.5 || S.x1 > 7.5) S.kos = 0; }
-      o.A.position.x = S.x1; o.B.position.x = S.x2;
+      FZ.tekerDondur(o.A, S.x1 - o.A.position.x); FZ.tekerDondur(o.B, S.x2 - o.B.position.x); o.A.position.x = S.x1; o.B.position.x = S.x2;
       if (Math.abs(S.v1) > 0.05) { FZ.setArrow(o.oa, V3(S.x1, 1.1, 0.5), V3(Math.sign(S.v1), 0, 0), Math.abs(S.v1) / 4); FZ.show('m7a', V3(S.x1 + S.v1 / 4 + 0.3 * Math.sign(S.v1), 1.1, 0.5), 1); }
       if (Math.abs(S.v2) > 0.05) { FZ.setArrow(o.ob, V3(S.x2, 1.6, 0.5), V3(Math.sign(S.v2), 0, 0), Math.abs(S.v2) / 4); FZ.show('m7b', V3(S.x2 + S.v2 / 4 + 0.3 * Math.sign(S.v2), 1.6, 0.5), 1); }
       const p = S.m1 * S.v1 + S.m2 * S.v2, Ek = 0.5 * S.m1 * S.v1 ** 2 + 0.5 * S.m2 * S.v2 ** 2;

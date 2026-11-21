@@ -691,9 +691,17 @@ LANES.forEach((L, i) => {
   const pts = []; for (let j = 0; j <= 160; j++) { const a = j / 160 * TAU; pts.push(V3(Math.cos(a) * L.r, 0.02, Math.sin(a) * L.r)); }
   const cl = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.16, gapSize: 0.16 })); cl.computeLineDistances(); G2.add(cl);
   const car = new THREE.Group(); G2.add(car); L.car = car;
-  const bd = mesh(new THREE.BoxGeometry(0.86, 0.26, 0.46), L.c); bd.position.y = 0.25; car.add(bd);
-  const cb = mesh(new THREE.BoxGeometry(0.42, 0.22, 0.4), 0xe5e7eb); cb.position.set(-0.04, 0.48, 0); car.add(cb);
-  for (const [x, z] of [[0.27, 0.24], [0.27, -0.24], [-0.27, 0.24], [-0.27, -0.24]]) { const wh = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 16), 0x111827); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.12, z); car.add(wh); }
+  { const P = (geo, c, x, y, z, o) => { const m = mesh(geo, c, o); m.position.set(x, y, z); car.add(m); return m; };   // yarış arabası (formula tipi), +x ileri
+    P(new THREE.BoxGeometry(0.62, 0.14, 0.26), L.c, -0.02, 0.2, 0);                               // gövde
+    const burun = P(new THREE.ConeGeometry(0.1, 0.36, 12), L.c, 0.46, 0.18, 0); burun.rotation.z = -Math.PI / 2;
+    P(new THREE.BoxGeometry(0.1, 0.03, 0.56), 0x111827, 0.6, 0.11, 0);                            // ön kanat
+    P(new THREE.BoxGeometry(0.1, 0.03, 0.46), 0x111827, -0.38, 0.42, 0); P(new THREE.BoxGeometry(0.04, 0.2, 0.03), 0x111827, -0.38, 0.32, 0.18); P(new THREE.BoxGeometry(0.04, 0.2, 0.03), 0x111827, -0.38, 0.32, -0.18); // arka kanat
+    P(new THREE.BoxGeometry(0.24, 0.12, 0.2), L.c, -0.18, 0.3, 0);                                // motor kapağı
+    P(new THREE.SphereGeometry(0.08, 14, 10), 0xf8fafc, 0.05, 0.33, 0);                           // kask
+    P(new THREE.BoxGeometry(0.05, 0.03, 0.12), 0x111827, 0.1, 0.34, 0, { edge: false });          // vizör
+    for (const [x, z, r] of [[0.32, 0.22, 0.09], [0.32, -0.22, 0.09], [-0.27, 0.23, 0.11], [-0.27, -0.23, 0.11]]) {
+      const wh = P(new THREE.CylinderGeometry(r, r, 0.1, 18), 0x111111, x, r, z, { edge: false }); wh.rotation.x = Math.PI / 2;
+      const jt = P(new THREE.CylinderGeometry(r * 0.55, r * 0.55, 0.105, 12), 0xcbd5e1, x, r, z, { edge: false }); jt.rotation.x = Math.PI / 2; } }
   L.vA = arrow(0x22c55e); L.aA = arrow(0xa855f7); L.vA.tid = 'v' + i; L.aA.tid = 'a' + i; L.w_ = W_RED * LANES[0].R / L.R;
   L.wedge = mesh(new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 8, 1, 0, 0.1), L.c, { op: 0.45, cast: false, edge: false }); L.wedge.rotation.x = -Math.PI / 2; L.wedge.position.y = 0.025; G2.add(L.wedge);
   tag('c' + i, '', L.hex, '#fff', true); tag('cr' + i, `r = ${L.R} m`, L.hex, '#fff', true);

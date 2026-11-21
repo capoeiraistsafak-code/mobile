@@ -133,15 +133,13 @@
     S0: () => ({ x: 0, v: 0, a: 0, F: 0, f: 0, kos: 0, sure: -1, m: 1000 }),
     kur(g) {
       for (let i = 0; i <= 10; i++) { kutu(g, 0.06, 0.02, 3, 0xffffff, -8 + i * 2.5, 0.02, 0, { edge: false, cast: false }); etiket('f3m' + i, `${i * 10} m`, '#1f232c'); }
-      const araba = new FZ.THREE.Group(); g.add(araba);
-      kutu(araba, 1.6, 0.45, 0.9, 0xef4444, 0, 0.4, 0); kutu(araba, 0.8, 0.4, 0.8, 0xe5e7eb, -0.15, 0.82, 0);
-      for (const [x, z] of [[0.5, 0.45], [0.5, -0.45], [-0.5, 0.45], [-0.5, -0.45]]) { const w = silindir(araba, 0.2, 0.2, 0.12, 0x111827, x, 0.2, z); w.rotation.x = Math.PI / 2; }
+      const araba = FZ.araba(g, 0xef4444);
       kart('f3t', '', '#F5C400'); etiket('f3F', 'F', '#ec4899'); etiket('f3f', 'f<sub>s</sub>', '#ef4444'); etiket('f3v', 'v', '#16a34a');
       return { araba, oF: ok(0xec4899, 'f3F'), of: ok(0xef4444, 'f3f'), ov: ok(0x22c55e, 'f3v') };
     },
     tick(S, dt, o) {
       if (S.kos) { S.a = (S.F - (S.v > 0 || S.F > S.f ? S.f : S.F)) / S.m; S.v = Math.max(0, S.v + S.a * dt); S.x += S.v * dt; if (S.sure >= 0) S.sure += dt; if (S.xMax && S.x >= S.xMax) { S.x = S.xMax; S.kos = 0; } }
-      const X = -8 + S.x / 4; o.araba.position.x = X;                       // 1 birim = 4 m
+      const X = -8 + S.x / 4; FZ.tekerDondur(o.araba, X - o.araba.position.x); o.araba.position.x = X;                       // 1 birim = 4 m
       for (let i = 0; i <= 10; i++) FZ.show('f3m' + i, V3(-8 + i * 2.5, 0.05, 1.8), 1, 0, 20);
       const b = V3(X, 0.6, 0.6);
       if (S.F > 0) { FZ.setArrow(o.oF, b.clone().add(V3(0.9, 0, 0)), V3(1, 0, 0), S.F / 1000); FZ.show('f3F', b.clone().add(V3(0.9 + S.F / 1000 + 0.3, 0, 0)), 1); }
