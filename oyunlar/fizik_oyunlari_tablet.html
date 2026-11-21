@@ -215,7 +215,13 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .renk{min-width:38px;width:38px;height:38px;border-radius:50%;padding:0;border:4px solid #1f232c}
 #palet .cark{position:relative;overflow:hidden;cursor:pointer;background:conic-gradient(red,#ff0,lime,cyan,blue,#f0f,red)!important}
 #palet .cark::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--sec,#ec4899);border:2px solid #fff}
-#palet .cark input{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:0;padding:0;cursor:pointer}
+#cark{position:absolute;left:516px;top:300px;z-index:9;background:rgba(36,41,52,.98);border:3px solid #ec4899;border-radius:24px;padding:18px;display:flex;align-items:center;gap:20px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+#cark canvas{width:340px;height:340px;border-radius:50%;touch-action:none;cursor:crosshair}
+#cark .sag{display:flex;flex-direction:column;align-items:center;gap:14px}
+#cark .onz{width:110px;height:110px;border-radius:50%;border:5px solid #fff;box-shadow:0 0 0 3px #141414}
+#cark .kp{font:800 28px Inter;background:#22c55e;color:#0b2b16;border-radius:16px;padding:14px 26px}
+#cark .imx{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 2px #000;pointer-events:none}
+#cark .tek{position:relative}
 #palet .renk.on{border-color:#fff;box-shadow:0 0 0 3px #ec4899}
 #palet .ayr{width:2px;height:50px;background:#556070}
 #palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
@@ -378,6 +384,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <canvas id="gl"></canvas>
   <div id="tags"></div>
   <canvas id="ciz" width="1920" height="1080"></canvas>
+  <div id="cark" class="hide"><div class="tek"><canvas id="carkC" width="340" height="340"></canvas><div class="imx" id="carkI"></div></div>
+    <div class="sag"><div class="onz" id="carkO"></div><button class="kp" id="carkTamam">Tamam</button></div></div>
   <div id="palet" class="hide">
     <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏︎</i>Kalem</button>
     <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
@@ -386,12 +394,13 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="mod" id="pMod"><button id="pParca" title="Silginin değdiği kısmı siler"><i>✂︎</i>Parça parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
     <button id="pTem" title="Bütün çizimleri sil"><i>⌫</i>Temizle</button>
     <span class="sat"></span>
-    <button class="renk on" data-r="#ef4444" style="background:#ef4444" title="Kırmızı"></button>
-    <button class="renk" data-r="#facc15" style="background:#facc15" title="Sarı"></button>
-    <button class="renk" data-r="#3b82f6" style="background:#3b82f6" title="Mavi"></button>
-    <button class="renk" data-r="#22c55e" style="background:#22c55e" title="Yeşil"></button>
+    <button class="renk on" data-r="#ff0000" style="background:#ff0000" title="Kırmızı"></button>
+    <button class="renk" data-r="#ffee00" style="background:#ffee00" title="Sarı"></button>
+    <button class="renk" data-r="#0066ff" style="background:#0066ff" title="Mavi"></button>
+    <button class="renk" data-r="#00e640" style="background:#00e640" title="Yeşil"></button>
+    <button class="renk" data-r="#a100ff" style="background:#a100ff" title="Mor"></button>
     <button class="renk" data-r="#ffffff" style="background:#ffffff" title="Beyaz"></button>
-    <label class="renk cark" id="pCark" title="Renk seç (istediğin renk)"><input type="color" id="pRenk" value="#ec4899"></label>
+    <button class="renk cark" id="pCark" title="Renk çemberi: istediğin rengi seç"></button>
     <span class="ayr"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
@@ -1397,12 +1406,12 @@ MISSIONS.forEach(M => M.steps.filter(st => st.q).forEach((st, i) => { st.q.n = (
 // ======================= ÇİZİM: KALEM / LAZER =======================
 // Kalem çizimi kalır; lazer çizimi 1,2 s sonra solar. Animasyon yeniden başlayınca (Devam / Başlat / sonraki adım) bütün çizimler silinir.
 // "Yalnız kalem" açıkken parmak/el (touch) çizmez; tablet kalemi ve fare çizer.
-const CZ = { silMod: 'tum', silen: new Map(), acik: false, arac: 'kalem', renk: '#ef4444', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
+const CZ = { silMod: 'tum', silen: new Map(), acik: false, arac: 'kalem', renk: '#ff0000', yalnizKalem: false, cizgiler: [], aktif: new Map(), kirli: true };
 CZ.yalnizKalem = true; try { const v = localStorage.getItem('ch_yalnizkalem2'); if (v != null) CZ.yalnizKalem = v === '1'; } catch (e) {}   // varsayılan: yalnız kalem (el dokunuşu çizmez)
 const cizCtx = $('ciz').getContext('2d');
 const LAZER_OMUR = 1.2, LAZER_SOL = 0.6;
 function cizAc(ac2) {
-  CZ.acik = ac2 ?? !CZ.acik;
+  CZ.acik = ac2 ?? !CZ.acik; if (!CZ.acik) $('cark').classList.add('hide');
   $('ciz').classList.toggle('acik', CZ.acik); $('palet').classList.toggle('hide', !CZ.acik); $('bCiz').classList.toggle('on', CZ.acik);
   $('durRozet').classList.toggle('pal', CZ.acik);
   if (CZ.acik && GAME.mode === 'game' && !CTL.dur) setDur(true);          // çizmeye başlarken animasyon durur
@@ -1485,8 +1494,25 @@ $('pLazer').onclick = () => { SFX.click(); CZ.arac = 'lazer'; cizAracGuncelle();
 $('pSilgi').onclick = () => { SFX.click(); CZ.arac = 'silgi'; cizAracGuncelle(); };
 $('pParca').onclick = () => { SFX.click(); CZ.silMod = 'parca'; CZ.arac = 'silgi'; cizAracGuncelle(); };
 $('pTum').onclick = () => { SFX.click(); CZ.silMod = 'tum'; CZ.arac = 'silgi'; cizAracGuncelle(); };
-$('pRenk').addEventListener('input', e => { CZ.renk = e.target.value; CZ.arac = 'kalem'; cizAracGuncelle(); });
-$('pRenk').addEventListener('change', e => { CZ.renk = e.target.value; CZ.arac = 'kalem'; cizAracGuncelle(); });
+// ---- Renk çemberi: yuvarlağın üstünden renk seçilir (açı = renk tonu, merkezden uzaklık = canlılık) ----
+{ const cv = $('carkC'), x = cv.getContext('2d'), R0 = 170, img = x.createImageData(340, 340);
+  const hsv = (h, s, v) => { const f = n => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return [f(5), f(3), f(1)].map(c => Math.round(c * 255)); };
+  for (let j = 0; j < 340; j++) for (let i = 0; i < 340; i++) { const dx = i - R0, dy = j - R0, r = Math.hypot(dx, dy), o = (j * 340 + i) * 4;
+    if (r > R0) { img.data[o + 3] = 0; continue; } const [rr, gg, bb] = hsv((Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360, Math.min(1, r / R0), 1);
+    img.data[o] = rr; img.data[o + 1] = gg; img.data[o + 2] = bb; img.data[o + 3] = 255; }
+  x.putImageData(img, 0, 0);
+  const sec = e => { const b = cv.getBoundingClientRect(), k = 340 / b.width; let dx = (e.clientX - b.left) * k - R0, dy = (e.clientY - b.top) * k - R0; const r = Math.hypot(dx, dy);
+    if (r > R0) { dx *= R0 / r; dy *= R0 / r; }
+    const [rr, gg, bb] = hsv((Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360, Math.min(1, Math.hypot(dx, dy) / R0), 1);
+    CZ.renk = '#' + [rr, gg, bb].map(c => c.toString(16).padStart(2, '0')).join(''); CZ.arac = 'kalem';
+    $('carkI').style.display = ''; $('carkI').style.left = (R0 + dx) / k + 'px'; $('carkI').style.top = (R0 + dy) / k + 'px'; $('carkI').style.background = CZ.renk; $('carkO').style.background = CZ.renk; cizAracGuncelle(); };
+  let bas = false;
+  cv.addEventListener('pointerdown', e => { bas = true; try { cv.setPointerCapture(e.pointerId); } catch (er) {} sec(e); });
+  cv.addEventListener('pointermove', e => { if (bas) sec(e); });
+  cv.addEventListener('pointerup', () => { bas = false; }); cv.addEventListener('pointercancel', () => { bas = false; });
+  $('pCark').onclick = () => { SFX.click(); const ac2 = $('cark').classList.contains('hide'); $('cark').classList.toggle('hide', !ac2); $('carkO').style.background = CZ.renk; $('carkI').style.display = 'none'; };
+  $('carkTamam').onclick = () => { SFX.click(); $('cark').classList.add('hide'); };
+}
 document.querySelectorAll('#palet .renk[data-r]').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
 $('pTem').onclick = () => { SFX.click(); cizTemizle(); };
 $('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem2', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
@@ -1550,5 +1576,5 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
-window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.__AU = AU;
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
 </script></body></html>
