@@ -15,6 +15,7 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 ## Ana menü
 - Üstte iki düzey: **🎒 Lise** ve **🎓 Üniversite**. Lise'nin altında **TYT / AYT**, Üniversite'nin altında **Temel dersler / Seçmeli dersler** sekmeleri.
 - Her konu düğmesi üçe bölünür: sol yarı **Konu anlatımı**, ortada konu adı, sağ yarı **Soru çözümü**. Yeşil daire = hazır, kırmızı = yakında.
+- Konuya girince üstteki **📖 Konu anlatımı / ✏️ Soru çözümü** düğmesiyle ikisi arasında doğrudan geçilir.
 - **Konu anlatımı** akışı: Merak → Tahmin → Gözle (3D) → Kavram → Keşfet (sürgülerle dene) → Çözümlü örnek → Dikkat (sık yanlışlar) → Özet.
 - **Soru çözümü**: her konuda 4 soru, notlar ve 1./2. YOL çözümler.
 

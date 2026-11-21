@@ -198,6 +198,10 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .a-acik{margin-top:14px;display:flex;gap:36px;font:700 24px Inter;color:#cbd5e1;align-items:center}
 .a-acik i{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:-4px;margin-right:8px;border:3px solid rgba(255,255,255,.85)}
 #yakinda{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.7)}
+#mMod{margin-top:14px;display:flex;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
+#mMod button{font:900 30px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:12px 40px}
+#mMod button.on{background:#D62828;color:#fff;box-shadow:0 8px 24px rgba(214,40,40,.45)}
+#mMod button:disabled{opacity:.35}
 #mGeri{position:absolute;left:40px;top:40px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:14px 24px}
 #menu{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(58,65,80,.78),rgba(31,35,44,.95))}
 .m-top{margin-top:34px}
@@ -337,6 +341,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button id="mGeri">← Konular</button>
     <div class="m-top"><span class="pill" style="font-size:40px;padding:10px 26px" id="mSinav">AYT FİZİK</span></div>
     <div class="m-bas" id="mKonu">ÇEMBERSEL HAREKET</div>
+    <div id="mMod"><button data-m="ders">📖 Konu anlatımı</button><button data-m="soru">✏️ Soru çözümü</button></div>
     <div class="m-alt">3D Görev Oyunu · <b>Hesapla, cevapla, görevi tamamla!</b></div>
     <div id="cards"></div>
     <div class="m-not">
@@ -1219,8 +1224,13 @@ function anaKur() {
     b.querySelector('.sag').onclick = () => { ac(); SFX.click(); q ? konuAc(SINAV, ad, 'soru') : yakinda('Soru çözümü'); };
     k.appendChild(b); });
 }
-function konuAc(sinav, ad, mod = 'soru') { KONU = { sinav, ad, mod }; $('mSinav').textContent = (SAD[sinav] || sinav) + ' · ' + (mod === 'ders' ? 'KONU ANLATIMI' : 'SORU ÇÖZÜMÜ'); $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
+function konuAc(sinav, ad, mod = 'soru') { KONU = { sinav, ad, mod }; $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR'); modYaz();
   $('ana').classList.add('hide'); buildMenu(); $('menu').classList.remove('hide'); }
+// konu menüsünde Konu anlatımı ⇄ Soru çözümü geçişi
+function modYaz() { if (!KONU) return; const h = HAZIR[KONU.sinav + '|' + KONU.ad] || {}, var_ = { ders: !!(h.dersler && h.dersler.length), soru: !!(h.gorevler && h.gorevler.length) };
+  $('mSinav').textContent = (SAD[KONU.sinav] || KONU.sinav) + ' · ' + (KONU.mod === 'ders' ? 'KONU ANLATIMI' : 'SORU ÇÖZÜMÜ');
+  document.querySelectorAll('#mMod button').forEach(b => { b.classList.toggle('on', b.dataset.m === KONU.mod); b.disabled = !var_[b.dataset.m]; }); }
+document.querySelectorAll('#mMod button').forEach(b => b.onclick = () => { if (!KONU || b.disabled || KONU.mod === b.dataset.m) return; SFX.click(); KONU.mod = b.dataset.m; modYaz(); buildMenu(); });
 function anaDon() { $('menu').classList.add('hide'); anaKur(); $('ana').classList.remove('hide'); }
 function sinavSec(k) { SFX.click(); SINAV = k; try { localStorage.setItem('ch_sinav', SINAV); } catch (e) {} anaKur(); }
 const sonSinav = { lise: SINAV === 'TYT' ? 'TYT' : 'AYT', uni: SINAV === 'SEC' ? 'SEC' : 'UNI' };
