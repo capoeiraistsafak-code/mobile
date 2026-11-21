@@ -99,13 +99,13 @@
   ] });
   const gKQ = gorev(sKQ, { yk: 'SEC6-g1', no: 1, icon: '💠', name: 'Kübit laboratuvarı', task: 'Ölçüm olasılığı, kübit sayısı, kapılar ve dolanıklık.', steps: [
     { do: S => { S.hedef = 90; }, sub: 'Kübit hazırlandı.', go: '▶︎ Başlat' },
-    { do: S => { S.olc = 1; }, q: { t: '|ψ⟩ = (1/√2)|0⟩ + (1/√2)|1⟩ durumundaki kübit ölçülürse 1 çıkma olasılığı nedir?', o: ['½', '1/√2', '1', '0'], f: ['kqt'],
+    { do: S => { S.olc = 1; }, q: { t: `|ψ⟩ = ${F('1', SQ('2'))}|0⟩ + ${F('1', SQ('2'))}|1⟩ durumundaki kübit ölçülürse 1 çıkma olasılığı nedir?`, o: ['½', F('1', SQ('2')), '1', '0'], f: ['kqt'],
       s: [`P(1) = |β|<sup>2</sup> = (${F('1', SQ('2'))})<sup>2</sup> = <em>${F('1', '2')}</em> ✓`], n: ['Olasılık genliğin karesidir, genliğin kendisi değil.'] } },
     { q: { t: '3 kübitlik bir sistemin genel durumu kaç karmaşık genlikle tanımlanır?', o: ['8', '3', '6', '9'],
       s: ['|000⟩, |001⟩, …, |111⟩', '2<sup>3</sup> = <em>8</em> ✓'], n: ['Her kübit eklendiğinde genlik sayısı iki katına çıkar.'] } },
-    { do: S => { S.olc = 0; S.n0 = 0; S.n1 = 0; S.hedef = 180; }, q: { t: 'X (NOT) kapısı |0⟩ durumunu neye dönüştürür?', o: ['|1⟩', '|0⟩', '(|0⟩ + |1⟩)/√2', 'Kübiti siler'], f: ['kqv'],
-      s: ['X kapısı Bloch küresinde 180° döndürür: kuzey → güney.', '<em>|0⟩ → |1⟩</em> ✓'], n: ['Hadamard (H) kapısı ise |0⟩\'ı ekvatora, (|0⟩ + |1⟩)/√2 durumuna götürür.'] } },
-    { q: { t: '(|00⟩ + |11⟩)/√2 durumundaki iki kübitten ilki ölçülüp 1 bulunuyor. İkincisi ölçülürse ne çıkar?', o: ['Kesinlikle 1', 'Kesinlikle 0', '%50 olasılıkla 1', 'Ölçülemez'],
+    { do: S => { S.olc = 0; S.n0 = 0; S.n1 = 0; S.hedef = 180; }, q: { t: 'X (NOT) kapısı |0⟩ durumunu neye dönüştürür?', o: ['|1⟩', '|0⟩', F('|0⟩ + |1⟩', SQ('2')), 'Kübiti siler'], f: ['kqv'],
+      s: ['X kapısı Bloch küresinde 180° döndürür: kuzey → güney.', '<em>|0⟩ → |1⟩</em> ✓'], n: [`Hadamard (H) kapısı ise |0⟩'ı ekvatora, ${F('|0⟩ + |1⟩', SQ('2'))} durumuna götürür.`] } },
+    { q: { t: `${F('|00⟩ + |11⟩', SQ('2'))} durumundaki iki kübitten ilki ölçülüp 1 bulunuyor. İkincisi ölçülürse ne çıkar?`, o: ['Kesinlikle 1', 'Kesinlikle 0', '%50 olasılıkla 1', 'Ölçülemez'],
       s: ['İlk kübit 1 → durum |11⟩\'e çöker', 'İkinci kübit <em>kesinlikle 1</em> ✓'], n: ['Sonuçlar ilişkilidir ama ilk ölçümün sonucu yine rastgeledir; bu yüzden bilgi aktarılamaz.'] } },
   ] });
   konuEkle('SEC', 'Kuantum Hesaplama', { dersler: [dKQ], gorevler: [gKQ] });

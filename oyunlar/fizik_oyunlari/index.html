@@ -172,7 +172,12 @@ button{font-family:inherit;cursor:pointer;border:none}
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 4px;font-size:.82em}
 .fr>span:last-child{border-top:3px solid currentColor;padding-top:2px}
 .fr>span{padding:0 4px}
-.sq{white-space:nowrap}.sq>span{border-top:3px solid currentColor;padding:0 3px;margin-left:1px}
+/* kök: tek parça işaret (kısa çentik + uzun çizgi + üst çizgi), içerik büyüdükçe birlikte uzar */
+.sq{display:inline-block;position:relative;padding-left:.6em;margin-left:.05em;white-space:nowrap}
+.sq::before{content:"";position:absolute;left:0;top:0;bottom:.04em;width:.62em;pointer-events:none;
+  background:linear-gradient(to top left,transparent calc(50% - .05em),currentColor calc(50% - .05em),currentColor calc(50% + .05em),transparent calc(50% + .05em)) right top/.4em 100% no-repeat,
+             linear-gradient(to top right,transparent calc(50% - .045em),currentColor calc(50% - .045em),currentColor calc(50% + .045em),transparent calc(50% + .045em)) left bottom/.24em 46% no-repeat}
+.sq>span{display:inline-block;border-top:.085em solid currentColor;padding:.06em .1em 0 .06em;margin-left:-.02em}
 sup{font-size:.6em;vertical-align:.7em;line-height:0}
 sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
@@ -397,7 +402,7 @@ const TAU = Math.PI * 2;
 const mod = (x, m) => ((x % m) + m) % m;
 // yazım yardımcıları
 const F = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
-const SQ = x => `<span class="sq">√<span>${x}</span></span>`;
+const SQ = x => `<span class="sq"><span>${x}</span></span>`;   // kök işareti CSS ile tek parça çizilir
 const OM = 'ω', AL = 'α';
 
 // ======================= ÖLÇEKLEME (akıllı tahta / her ekran) =======================
@@ -1625,7 +1630,7 @@ const NOTLAR = {
     [N_KURAL, `Tepede kova ters durur: taban suyun <b>ÜSTÜNDE</b> → taban suyu <b>AŞAĞI</b> iter → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `Dipte taban suyun <b>ALTINDA</b> → ${O('N')} yukarı. Yani ${O('N')} her zaman ${K('mg')}'nin tersi değildir.`,
       `Dipte: <span class="fm">${O('N')} − ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span> &nbsp; Tepede: <span class="fm">${O('N')} + ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span></span>`, N_CIFT,
       svgDipTepe('taban', 5.7, 3.7, 20, 'Oklar oyundaki hızlı dönüşün oranıyla: dipte N ≈ 5,7 mg, tepede N ≈ 3,7 mg')],
-    [`Kova yavaşladıkça gereken merkezcil kuvvet (m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>) küçülür, ${O('N')} de küçülür.`, `${O('N')} = 0 olduğu hız sınırdır: yalnız ${K('mg')} merkezcil kuvveti sağlar → mg = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → <span class="fm">v = √(g · r)</span>.`, `Kütle (m) sadeleşir: en küçük hız suyun miktarına bağlı değildir.`],
+    [`Kova yavaşladıkça gereken merkezcil kuvvet (m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span>) küçülür, ${O('N')} de küçülür.`, `${O('N')} = 0 olduğu hız sınırdır: yalnız ${K('mg')} merkezcil kuvveti sağlar → mg = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → <span class="fm">v = ${SQ('g · r')}</span>.`, `Kütle (m) sadeleşir: en küçük hız suyun miktarına bağlı değildir.`],
     [`v = 2 m/s → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 4 m/s² &lt; g = 10 m/s².`, `Suyun çember üzerinde kalması için yalnız 4 m/s²'lik ivme gerekir ama yer çekimi tek başına 10 m/s² verir → su çemberin <b>içine doğru</b> kovadan ayrılır.`, `Kova tabanı suyu çekemeyeceği için (${O('N')} negatif olamaz) bunu engelleyemez.`, `Ayrıldıktan sonra su yalnız yer çekimi etkisindedir: ayrılma anındaki hızla <b>eğik atış</b> yapar (animasyondaki parabol).`],
     [`v = 4 m/s → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 16 m/s² ≥ g → ${K('mg')} tek başına yetmez, kova tabanı da suyu aşağı iter (${O('N')} > 0).`, `Tepede ${O('N')} = m (<span class="fr"><span>v<sup>2</sup></span><span>r</span></span> − g) = m · 6 → ${O('N')} = 0,6 · ${K('mg')}.`, `Su tabana bastırmaya devam ettiği için dökülmez.`],
   ],
@@ -1637,7 +1642,7 @@ const NOTLAR = {
     [`Yan noktada ray trenin dışında (sağında) → ${O('N')} yatay ve <b>merkeze</b> doğru (sola). ${O('N')}'nin teğet bileşeni yoktur.`, `${K('mg')} düşey aşağı; tren yukarı gittiği için bu tam <b>teğet</b> yöndür → a<sub>t</sub> = g = 10 m/s², hıza ters → tren yavaşlar.`, `α = <span class="fr"><span>a<sub>t</sub></span><span>r</span></span> = <span class="fr"><span>10</span><span>10</span></span> = 1 rad/s² (açısal hız azalıyor).`, `Burada ${O('N')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = m · 70 = 7 · ${K('mg')} (v² = 2g(h − r) = 700).`, `Toplam ivme, merkezcil (${M_('a<sub>m</sub>')} = 70 m/s²) ile teğetsel (${M_('a<sub>t</sub>')} = 10 m/s²) bileşenlerin vektörel toplamıdır.`],
     [`Tepe, dipten 2r = 20 m yukarıdadır.`, `Enerji korunumu: m · g · h = m · g · 2r + <span class="fr"><span>1</span><span>2</span></span> · m · v² → <span class="fm">v² = 2g (h − 2r)</span>.`, `Yükseldikçe kinetik enerjinin bir kısmı potansiyel enerjiye döner → tren tepede yavaşlar.`],
     [`Tepede merkez <b>AŞAĞIDA</b> → merkezcil ivme aşağı: a = <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> = 50 m/s².`, `Dipteki 90 m/s²'den küçüktür çünkü v küçüldü.`, `Tepede ${K('mg')} ve ${O('N')} düşey, hareket yatay → a<sub>t</sub> = 0: ivmenin tamamı merkezcil.`],
-    [N_KURAL, `Tepede ray trenin <b>ÜSTÜNDE</b>: ray treni yalnız <b>AŞAĞI</b> itebilir → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `${O('N')} + ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → ${O('N')} = m (50 − 10) = 4 · ${K('mg')}.`, `Raydan düşmeme şartı ${O('N')} ≥ 0 → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ≥ g → v ≥ √(g · r) = 10 m/s. Burada v ≈ 22,4 m/s.`, `Tren tersken düşmez: çembersel yolda kalmak için gereken ivme (50 m/s²) g'den büyüktür; yer çekimi tek başına yetmez, ray iterek eksiği tamamlar.`, N_CIFT,
+    [N_KURAL, `Tepede ray trenin <b>ÜSTÜNDE</b>: ray treni yalnız <b>AŞAĞI</b> itebilir → ${O('N')} aşağı, ${K('mg')} ile aynı yönde.`, `${O('N')} + ${K('mg')} = m · <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> → ${O('N')} = m (50 − 10) = 4 · ${K('mg')}.`, `Raydan düşmeme şartı ${O('N')} ≥ 0 → <span class="fr"><span>v<sup>2</sup></span><span>r</span></span> ≥ g → v ≥ ${SQ('g · r')} = 10 m/s. Burada v ≈ 22,4 m/s.`, `Tren tersken düşmez: çembersel yolda kalmak için gereken ivme (50 m/s²) g'den büyüktür; yer çekimi tek başına yetmez, ray iterek eksiği tamamlar.`, N_CIFT,
       svgDipTepe('ray', 10, 4, 14, 'Oklar gerçek oranla: dipte N = 10 mg, tepede N = 4 mg')],
     [`Düz yolda yükseklik değişmez → tren yaya dipteki hızla (30 m/s) varır.`, `Yay kuvveti (F = k · x) harekete ters → treni yavaşlatır.`, `Kinetik enerji yayın esneklik potansiyel enerjisine dönüşür: <span class="fm"><span class="fr"><span>1</span><span>2</span></span> · m · v² = <span class="fr"><span>1</span><span>2</span></span> · k · x²</span>.`, `En çok sıkışmada tren bir an durur; fren tutmasa yay treni geri iterdi.`],
   ],

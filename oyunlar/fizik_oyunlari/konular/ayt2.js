@@ -96,7 +96,7 @@
   const d6 = ders(s6, { yk: 'AYT6-d1', no: 1, icon: '🧲', name: 'İş enerjiyi nasıl değiştirir?', task: 'İş-enerji teoremi, yay potansiyel enerjisi, sürtünmeli yüzeyde enerji kaybı, güç ve verim.', steps: [
     { k: { tur: 'merak', b: 'Araba tamponları neden yaylı ya da esnektir?', m: ['Çarpışmada enerji bir yere gitmek zorundadır. Yay onu nasıl "saklar"?'], dugme: 'Başlayalım ▶︎' } },
     { k: { tur: 'kavram', b: 'İş-enerji teoremi', m: [`${FM('W<sub>net</sub> = ΔE<sub>k</sub>')} · net kuvvetin yaptığı iş kinetik enerji değişimine eşittir.`, `Yay potansiyel enerjisi: ${FM(`E<sub>yay</sub> = ${F('1', '2')} k x<sup>2</sup>`)} (k: yay sabiti, x: sıkışma)`] } },
-    { p: { t: 'Blok yaya 2 kat daha hızlı çarparsa yay kaç kat daha fazla sıkışır?', o: ['Aynı', '2 kat', '4 kat', '√2 kat'], d: 1 } },
+    { p: { t: 'Blok yaya 2 kat daha hızlı çarparsa yay kaç kat daha fazla sıkışır?', o: ['Aynı', '2 kat', '4 kat', SQ('2') + ' kat'], d: 1 } },
     { sub: 'Bloğu sürtünmesiz eğik düzlemden bırakalım.', go: '▶︎ Bırak' },
     { do: S => { S.kos = 1; }, sub: 'Blok kayıyor, sonra yayı sıkıştırıyor…', until: S => !S.kos },
     { k: { tur: 'gozlem', sonuc: true, b: 'Enerji yayda depolanır', f: ['a6t'], m: [`mgh = ${F('1', '2')} m v² = ${F('1', '2')} k x² → 100 J = ${F('1', '2')} · 800 · x² → x = 0,5 m`, `${F('1', '2')} m v² = ${F('1', '2')} k x² → x = v ${SQ(`${F('m', 'k')}`)} : hız 2 katına → sıkışma <em>2 katına</em>.`] } },
