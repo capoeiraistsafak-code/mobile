@@ -1505,7 +1505,7 @@ $('pTum').onclick = () => { SFX.click(); CZ.silMod = 'tum'; CZ.arac = 'silgi'; c
     if (r > R0) { dx *= R0 / r; dy *= R0 / r; }
     const [rr, gg, bb] = hsv((Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360, Math.min(1, Math.hypot(dx, dy) / R0), 1);
     CZ.renk = '#' + [rr, gg, bb].map(c => c.toString(16).padStart(2, '0')).join(''); CZ.arac = 'kalem';
-    $('carkI').style.display = ''; $('carkI').style.left = (R0 + dx) / k + 'px'; $('carkI').style.top = (R0 + dy) / k + 'px'; $('carkI').style.background = CZ.renk; $('carkO').style.background = CZ.renk; cizAracGuncelle(); };
+    $('carkI').style.display = ''; $('carkI').style.left = (R0 + dx) + 'px'; $('carkI').style.top = (R0 + dy) + 'px'; /* sahne birimi (ölçekten bağımsız) */ $('carkI').style.background = CZ.renk; $('carkO').style.background = CZ.renk; cizAracGuncelle(); };
   let bas = false;
   cv.addEventListener('pointerdown', e => { bas = true; try { cv.setPointerCapture(e.pointerId); } catch (er) {} sec(e); });
   cv.addEventListener('pointermove', e => { if (bas) sec(e); });
