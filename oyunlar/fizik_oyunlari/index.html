@@ -400,6 +400,15 @@ function loopSnd(kind) {
 }
 oyunSesleri();
 function stopLoops() { AU.loops.forEach(l => l.stop()); AU.loops = []; }
+// Tablette (Android) kalem kullanımı, tam ekran, uygulama/oyun değişimi gibi durumlarda tarayıcı ses motorunu
+// "çalışıyor" gösterip susturabiliyor. Çözüm: dokunuşla başlayan önemli anlarda (görev başlangıcı, devam) ses motorunu
+// tamamen kapatıp YENİSİNİ kurmak ve görevin arka plan sesini yeniden bağlamak.
+function sesYenile() {
+  stopLoops(); const eski = AU.ctx; AU.ctx = null; AU.m = AU.oyun = AU.nb = null; AU.acildi = false;
+  if (eski) { try { eski.close(); } catch (e) {} }
+  ac(); if (AU.ctx && AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {});
+  if (typeof GAME !== 'undefined' && GAME.mode === 'game' && GAME.M && GAME.M.sesTur) GAME.M.snd = loopSnd(GAME.M.sesTur);
+}
 function setSes(on) { AU.on = on; $('bSes').textContent = on ? '🔊' : '🔇'; if (AU.m) AU.m.gain.setTargetAtTime(on ? .8 : 0, AU.ctx.currentTime, .05); try { localStorage.setItem('ch_ses', on ? '1' : '0'); } catch (e) {} }
 
 // ======================= 3D TEMEL (Tinkercad tarzı) =======================
@@ -540,7 +549,7 @@ const M1 = {
   task: 'İpe bağlı roketin hareketini hesaplayın, sonra ipi keserek roketi hedefe gönderin.',
   data: [['İp uzunluğu', 'r = 2 m'], ['Bir tur süresi', 'T = 2 s'], ['Masa', 'yatay, sürtünmesiz'], ['Alınacak değer', 'π = 3']],
   reset() { this.S = { a: Math.PI / 2, spin: false, arm: false, fly: -1, hit: false, v: false, av: false, w: '', vt: 'v', at: 'a', ht: 0 };
-    setPlate(14, 10, 1.2, -0.5); camGoal([2.0, 10.8, 11.6], [2.0, -0.2, -0.9], true); this.snd = loopSnd('swish'); },
+    setPlate(14, 10, 1.2, -0.5); camGoal([2.0, 10.8, 11.6], [2.0, -0.2, -0.9], true); this.sesTur = 'swish'; this.snd = loopSnd('swish'); },
   qp(at) { return at === 'peg' ? V3(0, Y1 + 0.9, 0) : rocket.position.clone().add(V3(0, 0.8, 0)); },
   tick(dt) {
     const S = this.S, W = Math.PI;                       // görsel: bir tur 2 s
@@ -622,7 +631,7 @@ const M2 = {
   data: [['Üç arabanın hızı', 'v = 10 m/s'], ['Yarıçaplar', 'r = 10 · 20 · 30 m'], ['Alınacak değer', 'π = 3']],
   qp(at) { return LANES[at].car.position.clone().add(V3(0, 1.2, 0)); },
   reset() { this.S = { t: 0, run: false, wedge: false, a: false, cw: false, ca: false, lap: -1 };
-    setPlate(12, 12, 0, 0); camGoal([0, 11.6, 10.2], [0, -0.3, 0.5], true); this.snd = loopSnd('engine'); },
+    setPlate(12, 12, 0, 0); camGoal([0, 11.6, 10.2], [0, -0.3, 0.5], true); this.sesTur = 'engine'; this.snd = loopSnd('engine'); },
   tick(dt) {
     const S = this.S; if (S.run) S.t += dt; if (S.lap >= 0 && S.run) S.lap += dt;
     this.snd.set(S.run ? .1 : 0, .5);
@@ -700,7 +709,7 @@ const M3 = {
   qp() { return rimPos(Math.PI, RW).add(V3(0, 1.0, 0.9)); },
   reset() { this.S = { th: 0, w: 0, mode: 'stop', goal: 0, frz: false, sp: null, spDone: 0, turns: 0, ok: '' };
     water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false);
-    setPlate(12, 8, 0, 0); camGoal([4.6, 5.6, 17.5], [0.3, AX + 0.8, 0], true); this.snd = loopSnd('swish'); },
+    setPlate(12, 8, 0, 0); camGoal([4.6, 5.6, 17.5], [0.3, AX + 0.8, 0], true); this.sesTur = 'swish'; this.snd = loopSnd('swish'); },
   tick(dt) {
     const S = this.S;
     if (S.mode === 'fast') { S.th += W_FAST * dt; S.w = W_FAST; }
@@ -834,7 +843,7 @@ const M4 = {
   data: [['Başlangıç yüksekliği', 'h = 45 m'], ['Döngü yarıçapı', 'r = 10 m'], ['Yer çekimi ivmesi', 'g = 10 m/s²'], ['Sürtünme', 'yok']],
   qp(at) { return at === 'yay' ? V3(R_WALL - 0.7, R_TY + 1.3, -R_Z) : wagon.position.clone().add(V3(1.4, 1.0, 0.9)); },
   reset() { this.S = { s: S0_4, run: false, goal: 0, stop: 'start', cx: 0, tc: -1, done: false, clk: 0, m: false, vlab: 'v', alab: 'a', ok: '' };
-    setPlate(27, 9, -2.4, -0.4); this.snd = loopSnd('rumble'); this.camFor(true); },
+    setPlate(27, 9, -2.4, -0.4); this.sesTur = 'rumble'; this.snd = loopSnd('rumble'); this.camFor(true); },
   camFor(snap) {
     const S = this.S, x = coaster(S.s).p.x;
     if (S.stop === 'start' && !S.run) camGoal([-6.2, 7.0, 21], [-6.5, 4.6, 0], snap);
@@ -1009,7 +1018,7 @@ function buildMenu() {
 function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
 
 function startMission(M) {
-  stopLoops(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
+  sesYenile(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = '';
@@ -1335,7 +1344,7 @@ function oyunSesKanali(acik) { if (!AU.oyun) return; const g = AU.oyun.gain, t =
 function sesUyandir() {
   if (!AU.ctx) { ac(); }
   if (!AU.ctx) return;
-  if (AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {});
+  if (AU.ctx.state !== 'running') { const c0 = AU.ctx; c0.resume().then(() => {}, () => {}); setTimeout(() => { if (AU.ctx === c0 && c0.state !== 'running') sesYenile(); }, 400); }
   if (!AU.acildi) { try { const b = AU.ctx.createBuffer(1, 1, 22050), s = AU.ctx.createBufferSource(); s.buffer = b; s.connect(AU.ctx.destination); s.start(0); AU.acildi = true; } catch (e) {} }
   sesRozet();
 }
@@ -1345,8 +1354,9 @@ setInterval(sesRozet, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sesUyandir(); });
 document.addEventListener('fullscreenchange', sesUyandir);
 function setDur(d) {
-  oyunSesKanali(!d);
-  if (CTL.dur && !d) cizTemizle();                                        // tekrar başlatınca çizimler silinir
+  const durdu = CTL.dur;
+  if (durdu && !d) { CTL.dur = false; sesYenile(); cizTemizle(); }          // devam: temiz ses motoru + çizimler silinir
+  oyunSesKanali(!d);                                        // tekrar başlatınca çizimler silinir
   CTL.dur = d; $('bDur').innerHTML = d ? IC_DEV + 'Devam' : IC_DUR + 'Duraklat'; $('bDur').classList.toggle('dur', d);
   $('durRozet').classList.toggle('hide', !d); hizRozet();
 }
