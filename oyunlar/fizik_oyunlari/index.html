@@ -22,6 +22,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 #tTitle{font:800 40px/1.1 Inter;color:#F5C400;white-space:nowrap}
 #tTask{flex:1;min-width:0;font:600 23px/1.22 Inter;color:#e5e7eb;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #tTitle{overflow:hidden;text-overflow:ellipsis;max-width:760px}
+.tb.gez{width:auto;padding:0 18px;font:800 26px Inter}
+.tb.gez:disabled{opacity:.35}
 .tb{flex:none;width:76px;height:76px;border-radius:18px;background:#3a4150;color:#fff;font:700 36px Inter;display:flex;align-items:center;justify-content:center;border:2px solid #556070}
 .tb:active{transform:scale(.94)}
 
@@ -307,6 +309,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <span id="tYil"></span>
     <div id="tTitle"></div>
     <div id="tTask"></div>
+    <button class="tb gez" id="bOnc" title="Önceki soru / kart (PageUp)">◀ Önceki</button>
+    <button class="tb gez" id="bSon" title="Sonraki soru / kart (PageDown)">Sonraki ▶</button>
     <button id="bNot" class="tb" title="Notlar: neden böyle? (N)"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M6 2h9l5 5v15H6zM14 3v5h5M8 12h10v1.6H8zm0 4h10v1.6H8zm0-8h5v1.6H8z" fill-rule="evenodd"/></svg>Notlar</button>
     <button class="tb" id="bTam" title="Tam ekran / Küçült (F)" style="width:auto;padding:0 16px;gap:8px;font:800 26px Inter"></button>
     <button class="tb" id="bSes" title="Ses (M)">🔊</button>
@@ -1353,7 +1357,7 @@ const GRUPLAR = new Set(MISSIONS.map(m => m.group));
 function showOnly(M) { GRUPLAR.forEach(g => g.visible = g === M.group); }
 
 function startMission(M) {
-  PANEL.qc = PANEL.board = false; sesYenile(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
+  PANEL.qc = PANEL.board = false; sesYenile(); GAME.M = M; GAME.cev = new Map(); GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
@@ -1368,7 +1372,7 @@ function overlay(html) { $('ov').innerHTML = `<div class="ov-k">${html}</div>`; 
 function closeOverlay() { $('ov').classList.add('hide'); }
 
 function next() {
-  const M = GAME.M; GAME.i++; const st = M.steps[GAME.i];
+  const M = GAME.M; GAME.i++; const st = M.steps[GAME.i]; setTimeout(gezYaz);
   $('go').classList.add('hide');
   if (!st) return finish();
   if (st.sub !== undefined) sub(st.sub);
@@ -1382,6 +1386,38 @@ function next() {
   else if (st.x) kesif(st.x);
   else next();
 }
+
+// ---- Önceki / sonraki soru (ya da ders kartı) ----
+// Hedef adıma kadar bütün adımlar sessizce ve hızlıca yeniden oynatılır; böylece 3D sahne o adımdaki doğru durumda olur.
+const etkilesimli = st => !!(st && (st.q || st.k || st.p || st.x));
+function adimaGit(hedef) {
+  const M = GAME.M; if (!M || GAME.mode !== 'game') return; hedef = Math.max(0, Math.min(M.steps.length, hedef));
+  const first = GAME.first, sus = {}; Object.keys(SFX).forEach(k => { if (typeof SFX[k] === 'function') { sus[k] = SFX[k]; SFX[k] = () => {}; } });
+  try {
+    cizTemizle(); M.reset(); $('bFound').innerHTML = ''; $('bFoundH').classList.add('hide'); GAME.wait = null; GAME.timer = 0; GAME.q = null; GAME.qn = 0; GAME.total = 0;
+    ['qc', 'go', 'ov'].forEach(id => $(id).classList.add('hide')); $('sub').classList.remove('q');
+    const dt = 1 / 30;
+    let altyazi = '';
+    for (let i = 0; i < hedef; i++) { const st = M.steps[i]; GAME.i = i;
+      if (st.sub !== undefined) altyazi = st.sub;
+      if (st.do) st.do(M.S, M);
+      if (st.go) continue;
+      if (st.until) { for (let n = 0; n < 9000 && !st.until(M.S); n++) M.tick(dt); }
+      else if (st.wait) { for (let t = 0; t < st.wait; t += dt) M.tick(dt); }
+      else if (st.q) { GAME.qn++; GAME.total++; if (st.q.after) st.q.after(M.S, M); }
+      else if (st.k || st.p) GAME.qn++;
+      else if (st.x) { GAME.qn++; st.x.kay.forEach(k => { if (M.S['_' + k.ad] == null) M.S['_' + k.ad] = k.deger; k.set(M.S, M.S['_' + k.ad]); }); }
+    }
+    sub(altyazi);
+  } finally { Object.assign(SFX, sus); }
+  GAME.i = hedef - 1; GAME.first = first; setDur(false); next(); gezYaz();
+}
+function gezHedef(yon) { const M = GAME.M; if (!M) return -1; const L = M.steps;
+  if (yon > 0) { for (let i = GAME.i + 1; i < L.length; i++) if (etkilesimli(L[i])) return i; return -1; }
+  const bas = etkilesimli(L[GAME.i]) ? GAME.i - 1 : GAME.i - 1; for (let i = bas; i >= 0; i--) if (etkilesimli(L[i]) && i < GAME.i) return i; return -1; }
+function gezYaz() { if (!GAME.M) return; $('bOnc').disabled = gezHedef(-1) < 0; $('bSon').disabled = gezHedef(1) < 0; }
+function gez(yon) { const h = gezHedef(yon); if (h < 0) return; SFX.click(); adimaGit(h); }
+$('bOnc').onclick = () => gez(-1); $('bSon').onclick = () => gez(1);
 
 function ask(q) {
   GAME.qn++; GAME.total++;
@@ -1448,7 +1484,9 @@ function answer(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true;
   const ok = k === Q.correctPos, btns = [...$('opts').children];
   btns.forEach((b, j) => { b.disabled = true; if (j === Q.correctPos) b.classList.add('ok'); else if (j === k) b.classList.add('no'); else b.classList.add('dim'); });
-  if (ok) { GAME.first++; yildizGoster(true); SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
+  const tekrar = GAME.cev && GAME.cev.has(GAME.i); if (GAME.cev && !tekrar) GAME.cev.set(GAME.i, ok);   // geri dönülüp yeniden cevaplanan soru yıldızı değiştirmez
+  if (ok && !tekrar) { GAME.first++; yildizGoster(true); SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
+  else if (ok) { SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru! (tekrar · yıldız değişmez)'; }
   else { SFX.bad(); $('fb').className = 'no'; $('fb').textContent = '✗ Yanlış! Önce çözümü inceleyelim.'; }
   $('qc').classList.add('cev');
   const lines = Q.q.s, gap = ok ? 0.45 : 1.25;
@@ -1522,6 +1560,8 @@ addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return; // şifre yazarken kısayollar çalışmasın
   if (!$('kilit').classList.contains('hide')) return;
   const k = e.key.toLowerCase();
+  if (GAME.mode === 'game' && e.key === 'PageDown') { e.preventDefault(); return gez(1); }
+  if (GAME.mode === 'game' && e.key === 'PageUp') { e.preventDefault(); return gez(-1); }
   if (GAME.mode === 'game' && k === 'q') return panelAyarla('qc', !PANEL.qc);
   if (GAME.mode === 'game' && k === 'v') return panelAyarla('board', !PANEL.board);
   if (k === 'f') return fullscreen();

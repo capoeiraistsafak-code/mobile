@@ -49,7 +49,11 @@ Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri *
 
 **Kalem / Lazer:** sol alttaki **✏ Çiz** (ya da `K`) çizim paletini açar ve animasyonu duraklatır. **Kalem** çizgisi kalır (5 renk), **Lazer** çizgisi 1–2 saniyede kaybolur (`L`). **Silgi** (`S`) iki modda çalışır: **Tüm çizgi** (varsayılan) değdiği çizginin tamamını siler, **Parça parça** yalnız değdiği kısmı siler. Renk çemberinden istenen renk seçilir. **Temizle** hepsini siler. Animasyon yeniden başlayınca (Devam / Treni sür / sonraki soru) çizimler kendiliğinden silinir. Fare ile de çizilir. **✋ Yalnız kalem** varsayılan olarak AÇIK: el/parmak dokunuşu çizmez, yalnız kalem (ve fare) çizer; kapatılabilir. Duraklatınca oyun sesleri (araç, roket, tren…) susar, düğme sesleri çalmaya devam eder.
 
-Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran.
+**Önceki / Sonraki:** Üst banttaki **◀ Önceki** ve **Sonraki ▶** düğmeleri (ya da sunum kumandasının `PageUp` / `PageDown` tuşları) derste bir önceki/sonraki karta, görevde bir önceki/sonraki soruya geçer. 3D sahne o adımdaki duruma kendiliğinden getirilir. Geri dönülüp yeniden cevaplanan soru yıldız sayısını değiştirmez.
+
+**Panelleri gizleme:** Soru kartı sağa (⟩ ya da `Q`), değerler sola (⟨ ya da `V`) kaydırılınca kenara gizlenir; kenardaki **◀ SORU** / **DEĞERLER ▶** sekmeleriyle geri gelir. Çizim paleti ▲ Küçült ile küçük düğmeye dönüşür, çizim açık kalır.
+
+Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran · `PageUp`/`PageDown` önceki/sonraki · `Q` soru kartı · `V` değerler.
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
 
