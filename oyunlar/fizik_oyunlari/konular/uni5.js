@@ -180,7 +180,7 @@
       for (let i = 0; i <= 100; i++) { const x = -5 + i / 10; const aci = sap * (Math.atan(x / b) / (Math.PI / 2) + 1) / 2; pts.push(V3(x, 2.4, b - aci * (x + 5) * 0.25)); }
       FZ.setLine(o.isin, pts); FZ.setLine(o.duzIsin, [V3(-5, 2.4, b), V3(5, 2.4, b)]); FZ.show('ggi', V3(-4.3, 2.7, b), 1);
       const rs = 2 * 6.67e-11 * S.M * 2e30 / 9e16 / 1000;
-      FZ.setTag('ggt', S.kd ? `Kara delik · olay ufku: r<sub>s</sub> = ${F('2GM', 'c<sup>2</sup>')}` : `Kütle = ${fs(S.M)} Güneş kütlesi · r<sub>s</sub> = ${fs(rs)} km`); FZ.show('ggt', V3(0, 3.2, -3.6), 1);
+      FZ.setTag('ggt', S.kd ? `Kara delik · olay ufku: r<sub>s</sub> = ${F('2GM', 'c<sup>2</sup>')}` : `Kütle = ${fs(S.M)} Güneş kütlesi · r<sub>s</sub> = ${fs(rs)} km`); FZ.show('ggt', V3(-1.5, 2.4, 3.6), 1);
     },
     qp: () => V3(0, 2.5, 0) });
   const dGG = ders(sGG, { yk: 'SEC8-d1', no: 1, icon: '🌀', name: 'Kütle uzay-zamanı büker', task: 'Eşdeğerlik ilkesi, uzay-zaman eğriliği, ışığın bükülmesi, kütle çekimsel zaman genişlemesi, kara delikler, kütle çekim dalgaları.', steps: [
