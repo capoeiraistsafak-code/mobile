@@ -160,12 +160,12 @@
   // =====================================================================
   // GENEL GÖRELİLİK VE KARA DELİKLER — eğri uzay-zaman ızgarası (benzetme), ışığın bükülmesi
   // =====================================================================
-  const sGG = sahne({ icon: '🕳️', cam: [[1.4, 7, 8], [1.4, 0, 0]], plate: [11, 9, 0, -10],
+  const sGG = sahne({ icon: '🕳️', cam: [[2, 9.5, 11], [2, 1.2, 0]], plate: [11, 9, 0, 0],
     data: [['G', '6,67 · 10⁻¹¹ N·m²/kg²'], ['c', '3 · 10⁸ m/s']],
     S0: () => ({ M: 1, kd: 0 }),
     kur(g) {
       const geo = new THREE.PlaneGeometry(10, 8, 60, 48); geo.rotateX(-Math.PI / 2);
-      const lev = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x334155, wireframe: true })); g.add(lev);
+      const lev = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x334155, wireframe: true })); lev.position.y = 1.8; g.add(lev); // ızgara tabanın üstünde dursun
       const kut = top(g, 0.4, 0xfacc15, 0, 0, 0, { edge: false }), ufuk = FZ.mesh(new THREE.SphereGeometry(1, 32, 20), 0x000000, { edge: false }); g.add(ufuk);
       const isin = duz(g, 0xef4444), duzIsin = FZ.cizgi(g, 0x94a3b8);
       kart('ggt', '', '#F5C400'); etiket('ggi', 'ışık', '#dc2626');
@@ -175,12 +175,12 @@
       const pos = o.lev.geometry.attributes.position, d = S.kd ? 2.5 : 1.2 * S.M;
       for (let i = 0; i < pos.count; i++) { const x = o.y0[i * 3], z = o.y0[i * 3 + 2], r = Math.hypot(x, z); pos.setY(i, -d / Math.sqrt(r * r / (S.kd ? 0.5 : 1) + 0.6) + 0.3); }
       pos.needsUpdate = true;
-      o.kut.visible = !S.kd; o.ufuk.visible = !!S.kd; o.kut.position.y = -d / Math.sqrt(0.6) + 0.7; o.ufuk.position.y = o.kut.position.y; o.ufuk.scale.setScalar(0.8);
+      o.kut.visible = !S.kd; o.ufuk.visible = !!S.kd; o.kut.position.y = 1.8 - d / Math.sqrt(0.6) + 0.7; o.ufuk.position.y = o.kut.position.y; o.ufuk.scale.setScalar(0.8);
       const b = 1.6, sap = (S.kd ? 0.9 : 0.25 * S.M), pts = [];
-      for (let i = 0; i <= 100; i++) { const x = -5 + i / 10; const aci = sap * (Math.atan(x / b) / (Math.PI / 2) + 1) / 2; pts.push(V3(x, 0.6, b - aci * (x + 5) * 0.25)); }
-      FZ.setLine(o.isin, pts); FZ.setLine(o.duzIsin, [V3(-5, 0.6, b), V3(5, 0.6, b)]); FZ.show('ggi', V3(-4.5, 0.9, b), 1);
+      for (let i = 0; i <= 100; i++) { const x = -5 + i / 10; const aci = sap * (Math.atan(x / b) / (Math.PI / 2) + 1) / 2; pts.push(V3(x, 2.4, b - aci * (x + 5) * 0.25)); }
+      FZ.setLine(o.isin, pts); FZ.setLine(o.duzIsin, [V3(-5, 2.4, b), V3(5, 2.4, b)]); FZ.show('ggi', V3(-4.3, 2.7, b), 1);
       const rs = 2 * 6.67e-11 * S.M * 2e30 / 9e16 / 1000;
-      FZ.setTag('ggt', S.kd ? `Kara delik · olay ufku: r<sub>s</sub> = ${F('2GM', 'c<sup>2</sup>')}` : `Kütle = ${fs(S.M)} Güneş kütlesi · r<sub>s</sub> = ${fs(rs)} km`); FZ.show('ggt', V3(0, 1.6, -3.6), 1);
+      FZ.setTag('ggt', S.kd ? `Kara delik · olay ufku: r<sub>s</sub> = ${F('2GM', 'c<sup>2</sup>')}` : `Kütle = ${fs(S.M)} Güneş kütlesi · r<sub>s</sub> = ${fs(rs)} km`); FZ.show('ggt', V3(0, 3.2, -3.6), 1);
     },
     qp: () => V3(0, 2.5, 0) });
   const dGG = ders(sGG, { yk: 'SEC8-d1', no: 1, icon: '🌀', name: 'Kütle uzay-zamanı büker', task: 'Eşdeğerlik ilkesi, uzay-zaman eğriliği, ışığın bükülmesi, kütle çekimsel zaman genişlemesi, kara delikler, kütle çekim dalgaları.', steps: [
@@ -190,7 +190,7 @@
     { sub: 'Işığın yoluna bakalım (gri: düz yol).', go: '▶︎ Bak' },
     { k: { tur: 'gozlem', sonuc: true, b: 'Işık da eğri uzay-zamanı izler', f: ['ggi'], m: ['1919 Güneş tutulmasında Eddington yıldızların yerini kaymış ölçtü: Güneş kenarında 1,75 açı saniyesi — Einstein\'ın tahmini.', 'Gökadaların arkasındaki cisimlerin çoklu görüntüsü: kütle çekimsel mercek.'] } },
     { x: { b: 'Kütleyi değiştir', m: ['Eğrilik ve olay ufku yarıçapı.'],
-      kay: [{ ad: 'M', etiket: 'M', min: 0.5, max: 3, adim: 0.5, deger: 1, birim: 'M<sub>☉</sub>', set: (S, v) => { S.M = v; } }],
+      kay: [{ ad: 'M', etiket: 'M', min: 0.5, max: 3, adim: 0.5, deger: 1, birim: 'M☉', set: (S, v) => { S.M = v; } }],
       olc: S => `r<sub>s</sub> = ${F('2GM', 'c<sup>2</sup>')} ≈ <em>${fs(2.96 * S._M)} km</em> (bu kütle bu yarıçapa sıkışırsa kara delik olur)` } },
     { do: S => { S.M = 1; S.kd = 1; }, k: { tur: 'kavram', b: 'Kara delik', f: ['ggt'], m: [`${FM(`r<sub>s</sub> = ${F('2 G M', 'c<sup>2</sup>')}`)} · olay ufkunun içinden ışık bile kaçamaz.`, '2019: Event Horizon Teleskobu M87 gökadasındaki kara deliğin gölgesini görüntüledi. 2015: LIGO iki kara deliğin birleşmesinden gelen kütle çekim dalgalarını ölçtü.'] } },
     { k: { tur: 'dikkat', b: 'Kütle çekim zamanı da yavaşlatır', m: ['Güçlü çekimde saatler yavaş işler. GPS uydularının saatleri yerdekilerden günde ~45 μs hızlı işler (özel görelilik −7 μs ile toplam +38 μs).', 'Kara delik "elektrikli süpürge" değildir: Güneş kara deliğe dönüşseydi Dünya\'nın yörüngesi değişmezdi.'] } },

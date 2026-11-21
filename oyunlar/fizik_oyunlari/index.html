@@ -1304,7 +1304,7 @@ function kesif(x) {
   kesYaz(); $('qnext').textContent = 'Devam ▶︎'; $('qnext').classList.remove('hide'); kaySolGuncelle();
 }
 function kesYaz() { const Q = GAME.q; if (!Q || !Q.kesif) return; const x = Q.q, S = GAME.M.S;
-  x.kay.forEach((k, i) => { const e = $('kv' + i); if (e) e.textContent = String(S['_' + k.ad]).replace('.', ',') + ' ' + (k.birim || ''); });
+  x.kay.forEach((k, i) => { const e = $('kv' + i); if (e) e.innerHTML = String(S['_' + k.ad]).replace('.', ',') + ' ' + (k.birim || ''); });
   const o = $('kesOlc'); if (o) o.innerHTML = x.olc(S); }
 // ---- Tahmin et: öğrenci bir şık seçer (puan yok); sonra sahnede olay gösterilir ----
 function tahmin(p) {

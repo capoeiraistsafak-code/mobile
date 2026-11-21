@@ -58,7 +58,7 @@
   // =====================================================================
   const NE = 26;
   const BANT = f => f < 3e9 ? 'radyo' : f < 3e11 ? 'mikrodalga' : f < 4e14 ? 'kızılötesi' : f < 7.9e14 ? 'görünür ışık' : f < 3e16 ? 'morötesi' : f < 3e19 ? 'X ışını' : 'gama';
-  const sEM = sahne({ icon: '📡', cam: [[-2, 4.5, 10], [1.2, 1.5, 0]], plate: [13, 6, 0, 0],
+  const sEM = sahne({ icon: '📡', cam: [[-1, 5, 14.5], [1.6, 1.8, 0]], plate: [13, 6, 0, 0],
     data: [['c', '3 · 10⁸ m/s'], ['μ₀', '4π · 10⁻⁷ T·m/A'], ['ε₀', '8,85 · 10⁻¹² C²/N·m²']],
     S0: () => ({ k: 1.2, kos: 1, lg: 8 }),
     kur(g) {
@@ -168,7 +168,7 @@
   // =====================================================================
   // nükleon başına bağlanma enerjisi (MeV), gerçek eğriye yakın basit model: Fe-56 civarında tepe ≈ 8,8 MeV
   const BE = A => A < 2 ? 0 : A <= 4 ? [0, 0, 1.1, 2.8, 7.07][A] : A < 56 ? 7.07 + (8.79 - 7.07) * (1 - Math.exp(-(A - 4) / 12)) : 8.79 - (A - 56) * 0.0058;
-  const sNK = sahne({ icon: '☢️', cam: [[1.8, 4, 11], [1.8, 2.2, 0]], plate: [12, 5, 0, 0],
+  const sNK = sahne({ icon: '☢️', cam: [[3, 4, 16], [3, 2.4, 0]], plate: [13, 5, 1, 0],
     data: [['1 u', '931,5 MeV/c²'], ['R₀', '1,2 fm']],
     S0: () => ({ mod: 'fisyon', faz: 0, kos: 0, A: 56 }),
     kur(g) {
