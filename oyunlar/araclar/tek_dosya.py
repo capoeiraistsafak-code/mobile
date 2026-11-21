@@ -25,6 +25,9 @@ font_css = '\n'.join(gom)
 
 html = re.sub(r'<link href="https://fonts.googleapis.com[^>]+>', '<style>' + font_css + '</style>', html)
 html = html.replace('<script src="three.min.js"></script>', '<script>' + three.replace('</script', '<\\/script') + '</script>')
+for m in re.findall(r'<script src="(konular/[^"]+)"></script>', html):
+    js = open(os.path.join(kl, m), encoding='utf-8').read()
+    html = html.replace(f'<script src="{m}"></script>', '<script>' + js.replace('</script', '<\\/script') + '</script>')
 html = html.replace('url(logo.png)', 'url(data:image/png;base64,' + logo + ')')
 assert '<script src="three.min.js">' not in html and 'url(logo.png)' not in html
 open(cikti, 'w', encoding='utf-8').write(html)

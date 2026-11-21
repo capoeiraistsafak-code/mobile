@@ -20,7 +20,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 .pill{display:inline-block;background:#D62828;color:#fff;font:900 30px Inter;padding:8px 20px;border-radius:12px;white-space:nowrap}
 #tTitle{font:800 40px/1.1 Inter;color:#F5C400;white-space:nowrap}
 #tTask{flex:1;min-width:0;font:600 23px/1.22 Inter;color:#e5e7eb;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#tTitle{overflow:hidden;text-overflow:ellipsis;max-width:520px}
+#tTitle{overflow:hidden;text-overflow:ellipsis;max-width:760px}
 .tb{flex:none;width:76px;height:76px;border-radius:18px;background:#3a4150;color:#fff;font:700 36px Inter;display:flex;align-items:center;justify-content:center;border:2px solid #556070}
 .tb:active{transform:scale(.94)}
 
@@ -109,6 +109,15 @@ button{font-family:inherit;cursor:pointer;border:none}
 .op.ok{background:#14532d;border-color:#4ade80}.op.ok i{background:#4ade80;color:#14532d}
 .op.no{background:#7f1d1d;border-color:#f87171}.op.no i{background:#f87171;color:#7f1d1d}
 .op.dim{display:none}
+.kes{margin:10px 0;display:flex;flex-direction:column;gap:10px}
+.kk{display:flex;align-items:center;gap:12px;font:800 28px Inter;color:#fff}
+.kk .ka{min-width:230px;color:#93c5fd}
+.kk button{width:70px;height:62px;border-radius:14px;background:#0891b2;color:#fff;font:900 38px Inter;border:2px solid #67e8f9}
+.kk button:active{transform:scale(.92)}
+.kk b{min-width:150px;text-align:center;font:900 32px Inter;color:#F5C400;background:#1f232c;border-radius:12px;padding:8px 10px}
+.kol{font:700 38px/1.3 Caveat;color:#8ec5ff;border-top:2px dashed #475569;padding-top:8px}
+.kol em{font-style:normal;color:#F5C400}
+.op.sec{background:#1e3a8a;border-color:#60a5fa}.op.sec i{background:#60a5fa;color:#0b1b3a}
 #qc.cev .op{min-height:0;padding:10px 18px;font-size:30px}#qc.cev .op i{width:44px;height:44px;font-size:26px}
 #qc.cev #qt{font-size:30px}
 #fb{font:900 36px Inter}#fb:empty{display:none}
@@ -158,26 +167,31 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
 /* katmanlar: menü, giriş, bitiş */
 #ana{position:absolute;inset:0;z-index:11;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 35%,rgba(58,65,80,.82),rgba(31,35,44,.97))}
-.a-bas{margin-top:36px;font:900 92px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
-.a-alt{margin-top:8px;font:700 34px Inter;color:#cbd5e1}.a-alt b{color:#F5C400}
-#sekme{margin-top:26px;display:flex;gap:0;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
-#sekme button{font:900 38px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:12px 60px;min-width:300px}
+.a-bas{margin-top:18px;font:900 66px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
+.a-alt{margin-top:4px;font:700 26px Inter;color:#cbd5e1}.a-alt b{color:#F5C400}
+#sekme{margin-top:12px;display:flex;gap:0;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
+#sekme button{font:900 30px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:8px 54px;min-width:300px}
 #sekme button.on{background:#D62828;color:#fff;box-shadow:0 8px 24px rgba(214,40,40,.45)}
-#sekme button small{display:block;font:700 18px Inter;opacity:.85;margin-top:2px}
-#konular{margin-top:24px;width:1840px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px 16px;align-content:start}
-.konu{display:flex;align-items:center;gap:12px;height:80px;padding:0 16px 0 12px;background:var(--k,#2a303c);border:3px solid rgba(0,0,0,.35);border-radius:999px;color:#fff;text-align:left;box-shadow:0 6px 16px rgba(0,0,0,.35)}
-.konu:hover,.konu:focus{border-color:#fff}
+#sekme button small{display:block;font:700 15px Inter;opacity:.85;margin-top:2px}
+#konular{margin-top:16px;width:1840px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;align-content:start}
 .konu.k0{--k:#E10600}.konu.k1{--k:#FFD400;color:#141414}.konu.k2{--k:#0066FF}.konu.k3{--k:#00A63E}.konu.k4{--k:#8A00E6}
+.konu{display:grid;grid-template-columns:150px 1fr 150px;align-items:stretch;height:72px;background:var(--k,#2a303c);border:3px solid rgba(0,0,0,.35);border-radius:999px;color:#fff;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.35)}
 .konu.k1 .yl{color:#141414}
-.konu:active{transform:scale(.97)}
-.konu .no{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;color:#141414;font:900 24px Inter;display:flex;align-items:center;justify-content:center}
-.konu .ad{flex:1;min-width:0;font:800 25px/1.12 Inter;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.konu .yl{flex:none;font:900 22px Inter;color:#fff;white-space:nowrap}
-.konu .dot{flex:none;width:32px;height:32px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 3px #141414}
-.konu .dot.dolu{background:#00E05A}
-.konu .dot.bos{background:#FF1A1A}
+.konu .yari{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.24);color:inherit;font:800 17px/1.1 Inter;text-align:left;padding:0 10px}
+.konu .yari.sol{padding-left:12px;border-right:3px solid rgba(255,255,255,.85)}
+.konu .yari.sag{justify-content:flex-end;text-align:right;padding-right:12px;border-left:3px solid rgba(255,255,255,.85)}
+.konu .yari:active{transform:scale(.95)}
+.konu .yari.var:hover{background:rgba(255,255,255,.22)}
+.konu .orta{display:flex;align-items:center;gap:10px;padding:0 12px;min-width:0}
+.konu .no{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;color:#141414;font:900 20px Inter;display:flex;align-items:center;justify-content:center}
+.konu .ad{flex:1;min-width:0;font:800 23px/1.1 Inter;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.konu .yl{flex:none;font:900 18px Inter;color:#fff;white-space:nowrap}
+.konu .dot{flex:none;width:26px;height:26px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 3px #141414}
 .konu.dolu{border:4px solid #fff;box-shadow:0 0 0 3px #00E05A,0 0 26px rgba(0,224,90,.75)}
-.a-acik{margin-top:20px;display:flex;gap:36px;font:700 24px Inter;color:#cbd5e1;align-items:center}
+.konu .dot.dolu{background:#00E05A}
+#qt.ders{font:900 40px/1.2 Inter;color:#F5C400}
+.konu .dot.bos{background:#FF1A1A}
+.a-acik{margin-top:14px;display:flex;gap:36px;font:700 24px Inter;color:#cbd5e1;align-items:center}
 .a-acik i{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:-4px;margin-right:8px;border:3px solid rgba(255,255,255,.85)}
 #yakinda{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.7)}
 #mGeri{position:absolute;left:40px;top:40px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:14px 24px}
@@ -288,7 +302,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="a-alt">3D Görev Oyunu · <b>TYT ve AYT konuları tek programda</b></div>
     <div id="sekme"><button data-s="TYT">TYT<small>9–10. sınıf</small></button><button data-s="AYT">AYT<small>11–12. sınıf</small></button></div>
     <div id="konular"></div>
-    <div class="a-acik"><span><i style="background:#00E05A"></i>Oyunu hazır</span><span><i style="background:#FF1A1A"></i>Yakında</span></div>
+    <div class="a-acik"><span>◀ Sol yarı: <b style="color:#fff">Konu anlatımı</b></span><span>Sağ yarı: <b style="color:#fff">Soru çözümü</b> ▶</span><span><i style="background:#00E05A"></i>Hazır</span><span><i style="background:#FF1A1A"></i>Yakında</span></div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
     <div id="yakinda" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">🛠</div><div class="ov-b" id="ykAd" style="font-size:50px"></div>
@@ -562,7 +576,7 @@ const M1 = {
     setPlate(14, 10, 1.2, -0.5); camGoal([2.0, 10.8, 11.6], [2.0, -0.2, -0.9], true); this.sesTur = 'swish'; this.snd = loopSnd('swish'); },
   qp(at) { return at === 'peg' ? V3(0, Y1 + 0.9, 0) : rocket.position.clone().add(V3(0, 0.8, 0)); },
   tick(dt) {
-    const S = this.S, W = Math.PI;                       // görsel: bir tur 2 s
+    const S = this.S, W = S.W || Math.PI;                // görsel: bir tur 2 s (keşfette değiştirilebilir)
     if (S.spin) { const prev = S.a; S.a += W * dt;
       if (S.arm && mod(S.a - A_REL, TAU) < mod(prev - A_REL, TAU)) { S.a = A_REL; S.spin = false; S.fly = 0; SFX.snap(); SFX.whoosh(); } }
     if (S.fly >= 0 && S.fly < STOP1) { S.fly = Math.min(STOP1, S.fly + W * R1 * dt * 0.42);   // kuvvet yok → sabit hızla DÜZ (yavaş çekim)
@@ -643,18 +657,20 @@ const M2 = {
   reset() { this.S = { t: 0, run: false, wedge: false, a: false, cw: false, ca: false, lap: -1 };
     setPlate(12, 12, 0, 0); camGoal([0, 11.6, 10.2], [0, -0.3, 0.5], true); this.sesTur = 'engine'; this.snd = loopSnd('engine'); },
   tick(dt) {
-    const S = this.S; if (S.run) S.t += dt; if (S.lap >= 0 && S.run) S.lap += dt;
+    const S = this.S; if (S.run) S.t += dt * (S.vk || 1); if (S.lap >= 0 && S.run) S.lap += dt;
     this.snd.set(S.run ? .1 : 0, .5);
     show('c2m', V3(0, 0.75, 0), 1, 0, -40);
     LANES.forEach((L, i) => {
       const a = A0 + L.w_ * S.t, p = V3(Math.cos(a) * L.r, 0, Math.sin(a) * L.r), hd = V3(-Math.sin(a), 0, Math.cos(a)), toC = p.clone().multiplyScalar(-1).normalize();
       L.car.position.copy(p); L.car.rotation.y = Math.atan2(-hd.z, hd.x);
-      setArrow(L.vA, p.clone().add(V3(0, 0.72, 0)), hd, 1.0);
-      if (S.a) setArrow(L.aA, p.clone().add(V3(0, 0.6, 0)).add(toC.clone().multiplyScalar(0.2)), toC, 1.4 * (LANES[0].r / L.r));
+      const vk = S.vk || 1;                                   // hız çarpanı (keşfet): v ∝ vk, a ∝ vk²
+      setArrow(L.vA, p.clone().add(V3(0, 0.72, 0)), hd, 1.0 * vk);
+      if (S.a) setArrow(L.aA, p.clone().add(V3(0, 0.6, 0)).add(toC.clone().multiplyScalar(0.2)), toC, 1.4 * (LANES[0].r / L.r) * vk * vk);
       const sw = Math.min(L.w_ * 2, L.w_ * S.t); L.wedge.visible = S.wedge && sw > 0.02;
       if (L.wedge.visible) { L.wedge.geometry.dispose(); L.wedge.geometry = new THREE.RingGeometry(L.r - 0.34, L.r + 0.34, 48, 1, -a, sw); }
       if (S.cw || S.ca) { const sp = p.clone().project(cam), sc = V3().project(cam); let dx = sp.x - sc.x, dy = sp.y - sc.y; const n = Math.hypot(dx, dy) || 1;
-        setTag('c' + i, (S.cw ? `<div>ω = ${L.w} rad/s</div>` : '') + (S.ca ? `<div>a = ${L.a} m/s²</div>` : ''));
+        const vv = 10 * vk, fs = x => (+x.toFixed(2)).toString().replace('.', ',');
+        setTag('c' + i, (S.cw ? `<div>ω = ${vk === 1 ? L.w : fs(vv / L.R)} rad/s</div>` : '') + (S.ca ? `<div>a = ${vk === 1 ? L.a : fs(vv * vv / L.R)} m/s²</div>` : ''));
         show('c' + i, p.clone().add(V3(0, 0.6, 0)), 1, dx / n * 130, -dy / n * 110 - 30); }
       else show('cr' + i, V3(L.r * 0.71, 0.05, -L.r * 0.71), 1, 0, 0);
     });
@@ -967,6 +983,162 @@ const M4 = {
 };
 
 const MISSIONS = [M1, M2, M3, M4];
+// ======================= KONU ANLATIMI (DERSLER) =======================
+// Görevlerle aynı 3D sahneleri kullanır; soru yerine "konu kartı" (k) gösterir: başlık + el yazısı satırlar, Devam ile ilerler.
+const FM = x => `<span class="fm">${x}</span>`, V2K = 'v<sup>2</sup>';
+const DERS = (taban, no, ad, gorev, adimlar) => Object.assign(Object.create(taban), { ders: true, no, name: ad, task: gorev, kisa: gorev, steps: adimlar });
+const DERSLER = [
+  DERS(M1, 1, 'Neden döner? Çembersel hareketin dili', 'Periyot, frekans, hızın yönü, merkezcil ivme ve ip koparsa ne olur?', [
+    { k: { tur: 'merak', b: 'Çekiç atıcı çekici neden tam doğru anda bırakır?', m: [
+      'Atlet çekici kendi etrafında döndürür ve bir anda bırakır.',
+      'Bıraktığı anda çekiç hangi yöne gider? Bu derste bunu bulacağız.',
+      'Önce dönen bir cismi tanımlamayı öğrenelim.'], dugme: 'Başlayalım ▶︎' } },
+    { sub: 'Oyuncak roket sürtünmesiz yatay masada, ipe bağlı. Başlat\'a basın.', go: '▶︎ Başlat' },
+    { do: S => { S.spin = true; }, sub: 'Roketin bir turunu sayın…', wait: 3 },
+    { k: { tur: 'kavram', b: 'Periyot ve frekans', f: ['r1r'], m: [
+      'Roket her turu aynı sürede atıyor: <em>düzgün çembersel hareket</em>.',
+      'Periyot (T): bir tam tur süresi · birimi s',
+      'Frekans (f): 1 saniyedeki tur sayısı · birimi Hz',
+      `${FM(`f = ${F('1', 'T')}`)} &nbsp; ${FM('T · f = 1')}`] } },
+    { x: { b: 'Periyodu değiştir', m: ['Periyodu − / + ile değiştirin; roketi ve ölçümleri izleyin.'],
+      kay: [{ ad: 'T', etiket: 'Periyot (T)', min: 1, max: 4, adim: 0.5, deger: 2, birim: 's', set: (S, v) => { S.W = 2 * Math.PI / v; } }],
+      olc: S => { const T = S._T, f = 1 / T, w = 2 * 3 / T, v = w * 2; return `r = 2 m, π = 3 alındı<br>f = ${F('1', 'T')} = <em>${(+f.toFixed(2)).toString().replace('.', ',')} Hz</em> · ω = ${F('2π', 'T')} = <em>${(+w.toFixed(2)).toString().replace('.', ',')} rad/s</em><br>v = ω · r = <em>${(+v.toFixed(2)).toString().replace('.', ',')} m/s</em> · a = ${F('v<sup>2</sup>', 'r')} = <em>${(+(v * v / 2).toFixed(1)).toString().replace('.', ',')} m/s²</em><br>T küçülünce roket hızlanır, ivme hızla büyür.`; } } },
+    { do: S => { S._T = 2; S.W = Math.PI; }, p: { t: 'Roket dönerken <b>hızının yönü</b> nereye doğrudur?', o: ['Merkeze doğru', 'İp doğrultusunda dışarı', 'Çembere teğet', 'Hız sabit olduğu için yönü yok'], d: 2 } },
+    { do: S => { S.v = true; S.vt = 'v'; }, sub: 'Yeşil oku izleyin.', wait: 2.5 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Hız her an teğet', f: ['r1v'], m: [
+      'Yeşil ok (hız) her an çembere <em>TEĞET</em>; yönü sürekli değişiyor.',
+      `Çizgisel hız: ${FM(`v = ${F('2πr', 'T')} = ω · r`)} &nbsp; açısal hız: ${FM(`ω = ${F('2π', 'T')}`)}`] } },
+    { p: { t: 'Hızın <b>büyüklüğü</b> sabit. Roketin <b>ivmesi</b> var mıdır?', o: ['Yoktur, hız sabit', 'Vardır, çünkü hızın yönü değişiyor', 'Vardır ve dışarı doğrudur', 'Yalnız ip koparsa olur'], d: 1 } },
+    { do: S => { S.av = true; S.at = 'a'; }, sub: 'Mor oka (ivme) ve kırmızı oka (ip kuvveti) bakın.', wait: 2.5 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Merkezcil ivme ve kuvvet', f: ['r1a', 'r1f'], m: [
+      'Hızın yönü değiştiği için ivme vardır; yönü her an <em>MERKEZE</em>.',
+      `${FM(`a = ${F('v<sup>2</sup>', 'r')} = ω<sup>2</sup> · r`)} &nbsp; ${FM(`F = m · a = ${F('m · v<sup>2</sup>', 'r')}`)}`,
+      'Bu kuvveti burada <em>ip</em> sağlar (gerilme kuvveti).'] } },
+    { k: { tur: 'dikkat', b: '"Merkezkaç kuvveti" yoktur', m: [
+      'Dönen bir araçta dışarı itiliyormuş gibi hissetmemiz bir kuvvet değil, <em>eylemsizliktir</em>: vücudumuz düz gitmek ister.',
+      'Merkezcil kuvvet de ayrı bir kuvvet değildir: ip, sürtünme, ağırlık, tepki gibi kuvvetlerin merkeze doğru bileşkesidir.'] } },
+    { p: { t: 'İp koparsa roket hangi yola gider?', o: ['Merkeze doğru düşer', 'İp doğrultusunda dışarı kaçar', 'Teğet boyunca düz gider', 'Çember çizmeye devam eder'], d: 2 } },
+    { sub: 'İp, roket hedefe bakan noktaya gelince kesilecek.', go: '✂ İpi kes' },
+    { do: S => { S.arm = true; }, sub: 'İp koptu…', until: S => S.fly >= STOP1 && S.ht > 0.8 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Newton\'un 1. yasası', f: ['r1v'], m: [
+      'İp kopunca kuvvet biter; roket kopma anındaki hızla <em>teğet</em> doğrultuda <em>düz</em> gider.',
+      'Çekiç atıcı da çekici, gitmesini istediği yöne <em>teğet</em> olduğu anda bırakır.'] } },
+    { k: { tur: 'ornek', b: 'Çözümlü örnek', m: [
+      'Bir taş 0,5 m uzunluğundaki ipte saniyede 2 tur atıyor (π = 3).',
+      `f = 2 Hz → T = ${F('1', 'f')} = 0,5 s`,
+      'ω = 2π · f = 2 · 3 · 2 = 12 rad/s',
+      'v = ω · r = 12 · 0,5 = 6 m/s',
+      `a = ${F('v<sup>2</sup>', 'r')} = ${F('36', '0,5')} = <em>72 m/s²</em>`] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [
+      `${FM(`f = ${F('1', 'T')}`)} · ${FM(`ω = ${F('2π', 'T')}`)} · ${FM('v = ω · r')} · ${FM(`a = ${F('v<sup>2</sup>', 'r')}`)}`,
+      'Hız teğet, ivme ve net kuvvet merkeze. Kuvvet biterse cisim teğet doğrultuda düz gider.'] } },
+  ]),
+  DERS(M2, 2, 'Virajda kim daha çok zorlanır?', 'Aynı hızla dönenlerde açısal hız, merkezcil ivme ve güvenli viraj hızı.', [
+    { k: { tur: 'merak', b: 'İç kulvar mı, dış kulvar mı?', m: [
+      'İki atlet virajda aynı hızla koşuyor; biri iç, biri dış kulvarda.',
+      'Hangisi daha hızlı <em>döner</em>? Hangisinin dönmesi daha zordur?'], dugme: 'Başlayalım ▶︎' } },
+    { sub: 'Üç araba aynı çizgisel hızla dönecek.', go: '▶︎ Başlat' },
+    { p: { t: 'Üç araba aynı hızla gidiyor. Aynı sürede <b>en büyük açıyı</b> hangisi tarar?', o: ['İçteki kırmızı (r = 10 m)', 'Ortadaki yeşil (r = 20 m)', 'Dıştaki mavi (r = 30 m)', 'Hepsi aynı açıyı tarar'], d: 0 } },
+    { do: S => { S.run = true; S.wedge = true; }, sub: 'Renkli dilimler son 2 saniyede taranan açıyı gösteriyor.', wait: 3.5 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Açısal hız', f: ['cr0', 'cr1', 'cr2'], m: [
+      `${FM(`ω = ${F('v', 'r')}`)} → v aynıyken r küçülünce ω <em>büyür</em>.`,
+      'Çizgisel hız (v) ile açısal hız (ω) farklı şeylerdir!'], after: S => { S.cw = true; } } },
+    { p: { t: 'Hangisinin <b>merkezcil ivmesi</b> en büyüktür?', o: ['İçteki (r küçük)', 'Dıştaki (r büyük)', 'Hızları aynı olduğu için hepsi eşit'], d: 0 } },
+    { do: S => { S.a = true; }, sub: 'Mor oklar merkezcil ivmeyi gösteriyor.', wait: 2.5 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Merkezcil ivme', f: ['a0', 'a1', 'a2'], m: [
+      `${FM(`a = ${F('v<sup>2</sup>', 'r')}`)} → v aynıyken dar virajda (r küçük) a <em>büyür</em>: 10 · 5 · 3,3 m/s²`], after: S => { S.ca = true; } } },
+    { x: { b: 'Hızı değiştir', m: ['Arabaların ortak hızını değiştirin; açısal hızlar ve ivmeler nasıl değişiyor?'],
+      kay: [{ ad: 'v', etiket: 'Hız (v)', min: 5, max: 20, adim: 5, deger: 10, birim: 'm/s', set: (S, v) => { S.vk = v / 10; } }],
+      olc: S => { const v = S._v, f = x => (+x.toFixed(2)).toString().replace('.', ','); return [10, 20, 30].map((r, i) => `${['Kırmızı', 'Yeşil', 'Mavi'][i]} (r = ${r} m): ω = <em>${f(v / r)}</em> rad/s · a = <em>${f(v * v / r)}</em> m/s²`).join('<br>') + '<br>Hız 2 katına çıkınca ω 2 katına, a <em>4 katına</em> çıkar.'; } } },
+    { do: S => { S._v = 10; S.vk = 1; }, k: { tur: 'gunluk', b: 'Arabayı virajda ne tutar?', m: [
+      'Düz virajda merkezcil kuvveti lastik ile yol arasındaki <em>sürtünme</em> sağlar.',
+      `Kaymadan dönme şartı (k: sürtünme katsayısı): ${FM(`v<sub>en büyük</sub> = ${SQ('k · g · r')}`)}`,
+      'Islak ya da buzlu yolda k küçülür → güvenli hız düşer. Kütle sadeleşir: güvenli hız aracın kütlesine bağlı değildir.'] } },
+    { k: { tur: 'ornek', b: 'Çözümlü örnek', m: [
+      'k = 0,4 olan bir yolda yarıçapı 40 m olan virajda en büyük güvenli hız?',
+      `v = ${SQ('k · g · r')} = ${SQ('0,4 · 10 · 40')} = ${SQ('160')} ≈ <em>12,6 m/s</em>`,
+      `Yol ıslanıp k = 0,1 olursa: v = ${SQ('40')} ≈ 6,3 m/s (yarıya iner)`] } },
+    { k: { tur: 'dikkat', b: 'Aynı diskte dönenler', m: [
+      'Dönme dolaptaki bütün kabinler <em>aynı ω</em> ile döner; merkezden uzak olanın v\'si büyüktür.',
+      'Virajdaki arabalarda ise <em>v aynı</em>, ω farklıdır. Hangisinin sabit olduğuna dikkat edin!'] } },
+    { do: S => { S.run = false; S.t = 0; S.lap = -1; S.wedge = false; }, sub: 'Kırmızının bir turunu ölçelim.', go: '⏱ Turu ölç' },
+    { do: S => { S.t = 0; S.lap = 0; S.run = true; }, sub: 'Süre tutuluyor…', until: S => S.lap >= 6 },
+    { do: S => { S.run = false; S.t = 6; S.lap = 6; SFX.ding(); }, k: { tur: 'ozet', b: 'Özet', f: ['c0'], m: [
+      `${FM(`ω = ${F('v', 'r')}`)} · ${FM(`a = ${F('v<sup>2</sup>', 'r')}`)} · ${FM(`T = ${F('2πr', 'v')}`)} (kırmızı: 6 s)`,
+      'Aynı hızda dar viraj daha zordur; virajı tutan kuvvet sürtünmedir.'] } },
+  ]),
+  DERS(M3, 3, 'Ters dönen kovadan su neden dökülmez?', 'Düşey çemberde tepki kuvvetinin yönü ve tepede en küçük hız.', [
+    { k: { tur: 'merak', b: 'Kova başımızın üstündeyken…', m: [
+      'Su dolu kovayı hızla çevirince, kova ters dönse bile su dökülmez.',
+      'Yavaş çevirince ise ıslanırız. Sınır neresi?'], dugme: 'Başlayalım ▶︎' } },
+    { p: { t: 'Kova tepedeyken kovanın tabanı suya hangi yönde kuvvet uygular?', o: ['Yukarı (ağırlığın tersine)', 'Aşağı', 'Hiç kuvvet uygulamaz', 'Yatay'], d: 1 } },
+    { sub: 'Kova r = 1 m yarıçaplı düşey çemberde dönecek.', go: '▶︎ Başlat' },
+    { do: S => { S.mode = 'frz'; S.goal = 3 * TAU + Math.PI; }, sub: 'Kova dönüyor…', until: S => S.mode === 'stop' },
+    { do: S => { S.frz = true; }, k: { tur: 'gozlem', sonuc: true, b: 'Tepki kuvveti nereye bakar?', f: ['k3g', 'k3n', 'k3m'], m: [
+      '(Görüntü kova tepeden geçerken donduruldu.)',
+      'Tepki kuvveti (N) yüzeye diktir ve <em>yüzeyden cisme</em> doğrudur.',
+      `Tepede taban suyun üstünde → N <em>aşağı</em>: ${FM(`N + mg = ${F('m · v<sup>2</sup>', 'r')}`)}`,
+      `Dipte taban suyun altında → N yukarı: ${FM(`N − mg = ${F('m · v<sup>2</sup>', 'r')}`)}`] } },
+    { k: { tur: 'dikkat', b: 'N her zaman mg\'nin tersi değildir', f: ['k3g', 'k3n'], m: [
+      'Yalnız yatay zeminde duran cisimde N yukarı, mg aşağıdır.',
+      'N ile mg etki-tepki çifti de değildir: ikisi de aynı cisme (suya) etki eder.'] } },
+    { p: { t: 'Kovayı gittikçe yavaş çevirirsek tepede ne olur?', o: ['Su her hızda kalır', 'Belli bir hızın altında su kovadan ayrılır', 'Kova ağırlaşır, su daha çok bastırır', 'Hızın etkisi yoktur'], d: 1 } },
+    { do: S => { S.frz = false; S.mode = 'goal'; S.wmax = W_FAST; S.goal = 6 * TAU; }, sub: 'Kova aşağıda duruyor…', until: S => S.mode === 'stop' },
+    { do: S => { S.th = 0; }, sub: 'Şimdi kova tepede v = 2 m/s olacak şekilde çevrilecek.', go: '▶︎ Kovayı çevir' },
+    { do: S => { S.slowRun = true; S.mode = 'slow'; }, sub: 'Kova dönüyor (tepede v = 2 m/s)…', until: S => S.spDone },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Tepede en küçük hız', m: [
+      'Hız azaldıkça tepede N küçülür; sınırda N = 0 olur:',
+      `${FM(`m · g = ${F('m · v<sup>2</sup>', 'r')}`)} → ${FM(`v<sub>en küçük</sub> = ${SQ('g · r')}`)}`,
+      `r = 1 m → v<sub>en küçük</sub> = ${SQ('10')} ≈ 3,2 m/s. 2 m/s bundan küçük → su ayrıldı.`] } },
+    { k: { tur: 'ornek', b: 'Çözümlü örnek', m: [
+      'İp uzunluğu (kovanın çember yarıçapı) 0,9 m ise tepede en az hız?',
+      `v = ${SQ('g · r')} = ${SQ('10 · 0,9')} = ${SQ('9')} = <em>3 m/s</em>`,
+      'Kütle sadeleşir: su az da olsa çok da olsa sınır hız aynıdır.'] } },
+    { do: S => { S.slowRun = false; S.sp = null; S.spDone = 0; S.mode = 'stop'; S.th = 0; water.visible = true; blob.visible = puddle.visible = false; drops.forEach(d => d.visible = false); SFX.pour(); },
+      sub: 'Kova dolduruldu; şimdi tepede v = 4 m/s.', go: '▶︎ Kovayı çevir' },
+    { do: S => { S.mode = 'goal'; S.wmax = W_FAST; S.goal = S.th + 4 * TAU; }, sub: 'Kova dönüyor (tepede v = 4 m/s)…', until: S => S.mode === 'stop' },
+    { do: S => { S.ok = 'Su dökülmedi ✓'; SFX.ding(); }, k: { tur: 'ozet', b: 'Özet', m: [
+      `Tepede ${FM(`N + mg = ${F('m · v<sup>2</sup>', 'r')}`)}, dipte ${FM(`N − mg = ${F('m · v<sup>2</sup>', 'r')}`)}`,
+      `Su dökülmez şartı: ${FM(`v ≥ ${SQ('g · r')}`)} · 4 m/s > 3,2 m/s → dökülmedi.`] } },
+  ]),
+  DERS(M4, 4, 'Lunapark treni ters dönünce neden düşmez?', 'Enerji korunumu, döngüde kuvvetler, düşmeme şartı ve h ≥ 2,5r.', [
+    { k: { tur: 'merak', b: 'Ters dönen yolcu neden düşmez?', m: [
+      'Döngünün tepesinde yolcular baş aşağıdır ama koltuğa bastırılmış hissederler.',
+      'Bunun sırrı hız ve merkezcil ivmede.'], dugme: 'Başlayalım ▶︎' } },
+    { p: { t: 'Tren 45 m yükseklikten durgun bırakılıyor (sürtünme yok). Dipte hızı ne olur?', o: ['15 m/s', '30 m/s', '45 m/s', '90 m/s'], d: 1 } },
+    { sub: 'Tren yokuştan bırakılacak.', go: '▶︎ Başlat' },
+    { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Potansiyel enerji kinetik enerjiye dönüşüyor…', until: S => !S.run },
+    { do: S => { S.vlab = 'v = 30 m/s'; S.alab = 'a = 90 m/s²'; }, k: { tur: 'gozlem', sonuc: true, b: 'Enerji korunumu', f: ['t4v', 't4h'], m: [
+      `${FM(`m · g · h = ${F('1', '2')} · m · v<sup>2</sup>`)} → v = ${SQ('2 · g · h')} = ${SQ('900')} = 30 m/s`,
+      'Kütle sadeleşti: boş tren de dolu tren de aynı hızla iner.'] } },
+    { p: { t: 'Döngünün dibinde yolcu kendini nasıl hisseder?', o: ['Daha hafif', 'Normal ağırlıkta', 'Daha ağır', 'Ağırlıksız'], d: 2 } },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Dipte kuvvetler', f: ['t4n', 't4g', 't4a'], m: [
+      `Merkez yukarıda → ${FM(`N − mg = ${F('m · v<sup>2</sup>', 'r')}`)}`,
+      'N = m (10 + 90) = 10 · mg → koltuk yolcuyu ağırlığının 10 katı kuvvetle iter.'] } },
+    { sub: 'Tren yan noktaya gidecek.', go: '▶︎ Treni sür' },
+    { do: S => M4.go(S, 'side', ROLL.sSide), sub: 'Tren döngüde yükseliyor…', until: S => !S.run },
+    { do: S => { S.atlab = 'a<sub>t</sub> = g'; }, k: { tur: 'kavram', b: 'Yan noktada hız neden azalır?', f: ['t4g', 't4at', 't4n'], m: [
+      'Burada mg tam <em>teğet</em> (aşağı) → teğetsel ivme a<sub>t</sub> = g, hıza ters: tren yavaşlar.',
+      `N yatay ve merkeze doğru. Açısal ivme: ${FM(`α = ${F('a<sub>t</sub>', 'r')}`)} = 1 rad/s²`] } },
+    { p: { t: 'Döngünün tepesinde ray trene hangi yönde kuvvet uygular?', o: ['Yukarı', 'Aşağı', 'Hiç kuvvet uygulamaz', 'Yatay'], d: 1 } },
+    { do: S => { S.vlab = 'v ≈ 22,4 m/s'; S.alab = 'a = 50 m/s²'; M4.go(S, 'top', ROLL.sTop); }, sub: 'Tren tepeye çıkıyor…', until: S => !S.run },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Tepede kuvvetler', f: ['t4n', 't4g', 't4a'], m: [
+      `Ray trenin üstünde → N <em>aşağı</em>: ${FM(`N + mg = ${F('m · v<sup>2</sup>', 'r')}`)} → N = 4 · mg`,
+      `Düşmeme şartı (N ≥ 0): ${FM('v<sup>2</sup> ≥ g · r')}`] } },
+    { k: { tur: 'ornek', b: 'Çözümlü örnek', m: [
+      'Yarıçapı 8 m olan döngüden düşmemek için tren en az kaç m yükseklikten bırakılmalı?',
+      `m g h = m g · 2r + ${F('1', '2')} m · g r → ${FM('h ≥ 2,5 · r')}`,
+      'h ≥ 2,5 · 8 = <em>20 m</em>'] } },
+    { sub: 'Tren istasyona gidecek.', go: '▶︎ Treni sür' },
+    { do: S => M4.go(S, 'end', ROLL.sContact), sub: 'Tren yaya yaklaşıyor…', until: S => !S.run },
+    { do: S => { S.tc = 0; }, sub: 'Yay sıkışıyor (yavaş çekim)', until: S => S.done },
+    { do: S => { S.ok = 'Tren istasyona ulaştı ✓'; }, k: { tur: 'ozet', b: 'Özet', m: [
+      `Enerji: m g h → ${F('1', '2')} m v² → ${F('1', '2')} k x² (yayda depolanır)`,
+      `Dip: ${FM(`N − mg = ${F('m v<sup>2</sup>', 'r')}`)} · Tepe: ${FM(`N + mg = ${F('m v<sup>2</sup>', 'r')}`)} · Şart: ${FM('h ≥ 2,5 r')}`] } },
+  ]),
+];
+let dersBitti = {}; try { dersBitti = JSON.parse(localStorage.getItem('ch_ders') || '{}'); } catch (e) {}
+
 
 // ======================= OYUN MOTORU =======================
 const GAME = { M: null, i: -1, wait: null, timer: 0, q: null, first: 0, total: 0, qn: 0, mode: 'menu' };
@@ -986,26 +1158,31 @@ const KONULAR = {
   TYT: ['Fizik Bilimine Giriş', 'Madde ve Özellikleri', 'Hareket ve Kuvvet', 'Enerji', 'Isı ve Sıcaklık', 'Elektrostatik', 'Elektrik ve Manyetizma', 'Basınç ve Kaldırma Kuvveti', 'Dalgalar', 'Optik'],
   AYT: ['Vektörler', 'Bağıl Hareket', "Newton'un Hareket Yasaları", 'Bir Boyutta Sabit İvmeli Hareket', 'İki Boyutta Hareket (Atışlar)', 'Enerji ve Hareket', 'İtme ve Çizgisel Momentum',
     'Tork ve Denge', 'Kütle ve Ağırlık Merkezi', 'Basit Makineler', 'Elektriksel Kuvvet ve Alan', 'Elektriksel Potansiyel', 'Düzgün Elektrik Alan ve Sığa',
-    'Manyetizma ve İndüklenme', 'Alternatif Akım ve Transformatörler', 'Çembersel Hareket', 'Dönerek Öteleme ve Açısal Momentum',
+    'Manyetizma ve İndüklenme', 'Alternatif Akım ve Transformatörler', 'Çembersel Hareket', 'Dönme ve Açısal Momentum',
     'Kütle Çekim ve Kepler Yasaları', 'Basit Harmonik Hareket', 'Dalga Mekaniği', 'Atom Fiziğine Giriş ve Radyoaktivite', 'Modern Fizik', 'Modern Fiziğin Uygulamaları'],
 };
 // hazır konular: görevleri (oyunları) olanlar
-const HAZIR = { 'AYT|Çembersel Hareket': { gorevler: MISSIONS } };
+const HAZIR = { 'AYT|Çembersel Hareket': { gorevler: MISSIONS, dersler: DERSLER } };
 let SINAV = 'AYT'; try { SINAV = localStorage.getItem('ch_sinav') || 'AYT'; } catch (e) {}
 let KONU = null;
-function konuYildiz(h) { let y = 0, t = 0; h.gorevler.forEach(M => { t += M.steps.filter(s => s.q).length; y += done[M.no] || 0; }); return [y, t]; }
+const YK = M => M.yk || M.no;                                            // yıldız/ders anahtarı (çembersel hareket: 1–4, diğer konular: 'TYT1-g1' gibi)
+function konuYildiz(h) { let y = 0, t = 0; h.gorevler.forEach(M => { t += M.steps.filter(s => s.q).length; y += done[YK(M)] || 0; }); return [y, t]; }
 function anaKur() {
   document.querySelectorAll('#sekme button').forEach(b => b.classList.toggle('on', b.dataset.s === SINAV));
   const L = KONULAR[SINAV], k = $('konular'); k.innerHTML = '';
-  k.style.gridTemplateColumns = `repeat(${L.length > 12 ? 4 : 2},1fr)`; k.style.width = L.length > 12 ? '1840px' : '1400px';
-  L.forEach((ad, i) => { const h = HAZIR[SINAV + '|' + ad], b = document.createElement('button');
-    b.className = 'konu k' + (i % 5) + ' ' + (h ? 'dolu' : 'bos');
-    let yl = ''; if (h) { const [y, t] = konuYildiz(h); yl = `<span class="yl">${YSVG(true)} ${y}/${t}</span>`; }
-    b.innerHTML = `<span class="no">${i + 1}</span><span class="ad">${ad}</span>${yl}<span class="dot ${h ? 'dolu' : 'bos'}" title="${h ? 'Oyunu hazır' : 'Yakında'}"></span>`;
-    b.onclick = () => { ac(); SFX.click(); if (h) konuAc(SINAV, ad); else { $('ykAd').textContent = `${SINAV} · ${ad}`; $('yakinda').classList.remove('hide'); } };
+  k.style.gridTemplateColumns = `repeat(${L.length > 12 ? 3 : 2},1fr)`; k.style.width = L.length > 12 ? '1840px' : '1500px';
+  L.forEach((ad, i) => { const h = HAZIR[SINAV + '|' + ad], d = !!(h && h.dersler && h.dersler.length), q = !!(h && h.gorevler && h.gorevler.length), b = document.createElement('div');
+    b.className = 'konu k' + (i % 5) + ' ' + (d || q ? 'dolu' : 'bos');
+    let yl = ''; if (q) { const [y, t] = konuYildiz(h); yl = `<span class="yl">${YSVG(true)} ${y}/${t}</span>`; }
+    b.innerHTML = `<button class="yari sol ${d ? 'var' : ''}" title="Konu anlatımı"><span class="dot ${d ? 'dolu' : 'bos'}"></span><span>Konu<br>anlatımı</span></button>
+      <div class="orta"><span class="no">${i + 1}</span><span class="ad">${ad}</span>${yl}</div>
+      <button class="yari sag ${q ? 'var' : ''}" title="Soru çözümü"><span>Soru<br>çözümü</span><span class="dot ${q ? 'dolu' : 'bos'}"></span></button>`;
+    const yakinda = tur => { $('ykAd').textContent = `${SINAV} · ${ad} · ${tur}`; $('yakinda').classList.remove('hide'); };
+    b.querySelector('.sol').onclick = () => { ac(); SFX.click(); d ? konuAc(SINAV, ad, 'ders') : yakinda('Konu anlatımı'); };
+    b.querySelector('.sag').onclick = () => { ac(); SFX.click(); q ? konuAc(SINAV, ad, 'soru') : yakinda('Soru çözümü'); };
     k.appendChild(b); });
 }
-function konuAc(sinav, ad) { KONU = { sinav, ad }; $('mSinav').textContent = sinav + ' FİZİK'; $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
+function konuAc(sinav, ad, mod = 'soru') { KONU = { sinav, ad, mod }; $('mSinav').textContent = sinav + ' FİZİK · ' + (mod === 'ders' ? 'KONU ANLATIMI' : 'SORU ÇÖZÜMÜ'); $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
   $('ana').classList.add('hide'); buildMenu(); $('menu').classList.remove('hide'); }
 function anaDon() { $('menu').classList.add('hide'); anaKur(); $('ana').classList.remove('hide'); }
 document.querySelectorAll('#sekme button').forEach(b => b.onclick = () => { SFX.click(); SINAV = b.dataset.s; try { localStorage.setItem('ch_sinav', SINAV); } catch (e) {} anaKur(); });
@@ -1015,9 +1192,15 @@ $('bFs2').onclick = () => fullscreen();
 
 function buildMenu() {
   $('cards').innerHTML = '';
-  MISSIONS.forEach(M => {
+  const h = KONU ? HAZIR[KONU.sinav + '|' + KONU.ad] : null;
+  if (KONU && KONU.mod === 'ders' && h) { h.dersler.forEach(M => {
+    const b = document.createElement('button'); b.className = 'card'; const nk = M.steps.filter(s => s.k || s.p || s.x).length;
+    b.innerHTML = `<div class="c-no" style="background:#60a5fa">DERS ${M.no}</div><div class="c-ic">${M.icon}</div><div class="c-ad">${M.name}</div><div class="c-ac">${M.task}</div>
+      <div class="c-st ${dersBitti[YK(M)] ? '' : 'yok'}">${dersBitti[YK(M)] ? '✓ İzlendi' : nk + ' adım'}</div>`;
+    b.onclick = () => { ac(); SFX.click(); startMission(M); }; $('cards').appendChild(b); }); return; }
+  (h ? h.gorevler : MISSIONS).forEach(M => {
     const b = document.createElement('button'); b.className = 'card';
-    const nq = M.steps.filter(s => s.q).length, y = done[M.no];
+    const nq = M.steps.filter(s => s.q).length, y = done[YK(M)];
     b.innerHTML = `<div class="c-no">GÖREV ${M.no}</div><div class="c-ic">${M.icon}</div><div class="c-ad">${M.name}</div><div class="c-ac">${M.task}</div>
       <div class="c-st ${y == null ? 'yok' : ''}">${y == null ? `${nq} soru · ${nq} yıldız` : `✓ ${y} / ${nq} yıldız`}</div><div class="c-yil">${YILDIZLAR(y || 0, nq)}</div>`;
     b.onclick = () => { ac(); SFX.click(); startMission(M); };
@@ -1025,18 +1208,19 @@ function buildMenu() {
   });
 }
 
-function showOnly(M) { MISSIONS.forEach(m => m.group.visible = m === M); }
+const GRUPLAR = new Set(MISSIONS.map(m => m.group));
+function showOnly(M) { GRUPLAR.forEach(g => g.visible = g === M.group); }
 
 function startMission(M) {
   sesYenile(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
-  $('tNo').textContent = 'GÖREV ' + M.no; $('tTitle').textContent = M.name; $('tTask').textContent = '';
+  $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
   $('board').innerHTML = `<div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
-  const nq = M.steps.filter(s => s.q).length;
-  overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px">GÖREV ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
-    <div class="ov-s">${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶︎ Göreve başla</button></div>`);
+  const nq = M.steps.filter(s => s.q).length, nk = M.steps.filter(s => s.k || s.p || s.x).length;
+  overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px${M.ders ? ';background:#2563eb' : ''}">${M.ders ? 'KONU ANLATIMI · DERS' : 'GÖREV'} ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
+    <div class="ov-s">${M.ders ? `${nk} adım · Merak → Tahmin et → Gözle → Keşfet → Açıkla` : `${nq} soru · Doğru cevapta devam · Yanlışta önce çözüm`}</div><div class="ov-dg"><button class="btn ana" id="ovGo">▶︎ ${M.ders ? 'Derse' : 'Göreve'} başla</button></div>`);
   $('ovGo').onclick = () => { SFX.start(); closeOverlay(); next(); };
 }
 function overlay(html) { $('ov').innerHTML = `<div class="ov-k">${html}</div>`; $('ov').classList.remove('hide'); }
@@ -1052,19 +1236,71 @@ function next() {
   else if (st.until) GAME.wait = st.until;
   else if (st.wait) GAME.timer = st.wait;
   else if (st.q) ask(st.q);
+  else if (st.k) anlat(st.k);
+  else if (st.p) tahmin(st.p);
+  else if (st.x) kesif(st.x);
   else next();
 }
 
 function ask(q) {
   GAME.qn++; GAME.total++;
   const order = q.fixed ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i));
-  GAME.q = { q, order, answered: false, correctPos: order.indexOf(0) }; SON_Q = q;
+  GAME.q = { q, order, answered: false, correctPos: order.indexOf(0) }; SON_Q = q; $('qt').classList.remove('ders'); $('qn').style.background = ''; $('qn').style.color = ''; $('fb').style.color = '';
   if (!$('notlar').classList.contains('hide')) notAc(true);
   $('qn').textContent = `SORU ${GAME.qn} / ${GAME.M.steps.filter(s => s.q).length}`;
   $('qt').innerHTML = q.t; $('fb').textContent = ''; $('fb').className = ''; $('sol').innerHTML = ''; $('qnext').classList.add('hide');
   $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => answer(+b.dataset.k));
   $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
+}
+// ---- Konu anlatımı kartları: tür etiketiyle (MERAK, KAVRAM, ÇÖZÜMLÜ ÖRNEK, DİKKAT, ÖZET...) ----
+const TURLER = { merak: ['MERAK', '#8b5cf6'], kavram: ['KAVRAM', '#2563eb'], gozlem: ['GÖZLEM', '#0891b2'], ornek: ['ÇÖZÜMLÜ ÖRNEK', '#16a34a'], dikkat: ['DİKKAT · KAVRAM YANILGISI', '#dc2626'], ozet: ['ÖZET', '#F5A300'], gunluk: ['GÜNLÜK HAYAT', '#db2777'] };
+function kartBasla(etiket, renk, baslik) {
+  $('qn').textContent = etiket; $('qn').style.background = renk; $('qn').style.color = '#fff';
+  $('qt').innerHTML = baslik; $('qt').classList.add('ders'); $('opts').innerHTML = ''; $('fb').textContent = ''; $('fb').className = ''; $('qnext').classList.add('hide'); $('sol').innerHTML = '';
+  $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
+}
+function anlat(k) {
+  GAME.qn++; GAME.q = { q: k, answered: true, ders: true }; SON_Q = k;
+  if (!$('notlar').classList.contains('hide')) notAc(true);
+  const [et, renk] = TURLER[k.tur || 'kavram'] || TURLER.kavram;
+  kartBasla(et, renk, k.b);
+  let m = k.m.slice();
+  if (k.sonuc && GAME.sonTahmin) { const T = GAME.sonTahmin;                   // tahminle gözlemi karşılaştır
+    m.unshift(T.ok ? `Tahminin: <em>${T.sec}</em> → <span class="g">✓ doğru!</span>` : `Tahminin: ${T.sec} → doğrusu: <em>${T.dogru}</em>`); }
+  const gap = 0.55, sol = $('sol');
+  sol.innerHTML = m.map((l, i) => `<div class="sl" style="animation-delay:${(0.2 + i * gap).toFixed(2)}s">${l}</div>`).join('');
+  let fs = 42; sol.style.fontSize = fs + 'px'; while (sol.scrollHeight > sol.clientHeight + 2 && fs > 34) { fs -= 2; sol.style.fontSize = fs + 'px'; }
+  sol.scrollTop = 0; kaySolGuncelle();
+  setTimeout(() => { if (GAME.q && GAME.q.q === k) { $('qnext').textContent = k.dugme || 'Devam ▶︎'; $('qnext').classList.remove('hide'); kaySolGuncelle(); } }, (0.2 + m.length * gap) * 1000);
+}
+// ---- KEŞFET: değer değiştir, sonucu canlı gör ----
+function kesif(x) {
+  GAME.qn++; GAME.q = { q: x, answered: true, ders: true, kesif: true }; SON_Q = x;
+  kartBasla('KEŞFET', '#0891b2', x.b);
+  const S = GAME.M.S; x.kay.forEach(k => { if (S['_' + k.ad] == null) S['_' + k.ad] = k.deger; k.set(S, S['_' + k.ad]); });
+  $('sol').innerHTML = x.m.map(l => `<div class="sl" style="animation:none;clip-path:none">${l}</div>`).join('') +
+    `<div class="kes">${x.kay.map((k, i) => `<div class="kk"><span class="ka">${k.etiket}</span><button data-i="${i}" data-d="-1">−</button><b id="kv${i}"></b><button data-i="${i}" data-d="1">+</button></div>`).join('')}</div><div class="kol" id="kesOlc"></div>`;
+  $('sol').querySelectorAll('.kes button').forEach(b => b.onclick = () => { const k = x.kay[+b.dataset.i]; SFX.click();
+    let v = S['_' + k.ad] + (+b.dataset.d) * k.adim; v = Math.round(clamp(v, k.min, k.max) * 1000) / 1000; S['_' + k.ad] = v; k.set(S, v); kesYaz(); });
+  kesYaz(); $('qnext').textContent = 'Devam ▶︎'; $('qnext').classList.remove('hide'); kaySolGuncelle();
+}
+function kesYaz() { const Q = GAME.q; if (!Q || !Q.kesif) return; const x = Q.q, S = GAME.M.S;
+  x.kay.forEach((k, i) => { const e = $('kv' + i); if (e) e.textContent = String(S['_' + k.ad]).replace('.', ',') + ' ' + (k.birim || ''); });
+  const o = $('kesOlc'); if (o) o.innerHTML = x.olc(S); }
+// ---- Tahmin et: öğrenci bir şık seçer (puan yok); sonra sahnede olay gösterilir ----
+function tahmin(p) {
+  GAME.q = { q: p, answered: false, tahmin: true }; SON_Q = p;
+  kartBasla('TAHMİN ET', '#7c3aed', p.t);
+  $('opts').innerHTML = p.o.map((t, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${t}</span></button>`).join('');
+  [...$('opts').children].forEach(b => b.onclick = () => tahminSec(+b.dataset.k));
+}
+function tahminSec(k) {
+  const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true; SFX.click();
+  [...$('opts').children].forEach((b, j) => { b.disabled = true; if (j === k) b.classList.add('sec'); });
+  GAME.sonTahmin = { sec: Q.q.o[k], dogru: Q.q.o[Q.q.d], ok: k === Q.q.d };
+  $('fb').className = 'ok'; $('fb').style.color = '#93c5fd'; $('fb').textContent = 'Tahminin kaydedildi. Şimdi gözlemleyelim!';
+  $('qnext').textContent = Q.q.dugme || 'Görelim ▶︎'; $('qnext').classList.remove('hide');
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function answer(k) {
@@ -1091,16 +1327,29 @@ function qContinue() {
 function yildizGoster(pop) { const nq = GAME.M ? GAME.M.steps.filter(s => s.q).length : 0; $('tYil').innerHTML = `${YSVG(true)} ${GAME.first} / ${nq}`;
   if (pop) { $('tYil').classList.remove('pop'); void $('tYil').offsetWidth; $('tYil').classList.add('pop'); } }
 function finish() {
+  if (GAME.M.ders) return dersBitir();
   const M = GAME.M, nq = GAME.total, y = GAME.first;                       // her soru: ilk denemede doğruysa 1 yıldız
-  done[M.no] = Math.max(done[M.no] || 0, y); yildizKaydet();
+  done[YK(M)] = Math.max(done[YK(M)] || 0, y); yildizKaydet();
   setTimeout(() => SFX.win(), 200);
-  const nx = MISSIONS[MISSIONS.indexOf(M) + 1];
+  const hz = KONU ? HAZIR[KONU.sinav + '|' + KONU.ad] : null, GL = hz ? hz.gorevler : MISSIONS, nx = GL[GL.indexOf(M) + 1];
   overlay(`<div class="ov-ic">🏆</div><div class="ov-b">GÖREV TAMAMLANDI!</div><div class="ov-t">${M.name}</div>
     <div class="ov-y" style="font-size:${nq > 6 ? 64 : 80}px">${YILDIZLAR(y, nq)}</div><div class="ov-s">${y} / ${nq} yıldız · her soruda ilk denemede doğru cevap 1 yıldız</div>
     <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar oyna</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki görev ▶︎</button>` : ''}</div>`);
   $('ovT').onclick = () => { SFX.click(); startMission(M); };
   $('ovM').onclick = () => { SFX.click(); toMenu(); };
   if (nx) $('ovN').onclick = () => { SFX.click(); startMission(nx); };
+}
+function dersBitir() {
+  const M = GAME.M, h = KONU ? HAZIR[KONU.sinav + '|' + KONU.ad] : null, L = h ? h.dersler : DERSLER, nx = L[L.indexOf(M) + 1];
+  dersBitti[YK(M)] = 1; try { localStorage.setItem('ch_ders', JSON.stringify(dersBitti)); } catch (e) {}
+  setTimeout(() => SFX.win(), 200);
+  overlay(`<div class="ov-ic">📘</div><div class="ov-b">DERS TAMAMLANDI!</div><div class="ov-t">${M.name}</div>
+    <div class="ov-s">Şimdi aynı konunun sorularını çözebilirsiniz.</div>
+    <div class="ov-dg"><button class="btn" id="ovT">↺ Tekrar izle</button><button class="btn" id="ovM">☰ Menü</button>${nx ? `<button class="btn ana" id="ovN">Sonraki ders ▶︎</button>` : `<button class="btn ana" id="ovS">Soru çözümüne geç ▶︎</button>`}</div>`);
+  $('ovT').onclick = () => { SFX.click(); startMission(M); };
+  $('ovM').onclick = () => { SFX.click(); toMenu(); };
+  if (nx) $('ovN').onclick = () => { SFX.click(); startMission(nx); };
+  else $('ovS').onclick = () => { SFX.click(); if (KONU) KONU.mod = 'soru'; toMenu(); if (KONU) konuAc(KONU.sinav, KONU.ad, 'soru'); };
 }
 function toMenu() {
   stopLoops(); GAME.mode = 'menu'; GAME.M = null; GAME.q = null; closeOverlay();
@@ -1145,7 +1394,7 @@ addEventListener('keydown', e => {
   if (GAME.mode !== 'game') return;
   if (!$('ov').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); const b = $('ovGo') || $('ovN'); b && b.click(); } return; }
   const idx = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, b: 1, c: 2, d: 3 }[k];
-  if (GAME.q && !GAME.q.answered && idx != null) return answer(idx);
+  if (GAME.q && !GAME.q.answered && idx != null) return GAME.q.tahmin ? tahminSec(idx) : answer(idx);
   if (k === ' ' || k === 'enter' || k === 'arrowright') { e.preventDefault(); if (GAME.q) qContinue(); else if (!$('go').classList.contains('hide')) $('go').click(); }
 });
 addEventListener('resize', fit);
@@ -1214,7 +1463,7 @@ function notIcerik() {
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
   if (Q && Q.n) { const no = M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1;
     h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`).join(''); }
-  h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (NOT_GOREV[M.no] || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
+  h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
   return h;
 }
 function notAc(ac_) {
@@ -1406,7 +1655,7 @@ function frame(now) {
   for (const a of ARROWS) a.visible = false; guide1.visible = false;
   for (const k in TAG) TAG[k]._on = false;
   if (GAME.mode === 'game' && GAME.M) {
-    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows();
+    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows(); if (GAME.q && GAME.q.kesif && (GAME.kz = (GAME.kz || 0) + rdt) > .25) { GAME.kz = 0; kesYaz(); }
     if (GAME.wait && $('ov').classList.contains('hide')) { if (GAME.wait(M.S)) { GAME.wait = null; next(); } }
     else if (GAME.timer > 0) { GAME.timer -= dt; if (GAME.timer <= 0) { GAME.timer = 0; next(); } }
   } else {                                                  // menü: tren sahnesi yavaşça döner
@@ -1417,6 +1666,18 @@ function frame(now) {
   camStep(rdt); R3.render(scene, cam); cizCiz();
   requestAnimationFrame(frame);
 }
+// ---- Konu modülleri (konular/*.js) için API ----
+window.FZ = { THREE, V3, UP, TAU, clamp, ease, mod, F, SQ, FM, YSVG, mesh, arrow, setArrow, dashLine, setLine, textSprite, tag, setTag, show, setPlate, camGoal, scene,
+  SFX, loopSnd, board, sub, HAZIR, KONULAR, GRUPLAR, anaKur, GAME,
+  konuEkle(sinav, ad, kayit) { HAZIR[sinav + '|' + ad] = kayit; [...kayit.dersler || [], ...kayit.gorevler || []].forEach(m => GRUPLAR.add(m.group)); if (!$('ana').classList.contains('hide')) anaKur(); } };
 fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
 window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
-</script></body></html>
+</script>
+<!-- konu modülleri: her dosya bir grup konunun 3D sahnesini, konu anlatımını ve sorularını ekler -->
+<script src="konular/kit.js"></script>
+<script src="konular/tyt1.js"></script>
+<script src="konular/tyt2.js"></script>
+<script src="konular/ayt1.js"></script>
+<script src="konular/ayt2.js"></script>
+<script src="konular/ayt3.js"></script>
+</body></html>
