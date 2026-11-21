@@ -143,7 +143,7 @@
       if (Math.abs(S.v1) > 0.05) { FZ.setArrow(o.oa, V3(S.x1, 1.1, 0.5), V3(Math.sign(S.v1), 0, 0), Math.abs(S.v1) / 4); FZ.show('m7a', V3(S.x1 + S.v1 / 4 + 0.3 * Math.sign(S.v1), 1.1, 0.5), 1); }
       if (Math.abs(S.v2) > 0.05) { FZ.setArrow(o.ob, V3(S.x2, 1.6, 0.5), V3(Math.sign(S.v2), 0, 0), Math.abs(S.v2) / 4); FZ.show('m7b', V3(S.x2 + S.v2 / 4 + 0.3 * Math.sign(S.v2), 1.6, 0.5), 1); }
       const p = S.m1 * S.v1 + S.m2 * S.v2, Ek = 0.5 * S.m1 * S.v1 ** 2 + 0.5 * S.m2 * S.v2 ** 2;
-      FZ.setTag('m7t', `v₁ = ${fs(S.v1)} · v₂ = ${fs(S.v2)} m/s<br>p<sub>toplam</sub> = ${fs(p)} kg·m/s · E<sub>k</sub> = ${fs(Ek)} J`); FZ.show('m7t', V3(0, 3.2, 0), 1);
+      FZ.setTag('m7t', `v₁ = ${fs(S.v1)} · v₂ = ${fs(S.v2)} m/s<br>p<sub>toplam</sub> = ${fs(p)} kg·m/s · E<sub>k</sub> = ${fs(Ek)} J`); FZ.show('m7t', V3(4, 3.4, 0), 1);
     },
     qp: () => V3(0, 4, 0) });
   const d7 = ders(s7, { yk: 'AYT7-d1', no: 1, icon: '🥚', name: 'Çarpışmada ne korunur?', task: 'Momentum, itme, momentumun korunumu, esnek ve esnek olmayan çarpışma.', steps: [
