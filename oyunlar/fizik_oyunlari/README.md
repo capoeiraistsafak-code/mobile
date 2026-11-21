@@ -25,7 +25,16 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 - **Üniversite · Temel (10/10):** Özel Görelilik, Termodinamik ve Entropi, Maxwell Denklemleri ve EM Dalgalar, Young Çift Yarık Deneyi, Dalga–Parçacık İkiliği, Belirsizlik İlkesi, Schrödinger Denklemi ve Kutudaki Parçacık, Kuantum Tünelleme, Hidrojen Atomu ve Spin, Katıhal Fiziği: Kristal ve Bant Yapısı.
 - **Üniversite · Seçmeli (8/8):** Yarı İletkenler ve p-n Eklemi, Süperiletkenlik, Lazer Fiziği, Nükleer Fizik, Parçacık Fiziği ve Standart Model, Kuantum Hesaplama, Astrofizik ve Kozmoloji, Genel Görelilik ve Kara Delikler.
 
-Konu dosyaları: `konular/tyt1-3.js`, `konular/ayt1-6.js`, `konular/uni1-5.js` (ortak araçlar `konular/kit.js`). Sorular özgündür; yayınevi sorularından kopya yoktur.
+### Animasyon programı laboratuvarlarından eklenenler (`konular/anim1-7.js`)
+- **Madde ve Özellikleri:** Taç gerçekten altın mı? (taşırma kabı, yüzen cisim + iğne, m–V grafiği, karışımlar) · Dayanıklılık, adezyon–kohezyon, kılcallık, yüzey gerilimi — 2 ders + 2 görev
+- **Hareket ve Kuvvet:** Newton yasaları laboratuvarı (bileşke, buz/halı disk, 1 kg–2 kg araba, patenciler, sürtünme) · Hareket laboratuvarı (yol–yer değiştirme, karşılaşma, yetişme)
+- **Enerji:** rampa + sürtünmeli bölge + yay, açılı kuvvetin işi, güç ve verim
+- **Isı ve Sıcaklık:** kalorifer, ısınma eğrisi ve hal değişimi, kendi termometreni yap, bimetal, gölün 4 °C'si, tuzak sorular
+- **Elektrostatik:** sürtünme ile elektriklenme ve kâğıt kaldırma, etki ile elektriklenme ve topraklama, elektroskop, **içi boş iletken (Faraday kabı ve kafesi)**
+- **Elektrik ve Manyetizma:** seri/paralel lamba sökme, 60 W–100 W, elektron ve akım yönü, ev tüketimi ve güvenlik
+- **AYT:** Newton (dolap sürtünme + laboratuvar soruları), Elektrik alan çizgileri (tek yük, dipol, iki + yük, paralel levhalar, q₃ dengesi), Çembersel hareket laboratuvarı (döner tabla, konik sarkaç, tümsek–çukur, viraj), Kepler, yazılı soruları
+
+Konu dosyaları: `konular/tyt1-3.js`, `konular/ayt1-6.js`, `konular/uni1-5.js`, `konular/anim1-7.js` (ortak araçlar `konular/kit.js`). Sorular özgündür; yayınevi sorularından kopya yoktur.
 
 # AYT · Çembersel Hareket
 
