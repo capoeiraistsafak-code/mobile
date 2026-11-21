@@ -32,6 +32,13 @@
   FZ.cizgi = (g, renk, pts) => { const l = FZ.dashLine(renk); g.add(l); if (pts) FZ.setLine(l, pts); return l; };
   FZ.levha = (g, txt, w, h, bg, fg, x, y, z) => { const m = FZ.textSprite(txt, w, h, bg, fg); m.position.set(x, y, z); g.add(m); return m; };
 
+  // Var olan bir konuya ek ders/görev ekler (konu anlatımı ve soru çözümü listelerinin sonuna)
+  FZ.konuEk = (sinav, ad, ek) => { const h = FZ.HAZIR[sinav + '|' + ad]; if (!h) return FZ.konuEkle(sinav, ad, ek);
+    (ek.dersler || []).forEach(m => { (h.dersler = h.dersler || []).push(m); FZ.GRUPLAR.add(m.group); });
+    (ek.gorevler || []).forEach(m => { (h.gorevler = h.gorevler || []).push(m); FZ.GRUPLAR.add(m.group); }); };
+  // Bir konunun var olan 3D sahnesini (taban) al: yeni ders/görevler aynı sahneyi kullanabilsin
+  FZ.taban = (sinav, ad) => { const h = FZ.HAZIR[sinav + '|' + ad]; const m = h && ((h.gorevler && h.gorevler[0]) || (h.dersler && h.dersler[0])); return m ? Object.getPrototypeOf(m) : null; };
+
   // ---------- Gerçekçi hazır modeller ----------
   const parla = (m, renk, guc) => { m.material.emissive = new THREE.Color(renk); m.material.emissiveIntensity = guc; return m; };
   const teker = (g, r, w, x, y, z) => { const t = new THREE.Group(); t.position.set(x, y, z); g.add(t);

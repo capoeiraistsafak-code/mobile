@@ -233,6 +233,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .m-alt{margin-top:10px;font:700 36px Inter;color:#cbd5e1}
 .m-alt b{color:#F5C400}
 #cards{margin-top:30px;display:flex;gap:30px}
+#cards.cok{gap:16px}#cards.cok .card{width:342px;padding:22px 20px 18px}#cards.cok .c-ic{font-size:68px}#cards.cok .c-ad{font-size:31px}#cards.cok .c-ac{font-size:21px}#cards.cok .c-yil{transform:scale(.85);transform-origin:left}
 .card{width:400px;height:450px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
 .card:hover,.card:focus{border-color:#F5A300}
 .card:active{transform:scale(.97)}
@@ -1364,7 +1365,8 @@ $('sfKaydet').onclick = () => { const e = $('sfEski').value, y = $('sfYeni').val
 $('mGeri').onclick = () => { SFX.click(); anaDon(); };
 $('bFs2').onclick = () => fullscreen();
 
-function buildMenu() {
+function buildMenu() { buildMenu0(); const c = $('cards'); c.classList.toggle('cok', c.children.length > 4); }   // 5 kart: kartlar küçülür, ekrana sığar
+function buildMenu0() {
   $('cards').innerHTML = '';
   const h = KONU ? HAZIR[KONU.sinav + '|' + KONU.ad] : null;
   if (KONU && KONU.mod === 'ders' && h) { h.dersler.forEach(M => {
@@ -1912,4 +1914,6 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
 <script src="konular/uni3.js"></script>
 <script src="konular/uni4.js"></script>
 <script src="konular/uni5.js"></script>
+<script src="konular/anim1.js"></script>
+<script src="konular/anim2.js"></script>
 </body></html>
