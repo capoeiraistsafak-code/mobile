@@ -98,6 +98,22 @@ button{font-family:inherit;cursor:pointer;border:none}
 @keyframes nabiz{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
 /* soru kartı */
+/* ---- gizlenebilir paneller (soru kartı, değerler, çizim paleti) ---- */
+#qc,#board{transition:transform .28s ease,opacity .28s}
+#qc{touch-action:pan-y}#board{touch-action:pan-y}#palet{touch-action:pan-x}
+#qc.kucuk{transform:translateX(calc(100% + 60px));opacity:0;pointer-events:none}
+#board.kucuk{transform:translateX(calc(-100% - 60px));opacity:0;pointer-events:none}
+#palet.kucuk{display:none!important}
+.kucult{position:absolute;top:10px;width:58px;height:58px;border-radius:50%;background:#3a4150;color:#fff;border:2px solid #556070;font:900 34px/1 Inter;display:flex;align-items:center;justify-content:center;z-index:2}
+#qcK{right:12px}#bdK{right:10px;top:8px;width:50px;height:50px;font-size:30px}
+#board .gorev{margin-right:48px}
+.sekmeK{position:absolute;z-index:8;background:#F5A300;color:#1f232c;font:900 26px Inter;border:3px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;gap:8px}
+#tabQ{right:0;top:300px;width:76px;height:300px;border-radius:24px 0 0 24px;border-right:none;writing-mode:vertical-rl;letter-spacing:3px}
+#tabB{left:0;top:142px;width:76px;height:300px;border-radius:0 24px 24px 0;border-left:none;writing-mode:vertical-rl;letter-spacing:3px;background:#94a3b8}
+#paletMini{left:516px;top:130px;border-radius:20px;padding:10px 22px;background:#ec4899;color:#fff;font-size:28px;writing-mode:horizontal-tb}
+#paletMini i{display:inline-block;width:30px;height:30px;border-radius:50%;border:3px solid #fff;vertical-align:middle}
+#tabQ.yeni{animation:tabNabiz 1s ease-in-out infinite}
+@keyframes tabNabiz{0%,100%{box-shadow:0 0 0 0 rgba(245,163,0,.9)}50%{box-shadow:0 0 0 18px rgba(245,163,0,0)}}
 #qc{position:absolute;right:24px;top:142px;bottom:24px;width:720px;background:#2a303c;border:3px solid #F5A300;border-radius:24px;padding:24px 28px;display:flex;flex-direction:column;gap:16px;z-index:6;box-shadow:0 20px 50px rgba(0,0,0,.45)}
 #qn{align-self:flex-start;background:#F5A300;color:#1f232c;font:900 26px Inter;padding:6px 16px;border-radius:10px}
 #qt{font:700 34px/1.3 Inter;color:#fff}
@@ -279,8 +295,12 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button class="renk cark" id="pCark" title="Renk çemberi: istediğin rengi seç"></button>
     <span class="ayr"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
+    <button id="pKucuk" data-p="palet" title="Paleti küçült (yukarı kaydır); çizim açık kalır"><i>▲</i>Küçült</button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
   </div>
+  <button id="paletMini" class="sekmeK hide" title="Çizim paletini aç">✏️ <i id="pmRenk"></i> Palet ▾</button>
+  <button id="tabQ" class="sekmeK hide" title="Soruyu göster">◀ SORU</button>
+  <button id="tabB" class="sekmeK hide" title="Değerleri göster">DEĞERLER ▶</button>
 
   <div id="top" class="hide">
     <span class="pill" id="tNo">GÖREV 1</span>
@@ -307,6 +327,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
   <div id="hizRozet" class="hide"></div>
 
   <div id="qc" class="hide">
+    <button class="kucult" id="qcK" data-p="qc" title="Soruyu gizle (sağa kaydır) · Q">⟩</button>
     <div id="qn">SORU 1</div>
     <div id="qt"></div>
     <div id="opts"></div>
@@ -1240,6 +1261,39 @@ function sinavSec(k) { SFX.click(); SINAV = k; try { localStorage.setItem('ch_si
 const sonSinav = { lise: SINAV === 'TYT' ? 'TYT' : 'AYT', uni: SINAV === 'SEC' ? 'SEC' : 'UNI' };
 document.querySelectorAll('#duzey button').forEach(b => b.onclick = () => { const d = b.dataset.d; sonSinav[duzeyOf(SINAV)] = SINAV; if (duzeyOf(SINAV) !== d) sinavSec(sonSinav[d]); });
 $('ykTamam').onclick = () => { SFX.click(); $('yakinda').classList.add('hide'); };
+// ======================= GİZLENEBİLİR PANELLER =======================
+// Soru kartı sağa, değerler sola kaydırılınca (ya da ⟩ ⟨ düğmeleriyle) kenara gizlenir; kenardaki sekmeyle geri gelir.
+// Çizim paleti yukarı kaydırılınca (ya da ▲ Küçült) küçük bir düğmeye dönüşür; çizim açık kalır.
+const PANEL = { qc: false, board: false, palet: false };
+function panelDuzen() {
+  const qcAcik = !$('qc').classList.contains('hide'), bdAcik = !$('board').classList.contains('hide'), plAcik = !$('palet').classList.contains('hide');
+  $('qc').classList.toggle('kucuk', PANEL.qc); $('board').classList.toggle('kucuk', PANEL.board); $('palet').classList.toggle('kucuk', PANEL.palet);
+  $('tabQ').classList.toggle('hide', !(qcAcik && PANEL.qc)); $('tabB').classList.toggle('hide', !(bdAcik && PANEL.board)); $('paletMini').classList.toggle('hide', !(plAcik && PANEL.palet));
+  if (!PANEL.qc) $('tabQ').classList.remove('yeni');
+  if (GAME.mode === 'game') { const soruGorunur = qcAcik && !PANEL.qc;            // kamera: sahne boş alana ortalansın
+    CAM.gvo = soruGorunur ? 170 : (bdAcik && !PANEL.board ? -200 : 0);
+    const sb = $('sub'); if (sb.classList.contains('q') !== soruGorunur) { sb.classList.toggle('q', soruGorunur); subSigdir(); } }
+  try { const r = document.querySelector('#palet .renk.on'); $('pmRenk').style.background = r ? (r.dataset.r || getComputedStyle(r).backgroundColor) : '#ec4899'; } catch (e) {} }
+function panelAyarla(ad, kucuk) { PANEL[ad] = kucuk; try { SFX.click(); } catch (e) {} panelDuzen(); }
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.kucult[data-p], #pKucuk'); if (b) { e.stopPropagation(); panelAyarla(b.dataset.p, true); } }, true);
+$('tabQ').onclick = () => panelAyarla('qc', false); $('tabB').onclick = () => panelAyarla('board', false); $('paletMini').onclick = () => panelAyarla('palet', false);
+// sürükleyerek gizleme: yön +1 sağa, −1 sola (x ekseni); 'y' yukarı
+function surukleGizle(id, eksen, yon) { const el = $(id); let d = null, surdu = false;
+  el.addEventListener('pointerdown', e => { if (e.button > 0 || (e.target.closest && e.target.closest('input,#cark'))) return; d = { x: e.clientX, y: e.clientY, id: e.pointerId, aktif: false }; surdu = false; });
+  el.addEventListener('pointermove', e => { if (!d || e.pointerId !== d.id) return; const sc = (SCALE || 1), dx = (e.clientX - d.x) / sc, dy = (e.clientY - d.y) / sc;
+    const ana = eksen === 'y' ? -dy : dx * yon, yan = eksen === 'y' ? Math.abs(dx) : Math.abs(dy);
+    if (!d.aktif) { if (ana > 24 && ana > 1.5 * yan) { d.aktif = true; surdu = true; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch (er) {} } else if (yan > 30) { d = null; return; } else return; }
+    const m = Math.max(0, ana); el.style.transform = eksen === 'y' ? `translateY(${-m}px)` : `translateX(${m * yon}px)`; el.style.opacity = String(Math.max(0.3, 1 - m / 500)); });
+  const bit = e => { if (!d || e.pointerId !== d.id) return; const sc = (SCALE || 1), dx = (e.clientX - d.x) / sc, dy = (e.clientY - d.y) / sc, ana = eksen === 'y' ? -dy : dx * yon, akt = d.aktif; d = null;
+    el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; if (akt && ana > 110) panelAyarla(id, true); };
+  el.addEventListener('pointerup', bit); el.addEventListener('pointercancel', bit);
+  el.addEventListener('click', e => { if (surdu) { surdu = false; e.stopPropagation(); e.preventDefault(); } }, true); }   // sürükleme sonunda şık seçilmesin
+surukleGizle('qc', 'x', 1); surukleGizle('board', 'x', -1); surukleGizle('palet', 'y', 1);
+// yeni soru gelince gizli kartın sekmesi yanıp söner; sınıf/metin değişince düzen güncellenir
+new MutationObserver(() => { if (PANEL.qc && !$('qc').classList.contains('hide')) $('tabQ').classList.add('yeni'); panelDuzen(); }).observe($('qn'), { childList: true, characterData: true, subtree: true });
+['qc', 'board', 'palet'].forEach(id => new MutationObserver(panelDuzen).observe($(id), { attributes: true, attributeFilter: ['class'] }));
+document.querySelectorAll('#palet .renk').forEach(b => b.addEventListener('click', () => setTimeout(panelDuzen)));
+
 // ======================= ŞİFRE VE AYARLAR =======================
 // Şifre cihazda (localStorage) özetlenmiş (hash) olarak saklanır. İlk şifrenin özeti aşağıdadır.
 const SIFRE_ILK = 'zkl8iq93ic';
@@ -1291,11 +1345,11 @@ const GRUPLAR = new Set(MISSIONS.map(m => m.group));
 function showOnly(M) { GRUPLAR.forEach(g => g.visible = g === M.group); }
 
 function startMission(M) {
-  sesYenile(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
+  PANEL.qc = PANEL.board = false; sesYenile(); GAME.M = M; GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
-  $('board').innerHTML = `<div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
+  $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
   const nq = M.steps.filter(s => s.q).length, nk = M.steps.filter(s => s.k || s.p || s.x).length;
   overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px${M.ders ? ';background:#2563eb' : ''}">${M.ders ? 'KONU ANLATIMI · DERS' : 'GÖREV'} ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
@@ -1460,6 +1514,8 @@ addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return; // şifre yazarken kısayollar çalışmasın
   if (!$('kilit').classList.contains('hide')) return;
   const k = e.key.toLowerCase();
+  if (GAME.mode === 'game' && k === 'q') return panelAyarla('qc', !PANEL.qc);
+  if (GAME.mode === 'game' && k === 'v') return panelAyarla('board', !PANEL.board);
   if (k === 'f') return fullscreen();
   if (k === 'm') { ac(); return setSes(!AU.on); }
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
