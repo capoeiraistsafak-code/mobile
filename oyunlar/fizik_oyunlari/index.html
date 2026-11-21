@@ -69,7 +69,12 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .mod button.on{background:#f472b6;color:#1f232c}
 #palet .etk{font:800 15px Inter;color:#cbd5e1;padding:0 2px}
 #ciz.silgi{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='24' cy='24' r='21' fill='rgba(255,255,255,.25)' stroke='white' stroke-width='3'/%3E%3C/svg%3E") 24 24,cell}
-#sesRozet{position:absolute;right:30px;top:140px;z-index:9;background:#7f1d1d;color:#fff;font:800 26px Inter;padding:10px 18px;border-radius:14px;border:2px solid #fca5a5;pointer-events:none}
+#sesRozet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:34px!important;z-index:13;background:#b91c1c;color:#fff;font:800 28px Inter;padding:14px 22px;border-radius:16px;border:3px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:rozetN 1.2s infinite}
+@keyframes rozetN{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.7),0 10px 30px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 16px rgba(255,255,255,0),0 10px 30px rgba(0,0,0,.5)}}
+#basla{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#3a4150,#1f232c)}
+#basla .b-ic{width:240px;height:240px;border-radius:50%;border:12px solid #F5A300;background:url(logo.png) center/cover;box-shadow:0 0 0 10px rgba(245,163,0,.18),0 20px 60px rgba(0,0,0,.5)}
+#bBasla{margin-top:46px;font:900 60px Inter;background:#22c55e;color:#0b2b16;border-radius:999px;padding:26px 90px;box-shadow:0 14px 40px rgba(34,197,94,.45);animation:nabiz 1.4s infinite}
+#basla .b-not{margin-top:22px;font:600 26px Inter;color:#94a3b8}
 #durRozet{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6;background:rgba(10,12,18,.86);color:#F5C400;font:900 40px Inter;padding:10px 30px;border-radius:16px;border:3px solid #F5C400}
 #bNot{width:auto;padding:0 18px;gap:8px;font:800 28px Inter;background:#1e3a8a!important;border-color:#60a5fa!important;color:#fff}
 #bNot.acik{background:#60a5fa!important;color:#0b1b3a!important}
@@ -257,7 +262,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <button id="bCiz" title="Kalem / lazer ile çiz (K)">✏︎ Çiz</button><button id="bOrt" title="Ekranı ortala (O)">⌖ Ortala</button><button data-h="0.25">¼×</button><button data-h="0.5">½×</button><button data-h="1" class="on">1×</button><button data-h="2">2×</button>
   </div>
   <div id="durRozet" class="hide">DURAKLATILDI</div>
-  <div id="sesRozet" class="hide">🔇 Ses için ekrana bir kez dokunun</div>
+  <button id="sesRozet" class="hide">🔇 Ses durdu · açmak için dokunun</button>
   <div id="notlar" class="hide"><div class="nt-bas"><span id="ntBaslik">NOTLAR · Neden böyle?</span><button id="ntKapat" title="Kapat">✕</button></div>
     <div class="nt-ic" id="ntIc"></div><div class="kay" id="ntKay" style="bottom:22px"><button id="ntY">▲</button><button id="ntA">▼</button></div></div>
   <div id="hizRozet" class="hide"></div>
@@ -273,6 +278,9 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="ov" class="hide"></div>
 
+  <div id="basla"><div class="b-ic"></div><div class="a-bas" style="margin-top:28px">FİZİK OYUNLARI</div>
+    <div class="a-alt">3D Görev Oyunu · Şafak Hoca</div>
+    <button id="bBasla">▶︎ Başla</button><div class="b-not">Ses ve oyun bu dokunuşla açılır</div></div>
   <div id="ana">
     <div class="a-bas">FİZİK OYUNLARI</div>
     <div class="a-alt">3D Görev Oyunu · <b>TYT ve AYT konuları tek programda</b></div>
@@ -1103,7 +1111,7 @@ function menuScene() { ortala(true); showOnly(M4); M4.S = { s: ROLL.sTop, run: f
 // düğmeler ve klavye
 $('go').onclick = () => { if ($('go').classList.contains('hide')) return; SFX.click(); cizTemizle(); if (CTL.dur) setDur(false); $('go').classList.add('hide'); GAME.goFn && GAME.goFn(); };
 $('qnext').onclick = qContinue;
-$('bSes').onclick = () => { ac(); setSes(!AU.on); };
+$('bSes').onclick = () => { const ac2 = !AU.on; if (ac2) { sesYenile(); } else ac(); setSes(ac2); if (ac2) setTimeout(() => SFX.ok(), 60); };
 $('bMenu').onclick = () => { SFX.click(); toMenu(); };
 $('bBas').onclick = () => { SFX.click(); if (GAME.M) startMission(GAME.M); };
 const fullscreen = () => { const d = document.documentElement; if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const f = d.requestFullscreen || d.webkitRequestFullscreen; f && f.call(d); }
@@ -1121,6 +1129,7 @@ $('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { l
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (k === 'f') return fullscreen();
+  if (!$('basla').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); $('bBasla').click(); } return; }
   if (k === 'm') { ac(); return setSes(!AU.on); }
   if (GAME.mode === 'game' && k === 'p') return setDur(!CTL.dur);
   if (GAME.mode === 'game' && k === 'o') return ortala(false);
@@ -1349,7 +1358,9 @@ function sesUyandir() {
   sesRozet();
 }
 ['pointerup', 'touchend', 'click', 'keydown'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));
-function sesRozet() { const r = $('sesRozet'); if (!r) return; const kapali = AU.ctx && AU.ctx.state !== 'running'; r.classList.toggle('hide', !(kapali && GAME.mode === 'game')); }
+function sesRozet() { const r = $('sesRozet'); if (!r) return; const kapali = AU.on && AU.ctx && AU.ctx.state !== 'running' && $('basla').classList.contains('hide'); r.classList.toggle('hide', !kapali); }
+$('sesRozet').onclick = () => { sesYenile(); setTimeout(() => { SFX.ok(); sesRozet(); }, 60); };
+$('bBasla').onclick = () => { sesYenile(); setTimeout(() => SFX.ok(), 60); $('basla').classList.add('hide'); };
 setInterval(sesRozet, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sesUyandir(); });
 document.addEventListener('fullscreenchange', sesUyandir);
