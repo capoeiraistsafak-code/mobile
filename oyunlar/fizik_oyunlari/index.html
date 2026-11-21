@@ -226,6 +226,15 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .m-not kbd{font:800 20px/1 Inter;background:#3a4150;border:2px solid #556070;border-radius:7px;padding:4px 8px;color:#fff}
 .m-logo{position:absolute;left:40px;bottom:26px;display:flex;align-items:center;gap:18px;font:800 32px Inter;color:#fff}
 .m-logo i{width:92px;height:92px;border-radius:50%;border:6px solid #F5A300;background:url(logo.png) center/cover}
+#kilit{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#3a4150,#14171e)}
+#kilit .ov-k,#ayar .ov-k{width:900px}
+.sf-in{display:block;width:100%;margin-top:18px;font:800 40px Inter;padding:18px 24px;border-radius:18px;border:3px solid #556070;background:#1f232c;color:#fff;text-align:center;letter-spacing:2px}
+.sf-in:focus{outline:none;border-color:#F5C400}
+.sf-et{margin-top:22px;text-align:left;font:700 26px Inter;color:#cbd5e1}
+.sf-msj{min-height:44px;margin-top:16px;font:800 30px Inter}
+.sf-msj.hata{color:#f87171}.sf-msj.iyi{color:#4ade80}
+#ayar{position:absolute;inset:0;z-index:13;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.75)}
+.m-ayar{position:absolute;right:330px;bottom:32px;display:flex;align-items:center;gap:8px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
 .m-fs{position:absolute;right:40px;bottom:32px;display:flex;align-items:center;gap:8px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
 
 #ov{position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.62)}
@@ -301,6 +310,11 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="ov" class="hide"></div>
 
+  <div id="kilit"><div class="ov-k"><div class="ov-ic">🔒</div><div class="ov-b">Fizik Oyunları</div>
+    <div class="ov-t">Devam etmek için şifreyi girin.</div>
+    <input class="sf-in" id="kSifre" type="password" autocomplete="off" placeholder="Şifre">
+    <div class="sf-msj hata" id="kMsj"></div>
+    <div class="ov-dg" style="margin-top:8px"><button class="btn" id="kGoster">👁 Göster</button><button class="btn ana" id="kGir">Giriş ▶︎</button></div></div></div>
   <div id="ana">
     <div class="a-bas">FİZİK OYUNLARI</div>
     <div class="a-alt">3D Görev Oyunu · <b>Lise (TYT · AYT) ve üniversite konuları tek programda</b></div>
@@ -308,7 +322,14 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div id="konular"></div>
     <div class="a-acik"><span>◀ Sol yarı: <b style="color:#fff">Konu anlatımı</b></span><span>Sağ yarı: <b style="color:#fff">Soru çözümü</b> ▶</span><span><i style="background:#00E05A"></i>Hazır</span><span><i style="background:#FF1A1A"></i>Yakında</span></div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
+    <button class="m-ayar" id="bAyar">⚙ Ayarlar</button>
     <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
+    <div id="ayar" class="hide"><div class="ov-k"><div class="ov-ic">⚙️</div><div class="ov-b" style="font-size:54px">Ayarlar · Şifre değiştir</div>
+      <div class="sf-et">Mevcut şifre</div><input class="sf-in" id="sfEski" type="password" autocomplete="off">
+      <div class="sf-et">Yeni şifre (en az 4 karakter)</div><input class="sf-in" id="sfYeni" type="password" autocomplete="off">
+      <div class="sf-et">Yeni şifre (tekrar)</div><input class="sf-in" id="sfYeni2" type="password" autocomplete="off">
+      <div class="sf-msj" id="sfMsj"></div>
+      <div class="ov-dg" style="margin-top:12px"><button class="btn" id="sfKapat">Kapat</button><button class="btn ana" id="sfKaydet">Kaydet</button></div></div></div>
     <div id="yakinda" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">🛠</div><div class="ov-b" id="ykAd" style="font-size:50px"></div>
       <div class="ov-t">Bu konunun oyunu henüz hazır değil. Yakında eklenecek.</div><div class="ov-dg"><button class="btn ana" id="ykTamam">Tamam</button></div></div></div>
   </div>
@@ -1205,6 +1226,32 @@ function sinavSec(k) { SFX.click(); SINAV = k; try { localStorage.setItem('ch_si
 const sonSinav = { lise: SINAV === 'TYT' ? 'TYT' : 'AYT', uni: SINAV === 'SEC' ? 'SEC' : 'UNI' };
 document.querySelectorAll('#duzey button').forEach(b => b.onclick = () => { const d = b.dataset.d; sonSinav[duzeyOf(SINAV)] = SINAV; if (duzeyOf(SINAV) !== d) sinavSec(sonSinav[d]); });
 $('ykTamam').onclick = () => { SFX.click(); $('yakinda').classList.add('hide'); };
+// ======================= ŞİFRE VE AYARLAR =======================
+// Şifre cihazda (localStorage) özetlenmiş (hash) olarak saklanır. İlk şifrenin özeti aşağıdadır.
+const SIFRE_ILK = 'zkl8iq93ic';
+function sifreOzet(s) { let h1 = 0xdeadbeef ^ 7, h2 = 0x41c6ce57 ^ 7; s = 'fizik-oyunlari:' + s;
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); }
+const kayitliOzet = () => { try { return localStorage.getItem('ch_sifre') || SIFRE_ILK; } catch (e) { return SIFRE_ILK; } };
+const sifreDogru = s => sifreOzet(s) === kayitliOzet();
+function kilitGir() { const v = $('kSifre').value;
+  if (sifreDogru(v)) { try { SFX.ok(); } catch (e) {} $('kilit').classList.add('hide'); $('kSifre').value = ''; $('kMsj').textContent = ''; }
+  else { try { SFX.bad(); } catch (e) {} $('kMsj').textContent = 'Şifre yanlış. Tekrar deneyin.'; $('kSifre').select(); } }
+$('kGir').onclick = kilitGir;
+$('kSifre').addEventListener('keydown', e => { if (e.key === 'Enter') kilitGir(); });
+$('kGoster').onclick = () => { const i = $('kSifre'); i.type = i.type === 'password' ? 'text' : 'password'; $('kGoster').textContent = i.type === 'password' ? '👁 Göster' : '🙈 Gizle'; i.focus(); };
+setTimeout(() => { try { $('kSifre').focus(); } catch (e) {} }, 300);
+const sfMsj = (t, iyi) => { const m = $('sfMsj'); m.textContent = t; m.className = 'sf-msj ' + (iyi ? 'iyi' : 'hata'); };
+$('bAyar').onclick = () => { SFX.click(); ['sfEski', 'sfYeni', 'sfYeni2'].forEach(id => $(id).value = ''); sfMsj(''); $('ayar').classList.remove('hide'); setTimeout(() => $('sfEski').focus(), 50); };
+$('sfKapat').onclick = () => { SFX.click(); $('ayar').classList.add('hide'); };
+$('sfKaydet').onclick = () => { const e = $('sfEski').value, y = $('sfYeni').value, y2 = $('sfYeni2').value;
+  if (!sifreDogru(e)) { SFX.bad(); return sfMsj('Mevcut şifre yanlış.'); }
+  if (y.length < 4) { SFX.bad(); return sfMsj('Yeni şifre en az 4 karakter olmalı.'); }
+  if (y !== y2) { SFX.bad(); return sfMsj('Yeni şifreler birbirini tutmuyor.'); }
+  try { localStorage.setItem('ch_sifre', sifreOzet(y)); } catch (err) { SFX.bad(); return sfMsj('Bu cihazda şifre kaydedilemedi (tarayıcı depolaması kapalı).'); }
+  SFX.ok(); sfMsj('Şifre değiştirildi ✓', true); ['sfEski', 'sfYeni', 'sfYeni2'].forEach(id => $(id).value = ''); };
+['sfEski', 'sfYeni', 'sfYeni2'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('sfKaydet').click(); }));
 $('mGeri').onclick = () => { SFX.click(); anaDon(); };
 $('bFs2').onclick = () => fullscreen();
 
@@ -1396,6 +1443,8 @@ $('bSifir').onclick = () => { SFX.click(); $('sifirSor').classList.remove('hide'
 $('sifirHayir').onclick = () => { SFX.click(); $('sifirSor').classList.add('hide'); };
 $('sifirEvet').onclick = () => { SFX.click(); done = {}; yildizKaydet(); try { localStorage.removeItem('ch_yildiz'); } catch (e) {} $('sifirSor').classList.add('hide'); buildMenu(); anaKur(); };
 addEventListener('keydown', e => {
+  if (e.target && e.target.tagName === 'INPUT') return; // şifre yazarken kısayollar çalışmasın
+  if (!$('kilit').classList.contains('hide')) return;
   const k = e.key.toLowerCase();
   if (k === 'f') return fullscreen();
   if (k === 'm') { ac(); return setSes(!AU.on); }

@@ -6,6 +6,12 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 
 **Tablet için:** `oyunlar/fizik_oyunlari_tablet.html` her şeyi (3D kütüphane, logo, yazı tipleri) içinde taşıyan TEK dosyadır; tablete indirip açın, internet gerekmez. Oyun güncellenince bu dosya `python3 araclar/tek_dosya.py fizik_oyunlari <yazı-tipi.css> fizik_oyunlari_tablet.html` ile yeniden üretilir.
 
+## Şifre
+- Program açılışta şifre ister. **İlk şifre: `uzum0108`**.
+- Ana menüde sağ alttaki **⚙ Ayarlar** düğmesiyle şifre değiştirilir (mevcut şifre + yeni şifre iki kez, en az 4 karakter).
+- Yeni şifre o cihazın tarayıcısında saklanır; her cihazda (tahta, tablet, bilgisayar) ayrı ayrı değiştirilir. Tarayıcı verileri silinirse şifre ilk şifreye (`uzum0108`) döner.
+- Not: Bu, öğrencilerin programı kendi başına açmasını engelleyen basit bir kilittir; dosyanın kaynak koduna bakabilen biri için gerçek bir güvenlik sağlamaz.
+
 ## Ana menü
 - Üstte iki düzey: **🎒 Lise** ve **🎓 Üniversite**. Lise'nin altında **TYT / AYT**, Üniversite'nin altında **Temel dersler / Seçmeli dersler** sekmeleri.
 - Her konu düğmesi üçe bölünür: sol yarı **Konu anlatımı**, ortada konu adı, sağ yarı **Soru çözümü**. Yeşil daire = hazır, kırmızı = yakında.
