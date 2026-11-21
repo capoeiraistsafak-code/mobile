@@ -57,6 +57,10 @@ Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `�
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
 
+**Ses seviyesi:** Oyunda üst banttaki 🔊 düğmesi ses panelini açar (kaydırma çubuğu, 🔇 Sustur, ▶ Dene); aynı ayar ana menüdeki ⚙ Ayarlar'da da vardır. Klavyede `9` azaltır, `0` artırır, `M` susturur. Seviye cihazda saklanır.
+
+**Chrome'da ses:** Chrome, sayfaya dokunulmadan ses çalınmasına izin vermez. Program ses motorunu ilk dokunuşta (şifre girişi) açar; tarayıcı sesi askıya alırsa bir sonraki dokunuşta kendiliğinden yeniden başlatır.
+
 ---
 
 © 2026 Şafak Ulusoy. All rights reserved. This software, its design and its content are the intellectual property of Şafak Ulusoy. Unauthorized copying, distribution or modification is prohibited.
