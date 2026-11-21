@@ -7,9 +7,18 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 **Tablet için:** `oyunlar/fizik_oyunlari_tablet.html` her şeyi (3D kütüphane, logo, yazı tipleri) içinde taşıyan TEK dosyadır; tablete indirip açın, internet gerekmez. Oyun güncellenince bu dosya `python3 araclar/tek_dosya.py fizik_oyunlari <yazı-tipi.css> fizik_oyunlari_tablet.html` ile yeniden üretilir.
 
 ## Ana menü
-- Üstte **TYT / AYT** sekmeleri; altında o sınavın konuları ders kitabı sırasıyla, yanları yuvarlak düğmeler hâlinde.
-- Düğmenin sonundaki **yeşil daire** = oyunu hazır, **kırmızı daire** = yakında. Hazır konularda kazanılan yıldızlar da yazar.
-- Hazır olan konu: **AYT 16 · Çembersel Hareket** (4 görev, 21 soru). Diğer konular sırayla doldurulacak.
+- Üstte iki düzey: **🎒 Lise** ve **🎓 Üniversite**. Lise'nin altında **TYT / AYT**, Üniversite'nin altında **Temel dersler / Seçmeli dersler** sekmeleri.
+- Her konu düğmesi üçe bölünür: sol yarı **Konu anlatımı**, ortada konu adı, sağ yarı **Soru çözümü**. Yeşil daire = hazır, kırmızı = yakında.
+- **Konu anlatımı** akışı: Merak → Tahmin → Gözle (3D) → Kavram → Keşfet (sürgülerle dene) → Çözümlü örnek → Dikkat (sık yanlışlar) → Özet.
+- **Soru çözümü**: her konuda 4 soru, notlar ve 1./2. YOL çözümler.
+
+### Hazır konular
+- **TYT (10/10):** Fizik Bilimine Giriş, Madde ve Özellikleri, Hareket ve Kuvvet, Enerji, Isı ve Sıcaklık, Elektrostatik, Elektrik ve Manyetizma, Basınç ve Kaldırma Kuvveti, Dalgalar, Optik.
+- **AYT (23/23):** Vektörler'den Modern Fiziğin Uygulamaları'na bütün konular (Çembersel Hareket: 4 görev, 21 soru).
+- **Üniversite · Temel (10/10):** Özel Görelilik, Termodinamik ve Entropi, Maxwell Denklemleri ve EM Dalgalar, Young Çift Yarık Deneyi, Dalga–Parçacık İkiliği, Belirsizlik İlkesi, Schrödinger Denklemi ve Kutudaki Parçacık, Kuantum Tünelleme, Hidrojen Atomu ve Spin, Katıhal Fiziği: Kristal ve Bant Yapısı.
+- **Üniversite · Seçmeli (8/8):** Yarı İletkenler ve p-n Eklemi, Süperiletkenlik, Lazer Fiziği, Nükleer Fizik, Parçacık Fiziği ve Standart Model, Kuantum Hesaplama, Astrofizik ve Kozmoloji, Genel Görelilik ve Kara Delikler.
+
+Konu dosyaları: `konular/tyt1-3.js`, `konular/ayt1-6.js`, `konular/uni1-5.js` (ortak araçlar `konular/kit.js`). Sorular özgündür; yayınevi sorularından kopya yoktur.
 
 # AYT · Çembersel Hareket
 

@@ -135,7 +135,7 @@
   // KUANTUM TÜNELLEME — enerji engeli, T ≈ e^(−2κa), V₀ − E = 1 eV, κ ≈ 5,12 nm⁻¹ (elektron)
   // =====================================================================
   const KAP = 5.12;
-  const sT = sahne({ icon: '🚇', cam: [[1.2, 3.5, 11], [1.2, 1.8, 0]], plate: [12, 4, 0, 0],
+  const sT = sahne({ icon: '🚇', cam: [[1.8, 3.6, 14.5], [1.8, 2, 0]], plate: [12, 4, 0, 0],
     data: [['Parçacık', 'elektron'], ['Enerji', 'E = 3 eV'], ['Engel', 'V₀ = 4 eV']],
     S0: () => ({ a: 0.25, ph: 0, kuant: 1, par: [], zam: 0, gec: 0, top: 0 }),
     kur(g) {
@@ -153,14 +153,14 @@
         if (x < -gen / 2) y = Math.cos(k * x - S.ph) * 0.5;
         else if (x <= gen / 2) y = S.kuant ? 0.5 * Math.exp(-KAP / 4 * (x + gen / 2)) * Math.cos(k * (-gen / 2) - S.ph) : 0;
         else y = 0.5 * at * Math.cos(k * x - S.ph);
-        pts.push(V3(x, 3.2 + y, 0)); }
+        pts.push(V3(x, 2.9 + y, 0)); }
       FZ.setLine(o.psi, pts);
       if (S.kos) { S.zam += dt * 6; while (S.zam > 1) { S.zam -= 1; S.par.push({ x: -5.5, z: (Math.random() - 0.5) * 1, ge: Math.random() < T, yon: 1 }); S.top++; } }
       S.par.forEach(p => { p.x += p.yon * dt * 2.2; if (p.yon > 0 && p.x > -gen / 2 - 0.1 && !p.ge) p.yon = -1; if (p.ge && p.yon > 0 && p.x > gen / 2 && !p.say) { p.say = 1; S.gec++; } });
       S.par = S.par.filter(p => p.x > -5.6 && p.x < 5.6).slice(-40);
       o.parc.forEach((m, i) => { const p = S.par[i]; if (!p) { m.visible = false; return; } m.visible = true; m.position.set(p.x, 0.3, p.z); m.material.color.setHex(p.ge ? 0x22c55e : 0xf97316); });
-      FZ.show('t3E', V3(-4.6, 1.8, -0.8), 1); FZ.show('t3V', V3(0, 2.75, 0), 1); FZ.show('t3p', V3(-5.2, 3.9, 0), 1);
-      FZ.setTag('t3t', `a = ${fs(S.a)} nm · T ≈ e<sup>−2κa</sup> = ${(T * 100).toFixed(T < 0.01 ? 3 : 1).replace('.', ',')} %<br>geçen: ${S.gec} / ${S.top}`); FZ.show('t3t', V3(3.4, 4.6, 0), 1);
+      FZ.show('t3E', V3(-3.8, 1.8, -0.8), 1); FZ.show('t3V', V3(0, 2.75, 0), 1); FZ.show('t3p', V3(-4.6, 3.6, 0), 1);
+      FZ.setTag('t3t', `a = ${fs(S.a)} nm · T ≈ e<sup>−2κa</sup> = ${(T * 100).toFixed(T < 0.01 ? 3 : 1).replace('.', ',')} %<br>geçen: ${S.gec} / ${S.top}`); FZ.show('t3t', V3(2.4, 4.3, 0), 1);
     },
     qp: () => V3(0, 5, 0) });
   const dT = ders(sT, { yk: 'UNI8-d1', no: 1, icon: '🔬', name: 'Duvarın içinden geçmek', task: 'Klasik engel, kuantum tünelleme, geçme olasılığı T ≈ e^(−2κa), tarama tünelleme mikroskobu.', steps: [

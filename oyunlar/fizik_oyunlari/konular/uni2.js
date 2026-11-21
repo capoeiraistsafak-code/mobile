@@ -94,13 +94,13 @@
       o.el.forEach((m, i) => { const r = o.rnd[(i + 5) % 14]; let x = 3 - ((r[0] * 3 + S.ph) % 3); if (hiz < 0.01) x = gen / 2 + r[0] * (3 - gen / 2);
         m.position.set(x, 0.6 + r[2] * 1.2, -0.5 + r[1]); m.visible = hiz > 0.01 || x > gen / 2; });
       // I–V grafiği (sağ üst köşede): V ∈ [−1, 0,8], I ∈ [0, 30 mA]
-      const gx = V => 4.6 + V * 1.6, gy = I => 3.3 + Math.min(1.8, I / 0.03 * 1.8), pts = [];
+      const gx = V => 1.9 + V * 1.6, gy = I => 2.9 + Math.min(1.6, I / 0.03 * 1.6), pts = [];
       for (let i = 0; i <= 90; i++) { const V = -1 + i / 90 * 1.8; pts.push(V3(gx(V), gy(Math.max(akim(V), -0.001)), 0)); }
-      FZ.setLine(o.egri, pts); FZ.setLine(o.eks, [V3(gx(-1), 3.3, 0), V3(gx(0.8), 3.3, 0), V3(gx(0), 3.3, 0), V3(gx(0), 5.2, 0)]);
+      FZ.setLine(o.egri, pts); FZ.setLine(o.eks, [V3(gx(-1), 2.9, 0), V3(gx(0.8), 2.9, 0), V3(gx(0), 2.9, 0), V3(gx(0), 4.6, 0)]);
       o.nok.position.set(gx(S.V), gy(Math.max(I, 0)), 0);
-      FZ.show('pnp', V3(-1.5, 2.4, 0), 1); FZ.show('pnn', V3(1.5, 2.4, 0), 1); FZ.show('pnd', V3(0, 0.15, 0.7), 1);
+      FZ.show('pnp', V3(-2, 2.4, 0), 1); FZ.show('pnn', V3(2.2, 2.4, 0), 1); FZ.show('pnd', V3(0, 0.15, 0.7), 1);
       const Is = Math.abs(I) < 1e-9 ? `${(I * 1e12).toFixed(1).replace('.', ',')} pA` : Math.abs(I) < 1e-3 ? `${fs(I * 1e6)} μA` : `${fs(I * 1e3)} mA`;
-      FZ.setTag('pnt', `V = ${fs(S.V)} V (${S.V > 0 ? 'ileri' : S.V < 0 ? 'ters' : 'yok'}) · I = ${Is}`); FZ.show('pnt', V3(0, 3.4, 0), 1);
+      FZ.setTag('pnt', `V = ${fs(S.V)} V (${S.V > 0 ? 'ileri' : S.V < 0 ? 'ters' : 'yok'}) · I = ${Is}`); FZ.show('pnt', V3(-0.6, -0.15, 1.6), 1);
     },
     qp: () => V3(0, 4, 0) });
   const dPN = ders(sPN, { yk: 'SEC1-d1', no: 1, icon: '💡', name: 'Akımı tek yöne geçiren kapı', task: 'Katkılama (n ve p tipi), p-n eklemi, tükenim bölgesi, ileri/ters öngerilim, diyot denklemi.', steps: [
@@ -151,16 +151,16 @@
       S.T += (S.hedef - S.T) * Math.min(1, dt * 0.8); const sup = S.T < TC;
       S.y += ((sup ? 0.6 : 0) - S.y) * Math.min(1, dt * 2.5); o.mik.position.y = 0.42 + S.y; o.sis.visible = S.T < 150;
       o.disk.material.color.setHex(sup ? 0x334155 : 0x64748b);
-      const c = o.mik.position.clone().add(V3(0, 0.18, 0)), L = 1; // mg = 0,5 N → 1 birim
-      FZ.setArrow(o.oG, c.clone().add(V3(-0.6, 0, 0.5)), V3(0, -1, 0), L); FZ.show('suG', c.clone().add(V3(-0.6, -L - 0.25, 0.5)), 1);
-      const yuz = o.mik.position.clone().add(V3(0.6, 0, 0.5));
-      if (S.y > 0.05) { const Fm = S.y / 0.6; FZ.setArrow(o.oF, yuz, V3(0, 1, 0), L * Fm); FZ.show('suF', yuz.clone().add(V3(0.35, L * Fm, 0)), 1); }
-      if (S.y < 0.55) { const N = 1 - S.y / 0.6; if (N > 0.05) { FZ.setArrow(o.oN, yuz.clone().add(V3(0.4, 0, 0)), V3(0, 1, 0), L * N); FZ.show('suN', yuz.clone().add(V3(0.75, L * N, 0)), 1); } }
+      const c = o.mik.position.clone().add(V3(0, 0.18, 0)), L = 1; // mg = 0,5 N → 1 birim; ağırlık mıknatısın merkezinden
+      FZ.setArrow(o.oG, c.clone().add(V3(-0.15, 0, 0.36)), V3(0, -1, 0), L); FZ.show('suG', c.clone().add(V3(-0.5, -L - 0.2, 0.36)), 1);
+      const yuz = o.mik.position.clone().add(V3(0.15, 0, 0.36)); // alt yüzey: manyetik itme / tepki buradan
+      if (S.y > 0.05) { const Fm = S.y / 0.6; FZ.setArrow(o.oF, yuz, V3(0, 1, 0), L * Fm); FZ.show('suF', yuz.clone().add(V3(0.45, L * Fm, 0)), 1); }
+      if (S.y < 0.55) { const N = 1 - S.y / 0.6; if (N > 0.05) { FZ.setArrow(o.oN, yuz.clone().add(V3(0.15, 0, 0)), V3(0, 1, 0), L * N); FZ.show('suN', yuz.clone().add(V3(0.6, L * N, 0)), 1); } }
       // R–T grafiği
-      const gx = T => 2.6 + T / 300 * 2.6, gy = T => 2.6 + (T < TC ? 0 : 0.3 + (T - TC) / 208 * 1.4), pts = [];
+      const gx = T => 1.4 + T / 300 * 2, gy = T => 2.2 + (T < TC ? 0 : 0.3 + (T - TC) / 208 * 1.2), pts = [];
       for (let i = 0; i <= 100; i++) { const T = i / 100 * 300; pts.push(V3(gx(T), gy(T), 0)); }
-      FZ.setLine(o.egri, pts); FZ.setLine(o.eks, [V3(gx(0), 4.5, 0), V3(gx(0), 2.6, 0), V3(gx(300), 2.6, 0)]); o.nok.position.set(gx(S.T), gy(S.T), 0);
-      FZ.setTag('sut', `T = ${Math.round(S.T)} K · ${sup ? 'süperiletken: R = 0' : 'normal: R > 0'}`); FZ.show('sut', V3(1.3, 3.2, 0), 1);
+      FZ.setLine(o.egri, pts); FZ.setLine(o.eks, [V3(gx(0), 3.9, 0), V3(gx(0), 2.2, 0), V3(gx(300), 2.2, 0)]); o.nok.position.set(gx(S.T), gy(S.T), 0);
+      FZ.setTag('sut', `T = ${Math.round(S.T)} K · ${sup ? 'süperiletken: R = 0' : 'normal: R > 0'}`); FZ.show('sut', V3(-1.6, 3.4, 0), 1);
     },
     qp: () => V3(0, 3.6, 0) });
   const dSU = ders(sSU, { yk: 'SEC2-d1', no: 1, icon: '🚄', name: 'Havada süzülen tren', task: 'Kritik sıcaklık, sıfır direnç, Meissner olayı, Cooper çiftleri, MR ve maglev.', steps: [
