@@ -9,7 +9,7 @@ import sharp from "sharp";
 import { createRequire } from "node:module";
 import { detectQuestions } from "./layout.js";
 // Okuma eşikleri (odev-kontrol/app.js içindeki T ile aynı tutulmalı).
-const THRESHOLDS = { minPageMatch: 40, inkDarkness: 55, printTolerancePx: 5, markMinRatio: 0.01, markMultiMin: 0.045, markRivalRatio: 0.55, workMinRatio: 0.004 };
+const THRESHOLDS = { minPageMatch: 40, inkDarkness: 55, printTolerancePx: 5, markMinRatio: 0.008, markMultiMin: 0.035, markRivalRatio: 0.5, workMinRatio: 0.004 };
 
 const require = createRequire(import.meta.url);
 /** Boş sayfa bu genişliğe getirilir; bütün koordinatlar bu ölçektedir. */
@@ -248,7 +248,9 @@ export async function readStudentPage(photoBuf, templates) {
     const answers = tp.questions.map((q) => {
       const opt = q.options.map((o) => {
         const n = inkIn(ink, o.box);
-        return { letter: o.letter, ink: n, ratio: n / rectArea(o.box) };
+        // İz, şık harfinin boyuna göre sabit bir alana oranlanır (uzun şık metni oranı düşürmesin).
+        const h = o.box.y1 - o.box.y0;
+        return { letter: o.letter, ink: n, ratio: n / (h * h * 2.5) };
       });
       const sorted = [...opt].sort((a, b) => b.ratio - a.ratio);
       const [first, second] = sorted;

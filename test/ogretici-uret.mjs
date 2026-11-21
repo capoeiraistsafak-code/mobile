@@ -60,6 +60,48 @@ for (const [ad, , f] of OGRENCILER) {
   fs.writeFileSync(path.join(OUT, "Ornek_Ogrenci_Fotograflari", ad), await photograph(await renderPage(layout, ink), 900 + ad.length, 1));
 }
 
+// --- odev-kontrol/Test_Fotograflari: farklı durumları deneyen 4 fotoğraf (aynı test sayfası) ---
+const TEST = path.resolve("odev-kontrol/Test_Fotograflari");
+fs.mkdirSync(TEST, { recursive: true });
+export const TEST_FOTOLARI = [
+  // dosya, açıklama, cevap üretici, fotoğraf zorluğu
+  ["105 Ece Tan.jpg", "7 doğru, 1 yanlış (4. soru); bazı şıklar tik ile işaretli", (i, k) => ({ mark: i === 3 ? yanlis(k) : k, work: true, style: i % 3 === 0 ? "tick" : "circle" }), 1],
+  ["101 Ali Kaya.jpg", "Daha eğik ve karanlık çekilmiş; 6 doğru, 2 boş (3. ve 7. soru)", (i, k) => (i === 2 || i === 6 ? { mark: null, work: false } : { mark: k, work: true }), 1.25],
+  ["102 Buse Er.jpg", "6. soruda iki şık işaretli (öğretmen baksın); kalan 7 soru doğru", (i, k) => (i === 5 ? { mark: k, mark2: k === "A" ? "C" : "A", work: true } : { mark: k, work: true }), 1],
+  ["103 Can Demir.jpg", "Hepsi doğru ama hiç işlem yok: 8 işlemsiz doğru (kopya şüphesi)", (i, k) => ({ mark: k, work: false }), 1],
+];
+for (const [ad, , f, zorluk] of TEST_FOTOLARI) {
+  const answers = layout.questions.map((q, i) => ({ number: q.number, ...f(i, ANAHTAR[i]) }));
+  const ink = studentInk(layout, answers, 700 + ad.length);
+  fs.writeFileSync(path.join(TEST, ad), await photograph(await renderPage(layout, ink), 1300 + ad.length, zorluk));
+}
+fs.writeFileSync(
+  path.join(TEST, "OKU_BENI.txt"),
+  `TEST FOTOĞRAFLARI
+=================
+
+Bu 4 fotoğraf, programı denemek için hazırlanmış öğrenci ödev fotoğraflarıdır.
+Hepsi aynı test sayfası: Ogretici/Ornek_Bos_Sayfa_Foto.jpg
+(Teknoloji ve Tasarım 8. sınıf, Fikrî Haklar – Test 1, anahtar: ${ANAHTAR})
+
+Nasıl denenir:
+  1. Ana Sayfa > 1. adım: Ogretici/Ornek_Ogrenci_Listesi_8-A.xlsx dosyasını yükle.
+  2. Ana Sayfa > 2. adım: Ogretici/Ornek_Kazanim_Listesi_TT8.xlsx dosyasını yükle.
+  3. Ödevler: 8-A için yeni ödev oluştur, "Boş sayfa ekle" ile
+     Ogretici/Ornek_Bos_Sayfa_Foto.jpg dosyasını seç.
+     "Anahtar ve kazanımları gir": Hızlı anahtar = ${ANAHTAR}
+     Toplu kazanım (her satır ayrı):
+${SORULAR.map((q, i) => `       ${i + 1} ${q.kod}`).join("\n")}
+  4. Ödev Kontrol: bu klasördeki 4 fotoğrafı sürükle (ya da "Klasörden yükle" ile
+     bu klasörü seç). Dosya adında numara ve ad olduğu için öğrenciler kendiliğinden
+     seçilir. "Kontrol et"e bas.
+
+Beklenen sonuçlar:
+${TEST_FOTOLARI.map(([ad, a]) => `  ${ad.padEnd(20)} ${a}`).join("\n")}
+  Deniz Ak (104)       fotoğraf yok -> "Yapmadı"
+`.replace(/\n/g, "\r\n")
+);
+
 // --- Programın "Örnek verilerle dene" düğmesi için gömülü örnekler (vendor/ornek-veri.js) ---
 const sharp = (await import("sharp")).default;
 const kucuk = async (buf) => (await sharp(buf).resize({ width: 1800, height: 1800, fit: "inside" }).jpeg({ quality: 82 }).toBuffer()).toString("base64");

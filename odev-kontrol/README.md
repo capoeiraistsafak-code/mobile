@@ -88,6 +88,7 @@ Bu değerler Ayarlar'dan değiştirilebilir.
 | Klasör | İçinde |
 |---|---|
 | `Ogretici/` | Sadece öğrenme amaçlı örnek dosyalar ve `BENI_OKU.txt`. İçinde Teknoloji ve Tasarım 8. sınıf örnekleri var: öğrenci listesi, kazanım listesi, boş test sayfası (yazdırılabilir ve fotoğraflı) ve 4 örnek öğrenci fotoğrafı. Beklenen sonuçlar `BENI_OKU.txt` dosyasında yazılı. |
+| `Test_Fotograflari/` | Programı denemek için 4 öğrenci fotoğrafı ve `OKU_BENI.txt`. Fotoğraflar farklı durumları gösterir: tik ile işaretleme, eğik ve karanlık çekim, iki şık işaretleme, hiç işlem yazmadan işaretleme. Dosya adında numara ve ad olduğu için öğrenci kendiliğinden seçilir. |
 | `Ogrenci/` | **Kendi** öğrenci listeleriniz (ör. `8-A.xlsx`) |
 | `Kazanim/` | **Kendi** kazanım listeleriniz (K12) |
 | `Odev/` | Öğrencilerden gelen fotoğraflar; her ödev için ayrı bir alt klasör açabilirsiniz |
@@ -101,6 +102,6 @@ Bu değerler Ayarlar'dan değiştirilebilir.
 
 - **Şıklar "A)", "A.", "(A)" biçiminde basılmış olmalı.** Optik formdaki gibi daire içinde harf olan şıklar şu an tanınmaz. Bir soru bulunamazsa anahtar ekranında "X. soru bulunamadı" uyarısı çıkar; sayfayı daha düz ve net çekip yeniden ekleyin.
 - **Sadece işaretlenen şık değerlendirilir.** Yazılan çözümün doğruluğu okunmaz; çözüm için sadece "yazı var / yok" bilgisi verilir.
-- **İşaretler şıkkın etrafına yapılmalı.** Daire içine almak, tik ya da çarpı işareti çalışır. Karalayıp silmek "iki şık işaretli" görünebilir; bu sorular öğretmene bırakılır.
+- **İşaretler şıkkın harfinin üstüne ya da çevresine yapılmalı.** Daire içine almak ve tik atmak çalışır. Karalayıp silmek "iki şık işaretli" görünebilir; bu sorular öğretmene bırakılır.
 - **Okuma eşikleri yapay test sayfalarıyla ayarlandı.** Bu sayfalarda 16/16 soru bulundu ve 128/128 şık doğru okundu. Gerçek kitap sayfaları ve gerçek el yazısıyla henüz ölçülmedi.
 - **Örnek kazanım kodları uydurmadır.** Resmî liste için K12'den aldığınız dosyayı kullanın.

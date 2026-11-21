@@ -21,9 +21,9 @@ const T = {
   samePageMatch: 120, // aynı boş sayfa ikinci kez eklenirse eskisi kullanılır
   inkDarkness: 55, // boş sayfadan bu kadar koyu nokta = el yazısı (0-255)
   printTolerancePx: 5, // basılı yazıdaki küçük kaymalara tolerans (piksel)
-  markMinRatio: 0.01, // şık kutusunun en az %1'i mürekkepse işaretli
-  markMultiMin: 0.045, // ikinci şık hem %4,5'i...
-  markRivalRatio: 0.55, // ...hem birincinin 0,55 katını geçerse "iki şık işaretli"
+  markMinRatio: 0.008, // şık harfi çevresindeki alanın en az %0,8'i mürekkepse işaretli
+  markMultiMin: 0.035, // ikinci şık hem %3,5'i...
+  markRivalRatio: 0.5, // ...hem birincinin yarısını geçerse "iki şık işaretli"
   workMinRatio: 0.004, // soru alanının en az %0,4'ü yazıysa "işlem var"
   pageMinInk: 0.002, // sayfanın en az %0,2'si yazıysa ödev yapılmış
 };
@@ -894,7 +894,9 @@ async function ogrenciSayfasiOku(foto, sayfalar) {
     const cevaplar = p.sorular.map((q) => {
       const opt = q.siklar.map((o) => {
         const n = murekkep(ink, o.box);
-        return { harf: o.letter, n, oran: n / alan(o.box) };
+        // İz, şık harfinin boyuna göre sabit bir alana oranlanır (uzun şık metni oranı düşürmesin; tik de okunsun).
+        const h = o.box.y1 - o.box.y0;
+        return { harf: o.letter, n, oran: n / (h * h * 2.5) };
       });
       const [bir, iki] = [...opt].sort((a, b) => b.oran - a.oran);
       const toplam = opt.reduce((s, o) => s + o.n, 0);
@@ -995,7 +997,7 @@ async function gonderimIsle(g) {
     if (!sayfalar.length) throw new Error("Bu ödeve henüz boş sayfa eklenmemiş.");
     const r = await ogrenciSayfasiOku(g.foto, sayfalar);
     if (!r.eslesti) throw new Error("Fotoğraf bu ödevin sayfalarına benzemiyor. Doğru sayfa mı? Bütün sayfa görünüyor mu?");
-    Object.assign(g, { durum: "bitti", hata: null, sayfaId: r.sayfaId, kaplama: r.kaplama, eslesme: r.puan, murekkep: r.sayfaMurekkep, yazili: r.sayfaMurekkep >= T.pageMinInk, cevaplar: r.cevaplar });
+    Object.assign(g, { durum: "bitti", hata: null, sayfaId: r.sayfaId, kaplama: r.kaplama, eslesme: r.puan, murekkep: r.sayfaMurekkep, yazili: r.sayfaMurekkep >= T.pageMinInk || r.cevaplar.some((c) => c.durum !== "none"), cevaplar: r.cevaplar });
   } catch (e) {
     console.error(e);
     g.durum = "hata";

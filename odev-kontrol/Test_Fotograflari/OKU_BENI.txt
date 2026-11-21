@@ -1,0 +1,32 @@
+TEST FOTOĞRAFLARI
+=================
+
+Bu 4 fotoğraf, programı denemek için hazırlanmış öğrenci ödev fotoğraflarıdır.
+Hepsi aynı test sayfası: Ogretici/Ornek_Bos_Sayfa_Foto.jpg
+(Teknoloji ve Tasarım 8. sınıf, Fikrî Haklar – Test 1, anahtar: BCADCADB)
+
+Nasıl denenir:
+  1. Ana Sayfa > 1. adım: Ogretici/Ornek_Ogrenci_Listesi_8-A.xlsx dosyasını yükle.
+  2. Ana Sayfa > 2. adım: Ogretici/Ornek_Kazanim_Listesi_TT8.xlsx dosyasını yükle.
+  3. Ödevler: 8-A için yeni ödev oluştur, "Boş sayfa ekle" ile
+     Ogretici/Ornek_Bos_Sayfa_Foto.jpg dosyasını seç.
+     "Anahtar ve kazanımları gir": Hızlı anahtar = BCADCADB
+     Toplu kazanım (her satır ayrı):
+       1 TT.8.A.1
+       2 TT.8.A.2
+       3 TT.8.B.1
+       4 TT.8.B.2
+       5 TT.8.C.1
+       6 TT.8.A.2
+       7 TT.8.B.1
+       8 TT.8.A.2
+  4. Ödev Kontrol: bu klasördeki 4 fotoğrafı sürükle (ya da "Klasörden yükle" ile
+     bu klasörü seç). Dosya adında numara ve ad olduğu için öğrenciler kendiliğinden
+     seçilir. "Kontrol et"e bas.
+
+Beklenen sonuçlar:
+  105 Ece Tan.jpg      7 doğru, 1 yanlış (4. soru); bazı şıklar tik ile işaretli
+  101 Ali Kaya.jpg     Daha eğik ve karanlık çekilmiş; 6 doğru, 2 boş (3. ve 7. soru)
+  102 Buse Er.jpg      6. soruda iki şık işaretli (öğretmen baksın); kalan 7 soru doğru
+  103 Can Demir.jpg    Hepsi doğru ama hiç işlem yok: 8 işlemsiz doğru (kopya şüphesi)
+  Deniz Ak (104)       fotoğraf yok -> "Yapmadı"
