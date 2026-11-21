@@ -169,10 +169,14 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 #ana{position:absolute;inset:0;z-index:11;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 35%,rgba(58,65,80,.82),rgba(31,35,44,.97))}
 .a-bas{margin-top:18px;font:900 66px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
 .a-alt{margin-top:4px;font:700 26px Inter;color:#cbd5e1}.a-alt b{color:#F5C400}
-#sekme{margin-top:12px;display:flex;gap:0;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
-#sekme button{font:900 30px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:8px 54px;min-width:300px}
+#sekme{display:flex;gap:0;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
+#sekme button{font:900 30px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:8px 40px;min-width:270px}
 #sekme button.on{background:#D62828;color:#fff;box-shadow:0 8px 24px rgba(214,40,40,.45)}
 #sekme button small{display:block;font:700 15px Inter;opacity:.85;margin-top:2px}
+#sekmeler{margin-top:12px;display:flex;gap:22px;align-items:center}
+#duzey{display:flex;background:#1f232c;border:3px solid #4b5566;border-radius:999px;padding:6px}
+#duzey button{font:900 30px Inter;color:#cbd5e1;background:transparent;border-radius:999px;padding:16px 38px}
+#duzey button.on{background:#2563EB;color:#fff;box-shadow:0 8px 24px rgba(37,99,235,.45)}
 #konular{margin-top:16px;width:1840px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;align-content:start}
 .konu.k0{--k:#E10600}.konu.k1{--k:#FFD400;color:#141414}.konu.k2{--k:#0066FF}.konu.k3{--k:#00A63E}.konu.k4{--k:#8A00E6}
 .konu{display:grid;grid-template-columns:150px 1fr 150px;align-items:stretch;height:72px;background:var(--k,#2a303c);border:3px solid rgba(0,0,0,.35);border-radius:999px;color:#fff;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.35)}
@@ -299,8 +303,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 
   <div id="ana">
     <div class="a-bas">FİZİK OYUNLARI</div>
-    <div class="a-alt">3D Görev Oyunu · <b>TYT ve AYT konuları tek programda</b></div>
-    <div id="sekme"><button data-s="TYT">TYT<small>9–10. sınıf</small></button><button data-s="AYT">AYT<small>11–12. sınıf</small></button></div>
+    <div class="a-alt">3D Görev Oyunu · <b>Lise (TYT · AYT) ve üniversite konuları tek programda</b></div>
+    <div id="sekmeler"><div id="duzey"><button data-d="lise">🎒 Lise</button><button data-d="uni">🎓 Üniversite</button></div><div id="sekme"></div></div>
     <div id="konular"></div>
     <div class="a-acik"><span>◀ Sol yarı: <b style="color:#fff">Konu anlatımı</b></span><span>Sağ yarı: <b style="color:#fff">Soru çözümü</b> ▶</span><span><i style="background:#00E05A"></i>Hazır</span><span><i style="background:#FF1A1A"></i>Yakında</span></div>
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
@@ -1160,15 +1164,27 @@ const KONULAR = {
     'Tork ve Denge', 'Kütle ve Ağırlık Merkezi', 'Basit Makineler', 'Elektriksel Kuvvet ve Alan', 'Elektriksel Potansiyel', 'Düzgün Elektrik Alan ve Sığa',
     'Manyetizma ve İndüklenme', 'Alternatif Akım ve Transformatörler', 'Çembersel Hareket', 'Dönme ve Açısal Momentum',
     'Kütle Çekim ve Kepler Yasaları', 'Basit Harmonik Hareket', 'Dalga Mekaniği', 'Atom Fiziğine Giriş ve Radyoaktivite', 'Modern Fizik', 'Modern Fiziğin Uygulamaları'],
+  // ÜNİVERSİTE: temel lisans dersleri (UNI) ve seçmeli dersler (SEC)
+  UNI: ['Özel Görelilik', 'Termodinamik ve Entropi', 'Maxwell Denklemleri ve EM Dalgalar', 'Çift Yarık Deneyi', 'Dalga–Parçacık İkiliği', 'Belirsizlik İlkesi',
+    'Schrödinger Denklemi ve Kutudaki Parçacık', 'Kuantum Tünelleme', 'Hidrojen Atomu ve Spin', 'Katıhal Fiziği: Kristal ve Bant Yapısı'],
+  SEC: ['Yarı İletkenler ve p-n Eklemi', 'Süperiletkenlik', 'Lazer Fiziği', 'Nükleer Fizik', 'Parçacık Fiziği ve Standart Model', 'Kuantum Hesaplama',
+    'Astrofizik ve Kozmoloji', 'Genel Görelilik ve Kara Delikler'],
 };
+const SAD = { TYT: 'TYT FİZİK', AYT: 'AYT FİZİK', UNI: 'ÜNİVERSİTE · TEMEL', SEC: 'ÜNİVERSİTE · SEÇMELİ' };
+// düzeyler: lise (TYT, AYT) · üniversite (temel, seçmeli)
+const DUZEY = { lise: [['TYT', 'TYT', '9–10. sınıf'], ['AYT', 'AYT', '11–12. sınıf']], uni: [['UNI', 'Temel dersler', 'lisans'], ['SEC', 'Seçmeli dersler', 'lisans']] };
+const duzeyOf = s => (s === 'UNI' || s === 'SEC') ? 'uni' : 'lise';
 // hazır konular: görevleri (oyunları) olanlar
 const HAZIR = { 'AYT|Çembersel Hareket': { gorevler: MISSIONS, dersler: DERSLER } };
-let SINAV = 'AYT'; try { SINAV = localStorage.getItem('ch_sinav') || 'AYT'; } catch (e) {}
+let SINAV = 'AYT'; try { SINAV = localStorage.getItem('ch_sinav') || 'AYT'; } catch (e) {} if (!KONULAR[SINAV]) SINAV = 'AYT';
 let KONU = null;
 const YK = M => M.yk || M.no;                                            // yıldız/ders anahtarı (çembersel hareket: 1–4, diğer konular: 'TYT1-g1' gibi)
 function konuYildiz(h) { let y = 0, t = 0; h.gorevler.forEach(M => { t += M.steps.filter(s => s.q).length; y += done[YK(M)] || 0; }); return [y, t]; }
 function anaKur() {
-  document.querySelectorAll('#sekme button').forEach(b => b.classList.toggle('on', b.dataset.s === SINAV));
+  const dz = duzeyOf(SINAV);
+  document.querySelectorAll('#duzey button').forEach(b => b.classList.toggle('on', b.dataset.d === dz));
+  $('sekme').innerHTML = DUZEY[dz].map(([k, ad, alt]) => `<button data-s="${k}" class="${k === SINAV ? 'on' : ''}">${ad}<small>${alt}</small></button>`).join('');
+  $('sekme').querySelectorAll('button').forEach(b => b.onclick = () => sinavSec(b.dataset.s));
   const L = KONULAR[SINAV], k = $('konular'); k.innerHTML = '';
   k.style.gridTemplateColumns = `repeat(${L.length > 12 ? 3 : 2},1fr)`; k.style.width = L.length > 12 ? '1840px' : '1500px';
   L.forEach((ad, i) => { const h = HAZIR[SINAV + '|' + ad], d = !!(h && h.dersler && h.dersler.length), q = !!(h && h.gorevler && h.gorevler.length), b = document.createElement('div');
@@ -1177,15 +1193,17 @@ function anaKur() {
     b.innerHTML = `<button class="yari sol ${d ? 'var' : ''}" title="Konu anlatımı"><span class="dot ${d ? 'dolu' : 'bos'}"></span><span>Konu<br>anlatımı</span></button>
       <div class="orta"><span class="no">${i + 1}</span><span class="ad">${ad}</span>${yl}</div>
       <button class="yari sag ${q ? 'var' : ''}" title="Soru çözümü"><span>Soru<br>çözümü</span><span class="dot ${q ? 'dolu' : 'bos'}"></span></button>`;
-    const yakinda = tur => { $('ykAd').textContent = `${SINAV} · ${ad} · ${tur}`; $('yakinda').classList.remove('hide'); };
+    const yakinda = tur => { $('ykAd').textContent = `${SAD[SINAV]} · ${ad} · ${tur}`; $('yakinda').classList.remove('hide'); };
     b.querySelector('.sol').onclick = () => { ac(); SFX.click(); d ? konuAc(SINAV, ad, 'ders') : yakinda('Konu anlatımı'); };
     b.querySelector('.sag').onclick = () => { ac(); SFX.click(); q ? konuAc(SINAV, ad, 'soru') : yakinda('Soru çözümü'); };
     k.appendChild(b); });
 }
-function konuAc(sinav, ad, mod = 'soru') { KONU = { sinav, ad, mod }; $('mSinav').textContent = sinav + ' FİZİK · ' + (mod === 'ders' ? 'KONU ANLATIMI' : 'SORU ÇÖZÜMÜ'); $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
+function konuAc(sinav, ad, mod = 'soru') { KONU = { sinav, ad, mod }; $('mSinav').textContent = (SAD[sinav] || sinav) + ' · ' + (mod === 'ders' ? 'KONU ANLATIMI' : 'SORU ÇÖZÜMÜ'); $('mKonu').textContent = ad.toLocaleUpperCase('tr-TR');
   $('ana').classList.add('hide'); buildMenu(); $('menu').classList.remove('hide'); }
 function anaDon() { $('menu').classList.add('hide'); anaKur(); $('ana').classList.remove('hide'); }
-document.querySelectorAll('#sekme button').forEach(b => b.onclick = () => { SFX.click(); SINAV = b.dataset.s; try { localStorage.setItem('ch_sinav', SINAV); } catch (e) {} anaKur(); });
+function sinavSec(k) { SFX.click(); SINAV = k; try { localStorage.setItem('ch_sinav', SINAV); } catch (e) {} anaKur(); }
+const sonSinav = { lise: SINAV === 'TYT' ? 'TYT' : 'AYT', uni: SINAV === 'SEC' ? 'SEC' : 'UNI' };
+document.querySelectorAll('#duzey button').forEach(b => b.onclick = () => { const d = b.dataset.d; sonSinav[duzeyOf(SINAV)] = SINAV; if (duzeyOf(SINAV) !== d) sinavSec(sonSinav[d]); });
 $('ykTamam').onclick = () => { SFX.click(); $('yakinda').classList.add('hide'); };
 $('mGeri').onclick = () => { SFX.click(); anaDon(); };
 $('bFs2').onclick = () => fullscreen();
@@ -1681,4 +1699,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
 <script src="konular/ayt1.js"></script>
 <script src="konular/ayt2.js"></script>
 <script src="konular/ayt3.js"></script>
+<script src="konular/ayt4.js"></script>
+<script src="konular/ayt5.js"></script>
+<script src="konular/ayt6.js"></script>
 </body></html>
