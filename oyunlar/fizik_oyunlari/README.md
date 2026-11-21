@@ -52,3 +52,8 @@ Sol alttaki kontrol çubuğu: **⏸ Duraklat / ▶ Devam** ve hız düğmeleri *
 Kısayollar: `1`–`4` şık seç · `Boşluk` devam · `P` duraklat/devam · `−`/`+` hız · `M` ses aç/kapa · `F` tam ekran.
 
 Sesler (roket, motor, tren, su, yay, zil) tarayıcıda üretilir; insan sesi/seslendirme yoktur.
+
+---
+
+© 2026 Şafak Ulusoy. All rights reserved. This software, its design and its content are the intellectual property of Şafak Ulusoy. Unauthorized copying, distribution or modification is prohibited.
+(Tüm hakları saklıdır. Bu yazılım, tasarımı ve içeriği Şafak Ulusoy’un fikrî mülkiyetidir. İzinsiz kopyalanması, dağıtılması veya değiştirilmesi yasaktır.)

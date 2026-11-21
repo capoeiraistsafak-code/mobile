@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- © 2026 Şafak Ulusoy. Tüm hakları saklıdır. Bu yazılım, tasarımı ve içeriği Şafak Ulusoy’un fikrî mülkiyetidir. İzinsiz kopyalanması, dağıtılması veya değiştirilmesi yasaktır. -->
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
@@ -237,6 +238,8 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
 .sf-et{margin-top:22px;text-align:left;font:700 26px Inter;color:#cbd5e1}
 .sf-msj{min-height:44px;margin-top:16px;font:800 30px Inter}
 .sf-msj.hata{color:#f87171}.sf-msj.iyi{color:#4ade80}
+/* Telif yazısı (yalnızca Ayarlar'ın en altında): sade, sarı zemin, çerçeveli, yuvarlak köşe, siyah yazı */
+.telif{margin:22px auto 0;max-width:820px;padding:12px 20px;background:#fff6c7;border:2px solid #e6c84f;border-radius:14px;color:#111;font:500 19px/1.45 Inter;text-align:center}
 #ayar{position:absolute;inset:0;z-index:13;display:flex;align-items:center;justify-content:center;background:rgba(20,23,30,.75)}
 .m-ayar{position:absolute;right:330px;bottom:32px;display:flex;align-items:center;gap:8px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
 .m-fs{position:absolute;right:40px;bottom:32px;display:flex;align-items:center;gap:8px;font:800 30px Inter;background:#3a4150;color:#fff;border:2px solid #556070;border-radius:16px;padding:16px 26px}
@@ -328,12 +331,13 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0}
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-ayar" id="bAyar">⚙ Ayarlar</button>
     <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
-    <div id="ayar" class="hide"><div class="ov-k"><div class="ov-ic">⚙️</div><div class="ov-b" style="font-size:54px">Ayarlar · Şifre değiştir</div>
+    <div id="ayar" class="hide"><div class="ov-k" style="padding:30px 56px"><div class="ov-ic" style="font-size:64px">⚙️</div><div class="ov-b" style="font-size:50px;margin-top:8px">Ayarlar · Şifre değiştir</div>
       <div class="sf-et">Mevcut şifre</div><input class="sf-in" id="sfEski" type="password" autocomplete="off">
       <div class="sf-et">Yeni şifre (en az 4 karakter)</div><input class="sf-in" id="sfYeni" type="password" autocomplete="off">
       <div class="sf-et">Yeni şifre (tekrar)</div><input class="sf-in" id="sfYeni2" type="password" autocomplete="off">
       <div class="sf-msj" id="sfMsj"></div>
-      <div class="ov-dg" style="margin-top:12px"><button class="btn" id="sfKapat">Kapat</button><button class="btn ana" id="sfKaydet">Kaydet</button></div></div></div>
+      <div class="ov-dg" style="margin-top:12px"><button class="btn" id="sfKapat">Kapat</button><button class="btn ana" id="sfKaydet">Kaydet</button></div>
+      <p class="telif">© 2026 Şafak Ulusoy. All rights reserved. This software, its design and its content are the intellectual property of Şafak Ulusoy. Unauthorized copying, distribution or modification is prohibited.<br>(Tüm hakları saklıdır. Bu yazılım, tasarımı ve içeriği Şafak Ulusoy’un fikrî mülkiyetidir. İzinsiz kopyalanması, dağıtılması veya değiştirilmesi yasaktır.)</p></div></div>
     <div id="yakinda" class="hide"><div class="ov-k" style="width:900px"><div class="ov-ic">🛠</div><div class="ov-b" id="ykAd" style="font-size:50px"></div>
       <div class="ov-t">Bu konunun oyunu henüz hazır değil. Yakında eklenecek.</div><div class="ov-dg"><button class="btn ana" id="ykTamam">Tamam</button></div></div></div>
   </div>
