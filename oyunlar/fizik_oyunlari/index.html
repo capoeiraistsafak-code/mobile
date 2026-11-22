@@ -1573,6 +1573,7 @@ function tahmin(p) {
   kartBasla('TAHMİN ET', '#7c3aed', p.t);
   $('opts').innerHTML = p.o.map((t, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${t}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => tahminSec(+b.dataset.k));
+  if (!$('notlar').classList.contains('hide')) notAc(true);
 }
 function tahminSec(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true; SFX.click();
@@ -1826,6 +1827,14 @@ function notIcerik() {
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
   if (M.ders) {
     const nt = m => `<div class="nt-m"><div>${m}</div></div>`, K = dersKartlari(M), son = K[K.length - 1];
+    if (GAME.q && GAME.q.tahmin && !GAME.q.answered) {          // TAHMİN: cevabı vermeden, tahmin için gereken bilgi ve formüller
+      const P = GAME.q.q, sk = M.steps.slice(GAME.i + 1).find(x => x.k), FM_ = sk ? kartFormul(sk.k).filter(h => { _tmp.innerHTML = h.replace(/<su[bp]>[^<]*<\/su[bp]>/g, ''); return !/\d/.test(_tmp.textContent.replace(/[½⅓¼]/g, '')) || /^[^=]*=[^=]*$/.test(_tmp.textContent) && !/=\s*[\d,.]+\s*[A-Za-z°]*\s*$/.test(_tmp.textContent); }) : [];
+      const tum = dersFormulleri(M); h += `<div class="nt-k">TAHMİN · BUNU BİLMEN YETER</div>`;
+      if (P.b) h += `<div class="nt-k" style="color:#fde047;margin-top:6px">VERİLENLER / BİLGİ</div>` + P.b.map(nt).join('');
+      if (FM_.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">GEREKLİ FORMÜL</div>` + FM_.map(nt).join('');
+      if (tum.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">ŞİMDİYE KADARKİ FORMÜLLER</div>` + tum.map(nt).join('');
+      if (!P.b && !FM_.length && !tum.length) h += nt('Sahneye bak: verilen değerler ve oklar tahmin için ipucu değil, veridir. Mantıkla tahmin et; sonra deneyle kontrol edeceğiz.');
+      h += `<div class="nt-m" style="color:#94a3b8"><div>Tahmin ettikten sonra deney yapılır ve "neden böyle?" kartı açılır.</div></div>`; return h; }
     if (son) { h += `<div class="nt-k">BU KART · NEDEN BÖYLE?</div>` + nt(`<b>${son.b}</b>`) + (son.n || son.m).map(nt).join(''); }
     const F_ = dersFormulleri(M); if (F_.length) h += `<div class="nt-k" style="margin-top:14px">FORMÜLLER</div>` + F_.map(nt).join('');
     const once = K.slice(0, -1).filter(k => k.tur !== 'merak').reverse();

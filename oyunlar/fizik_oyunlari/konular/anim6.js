@@ -80,7 +80,7 @@
   const dEn = ders(sEn, { yk: 'TYT4-d2', no: 2, icon: '🎢', name: 'Enerji laboratuvarı: rampa, sürtünme, yay', task: 'Mekanik enerjinin dönüşümü, sürtünmede ısıya giden enerji, açılı kuvvetin işi, güç ve verim.', steps: [
     { do: S => rampaK(S), k: { tur: 'merak', b: 'Enerji nereye gider?', m: ['2 kg\'lık blok 2 m yükseklikten sürtünmesiz rampadan kayacak, 2 m\'lik sürtünmeli bölgeden geçip yaya çarpacak. Geri döndüğünde yine 2 m\'ye çıkabilir mi?'], dugme: 'Başlayalım ▶︎' } },
     { k: { tur: 'kavram', b: 'Enerji türleri', f: ['enB0', 'enB1', 'enB2', 'enB3'], m: [`${FM(`E<sub>k</sub> = ${F('1', '2')} m v<sup>2</sup>`)} · ${FM('E<sub>p</sub> = m g h')} · ${FM(`E<sub>yay</sub> = ${F('1', '2')} k x<sup>2</sup>`)}`, 'Başta: E<sub>p</sub> = 2 · 10 · 2 = 40 J. Sürtünme kuvvetinin yaptığı iş ısıya (Q) dönüşür: Q = μ m g · d.'] } },
-    { p: { t: 'μ = 0,2 olan 2 m\'lik bölgeden bir kez geçen blok kaç J enerjiyi ısıya verir?', o: ['4', '8', '40', '0,8'], d: 1 } },
+    { p: { t: 'μ = 0,2 olan 2 m\'lik bölgeden bir kez geçen blok kaç J enerjiyi ısıya verir?', o: ['4', '8', '40', '0,8'], d: 1, b: ['Blok: m = 2 kg · g = 10 m/s² · yatay zeminde N = mg', 'Sürtünmeli bölge: μ = 0,2, uzunluk d = 2 m', 'Isıya giden enerji = sürtünmenin işi: Q = f · d = μ · N · d'] } },
     { sub: 'Bloğu bırakalım.', go: '▶︎ Bırak' },
     { do: S => { S.kos = 1; }, sub: 'Enerji dönüşüyor…', until: S => S.Q >= 16 || !S.kos },
     { k: { tur: 'gozlem', sonuc: true, b: 'Toplam enerji korunur', f: ['enT'], m: ['Her geçişte Q = 0,2 · 2 · 10 · 2 = <em>8 J</em> ısıya gitti. Yaya 32 J ulaştı; dönüşte bir 8 J daha → 24 J ile rampada <em>1,2 m</em>\'ye çıkar.', `Her an: ${FM('E<sub>k</sub> + E<sub>p</sub> + E<sub>yay</sub> + Q = 40 J')}`] } },

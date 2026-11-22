@@ -199,7 +199,7 @@
     { do: S => { S.v = 10; S.a = -5; }, sub: 'Önce 10 m/s ile giden araba 5 m/s² ile fren yapsın.', go: '▶︎ Fren (10 m/s)' },
     { do: S => { S.kos = 1; }, sub: 'Araba yavaşlıyor; grafiği izleyin.', until: S => !S.kos },
     { k: { tur: 'gozlem', b: 'Durma mesafesi', f: ['a4t'], m: [`x = ${F('v<sub>0</sub><sup>2</sup>', '2 a')} = ${F('100', '10')} = 10 m · süre t = ${F('v<sub>0</sub>', 'a')} = 2 s`, 'Grafik: hız zamanla doğrusal azalıyor; eğim = ivme.'] } },
-    { p: { t: 'Araba bu kez <b>20 m/s</b> ile gidip aynı ivmeyle fren yaparsa durma mesafesi ne olur?', o: ['10 m', '20 m', '40 m', '80 m'], d: 2 } },
+    { p: { t: 'Araba bu kez <b>20 m/s</b> ile gidip aynı ivmeyle fren yaparsa durma mesafesi ne olur?', o: ['10 m', '20 m', '40 m', '80 m'], d: 2, b: ['Fren ivmesi a = 5 m/s² (her iki durumda aynı)', 'Önceki deney: 10 m/s → 10 m\'de durdu', 'Durma mesafesi: x = v<sub>0</sub><sup>2</sup> / 2a'] } },
     { do: S => { S.x = 0; S.v = 20; S.tt = 0; S.iz = []; }, sub: 'Şimdi 20 m/s.', go: '▶︎ Fren (20 m/s)' },
     { do: S => { S.kos = 1; }, sub: 'Araba yavaşlıyor…', until: S => !S.kos },
     { k: { tur: 'gozlem', sonuc: true, b: 'Mesafe hızın karesiyle artar', f: ['a4t'], m: [`x = ${F('400', '10')} = 40 m: hız 2 katına çıkınca mesafe <em>4 katına</em> çıktı.`, 'Hız-zaman grafiğinin altındaki alan = alınan yol: ½ · 4 · 20 = 40 m.'] } },

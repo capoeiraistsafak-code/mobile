@@ -98,7 +98,7 @@
     { do: S => { S.Qmax = 3000; S.kos = 1; }, sub: 'Isınıyor…', until: S => !S.kos },
     { k: { tur: 'kavram', b: 'Öz ısı ve ısı sığası', f: ['k2a', 'k2b', 'k2c'], m: ['Öz ısısı (c) küçük olan madde aynı ısıyla daha çok ısınır: K 15, L 30, M 60 °C arttı.', `Öz ısı maddeyi tanıtır (ayırt edicidir). Isı sığası: ${FM('C = m · c')} · madde miktarına bağlıdır.`, 'Neden su yavaş ısınır? Öz ısısı büyüktür (1 cal/g·°C). Bu yüzden deniz kenarında sıcaklık farkı azdır.'] } },
     { do: S => md(S, 'karisim', { mk: [200, 100], Tk: [80, 20], kar: 0 }), sub: 'Ece 80 °C\'deki 200 g suyu, 20 °C\'deki 100 g suyla bir termos kabında karıştırıyor.', go: '▶︎ Karıştır' },
-    { p: { t: 'Karışımın denge sıcaklığı nasıl olur?', o: ['50 °C (ortalama)', '60 °C', '40 °C', '80 °C'], d: 1 } },
+    { p: { t: 'Karışımın denge sıcaklığı nasıl olur?', o: ['50 °C (ortalama)', '60 °C', '40 °C', '80 °C'], d: 1, b: ['Sıcak su: 200 g, 80 °C · Soğuk su: 100 g, 20 °C', 'Suyun öz ısısı c = 1 cal/g·°C · termos dışarıya ısı vermiyor', 'Isıl denge: sıcağın verdiği ısı = soğuğun aldığı ısı, Q = m · c · ΔT'] } },
     { do: S => { S.kos = 1; }, sub: 'Sıcak su ısı veriyor, soğuk su alıyor…', until: S => S.kar >= 1 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Isıl denge', f: ['k2c'], m: [`${FM('Q<sub>verilen</sub> = Q<sub>alınan</sub>')}: 200 · 1 · (80 − T) = 100 · 1 · (T − 20) → <em>T = 60 °C</em>`, 'Denge sıcaklığı ısı sığası büyük olana (200 g) daha yakındır. Ortalama ancak ısı sığaları eşitse doğrudur.'] } },
     { k: { tur: 'dikkat', b: 'UYARI', m: ['Isı her zaman sıcaklığı yüksek olandan düşük olana akar; iç enerjisi büyük olandan değil.', 'Isı alan cismin sıcaklığı her zaman artmaz: hal değişirken sabit kalır (Q = m · L).'] } },

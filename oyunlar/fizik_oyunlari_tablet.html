@@ -1731,6 +1731,7 @@ function tahmin(p) {
   kartBasla('TAHMİN ET', '#7c3aed', p.t);
   $('opts').innerHTML = p.o.map((t, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${t}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => tahminSec(+b.dataset.k));
+  if (!$('notlar').classList.contains('hide')) notAc(true);
 }
 function tahminSec(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true; SFX.click();
@@ -1984,6 +1985,14 @@ function notIcerik() {
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
   if (M.ders) {
     const nt = m => `<div class="nt-m"><div>${m}</div></div>`, K = dersKartlari(M), son = K[K.length - 1];
+    if (GAME.q && GAME.q.tahmin && !GAME.q.answered) {          // TAHMİN: cevabı vermeden, tahmin için gereken bilgi ve formüller
+      const P = GAME.q.q, sk = M.steps.slice(GAME.i + 1).find(x => x.k), FM_ = sk ? kartFormul(sk.k).filter(h => { _tmp.innerHTML = h.replace(/<su[bp]>[^<]*<\/su[bp]>/g, ''); return !/\d/.test(_tmp.textContent.replace(/[½⅓¼]/g, '')) || /^[^=]*=[^=]*$/.test(_tmp.textContent) && !/=\s*[\d,.]+\s*[A-Za-z°]*\s*$/.test(_tmp.textContent); }) : [];
+      const tum = dersFormulleri(M); h += `<div class="nt-k">TAHMİN · BUNU BİLMEN YETER</div>`;
+      if (P.b) h += `<div class="nt-k" style="color:#fde047;margin-top:6px">VERİLENLER / BİLGİ</div>` + P.b.map(nt).join('');
+      if (FM_.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">GEREKLİ FORMÜL</div>` + FM_.map(nt).join('');
+      if (tum.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">ŞİMDİYE KADARKİ FORMÜLLER</div>` + tum.map(nt).join('');
+      if (!P.b && !FM_.length && !tum.length) h += nt('Sahneye bak: verilen değerler ve oklar tahmin için ipucu değil, veridir. Mantıkla tahmin et; sonra deneyle kontrol edeceğiz.');
+      h += `<div class="nt-m" style="color:#94a3b8"><div>Tahmin ettikten sonra deney yapılır ve "neden böyle?" kartı açılır.</div></div>`; return h; }
     if (son) { h += `<div class="nt-k">BU KART · NEDEN BÖYLE?</div>` + nt(`<b>${son.b}</b>`) + (son.n || son.m).map(nt).join(''); }
     const F_ = dersFormulleri(M); if (F_.length) h += `<div class="nt-k" style="margin-top:14px">FORMÜLLER</div>` + F_.map(nt).join('');
     const once = K.slice(0, -1).filter(k => k.tur !== 'merak').reverse();
@@ -3038,7 +3047,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
   const d8 = ders(s8, { yk: 'TYT8-d1', no: 1, icon: '🤿', name: 'Su neden yukarı iter?', task: 'Katı ve sıvı basıncı, kaldırma kuvveti, yüzme ve batma.', steps: [
     { k: { tur: 'merak', b: 'Suda arkadaşımızı kaldırmak neden kolaydır?', m: ['Havuzda insanlar daha hafif gibidir. Su onları yukarı mı itiyor?', 'Önce basıncı, sonra kaldırma kuvvetini inceleyelim.'], dugme: 'Başlayalım ▶︎' } },
     { k: { tur: 'kavram', b: 'Basınç', m: [`Katı basıncı: ${FM(`P = ${F('F', 'A')}`)} (Pa) · bıçağın keskin tarafı az alan → büyük basınç`, `Sıvı basıncı: ${FM('P = h · d · g')} · derinlik arttıkça artar, kabın şekline bağlı değildir.`, 'Örnek: 2 m derinlikte suyun basıncı 2 · 1000 · 10 = 20 000 Pa'] } },
-    { p: { t: '15 N ağırlığındaki blok suya <b>yarısına kadar</b> batırılıyor. Dinamometre ne gösterir?', o: ['15 N', '12,5 N', '7,5 N', '0'], d: 1 } },
+    { p: { t: 'Hacmi 500 cm³, ağırlığı 15 N olan blok suya <b>yarısına kadar</b> batırılıyor. Dinamometre ne gösterir?', o: ['15 N', '12,5 N', '7,5 N', '0'], d: 1, b: ['Blok: V = 500 cm³, G = 15 N · yarısı batıyor → V<sub>batan</sub> = 250 cm³', 'Su: d = 1 g/cm³ = 1000 kg/m³ · g = 10 m/s² · 1 cm³ = 10<sup>−6</sup> m³', 'Dinamometre = G − F<sub>k</sub> · F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g'] } },
     { do: S => { S.hedef = 0.4; }, sub: 'Bloğu suya indirelim.', go: '▶︎ İndir' },
     { sub: 'Blok yarısına kadar batıyor…', until: S => Math.abs(S.bat - S.hedef) < 0.002 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Kaldırma kuvveti', f: ['e8k', 'e8d', 'e8G'], m: [`Su bloğu yukarı iter: ${FM('F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g')}`, 'V<sub>batan</sub> = 250 cm³ → F<sub>k</sub> = 2,5 N → dinamometre 15 − 2,5 = 12,5 N', 'Kaldırma kuvveti, batan kısmın yer değiştirdiği sıvının ağırlığına eşittir (Arşimet).'] } },
@@ -3371,7 +3380,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
     { do: S => { S.v = 10; S.a = -5; }, sub: 'Önce 10 m/s ile giden araba 5 m/s² ile fren yapsın.', go: '▶︎ Fren (10 m/s)' },
     { do: S => { S.kos = 1; }, sub: 'Araba yavaşlıyor; grafiği izleyin.', until: S => !S.kos },
     { k: { tur: 'gozlem', b: 'Durma mesafesi', f: ['a4t'], m: [`x = ${F('v<sub>0</sub><sup>2</sup>', '2 a')} = ${F('100', '10')} = 10 m · süre t = ${F('v<sub>0</sub>', 'a')} = 2 s`, 'Grafik: hız zamanla doğrusal azalıyor; eğim = ivme.'] } },
-    { p: { t: 'Araba bu kez <b>20 m/s</b> ile gidip aynı ivmeyle fren yaparsa durma mesafesi ne olur?', o: ['10 m', '20 m', '40 m', '80 m'], d: 2 } },
+    { p: { t: 'Araba bu kez <b>20 m/s</b> ile gidip aynı ivmeyle fren yaparsa durma mesafesi ne olur?', o: ['10 m', '20 m', '40 m', '80 m'], d: 2, b: ['Fren ivmesi a = 5 m/s² (her iki durumda aynı)', 'Önceki deney: 10 m/s → 10 m\'de durdu', 'Durma mesafesi: x = v<sub>0</sub><sup>2</sup> / 2a'] } },
     { do: S => { S.x = 0; S.v = 20; S.tt = 0; S.iz = []; }, sub: 'Şimdi 20 m/s.', go: '▶︎ Fren (20 m/s)' },
     { do: S => { S.kos = 1; }, sub: 'Araba yavaşlıyor…', until: S => !S.kos },
     { k: { tur: 'gozlem', sonuc: true, b: 'Mesafe hızın karesiyle artar', f: ['a4t'], m: [`x = ${F('400', '10')} = 40 m: hız 2 katına çıkınca mesafe <em>4 katına</em> çıktı.`, 'Hız-zaman grafiğinin altındaki alan = alınan yol: ½ · 4 · 20 = 40 m.'] } },
@@ -6676,7 +6685,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
   const dEn = ders(sEn, { yk: 'TYT4-d2', no: 2, icon: '🎢', name: 'Enerji laboratuvarı: rampa, sürtünme, yay', task: 'Mekanik enerjinin dönüşümü, sürtünmede ısıya giden enerji, açılı kuvvetin işi, güç ve verim.', steps: [
     { do: S => rampaK(S), k: { tur: 'merak', b: 'Enerji nereye gider?', m: ['2 kg\'lık blok 2 m yükseklikten sürtünmesiz rampadan kayacak, 2 m\'lik sürtünmeli bölgeden geçip yaya çarpacak. Geri döndüğünde yine 2 m\'ye çıkabilir mi?'], dugme: 'Başlayalım ▶︎' } },
     { k: { tur: 'kavram', b: 'Enerji türleri', f: ['enB0', 'enB1', 'enB2', 'enB3'], m: [`${FM(`E<sub>k</sub> = ${F('1', '2')} m v<sup>2</sup>`)} · ${FM('E<sub>p</sub> = m g h')} · ${FM(`E<sub>yay</sub> = ${F('1', '2')} k x<sup>2</sup>`)}`, 'Başta: E<sub>p</sub> = 2 · 10 · 2 = 40 J. Sürtünme kuvvetinin yaptığı iş ısıya (Q) dönüşür: Q = μ m g · d.'] } },
-    { p: { t: 'μ = 0,2 olan 2 m\'lik bölgeden bir kez geçen blok kaç J enerjiyi ısıya verir?', o: ['4', '8', '40', '0,8'], d: 1 } },
+    { p: { t: 'μ = 0,2 olan 2 m\'lik bölgeden bir kez geçen blok kaç J enerjiyi ısıya verir?', o: ['4', '8', '40', '0,8'], d: 1, b: ['Blok: m = 2 kg · g = 10 m/s² · yatay zeminde N = mg', 'Sürtünmeli bölge: μ = 0,2, uzunluk d = 2 m', 'Isıya giden enerji = sürtünmenin işi: Q = f · d = μ · N · d'] } },
     { sub: 'Bloğu bırakalım.', go: '▶︎ Bırak' },
     { do: S => { S.kos = 1; }, sub: 'Enerji dönüşüyor…', until: S => S.Q >= 16 || !S.kos },
     { k: { tur: 'gozlem', sonuc: true, b: 'Toplam enerji korunur', f: ['enT'], m: ['Her geçişte Q = 0,2 · 2 · 10 · 2 = <em>8 J</em> ısıya gitti. Yaya 32 J ulaştı; dönüşte bir 8 J daha → 24 J ile rampada <em>1,2 m</em>\'ye çıkar.', `Her an: ${FM('E<sub>k</sub> + E<sub>p</sub> + E<sub>yay</sub> + Q = 40 J')}`] } },
@@ -7200,7 +7209,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
     { k: { tur: 'merak', b: 'Aynı tuğla, aynı ağırlık… ama neden bazen derin, bazen sığ iz bırakıyor?', m: ['Ece tuğlayı üç farklı yüzü üstüne koyup süngerdeki izi karşılaştıracak.'], dugme: 'İzleyelim ▶︎' } },
     { k: { tur: 'kavram', b: 'Basınç kuvveti ve basınç', f: ['bsG', 'bsN'], m: ['Tuğla süngere ağırlığı kadar kuvvet uygular: buna <em>basınç kuvveti</em> (F) denir. Burada F = G = 20 N.', `Birim yüzeye düşen kuvvete <em>basınç</em> denir: ${FM(`P = ${F('F', 'S')}`)} · birimi N/m² = pascal (Pa).`] } },
     { do: S => { S.o = 1; }, sub: 'Ece tuğlayı yan yüzüne çevirdi: yere değen yüzey yarıya indi.', wait: 2.5 },
-    { p: { t: 'Tuğla en küçük yüzü (0,005 m²) üstüne dikilirse süngerdeki iz nasıl olur?', o: ['En sığ iz', 'Aynı iz', 'En derin iz', 'İz oluşmaz'], d: 2 } },
+    { p: { t: 'Tuğla en küçük yüzü (0,005 m²) üstüne dikilirse süngerdeki iz nasıl olur?', o: ['En sığ iz', 'Aynı iz', 'En derin iz', 'İz oluşmaz'], d: 2, b: ['Tuğlanın ağırlığı her konumda aynıdır (F = G).', 'Süngerdeki izin derinliği basınca bağlıdır: P = F / A'] } },
     { do: S => { S.o = 2; }, sub: 'Tuğla dik konuldu…', wait: 2.5 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Yüzey küçüldü, basınç büyüdü', f: ['bsK'], m: ['Üç konumda da F = 20 N (ağırlık değişmedi). Basınçlar: 1000 Pa, 2000 Pa, <em>4000 Pa</em>.', 'Neden? Aynı kuvvet daha küçük bir alana dağılınca her santimetrekareye düşen pay artar.'] } },
     { do: S => { S.ust = 1; }, sub: 'Ece dik tuğlanın üstüne özdeş bir tuğla daha koydu.', wait: 2.5 },
@@ -7248,7 +7257,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
   const h3 = ders(sBs, { yk: 'TYT8-d4', no: 4, icon: '⚓', name: 'Hikâye: Taş batar, tahta yüzer, balık askıda', task: 'Kaldırma kuvveti, dinamometreyle ölçme, yüzme–askıda kalma–batma, batan hacim oranı.', notlar: ['Kaldırma kuvveti cisme sıvı tarafından yukarı doğru uygulanır; büyüklüğü taşırılan sıvının ağırlığına eşittir.', 'Kaldırma kuvveti cismin özkütlesine değil, batan hacmine ve sıvının özkütlesine bağlıdır.'], steps: [
     { do: S => md(S, 'kald', { cis: 'demir', ind: 0 }), sub: 'Ece, havuzda ağır bir taşı su içindeyken kolayca kaldırabildiğini fark etti. Laboratuvarda bunu ölçmeye karar verdi.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Havada ölçüm', f: ['bsT', 'bsG'], m: ['1 L hacimli metal blok dinamometreye asıldı: 30 N gösteriyor. Havadayken ip gerilmesi T = G = 30 N.'] } },
-    { p: { t: 'Blok tamamen suya batırılırsa dinamometre kaç N gösterir?', o: ['30 N', '20 N', '40 N', '0'], d: 1 } },
+    { p: { t: 'Blok tamamen suya batırılırsa dinamometre kaç N gösterir?', o: ['30 N', '20 N', '40 N', '0'], d: 1, b: ['Blok: hacim V = 1 L = 0,001 m³, ağırlık G = 30 N', 'Su: d = 1000 kg/m³ · g = 10 m/s²', 'Dinamometre = G − F<sub>k</sub> · F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g'] } },
     { sub: 'Bloğu yavaşça suya indirelim.', go: '▶︎ İndir' },
     { do: S => { S.kos = 1; }, sub: 'Blok batıyor; dinamometre değeri azalıyor, su seviyesi yükseliyor…', until: S => S.ind >= 1 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Kaldırma kuvveti', f: ['bsF', 'bsT', 'bsG'], m: ['Dinamometre 20 N gösterdi: su bloğu <em>10 N</em> ile yukarı itiyor.', `${FM('F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g')} = 0,001 · 1000 · 10 = 10 N`, 'Neden? Bloğun alt yüzü üst yüzünden daha derinde: alttan gelen sıvı basıncı daha büyük, farkı yukarı doğru net kuvvettir.'] } },
@@ -7438,7 +7447,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
     { do: S => { S.Qmax = 3000; S.kos = 1; }, sub: 'Isınıyor…', until: S => !S.kos },
     { k: { tur: 'kavram', b: 'Öz ısı ve ısı sığası', f: ['k2a', 'k2b', 'k2c'], m: ['Öz ısısı (c) küçük olan madde aynı ısıyla daha çok ısınır: K 15, L 30, M 60 °C arttı.', `Öz ısı maddeyi tanıtır (ayırt edicidir). Isı sığası: ${FM('C = m · c')} · madde miktarına bağlıdır.`, 'Neden su yavaş ısınır? Öz ısısı büyüktür (1 cal/g·°C). Bu yüzden deniz kenarında sıcaklık farkı azdır.'] } },
     { do: S => md(S, 'karisim', { mk: [200, 100], Tk: [80, 20], kar: 0 }), sub: 'Ece 80 °C\'deki 200 g suyu, 20 °C\'deki 100 g suyla bir termos kabında karıştırıyor.', go: '▶︎ Karıştır' },
-    { p: { t: 'Karışımın denge sıcaklığı nasıl olur?', o: ['50 °C (ortalama)', '60 °C', '40 °C', '80 °C'], d: 1 } },
+    { p: { t: 'Karışımın denge sıcaklığı nasıl olur?', o: ['50 °C (ortalama)', '60 °C', '40 °C', '80 °C'], d: 1, b: ['Sıcak su: 200 g, 80 °C · Soğuk su: 100 g, 20 °C', 'Suyun öz ısısı c = 1 cal/g·°C · termos dışarıya ısı vermiyor', 'Isıl denge: sıcağın verdiği ısı = soğuğun aldığı ısı, Q = m · c · ΔT'] } },
     { do: S => { S.kos = 1; }, sub: 'Sıcak su ısı veriyor, soğuk su alıyor…', until: S => S.kar >= 1 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Isıl denge', f: ['k2c'], m: [`${FM('Q<sub>verilen</sub> = Q<sub>alınan</sub>')}: 200 · 1 · (80 − T) = 100 · 1 · (T − 20) → <em>T = 60 °C</em>`, 'Denge sıcaklığı ısı sığası büyük olana (200 g) daha yakındır. Ortalama ancak ısı sığaları eşitse doğrudur.'] } },
     { k: { tur: 'dikkat', b: 'UYARI', m: ['Isı her zaman sıcaklığı yüksek olandan düşük olana akar; iç enerjisi büyük olandan değil.', 'Isı alan cismin sıcaklığı her zaman artmaz: hal değişirken sabit kalır (Q = m · L).'] } },
@@ -7752,7 +7761,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
     { k: { tur: 'kavram', b: 'F = m · a', f: ['k4K'], m: [`${FM('F<sub>net</sub> = m · a')} → a = 20 / 5 = 4 m/s² (parkede).`, 'Halıya girince sürtünme başlar: f<sub>k</sub> = μ<sub>k</sub> · N = 0,3 · 50 = 15 N → a = (20 − 15) / 5 = 1 m/s².'] } },
     { do: S => { S.kos = 1; }, sub: 'Koli halıda…', until: S => !S.kos },
     { do: S => kutuK(S, 15, 5, 0.4, 0.3), sub: 'Şimdi koli halının ortasında duruyor; Ece 15 N ile itiyor.', wait: 0.1 },
-    { do: S => { S.xk = 3.5; S.vk = 0; }, p: { t: 'Halıda duran koliye (μ<sub>s</sub> = 0,4) 15 N kuvvet uygulanırsa ne olur?', o: ['Kayar, a = 3 m/s²', 'Kımıldamaz; sürtünme 15 N', 'Kımıldamaz; sürtünme 20 N', 'Kayar, a = 0'], d: 1 } },
+    { do: S => { S.xk = 3.5; S.vk = 0; }, p: { t: 'Halıda duran koliye (μ<sub>s</sub> = 0,4) 15 N kuvvet uygulanırsa ne olur?', o: ['Kayar, a = 3 m/s²', 'Kımıldamaz; sürtünme 15 N', 'Kımıldamaz; sürtünme 20 N', 'Kayar, a = 0'], d: 1, b: ['Koli: m = 5 kg, g = 10 m/s² → N = mg = 50 N', 'Halıda μ<sub>s</sub> = 0,4 · μ<sub>k</sub> = 0,3 · uygulanan kuvvet F = 15 N', 'Kayması için F, en büyük statik sürtünmeyi (f<sub>s,max</sub> = μ<sub>s</sub> · N) aşmalı.'] } },
     { k: { tur: 'gozlem', sonuc: true, b: 'Statik sürtünme', f: ['k4f'], m: ['f<sub>s,max</sub> = 0,4 · 50 = 20 N > 15 N → koli kımıldamaz; sürtünme kuvvet kadar, <em>15 N</em>.', 'Statik sürtünme sabit değildir: 0\'dan f<sub>s,max</sub>\'a kadar uygulanan kuvvete eşit olur.'] } },
     { k: { tur: 'kavram', b: 'Newton\'un üç yasası', m: ['1. Eylemsizlik: net kuvvet sıfırsa durur ya da sabit hızla gider.', '2. F<sub>net</sub> = m a · 3. Etki–tepki: Ece koliyi iterken koli de Ece\'yi eşit ve zıt kuvvetle iter (farklı cisimlere etki eder).'] } },
     { k: { tur: 'ozet', b: 'Özet', m: [`${FM('F<sub>net</sub> = m a')} · ${FM('f<sub>k</sub> = μ<sub>k</sub> N')} · f<sub>s</sub> ≤ μ<sub>s</sub> N · etki–tepki farklı cisimlerde.`] } },

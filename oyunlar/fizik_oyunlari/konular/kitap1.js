@@ -191,7 +191,7 @@
     { k: { tur: 'merak', b: 'Aynı tuğla, aynı ağırlık… ama neden bazen derin, bazen sığ iz bırakıyor?', m: ['Ece tuğlayı üç farklı yüzü üstüne koyup süngerdeki izi karşılaştıracak.'], dugme: 'İzleyelim ▶︎' } },
     { k: { tur: 'kavram', b: 'Basınç kuvveti ve basınç', f: ['bsG', 'bsN'], m: ['Tuğla süngere ağırlığı kadar kuvvet uygular: buna <em>basınç kuvveti</em> (F) denir. Burada F = G = 20 N.', `Birim yüzeye düşen kuvvete <em>basınç</em> denir: ${FM(`P = ${F('F', 'S')}`)} · birimi N/m² = pascal (Pa).`] } },
     { do: S => { S.o = 1; }, sub: 'Ece tuğlayı yan yüzüne çevirdi: yere değen yüzey yarıya indi.', wait: 2.5 },
-    { p: { t: 'Tuğla en küçük yüzü (0,005 m²) üstüne dikilirse süngerdeki iz nasıl olur?', o: ['En sığ iz', 'Aynı iz', 'En derin iz', 'İz oluşmaz'], d: 2 } },
+    { p: { t: 'Tuğla en küçük yüzü (0,005 m²) üstüne dikilirse süngerdeki iz nasıl olur?', o: ['En sığ iz', 'Aynı iz', 'En derin iz', 'İz oluşmaz'], d: 2, b: ['Tuğlanın ağırlığı her konumda aynıdır (F = G).', 'Süngerdeki izin derinliği basınca bağlıdır: P = F / A'] } },
     { do: S => { S.o = 2; }, sub: 'Tuğla dik konuldu…', wait: 2.5 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Yüzey küçüldü, basınç büyüdü', f: ['bsK'], m: ['Üç konumda da F = 20 N (ağırlık değişmedi). Basınçlar: 1000 Pa, 2000 Pa, <em>4000 Pa</em>.', 'Neden? Aynı kuvvet daha küçük bir alana dağılınca her santimetrekareye düşen pay artar.'] } },
     { do: S => { S.ust = 1; }, sub: 'Ece dik tuğlanın üstüne özdeş bir tuğla daha koydu.', wait: 2.5 },
@@ -239,7 +239,7 @@
   const h3 = ders(sBs, { yk: 'TYT8-d4', no: 4, icon: '⚓', name: 'Hikâye: Taş batar, tahta yüzer, balık askıda', task: 'Kaldırma kuvveti, dinamometreyle ölçme, yüzme–askıda kalma–batma, batan hacim oranı.', notlar: ['Kaldırma kuvveti cisme sıvı tarafından yukarı doğru uygulanır; büyüklüğü taşırılan sıvının ağırlığına eşittir.', 'Kaldırma kuvveti cismin özkütlesine değil, batan hacmine ve sıvının özkütlesine bağlıdır.'], steps: [
     { do: S => md(S, 'kald', { cis: 'demir', ind: 0 }), sub: 'Ece, havuzda ağır bir taşı su içindeyken kolayca kaldırabildiğini fark etti. Laboratuvarda bunu ölçmeye karar verdi.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Havada ölçüm', f: ['bsT', 'bsG'], m: ['1 L hacimli metal blok dinamometreye asıldı: 30 N gösteriyor. Havadayken ip gerilmesi T = G = 30 N.'] } },
-    { p: { t: 'Blok tamamen suya batırılırsa dinamometre kaç N gösterir?', o: ['30 N', '20 N', '40 N', '0'], d: 1 } },
+    { p: { t: 'Blok tamamen suya batırılırsa dinamometre kaç N gösterir?', o: ['30 N', '20 N', '40 N', '0'], d: 1, b: ['Blok: hacim V = 1 L = 0,001 m³, ağırlık G = 30 N', 'Su: d = 1000 kg/m³ · g = 10 m/s²', 'Dinamometre = G − F<sub>k</sub> · F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g'] } },
     { sub: 'Bloğu yavaşça suya indirelim.', go: '▶︎ İndir' },
     { do: S => { S.kos = 1; }, sub: 'Blok batıyor; dinamometre değeri azalıyor, su seviyesi yükseliyor…', until: S => S.ind >= 1 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Kaldırma kuvveti', f: ['bsF', 'bsT', 'bsG'], m: ['Dinamometre 20 N gösterdi: su bloğu <em>10 N</em> ile yukarı itiyor.', `${FM('F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g')} = 0,001 · 1000 · 10 = 10 N`, 'Neden? Bloğun alt yüzü üst yüzünden daha derinde: alttan gelen sıvı basıncı daha büyük, farkı yukarı doğru net kuvvettir.'] } },
