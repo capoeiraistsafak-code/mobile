@@ -6,11 +6,12 @@
   const SIVI = (renk = 0x3b82f6, op = 0.6) => new THREE.MeshLambertMaterial({ color: renk, transparent: true, opacity: op, depthWrite: false });
   const CAM = () => new THREE.MeshPhongMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.22, shininess: 100, specular: 0xffffff, side: THREE.DoubleSide, depthWrite: false });
   // Termometre: cam boru + hazne + kırmızı sıvı; a.ayarla(oran 0..1)
-  const termometre = (g, x, z, boy = 1.8) => { const a = new THREE.Group(); a.position.set(x, 0, z); g.add(a);
+  const termometre = (g, x, z, boy = 1.8, et = null) => { const a = new THREE.Group(); a.position.set(x, 0, z); g.add(a);
     const c = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, boy, 10), CAM()); c.position.y = boy / 2 + 0.15; a.add(c);
     const h = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); h.position.y = 0.12; a.add(h);
     const s = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); a.add(s);
     for (let i = 0; i <= 10; i++) kutu(a, 0.1, 0.012, 0.01, 0x111827, 0.1, 0.25 + i * (boy - 0.2) / 10, 0.05, { edge: false });
+    if (et) et.forEach(([k, t]) => FZ.yazi(a, t, 0.45, 0.2 + 0.05 + k * (boy - 0.2), 0.06, 0.22));
     a.ayarla = k => { const L = 0.05 + Math.max(0, Math.min(1, k)) * (boy - 0.2); s.scale.y = L; s.position.y = 0.2 + L / 2; }; a.boy = boy; return a; };
   const tencere = (g, x, m) => { const a = new THREE.Group(); a.position.set(x, 0.5, 0); g.add(a);
     const d = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.55, 0.9, 24, 1, true), FZ.metal(0x9ca3af)); d.material.side = THREE.DoubleSide; d.position.y = 0.45; a.add(d);
@@ -28,7 +29,7 @@
       const G = {}; ['tencere', 'karisim', 'termo', 'halka', 'ray'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
       const oc = [-2.4, 0, 2.4].map(x => { const o = FZ.ocak(G.tencere, 1); o.position.x = x; return o; });
       const tn = [-2.4, 0, 2.4].map((x, i) => tencere(G.tencere, x, i + 1));
-      const tm = [-2.4, 0, 2.4].map(x => { const t = termometre(G.tencere, x + 0.25, 0.1, 1.5); t.position.y = 0.6; return t; });
+      const tm = [-2.4, 0, 2.4].map(x => { const t = termometre(G.tencere, x + 0.25, 0.1, 1.5, [[0, '0'], [0.5, '50'], [1, '100°C']]); t.position.y = 0.6; return t; });
       // karışım: iki beher → kalorimetre
       const bh = [-1.6, 1.6].map((x, i) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.2, 24, 1, true), CAM()); c.position.set(x, 0.62, 0); G.karisim.add(c); const s = silindir(G.karisim, 0.5, 0.47, 1, i ? 0x60a5fa : 0xef4444, x, 0.5, 0, { op: 0.6, edge: false }); return s; });
       const kal = new THREE.Group(); kal.position.set(0, 0, -1.3); G.karisim.add(kal);
@@ -36,7 +37,7 @@
       const kks = silindir(kal, 0.75, 0.75, 1, 0x8b5cf6, 0, 0.5, 0, { op: 0.65, edge: false });
       const ktm = termometre(G.karisim, 0.35, -1.3, 2); ktm.position.y = 0.5;
       // termometreler: X, Celsius, Y
-      const tt = [-1.6, 0, 1.6].map(x => termometre(G.termo, x, 0, 2.6));
+      const tt = [[-1.6, ['20', '120 °X']], [0, ['0', '100 °C']], [1.6, ['−10', '140 °Y']]].map(([x, e]) => termometre(G.termo, x, 0, 2.6, [[0.1, e[0]], [0.9, e[1]]]));
       // halka–küre ve delikli levha
       const halka = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.1, 10, 32), FZ.metal(0xb45309)); halka.rotation.x = Math.PI / 2; halka.position.set(-1.2, 2, 0); G.halka.add(halka);
       kutu(G.halka, 0.08, 2, 0.08, 0x374151, -1.8, 1, 0); kutu(G.halka, 0.6, 0.06, 0.06, 0x374151, -1.5, 2, 0);

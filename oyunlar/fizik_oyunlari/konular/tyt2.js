@@ -79,6 +79,7 @@
       const su = silindir(g, 0.95, 0.88, 1, 0x38bdf8, 0, 1.2, 0, { op: 0.8, edge: false });
       silindir(g, 0.12, 0.12, 3, 0xf8fafc, 1.7, 1.9, 0, { op: 0.6 });
       const civa = silindir(g, 0.07, 0.07, 1, 0xef4444, 1.7, 0.9, 0.02, { edge: false });
+      FZ.olcek(g, 1.92, 0.05, [0, 20, 40, 60, 80, 100].map(T => [0.75 + T / 100 * 2.3, `${T}`]), 1, 0.22); FZ.yazi(g, '°C', 1.7, 3.6, 0.05, 0.22);
       const buzlar = [0, 1, 2].map(i => { const b_ = kutu(g, 0.35, 0.35, 0.35, 0xbae6fd, -0.4 + i * 0.4, 1.8, 0.2); b_.material.emissive = new THREE.Color(0x0ea5e9); b_.material.emissiveIntensity = 0.25; return b_; });
       kart('e5T', '', '#ef4444'); kart('e5Q', '', '#f97316');
       return { alev, su, civa, buzlar };

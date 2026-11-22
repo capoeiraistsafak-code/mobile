@@ -281,4 +281,13 @@
   FZ.dokuMat = (ad, ops = {}) => new THREE.MeshStandardMaterial(Object.assign({ map: FZ.doku(ad), roughness: .85, metalness: 0 }, ops));
   // Tuğla: delikli harman tuğlası görünümü; boyutlar w (x), h (y), d (z)
   FZ.tugla = (g, w = 1, h = .5, d = .25) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), FZ.dokuMat('tugla')); m.castShadow = m.receiveShadow = true; g.add(m); return m; };
+
+  // Ölçek yazısı: ön yüze bakan küçük, şeffaf zeminli sayı (dereceli silindir, termometre, cetvel…)
+  FZ.yazi = (g, txt, x, y, z, boy = 0.16, renk = '#111827', zemin = 'rgba(255,255,255,0.88)') => { const c = document.createElement('canvas'), w = 256, h = 96; c.width = w; c.height = h; const k = c.getContext('2d');
+    k.font = '900 64px Inter, sans-serif'; const tw = Math.min(w - 8, k.measureText(txt).width + 24); k.fillStyle = zemin; k.beginPath(); k.roundRect((w - tw) / 2, 8, tw, h - 16, 18); k.fill();
+    k.fillStyle = renk; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(txt, w / 2, h / 2 + 4);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const m = new THREE.Mesh(new THREE.PlaneGeometry(boy * w / h, boy), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+    m.position.set(x, y, z); m.userData.golgesiz = true; g.add(m); return m; };
+  // Dikey ölçek: [[y, 'yazı'], …] noktalarına çentik + yazı
+  FZ.olcek = (g, x, z, L, yon = -1, boy = 0.15) => L.forEach(([y, t]) => { FZ.kutu(g, 0.12, 0.018, 0.02, 0x111827, x, y, z, { edge: false }); FZ.yazi(g, t, x + yon * (0.06 + boy * 1.3), y, z + 0.01, boy); });
 })();

@@ -23,6 +23,7 @@
       // dereceli silindir
       silindir(g, 0.36, 0.36, 2.6, 0xe0f2fe, SIL_X, 1.3, 0, { op: 0.25, edge: false });
       for (let i = 1; i <= 10; i++) kutu(g, 0.12, 0.015, 0.02, 0x334155, SIL_X - 0.3, i * 0.24, 0.36, { edge: false });
+      [2, 4, 6, 8, 10].forEach(i => FZ.yazi(g, `${i * 15}`, SIL_X - 0.72, i * 0.24, 0.38, 0.22)); FZ.yazi(g, 'cm³', SIL_X, 2.8, 0.38, 0.22);   // her çizgi 15 cm³
       const silSu = silindir(g, 0.33, 0.33, 0.01, 0x3b82f6, SIL_X, 0.01, 0, { op: 0.7, edge: false });
       const damla = top(g, 0.06, 0x3b82f6, SIL_X, 2, 0, { edge: false });
       const kup = kutu(g, 1, 1, 1, 0xa9b3c1, TER_X, 0.56, 0);

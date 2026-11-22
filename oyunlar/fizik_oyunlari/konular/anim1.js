@@ -25,7 +25,7 @@
       for (let i = 0; i < 9; i++) dilim.push(FZ.kutu(petek, 0.14, 2.5, 0.42, 0xe5e7eb, -0.56 + i * 0.14, 0, 0));
       // oda: döşeme, koltuk, termometre
       kutu(g, 0.9, 0.45, 0.8, 0x7c3aed, 3.7, 0.25, 0); kutu(g, 0.9, 0.6, 0.18, 0x6d28d9, 3.7, 0.6, -0.32);
-      kutu(g, 0.08, 1.6, 0.04, 0xf8fafc, 3.0, 2.4, 0.3, { op: 0.6 }); const civa = kutu(g, 0.05, 1, 0.05, 0xef4444, 3.0, 1.9, 0.32, { edge: false });
+      kutu(g, 0.08, 1.6, 0.04, 0xf8fafc, 3.0, 2.4, 0.3, { op: 0.6 }); const civa = kutu(g, 0.05, 1, 0.05, 0xef4444, 3.0, 1.9, 0.32, { edge: false }); FZ.olcek(g, 3.13, 0.32, [10, 20, 30, 40].map(T => [1.82 + (T - 10) / 30 * 1.4, `${T}`]), 1, 0.2); FZ.yazi(g, '°C', 3.0, 3.42, 0.33, 0.2);
       // su tanecikleri, konveksiyon okları, ışıma dalgaları
       const tan = []; for (let i = 0; i < 26; i++) tan.push(top(g, 0.09, 0xef4444, 0, 0, 0.12, { edge: false }));
       const konv = []; for (let i = 0; i < 4; i++) konv.push(ok(0xf97316, 'k5k'));
