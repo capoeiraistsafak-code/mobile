@@ -15,6 +15,12 @@ Kullanıcının ElevenLabs kredisi sınırlıdır (aylık 30.000). Daha önce bi
 
 # Kurallar
 
+- **FİZİK KANUNLARINA UYGUNLUK (bütün videolarda, sorularda ve animasyonlarda):** Hiçbir soru, çözüm, ekran notu, seslendirme cümlesi veya animasyon fizik kanunlarına aykırı olamaz.
+  - Her sorunun cevabı yayından önce adım adım çözülerek doğrulanır; öncüllerin her biri ayrı ayrı kontrol edilir.
+  - Animasyon da fiziğe uygun olur, yalnızca sonuç değil: ör. iletkende yalnız elektronlar hareket eder (protonlar "+" olarak yürümez); etki-tepki kuvvetleri eşit büyüklükte ve zıt yönlü çizilir; aynı işaretli yükler iter, zıt işaretliler çeker; ısı sıcaktan soğuğa akar; hal değişiminde sıcaklık sabit kalır.
+  - Sorunun kökü ve öncülleri tek anlamlı yazılır: öznesi belirsiz cümle olmaz (ör. "bilye, ısıtıldıktan sonra" değil "levha ısıtıldıktan sonra").
+  - Basitleştirme gerekiyorsa MEB/TYT düzeyinde kabul gören model kullanılır ve yanlış bilgi öğretmez.
+  - Video kullanıcıya gönderilmeden önce sorular, çözümler ve animasyonlar bu kurala göre kontrol edilir; kuşkulu bir nokta varsa kullanıcıya söylenir.
 - **Ekrandaki terimler anlamlı ve okunaklı olur (bütün videolarda):** Emir kipi kısaltmalar yazılmaz ("Hızlı dön" değil "Hızlı dönerse"; "Yavaş dön" değil "Yavaş dönerse"). Sembol yalnız bırakılmaz, adıyla yazılır: "Hız (v) → her an TEĞET", "Kuvvet (F) ve ivme (a) → MERKEZE", "Açısal hız: ω = v/r", "İvme: a = v²/r", "Potansiyel enerji: Ep = m·g·h". Kesik ifadeler tam cümleye çevrilir ("r küçük, a BÜYÜK" değil "r küçülünce a BÜYÜR"; "Altta" değil "Döngünün dibinde"; "En az hız" değil "Tepede en küçük hız"). Notlar ekrana sığar, ✓/✗ yazının üstüne binmez.
 - **Seslendirme metni ekrandaki terimlerle aynı olur:** Ekranda ne yazıyorsa metinde de aynı terim ve sırayla söylenir (ör. ekranda "Hızlı dönerse" → metinde "Kova hızlı dönerse").
 - **Video süresi: EN FAZLA 2:59.** Hiçbir video 3:00 veya üstü olamaz (seslendirme eklendikten sonra da). Uzarsa sahneler kısaltılır ya da video bölümlere ayrılır; çıkarmadan önce süre kontrol edilir.
