@@ -236,12 +236,12 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
 .m-bas{margin-top:14px;font:900 88px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
 .m-alt{margin-top:10px;font:700 36px Inter;color:#cbd5e1}
 .m-alt b{color:#F5C400}
-#cards{margin-top:30px;display:flex;gap:30px;max-width:1800px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;touch-action:pan-x;padding:6px 6px 18px;scrollbar-width:thin;scrollbar-color:#F5C400 #2a303c;cursor:grab}
+#cards{margin-top:30px;display:flex;gap:30px;width:max-content;max-width:1800px;margin-left:auto;margin-right:auto;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;touch-action:pan-x;padding:6px 6px 18px;scrollbar-width:thin;scrollbar-color:#F5C400 #2a303c;cursor:grab}
 #cards::-webkit-scrollbar{height:12px}#cards::-webkit-scrollbar-thumb{background:#F5C400;border-radius:6px}#cards::-webkit-scrollbar-track{background:#2a303c;border-radius:6px}
 #cards.surukle{cursor:grabbing;scroll-snap-type:none}#cards .card{flex:0 0 auto;scroll-snap-align:start}
 .kartOk{position:absolute;top:50%;transform:translateY(-50%);width:64px;height:120px;border-radius:18px;background:rgba(245,196,0,.92);color:#1f232c;font:900 44px Inter;z-index:3;border:none}
 .kartOk.sol{left:-60px}.kartOk.sag{right:-60px}.kartOk{width:52px}.kartOk.hide{display:none}
-#kartSar{position:relative;max-width:1800px}
+#kartSar{position:relative;max-width:1800px;width:max-content;margin:0 auto}
 #cards.cok{gap:16px}#cards.cok .card{width:342px;padding:22px 20px 18px}#cards.cok .c-ic{font-size:68px}#cards.cok .c-ad{font-size:31px}#cards.cok .c-ac{font-size:21px}#cards.cok .c-yil{transform:scale(.85);transform-origin:left}
 .card{width:400px;height:450px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
 .card:hover,.card:focus{border-color:#F5A300}
