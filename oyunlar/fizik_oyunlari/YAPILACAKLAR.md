@@ -1,0 +1,15 @@
+# Yapılacaklar (kullanıcı istekleri, sırayla)
+- [ ] Gölgeler: cisimler üst üste binince gölge (motor: shadowMap, castShadow/receiveShadow hepsinde)
+- [ ] Soru çözülünce "Devam"da paneller (soru, değerler, kalem) kapanır, sorudaki olay 3D canlandırılır (motor kuralı, bütün sorular)
+- [ ] Kalem: şekil tanıma (daire, elips, kare, dikdörtgen, üçgen, yıldız, çizgi) — basılı bekletince; Ayarlar'dan aç/kapa, varsayılan açık
+- [ ] Ses: geç/hiç yüklenmeme — motoru erkenden ısıt, gürültü tamponları önceden hazır
+- [ ] Ece kız gibi, erkekler erkek gibi (FZ.insan cinsiyet)
+- [ ] İkonlar konuya göre (📖 yerine), uygun yoksa kitap
+- [ ] Kutu/kart taşmaları
+- [ ] Gerçekçilik: sünger, tuğla, yaylar kıvrımlı, trenler/kutular; tüm sistem taraması
+- [ ] Elektroskop: hikâye–görsel uyumsuzluğu, bozuk kısımlar
+- [ ] Ölçekler: dereceli silindir, termometre, cetvel sayıları; yük miktarı etiketleri
+- [ ] Notlar: tahmin (p) adımlarında ve sorularda çözmek için gereken bilgi + formüller ayrıntılı (ör. "Su neden yukarı iter" 12,5)
+- [ ] Konu anlatımında tanımlar (nedir, kim buldu, birim) kitap gibi; görerek–deneyerek
+- [ ] Kitap taraması: AYT s.217–320 devam (TYT bitti, AYT 1–216 bitti → KITAP_TAM_TARAMA.md)
+- [ ] Kalan konular için hikâye + soru sistemi + tuzak (TYT Dalgalar, Optik; AYT hepsi)
