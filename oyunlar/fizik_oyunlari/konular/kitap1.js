@@ -146,7 +146,7 @@
         A(o.oG, V3(1.2, y2 + 1.1, 1.0), V3(0, -1, 0), 10000 * 0.0025 * 0.1, 'bsG', 0.6); FZ.setTag('bsG', `G = ${S.mk * 10} N (ölçek ⅒)`);
         FZ.setTag('bsA', `S<sub>1</sub> = ${String(S.s1).replace('.', ',')} m² · iniş ${Math.round(x1 * 40)} cm`); FZ.show('bsA', V3(-2.3, -0.35, 0.5), 1);
         FZ.setTag('bsB', `S<sub>2</sub> = ${String(S.s2).replace('.', ',')} m² · çıkış ${fs(x2 * 40)} cm`); FZ.show('bsB', V3(1.2, -0.35, 1.3), 1);
-        FZ.setTag('bsK', `${F('F<sub>1</sub>', 'S<sub>1</sub>')} = ${F('F<sub>2</sub>', 'S<sub>2</sub>')} → ${F(String(Math.round(F1)), String(S.s1).replace('.', ','))} = ${F(String(S.mk * 10), String(S.s2).replace('.', ','))}`); FZ.show('bsK', V3(0, 4.2, 0), 1);
+        FZ.setTag('bsK', `${F('F<sub>1</sub>', 'S<sub>1</sub>')} = ${F('F<sub>2</sub>', 'S<sub>2</sub>')} → ${F(String(Math.round(F1)), String(S.s1).replace('.', ','))} = ${F(String(S.mk * 10), String(S.s2).replace('.', ','))}`); FZ.show('bsK', V3(0.3, 3.7, 0), 1);
       } else if (S.mod === 'akis') {
         o.tan.forEach(m => { const u = m.userData, r = AKY(u.x), v = S.hiz * (0.6 / r) ** 2 * 0.6; u.x += v * dt; if (u.x > 3.6) u.x -= 7.2; const rr = AKY(u.x) * 0.8 * u.r; m.position.set(u.x, 0.9 + Math.sin(u.a) * rr, Math.cos(u.a) * rr); });
         const hs = [-2.4, 0, 2.4].map(x => { const v = S.hiz * (0.6 / AKY(x)) ** 2; return Math.max(0.15, 2.4 - 0.11 * v * v); });
