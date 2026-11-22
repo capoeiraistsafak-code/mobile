@@ -12,7 +12,7 @@
   const QS = [0, 1000, 9000, 19000, 73000, 74000];   // bölüm sınırları (cal)
   const TQ = q => q < QS[1] ? -20 + 20 * q / QS[1] : q < QS[2] ? 0 : q < QS[3] ? 100 * (q - QS[2]) / (QS[3] - QS[2]) : q < QS[4] ? 100 : 100 + 20 * (q - QS[4]) / (QS[5] - QS[4]);
   const GX = q => -3.4 + 3.2 * Math.pow(q / QS[5], 0.55), GY = T => 1.2 + (T + 20) / 140 * 2.6, GZ = -1.2;   // Q ekseni karekök ölçekli (kısa bölümler de görünsün)
-  const sIs = sahne({ icon: '🌡️', cam: [[0.4, 3, 11], [0.4, 2, 0]], plate: [11, 4, 0, 0], data: [['Buz', '100 g, −20 °C'], ['L<sub>erime</sub>', '80 cal/g'], ['L<sub>buharlaşma</sub>', '540 cal/g']],
+  const sIs = sahne({ icon: '🌡️', cam: [[1.3, 3.2, 12.5], [1.3, 2, 0]], plate: [11, 4, 0, 0], data: [['Buz', '100 g, −20 °C'], ['L<sub>erime</sub>', '80 cal/g'], ['L<sub>buharlaşma</sub>', '540 cal/g']],
     S0: () => ({ mod: 'egri', q: 0, kos: 0, T: 20, isit: 0 }),
     kur(g) {
       const G = {}; ['egri', 'bimetal', 'gol'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });

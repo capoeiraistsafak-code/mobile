@@ -426,6 +426,14 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
 .sf-msj.hata{color:#f87171}.sf-msj.iyi{color:#4ade80}
 /* Telif yazısı (yalnızca Ayarlar'ın en altında): sade, sarı zemin, çerçeveli, yuvarlak köşe, siyah yazı */
 .telif{margin:22px auto 0;max-width:820px;padding:12px 20px;background:#fff6c7;border:2px solid #e6c84f;border-radius:14px;color:#111;font:500 19px/1.45 Inter;text-align:center}
+.fxSatir{display:flex;flex-direction:column;gap:8px;margin-top:14px;background:#1f232c;border:2px solid #4b5566;border-radius:18px;padding:12px 18px;text-align:left}
+.fxSatir label{font:700 24px Inter;color:#e5e7eb;display:flex;align-items:center;gap:12px;cursor:pointer}.fxSatir input{width:30px;height:30px;accent-color:#22c55e}
+#konf{position:fixed;inset:0;pointer-events:none;z-index:60}
+#flas{position:fixed;inset:0;pointer-events:none;z-index:59;background:radial-gradient(circle,rgba(239,68,68,0) 35%,rgba(239,68,68,.55) 100%);opacity:0;transition:opacity .25s}
+#flas.on{opacity:1}
+@keyframes sars{0%,100%{translate:0 0}15%{translate:-18px 0}30%{translate:16px 0}45%{translate:-12px 0}60%{translate:9px 0}75%{translate:-5px 0}}
+.sars{animation:sars .55s ease}
+.lbl,.chip{font-variant-numeric:tabular-nums}
 .sesSatir{display:flex;align-items:center;gap:14px;margin-top:14px;background:#1f232c;border:2px solid #4b5566;border-radius:18px;padding:10px 16px}
 .sesEt{font:800 28px Inter;color:#fff;white-space:nowrap}.sesYuzde{font:900 28px Inter;color:#F5C400;min-width:96px;text-align:center}
 .sesKay{flex:1;min-width:200px;height:44px;accent-color:#F5A300;cursor:pointer}
@@ -531,8 +539,10 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-ayar" id="bAyar">⚙ Ayarlar</button>
     <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
+    <canvas id="konf"></canvas><div id="flas"></div>
     <div id="ayar" class="hide"><div class="ov-k" style="padding:30px 56px"><div class="ov-ic" style="font-size:64px">⚙️</div><div class="ov-b" style="font-size:46px;margin-top:4px">Ayarlar</div>
       <div class="sesSatir"><span class="sesEt">🔊 Ses</span><input type="range" class="sesKay" min="0" max="100" step="5" value="80" aria-label="Ses seviyesi"><b class="sesYuzde">%80</b><button class="btn sesSus" type="button">🔇 Sustur</button><button class="btn sesDene" type="button">▶ Dene</button></div>
+      <div class="fxSatir"><label><input type="checkbox" id="fxDogru"> 🎉 Doğru cevapta konfeti ve konfeti sesi</label><label><input type="checkbox" id="fxYanlis"> 💥 Yanlış cevapta efekt (kırmızı parlama, sarsılma, ses)</label></div>
       <div class="sf-et" style="margin-top:14px;color:#F5C400;font-size:28px">Şifre değiştir</div>
       <div class="sf-et">Mevcut şifre</div><input class="sf-in" id="sfEski" type="password" autocomplete="off">
       <div class="sf-et">Yeni şifre (en az 4 karakter)</div><input class="sf-in" id="sfYeni" type="password" autocomplete="off">
@@ -625,6 +635,8 @@ const OYUN_SFX = ['snap', 'whoosh', 'ding', 'splash', 'boing', 'bell', 'pour', '
 function oyunSesleri() { OYUN_SFX.forEach(k => { const f = SFX[k]; SFX[k] = () => { if (typeof CTL !== 'undefined' && CTL.dur) return; ac(); AU.hedef = AU.oyun; try { f(); } finally { AU.hedef = null; } }; }); }
 const SFX = {
   click: () => tone(900, .05, { type: 'square', vol: .06 }),
+  konfeti: () => { noise(.09, { type: 'highpass', f: 1500, vol: .7 }); noise(.25, { type: 'bandpass', f: 4000, f2: 2000, q: 1, vol: .35, at: .03 }); [1568, 1760, 2093, 2637].forEach((f, i) => tone(f, .16, { type: 'triangle', vol: .09, at: .12 + i * .07 })); for (let i = 0; i < 6; i++) noise(.04, { type: 'highpass', f: 5000, vol: .18, at: .25 + Math.random() * .6 }); },
+  yanlis: () => { tone(150, .5, { type: 'sawtooth', vol: .16, to: 90 }); tone(156, .5, { type: 'square', vol: .07, to: 95 }); noise(.2, { type: 'lowpass', f: 400, vol: .35 }); },
   ok: () => { tone(660, .18, { vol: .22 }); tone(880, .18, { vol: .22, at: .12 }); tone(1320, .4, { vol: .2, at: .24 }); },
   bad: () => { tone(220, .4, { type: 'sawtooth', vol: .12, to: 140 }); tone(170, .45, { type: 'square', vol: .05, at: .05, to: 110 }); },
   snap: () => { noise(.12, { type: 'highpass', f: 2500, vol: .5 }); tone(1400, .08, { type: 'triangle', vol: .15, to: 400 }); },
@@ -783,12 +795,18 @@ function tag(id, html, bg, fg = '#fff', chip = false) {
 }
 const FOCUS = () => (GAME.q && GAME.q.q.f) ? GAME.q.q.f : null;
 function show(id, p3, op = 1, dx = 0, dy = 0) {
-  const d = TAG[id]; if (!d || op <= 0) return; const p = p3.clone().project(cam); if (p.z > 1) return;
+  const d = TAG[id]; if (!d || op <= 0) return; if (GAME.q && !GAME.q.answered && GAME.q.q.gizle && GAME.q.q.gizle.includes(id)) return; const p = p3.clone().project(cam); if (p.z > 1) return;
   const f = FOCUS(); if (f) { if (f.includes(id) || id === 'qlab') { d.classList.add('odak'); } else { d.classList.remove('odak'); op *= 0.22; } } else d.classList.remove('odak');
   d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = ((1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;
 }
 setTimeout(() => { const q = tag('qlab', '', '#F5C400', '#1f232c'); q.style.fontSize = '46px'; q.style.border = '4px solid #1f232c'; });
-function setTag(id, html) { if (TAG[id] && TAG[id]._h !== html) { TAG[id].innerHTML = html; TAG[id]._h = html; } }
+function setTag(id, html) { const d = TAG[id]; if (!d) return; const now = performance.now();
+  if (d._h === html) { d._bek = null; return; }
+  const sayili = /\d/.test(html) && /\d/.test(d._h || '');            // yalnız sayı değişen kutular yavaşlatılır
+  if (sayili && d._h != null && now - (d._t || 0) < 2000) { if (d._bek !== html) { d._bek = html; d._bt = now; } else if (now - d._bt > 350) uygula(); return; }
+  uygula();
+  function uygula() { d.innerHTML = html; d._h = html; d._t = now; d._bek = null; const w = d.offsetWidth; if (w > (d._mw || 0)) { d._mw = w; d.style.minWidth = w + 'px'; } } }
+function tagSifirla() { Object.values(TAG).forEach(d => { d._mw = 0; d.style.minWidth = ''; d._t = 0; d._bek = null; }); }
 
 // ===================================================================================
 // GÖREV 1 — ROKET (ipe bağlı oyuncak roket, ip kopunca teğet gider)
@@ -1553,7 +1571,7 @@ function showOnly(M) { GRUPLAR.forEach(g => g.visible = g === M.group); }
 
 function startMission(M) {
   PANEL.qc = PANEL.board = false; sesYenile(); GAME.M = M; GAME.cev = new Map(); GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
-  showOnly(M); M.reset();
+  showOnly(M); M.reset(); tagSifirla();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
   $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>${M.ders ? '<h3 id="bFormH" class="hide" style="margin-top:14px">FORMÜLLER</h3><div id="bForm"></div>' : ''}`;
@@ -1599,7 +1617,7 @@ function adimaGit(hedef) {
       if (st.go) continue;
       if (st.until) { for (let n = 0; n < 9000 && !st.until(M.S); n++) M.tick(dt); }
       else if (st.wait) { for (let t = 0; t < st.wait; t += dt) M.tick(dt); }
-      else if (st.q) { GAME.qn++; GAME.total++; if (st.q.after) st.q.after(M.S, M); }
+      else if (st.q) { GAME.qn++; GAME.total++; if (st.q.goster) st.q.goster(M.S, M); if (st.q.after) st.q.after(M.S, M); }
       else if (st.k || st.p) GAME.qn++;
       else if (st.x) { GAME.qn++; st.x.kay.forEach(k => { if (M.S['_' + k.ad] == null) M.S['_' + k.ad] = k.deger; k.set(M.S, M.S['_' + k.ad]); }); }
     }
@@ -1675,11 +1693,31 @@ function tahminSec(k) {
   $('qnext').textContent = Q.q.dugme || 'Görelim ▶︎'; $('qnext').classList.remove('hide');
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+// ---- Doğru / yanlış cevap efektleri (Ayarlar'dan ayrı ayrı açılıp kapanır) ----
+const FX = { dogru: true, yanlis: true };
+try { FX.dogru = localStorage.getItem('ch_fxDogru') !== '0'; FX.yanlis = localStorage.getItem('ch_fxYanlis') !== '0'; } catch (e) {}
+const KONF = { p: [], cal: false };
+function konfeti() { const cv = $('konf'); cv.width = innerWidth; cv.height = innerHeight; const R = ['#ef4444', '#f59e0b', '#facc15', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7', '#ec4899'];
+  for (let k = 0; k < 2; k++) for (let i = 0; i < 90; i++) { const x0 = k ? cv.width * 0.82 : cv.width * 0.18, a = -Math.PI / 2 + (k ? -0.5 : 0.5) + (Math.random() - 0.5) * 1.2, v = 9 + Math.random() * 11;
+    KONF.p.push({ x: x0, y: cv.height * 0.85, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: Math.random() * 6, dr: (Math.random() - 0.5) * 0.3, w: 8 + Math.random() * 8, h: 5 + Math.random() * 6, c: R[(Math.random() * R.length) | 0], t: 0 }); }
+  if (!KONF.cal) { KONF.cal = true; requestAnimationFrame(konfAdim); } }
+function konfAdim() { const cv = $('konf'), x = cv.getContext('2d'); x.clearRect(0, 0, cv.width, cv.height);
+  KONF.p.forEach(p => { p.vy += 0.32; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.dr; p.t++; x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.globalAlpha = Math.max(0, 1 - p.t / 160); x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.t * 0.15))); x.restore(); });
+  KONF.p = KONF.p.filter(p => p.t < 160 && p.y < cv.height + 40); if (KONF.p.length) requestAnimationFrame(konfAdim); else { KONF.cal = false; x.clearRect(0, 0, cv.width, cv.height); } }
+function fxDogru() { if (!FX.dogru) return; konfeti(); setTimeout(() => { try { SFX.konfeti(); } catch (e) {} }, 120); }
+function fxYanlis() { if (!FX.yanlis) return; const f = $('flas'); f.classList.add('on'); setTimeout(() => f.classList.remove('on'), 450);
+  const q = $('qc'); q.classList.remove('sars'); void q.offsetWidth; q.classList.add('sars'); try { SFX.yanlis(); } catch (e) {} }
+function fxAyarKur() { [['fxDogru', 'dogru', 'ch_fxDogru'], ['fxYanlis', 'yanlis', 'ch_fxYanlis']].forEach(([id, k, ls]) => { const c = $(id); if (!c) return; c.checked = FX[k];
+  c.onchange = () => { FX[k] = c.checked; try { localStorage.setItem(ls, c.checked ? '1' : '0'); } catch (e) {} if (c.checked) (k === 'dogru' ? fxDogru : fxYanlis)(); }; }); }
+setTimeout(fxAyarKur);
 function answer(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true;
   const ok = k === Q.correctPos, btns = [...$('opts').children];
   btns.forEach((b, j) => { b.disabled = true; if (j === Q.correctPos) b.classList.add('ok'); else if (j === k) b.classList.add('no'); else b.classList.add('dim'); });
   const tekrar = GAME.cev && GAME.cev.has(GAME.i); if (GAME.cev && !tekrar) GAME.cev.set(GAME.i, ok);   // geri dönülüp yeniden cevaplanan soru yıldızı değiştirmez
+  if (Q.q.goster) try { Q.q.goster(GAME.M.S, GAME.M); } catch (e) { console.error(e); }
+  if (ok) fxDogru(); else fxYanlis();
+  setTimeout(() => { if (!$('notlar').classList.contains('hide')) notAc(true); }, 50);
   if (ok && !tekrar) { GAME.first++; yildizGoster(true); SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
   else if (ok) { SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru! (tekrar · yıldız değişmez)'; }
   else { SFX.bad(); $('fb').className = 'no'; $('fb').textContent = '✗ Yanlış! Önce çözümü inceleyelim.'; }
@@ -1849,6 +1887,34 @@ function dersKartlari(M) { const L = []; for (let i = 0; i <= Math.min(GAME.i, M
 function dersFormulleri(M) { const g = new Set(), L = []; dersKartlari(M).forEach(k => kartFormul(k).forEach(h => { _tmp.innerHTML = h; const t = _tmp.textContent.replace(/[\s·×*]+/g, ''); if (!g.has(t)) { g.add(t); L.push(h); } })); return L; }
 function formulYaz() { const M = GAME.M, el = $('bForm'); if (!M || !M.ders || !el) return; const L = dersFormulleri(M);
   el.innerHTML = L.map(h => `<div>${h}</div>`).join(''); $('bFormH').classList.toggle('hide', !L.length); el.scrollTop = el.scrollHeight; }
+// Soruya gereken formüller: konunun derslerindeki sarı çerçeveli formüllerden, sorunun metni ve çözümüyle en çok sembol paylaşanlar
+function konuOf(M) { for (const h of Object.values(HAZIR)) if ((h.gorevler || []).includes(M) || (h.dersler || []).includes(M)) return h; return null; }
+const SEMB = t => new Set((t.match(/[A-Za-zΔρλμθωεγτσα-ωΑ-Ω]+[₀-₉0-9]*/g) || []).filter(w => w.length <= 4 && !/^(ve|ile|bir|kaç|için|olan|ise|de|da|ya|mi|veya|N|kg|cm|m|s|J|W|V|A|Pa|cal|Hz)$/.test(w)));
+const KOK = w => w.toLocaleLowerCase('tr').replace(/[^a-zçğıöşüâ0-9]/g, '').slice(0, 5);
+const DURAK = new Set(['hangi', 'aşağı', 'göre', 'olur', 'olan', 'kadar', 'nasıl', 'doğru', 'yargı', 'arası', 'sonra', 'kaçtı', 'kaç', 'için', 'ilişk', 'büyük', 'küçük', 'değiş', 'aynı', 'sıras', 'buna', 'şekil', 'üzeri', 'birin']);
+const KOKLER = t => { _tmp.innerHTML = t; return new Set(_tmp.textContent.split(/\s+/).filter(w => w.length >= 4).map(KOK).filter(k => k.length >= 4 && !DURAK.has(k))); };
+// Çözüm satırlarındaki formüllerin yalnız SEMBOLİK kısmı (sayısız): "ΔL = L₀ λ ΔT = 2 · …" → "ΔL = L₀ λ ΔT"
+function soruFormul(Q) { if (Q.fm) return Q.fm.map(f => `<span class="fm">${f}</span>`);
+  const say = h => /\d/.test(h.replace(/<su[bp]>[^<]*<\/su[bp]>/g, '').replace(/<[^>]+>/g, '').replace(/&[a-z]+;/g, ''));
+  const L = [], gor = new Set();
+  (Q.s || []).forEach(l => { if (l[0] === '§') return; l.split(/[.;]\s|·\s(?=[A-ZΔ])|,\s/).forEach(par => { const p = par.split(/\s=\s/); if (p.length < 2) return;
+    p[0] = p[0].split(/[:→]/).pop().trim(); const kel = x => /[a-zçğıöşü]{5,}/.test(x.replace(/<su[bp]>[^<]*<\/su[bp]>/g, '').replace(/<[^>]+>/g, ''));
+    const al = []; for (let k = 0; k < p.length; k++) { let x = p[k]; const ok_ = x.includes('→'); x = x.split('→')[0];
+      if (say(x) || /✓|[<>]=?\s|&[lg]t;/.test(x) || kel(x) || x.replace(/<[^>]+>/g, '').trim().length > 30 || !x.trim()) break; al.push(x.trim()); if (ok_) break; }
+    if (al.length >= 2 && al[0].replace(/<[^>]+>/g, '').trim() === al[1].replace(/<[^>]+>/g, '').trim()) return;
+    if (al.join('').replace(/<[^>]+>|\s/g, '').length < 5) return;
+    if (al.length >= 2) { const f = al.join(' = '), k = f.replace(/<[^>]+>|\s/g, ''); if (!gor.has(k) && /[A-Za-zΔρλμθω]/.test(k)) { gor.add(k); L.push(`<span class="fm">${f.replace(/<\/?em>/g, '')}</span>`); } } }); });
+  return L.slice(0, 4); }
+function soruBilgi(M, Q) {   // konunun anlatım kartlarından soruyla en çok kelime paylaşan 2 kart (kavram, dikkat, özet, günlük)
+  const h = konuOf(M); if (!h) return [];
+  const kartlar = []; (h.dersler || []).forEach(d => d.steps.forEach(st => { if (st.k && /kavram|dikkat|ozet|gunluk|ornek/.test(st.k.tur || 'kavram')) kartlar.push(st.k); }));
+  if (!kartlar.length) return [];
+  const df = new Map(); const kk = kartlar.map(k => { const s_ = KOKLER(k.b + ' ' + (k.m || []).join(' ')); s_.forEach(w => df.set(w, (df.get(w) || 0) + 1)); return s_; });
+  const hedef = KOKLER(Q.t); const N = kartlar.length;
+  const puan = kk.map((s_, i) => { let p = 0; hedef.forEach(w => { if (s_.has(w)) p += Math.log(1 + N / df.get(w)); }); return [p, i]; }).filter(x => x[0] > 0.8).sort((a, b) => b[0] - a[0]);
+  const sec = []; const gor = new Set(); for (const [p, i] of puan) { const k = kartlar[i]; if (gor.has(k.b)) continue; gor.add(k.b); sec.push(k); if (sec.length === 2) break; }
+  return sec;
+}
 function notIcerik() {
   const M = GAME.M; if (!M) return '';
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
@@ -1861,9 +1927,20 @@ function notIcerik() {
     if (M.notlar && M.notlar.length) h += `<div class="nt-k" style="margin-top:14px">BU KONUDA GENEL</div>` + M.notlar.map(nt).join('');
     if (!h) h = `<div class="nt-k">NOTLAR</div>` + nt('Notlar, ders ilerledikçe kart kart burada birikir.');
     return h; }
-  if (Q && Q.n) { const no = M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1;
-    h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`).join(''); }
-  h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
+  const nt = m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`;
+  const cevapli = !GAME.q || GAME.q.answered, no = Q && Q.t ? M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1 : 0;
+  if (Q && Q.t && !cevapli) {                                   // SORU ÇÖZÜLMEDEN ÖNCE: yalnız bu soruyu çözmek için gereken bilgi
+    const FM_ = soruFormul(Q), BL = (Q.b || []).concat((Q.n || []).filter(m => !m.startsWith('<div class="nt-svg"') && !/TUZAK|yanlış|sanmak|✓|<em>|hata/i.test(m)));
+    const K_ = (!FM_.length && !BL.length) ? soruBilgi(M, Q).slice(0, 1) : [];
+    h += `<div class="nt-k">SORU ${no} · BU SORUYU ÇÖZMEK İÇİN</div>`;
+    if (FM_.length) h += `<div class="nt-k" style="color:#fde047;margin-top:6px">GEREKLİ FORMÜLLER</div>` + FM_.map(nt).join('');
+    if (BL.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">BİLMEN GEREKEN</div>` + BL.map(nt).join('');
+    K_.forEach(k => { h += `<div class="nt-k" style="color:#fde047;margin-top:10px">${k.b}</div>` + k.m.map(nt).join(''); });
+    if (!FM_.length && !BL.length && !K_.length) h += nt('Soruyu dikkatle oku; verilenleri sol kutudan kontrol et.');
+    h += `<div class="nt-m" style="color:#94a3b8"><div>Cevapladıktan sonra burada "neden böyle?" açıklaması açılır.</div></div>`;
+    return h; }
+  if (Q && Q.n) h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(nt).join('');
+  const gen = M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []; if (gen.length) h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + gen.map(nt).join('');
   return h;
 }
 function notAc(ac_) {
@@ -2089,7 +2166,7 @@ window.FZ = { THREE, V3, UP, TAU, clamp, ease, mod, F, SQ, FM, YSVG, mesh, arrow
   SFX, loopSnd, board, sub, HAZIR, KONULAR, GRUPLAR, anaKur, GAME,
   konuEkle(sinav, ad, kayit) { HAZIR[sinav + '|' + ad] = kayit; [...kayit.dersler || [], ...kayit.gorevler || []].forEach(m => GRUPLAR.add(m.group)); if (!$('ana').classList.contains('hide')) anaKur(); } };
 fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
-window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFormul }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
 </script>
 <!-- konu modülleri: her dosya bir grup konunun 3D sahnesini, konu anlatımını ve sorularını ekler -->
 <script>// Konu modülleri için ortak araçlar. Her konu: bir 3D sahne + konu anlatımı (dersler) + soru çözümü (görevler).
@@ -6582,7 +6659,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
   const QS = [0, 1000, 9000, 19000, 73000, 74000];   // bölüm sınırları (cal)
   const TQ = q => q < QS[1] ? -20 + 20 * q / QS[1] : q < QS[2] ? 0 : q < QS[3] ? 100 * (q - QS[2]) / (QS[3] - QS[2]) : q < QS[4] ? 100 : 100 + 20 * (q - QS[4]) / (QS[5] - QS[4]);
   const GX = q => -3.4 + 3.2 * Math.pow(q / QS[5], 0.55), GY = T => 1.2 + (T + 20) / 140 * 2.6, GZ = -1.2;   // Q ekseni karekök ölçekli (kısa bölümler de görünsün)
-  const sIs = sahne({ icon: '🌡️', cam: [[0.4, 3, 11], [0.4, 2, 0]], plate: [11, 4, 0, 0], data: [['Buz', '100 g, −20 °C'], ['L<sub>erime</sub>', '80 cal/g'], ['L<sub>buharlaşma</sub>', '540 cal/g']],
+  const sIs = sahne({ icon: '🌡️', cam: [[1.3, 3.2, 12.5], [1.3, 2, 0]], plate: [11, 4, 0, 0], data: [['Buz', '100 g, −20 °C'], ['L<sub>erime</sub>', '80 cal/g'], ['L<sub>buharlaşma</sub>', '540 cal/g']],
     S0: () => ({ mod: 'egri', q: 0, kos: 0, T: 20, isit: 0 }),
     kur(g) {
       const G = {}; ['egri', 'bimetal', 'gol'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
@@ -6813,8 +6890,8 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
   const BARO = { 0: 76, 1000: 67, 2000: 60 };
   const MODLAR = ['kati', 'sivi', 'ubor', 'hid', 'akis', 'gaz', 'kald'];
   const sBs = sahne({ icon: '🧱', cam: [[0, 3.4, 10.5], [0, 1.5, 0]], plate: [12, 5, 0, 0], data: [['g', '10 m/s²'], ['Suyun özkütlesi', '1000 kg/m³ (1 g/cm³)']],
-    cam2: S => ({ kati: [[2.3, 3.2, 10.2], [2.3, 0.9, 0]], sivi: [[2.3, 3.6, 12.2], [2.3, 2.1, 0]], ubor: [[2.9, 3, 10.7], [2.9, 1.9, 0]], hid: [[2.6, 3.2, 11.2], [2.6, 1.5, 0]], akis: [[2.3, 2.8, 11.2], [2.3, 1.6, 0]], gaz: [[0.9, 3.4, 13.5], [0.9, 2.1, 0]], kald: [[2.9, 3.2, 11.2], [2.9, 2, 0]] })[S.mod],
-    S0: () => ({ mod: 'kati', o: 0, ust: 0, h: 1.5, dolum: 0, tt: 0, hs: [0, 0, 0], iz: [[], [], []], iki: 0, yag: 0, itis: 0, hiz: 1, irt: 0, gazP: 86, cis: 'demir', ind: 0, kos: 0 }),
+    cam2: S => ({ kati: [[2.3, 3.2, 10.2], [2.3, 0.9, 0]], sivi: [[2.3, 3.6, 12.2], [2.3, 2.1, 0]], ubor: [[2.9, 3, 10.7], [2.9, 1.9, 0]], hid: [[2.6, 3.2, 11.2], [2.6, 1.5, 0]], akis: [[2.3, 2.8, 11.2], [2.3, 1.6, 0]], gaz: [[0.9, 3.4, 13.5], [0.9, 2.1, 0]], kald: [[2.9, 3.6, 13], [2.9, 2.4, 0]] })[S.mod],
+    S0: () => ({ mod: 'kati', o: 0, ust: 0, dongu: 0, kes: 0, karis: 0, yagH: 1, s1: 0.01, s2: 0.25, mk: 1000, x1: 50, V: 1, dt: 0.6, indH: 1, h: 1.5, dolum: 0, tt: 0, hs: [0, 0, 0], iz: [[], [], []], iki: 0, yag: 0, itis: 0, hiz: 1, irt: 0, gazP: 86, cis: 'demir', ind: 0, kos: 0 }),
     kur(g) {
       const G = {}; MODLAR.forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
       const ece = FZ.insan(g, 0xdb2777, 1.15);
@@ -6882,8 +6959,8 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
       const A = (a, p, d, L, id, dx = 0.3) => { if (L < 0.02) { a.visible = false; return; } FZ.setArrow(a, p, d, L); FZ.show(id, p.clone().add(d.clone().normalize().multiplyScalar(L + 0.25)).add(V3(dx, 0, 0)), 1); };
       [o.oG, o.oT, o.oF, o.oN].forEach(a => a.visible = false); o.ece.visible = S.mod === 'kati' || S.mod === 'hid';
       if (S.mod === 'kati') {
-        const [w, h, d, Sm] = BR[S.o], Gt = 20 * (1 + S.ust), P = Gt / Sm, dent = Math.min(0.3, P / 8000 * 0.3);
-        S.P = P; if (o.sonO !== S.o * 10 + S.ust) { o.sonO = S.o * 10 + S.ust; const pa = o.sg.attributes.position.array;
+        if (S.dongu) S.o = Math.floor(S.t / 1.6) % 3; let [w, h, d, Sm] = BR[S.o]; if (S.kes) { w /= 2; Sm /= 2; } const Gt = 20 * (1 + S.ust) * (S.kes ? 0.5 : 1), P = Gt / Sm, dent = Math.min(0.3, P / 8000 * 0.3);
+        S.P = P; if (o.sonO !== S.o * 10 + S.ust + S.kes * 100) { o.sonO = S.o * 10 + S.ust + S.kes * 100; const pa = o.sg.attributes.position.array;
           for (let i = 0; i < pa.length; i += 3) { const x = o.sp0[i], y = o.sp0[i + 1], z = o.sp0[i + 2]; let yy = y;
             if (y > 0.29) { const ex = Math.max(0, Math.abs(x) - w / 2), ez = Math.max(0, Math.abs(z) - d / 2), e = Math.hypot(ex, ez); yy = 0.3 - dent * Math.max(0, 1 - e / 0.35); } pa[i + 1] = yy; }
           o.sg.attributes.position.needsUpdate = true; o.sg.computeVertexNormals(); }
@@ -6903,7 +6980,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
           o.mus[i].visible = !!S.dolum; o.mus[i].akis.visible = S.kos && S.dolum && S.hs[i] < KH - 1e-3; const al = KH + 0.45 - h; o.mus[i].akis.scale.y = al; o.mus[i].akis.position.y = -0.17 - al / 2;
           const P = Math.round(h * 0.2 * 10000) + (S.iki && i === 0 ? -Math.round(yagH * 0.2 * 2000) : 0);
           FZ.setTag(['bsA', 'bsB', 'bsC'][i], `P = ${P} Pa`); FZ.show(['bsA', 'bsB', 'bsC'][i], V3(KX[i], -0.35, 0.8), 1); }
-        o.yagK.visible = !!S.iki; if (S.iki) { o.yagK.scale.set(1, 0.5, 1); o.yagK.position.set(KX[0], 0.06 + S.hs[0] - 0.25, 0); }
+        o.yagK.visible = !!S.iki && !S.karis; if (S.iki) o.su[0].material.color.setHex(S.karis ? 0x84cc16 : 0x3b82f6); else o.su[0].material.color.setHex(0x3b82f6); if (S.iki) { o.yagK.scale.set(1, 0.5, 1); o.yagK.position.set(KX[0], 0.06 + S.hs[0] - 0.25, 0); }
         if (!S.dolum && !S.iki) { const Fv = Math.round(S.h * 0.2 * 10000 * 0.03), Gs = [0, 1, 2].map(i => Math.round(hacim(i, S.h) * 0.008 * 10000));
           FZ.setTag('bsK', `Taban alanları eşit (S = 0,03 m²) · F = P·S = ${Fv} N · ağırlıklar: G<sub>1</sub> = ${Gs[0]} N, G<sub>2</sub> = ${Gs[1]} N, G<sub>3</sub> = ${Gs[2]} N`); }
         else if (S.iki) FZ.setTag('bsK', 'Yağ (d = 0,8 g/cm³) 10 cm · su 20 cm'); else FZ.setTag('bsK', `Eşit debili musluklar · t = ${fs(S.tt)} s`);
@@ -6913,7 +6990,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
           S.iz.forEach((L, i) => { if (L.length > 1) FZ.setLine(o.cz[i], L.map(([t, h]) => V3(X(Math.min(14, t)), Y(h), Z))); else o.cz[i].visible = false; });
           FZ.setTag('bsP', 'P – t'); FZ.show('bsP', V3(5.6, 3.7, -0.35), 1); }
       } else if (S.mod === 'ubor') {
-        const hy = S.yag * 1.0, x = 0.4 * hy, y0 = 2.0, ara = y0 - x, sag = y0 + x, ust = ara + hy;
+        const hy = S.yag * S.yagH, x = 0.4 * hy, y0 = 2.0, ara = y0 - x, sag = y0 + x, ust = ara + hy;
         const sL = y => 3.3 - y, sR = y => 2.4 + Math.PI + (y - 0.9), T = o.uYol.getLength();
         const parca = (s0, s1) => { const n = 60, pts = []; for (let i = 0; i <= n; i++) pts.push(o.uYol.getPointAt(Math.min(1, (s0 + (s1 - s0) * i / n) / T))); return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.23, 12, false); };
         o.uSu.geometry.dispose(); o.uSu.geometry = parca(sL(ara), sR(sag)); o.uYag.visible = hy > 0.01; if (hy > 0.01) { o.uYag.geometry.dispose(); o.uYag.geometry = parca(sL(ust), sL(ara)); }
@@ -6925,15 +7002,15 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
         FZ.setTag('bsK', 'Aynı yatay düzlemde, aynı sıvının içindeki noktalarda basınç eşittir'); FZ.show('bsK', V3(0.3, 4.1, 0), 1);
       } else if (S.mod === 'hid') {
         if (S.kos) { S.itis = Math.min(1, S.itis + dt * 0.4); if (S.itis >= 1) S.kos = 0; }
-        const x1 = S.itis * 1.25, x2 = x1 / 25, y1 = 2.0 - x1, y2 = 1.5 + x2;
+        const r_ = S.s2 / S.s1, x1 = S.itis * S.x1 / 40, x2 = x1 / r_, y1 = 2.0 - x1, y2 = 1.5 + x2;
         o.hsu1.scale.y = y1 - 0.4; o.hsu1.position.y = 0.4 + (y1 - 0.4) / 2; o.hsu2.scale.y = y2 - 0.4; o.hsu2.position.y = 0.4 + (y2 - 0.4) / 2;
         o.p1.position.set(-2.3, y1 + 0.06, 0); o.p2.position.set(1.2, y2 + 0.07, 0); o.kol.position.y = y1 + 0.7; o.car.position.set(1.2, y2 + 0.14, 0);
         o.ece.position.set(-3.1, 0, 0); o.ece.rotation.y = 0; FZ.koluUzat(o.ece, 0, V3(-2.3, y1 + 1.3, 0.05)); FZ.koluUzat(o.ece, 1, V3(-2.3, y1 + 1.3, -0.05));
-        A(o.oT, V3(-2.3, y1 + 2.4, 0.3), V3(0, -1, 0), 400 * 0.0025, 'bsT', 0.4); FZ.setTag('bsT', 'F<sub>1</sub> = 400 N');
-        A(o.oG, V3(1.2, y2 + 1.1, 1.0), V3(0, -1, 0), 10000 * 0.0025 * 0.1, 'bsG', 0.6); FZ.setTag('bsG', 'G = 10 000 N (ölçek ⅒)');
-        FZ.setTag('bsA', `S<sub>1</sub> = 0,01 m² · iniş ${Math.round(x1 * 40)} cm`); FZ.show('bsA', V3(-2.3, -0.35, 0.5), 1);
-        FZ.setTag('bsB', `S<sub>2</sub> = 0,25 m² · çıkış ${fs(x2 * 40)} cm`); FZ.show('bsB', V3(1.2, -0.35, 1.3), 1);
-        FZ.setTag('bsK', `${F('F<sub>1</sub>', 'S<sub>1</sub>')} = ${F('F<sub>2</sub>', 'S<sub>2</sub>')} → ${F('400', '0,01')} = ${F('10 000', '0,25')} = 40 000 Pa`); FZ.show('bsK', V3(0, 4.2, 0), 1);
+        A(o.oT, V3(-2.3, y1 + 2.4, 0.3), V3(0, -1, 0), 400 * 0.0025, 'bsT', 0.4); const F1 = S.mk * 10 * S.s1 / S.s2; FZ.setTag('bsT', `F<sub>1</sub> = ${Math.round(F1)} N`);
+        A(o.oG, V3(1.2, y2 + 1.1, 1.0), V3(0, -1, 0), 10000 * 0.0025 * 0.1, 'bsG', 0.6); FZ.setTag('bsG', `G = ${S.mk * 10} N (ölçek ⅒)`);
+        FZ.setTag('bsA', `S<sub>1</sub> = ${String(S.s1).replace('.', ',')} m² · iniş ${Math.round(x1 * 40)} cm`); FZ.show('bsA', V3(-2.3, -0.35, 0.5), 1);
+        FZ.setTag('bsB', `S<sub>2</sub> = ${String(S.s2).replace('.', ',')} m² · çıkış ${fs(x2 * 40)} cm`); FZ.show('bsB', V3(1.2, -0.35, 1.3), 1);
+        FZ.setTag('bsK', `${F('F<sub>1</sub>', 'S<sub>1</sub>')} = ${F('F<sub>2</sub>', 'S<sub>2</sub>')} → ${F(String(Math.round(F1)), String(S.s1).replace('.', ','))} = ${F(String(S.mk * 10), String(S.s2).replace('.', ','))}`); FZ.show('bsK', V3(0, 4.2, 0), 1);
       } else if (S.mod === 'akis') {
         o.tan.forEach(m => { const u = m.userData, r = AKY(u.x), v = S.hiz * (0.6 / r) ** 2 * 0.6; u.x += v * dt; if (u.x > 3.6) u.x -= 7.2; const rr = AKY(u.x) * 0.8 * u.r; m.position.set(u.x, 0.9 + Math.sin(u.a) * rr, Math.cos(u.a) * rr); });
         const hs = [-2.4, 0, 2.4].map(x => { const v = S.hiz * (0.6 / AKY(x)) ** 2; return Math.max(0.15, 2.4 - 0.11 * v * v); });
@@ -6948,21 +7025,21 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
         FZ.setTag('bsB', `Δh = ${S.gazP - P0} cm`); FZ.show('bsB', V3(2.3, y0 + 1.2, 0.3), 1);
         FZ.setTag('bsK', `${S.irt} m · P<sub>0</sub> = ${P0} cmHg · P<sub>gaz</sub> = ${S.gazP} cmHg`); FZ.show('bsK', V3(1.2, 4.2, 0), 1);
       } else {
-        const d = { demir: 3, tahta: 0.6, askida: 1 }[S.cis], V = 1, G = 10 * d * V; let yb;
-        if (S.kos) { S.ind = Math.min(1, S.ind + dt * 0.35); if (S.ind >= 1) S.kos = 0; }
+        const d = { demir: 3, tahta: S.dt, askida: 1 }[S.cis], V = S.V, G = 10 * d * V, kn = 0.8 * Math.cbrt(V); let yb;
+        if (S.kos) { S.ind = Math.min(S.indH, S.ind + dt * 0.35); if (S.ind >= S.indH) S.kos = 0; }
         const L0 = 0.8 + 0.6;   // boş kapta su seviyesi 1,4
-        if (S.cis === 'demir') yb = 3.6 - S.ind * 3.3; else if (S.cis === 'tahta') { const yer = L0 + 0.14 * 0.6 - 0.8 * 0.6; yb = 3.6 - S.ind * (3.6 - yer); } else { const yer = 0.65; yb = 3.6 - S.ind * (3.6 - yer); }
+        if (S.cis === 'demir') yb = 3.6 - S.ind * 3.3; else if (S.cis === 'tahta') { const yer = L0 + 0.14 * S.dt - 0.8 * S.dt; yb = 3.6 - S.ind * (3.6 - yer); } else { const yer = 0.65; yb = 3.6 - S.ind * (3.6 - yer); }
         let s = 0; for (let k = 0; k < 3; k++) { const lev = L0 + 0.14 * s; s = Math.max(0, Math.min(1, (lev - yb) / 0.8)); }
-        if (S.cis === 'tahta') s = Math.min(s, 0.6);
+        if (S.cis === 'tahta') s = Math.min(s, S.dt);
         const lev = L0 + 0.14 * s; o.ksu.scale.y = lev - 0.06; o.ksu.position.y = 0.06 + (lev - 0.06) / 2;
-        const Fk = 10 * V * s, T = S.cis === 'demir' ? G - Fk : Math.max(0, G - Fk);
-        o.cis.position.set(0, yb + 0.4, 0); o.cis.material.color.setHex({ demir: 0x6b7280, tahta: 0xb08150, askida: 0x0ea5e9 }[S.cis]);
+        o.cis.scale.setScalar(kn / 0.8); const Fk = 10 * V * s, T = S.cis === 'demir' ? G - Fk : Math.max(0, G - Fk);
+        o.cis.position.set(0, yb + 0.4, 0); o.cis.material.color.setHex({ demir: 0xef4444, tahta: 0xd97706, askida: 0x22d3ee }[S.cis]);
         o.din.visible = S.cis === 'demir'; o.din.position.set(0, 5.1, 0); o.dip.scale.y = 5.1 - 1.1 - (yb + 0.8); o.dip.position.y = -1.1 - o.dip.scale.y / 2;
         const c = V3(0, yb + 0.4, 0.45);
         A(o.oG, c, V3(0, -1, 0), G * KN, 'bsG', 0.35); FZ.setTag('bsG', `G = ${fs(G)} N`);
         if (Fk > 0.05) { A(o.oF, V3(0.25, yb + 0.4 * s, 0.45), V3(0, 1, 0), Fk * KN, 'bsF', 0.4); FZ.setTag('bsF', `F<sub>k</sub> = ${fs(Fk)} N`); }
         if (S.cis === 'demir') { A(o.oT, V3(0, yb + 0.8, 0.45), V3(0, 1, 0), T * KN, 'bsT', 0.4); FZ.setTag('bsT', `T = ${fs(T)} N`); }
-        FZ.setTag('bsK', S.cis === 'demir' ? `Dinamometre ${fs(T)} N · batan %${Math.round(s * 100)}` : S.cis === 'tahta' ? 'Yüzüyor · batan %60' : 'Askıda: F<sub>k</sub> = G');
+        FZ.setTag('bsK', S.cis === 'demir' ? `Dinamometre ${fs(T)} N · batan %${Math.round(s * 100)}` : S.cis === 'tahta' ? `Yüzüyor · batan %${Math.round(S.dt * 100)}` : 'Askıda: F<sub>k</sub> = G');
         FZ.show('bsK', V3(1.6, 3.6, 0), 1);
       }
     },
@@ -7044,60 +7121,837 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
   // ======================= SORU SİSTEMLERİ (kitaptaki bütün soru çeşitleri) =======================
   const s1 = gorev(sBs, { yk: 'TYT8-g2', no: 2, icon: '🧱', name: 'Soru sistemi: katı ve sıvı basıncı', task: 'Tuğla ve sünger, üç kap, musluk grafikleri, karışmayan sıvılar, basınç kuvveti ile ağırlık.', notlar: [...NT.kati, ...NT.sivi], steps: [
     { do: S => md(S, 'kati', { o: 0, ust: 0 }), sub: '20 N ağırlığındaki tuğla süngerin üstünde.', go: '▶︎ Başlat' },
-    { do: S => { S.o = 2; }, q: { t: '20 N\'luk tuğla 0,02 m², 0,01 m² ve 0,005 m²\'lik yüzleri üzerine konuluyor. Süngere uyguladığı basınç kuvvetleri F ve basınçlar P için hangisi doğrudur?', o: ['F\'ler eşit; P en küçük yüzde en büyüktür', 'F ve P üç konumda eşittir', 'F en küçük yüzde en büyüktür; P\'ler eşit', 'P en büyük yüzde en büyüktür'], f: ['bsK', 'bsG'],
+    { do: S => md(S, 'kati', { o: 0, ust: 0, dongu: 0, kes: 0 }), q: { gizle: ['bsK'], goster: S => { S.dongu = 1; S.t = 0; }, t: '20 N\'luk tuğla 0,02 m², 0,01 m² ve 0,005 m²\'lik yüzleri üzerine konuluyor. Süngere uyguladığı basınç kuvvetleri F ve basınçlar P için hangisi doğrudur?', o: ['F\'ler eşit; P en küçük yüzde en büyüktür', 'F ve P üç konumda eşittir', 'F en küçük yüzde en büyüktür; P\'ler eşit', 'P en büyük yüzde en büyüktür'], f: ['bsK', 'bsG'],
       s: ['Basınç kuvveti ağırlıktır: F = 20 N, üçünde eşit.', 'P = F / S → S küçüldükçe P büyür: 1000, 2000, <em>4000 Pa</em> ✓'], n: ['Kuvvet ile basıncı karıştırmamak gerekir: kuvvet aynı kalabilir, basınç alanla değişir.'] } },
-    { do: S => { S.ust = 1; }, q: { t: 'Dik duran tuğlanın (S = 0,005 m²) üstüne özdeş bir tuğla daha konursa süngere yapılan basınç kaç Pa olur?', o: ['8000', '4000', '2000', '16 000'], f: ['bsK'],
+    { do: S => md(S, 'kati', { o: 2, ust: 0, dongu: 0, kes: 0 }), q: { gizle: ['bsK'], goster: S => { S.ust = 1; }, t: 'Dik duran tuğlanın (S = 0,005 m²) üstüne özdeş bir tuğla daha konursa süngere yapılan basınç kaç Pa olur?', o: ['8000', '4000', '2000', '16 000'], f: ['bsK'],
       s: ['G = 40 N, S = 0,005 m²', `P = ${F('40', '0,005')} = <em>8000 Pa</em> ✓`], n: ['Aynı yüzeyde ağırlık 2 katına çıkınca basınç da 2 katına çıkar.'] } },
-    { q: { t: 'Dik kenarlı düzgün bir tuğla düşey doğrultuda tam ortadan kesilip bir yarısı kaldırılırsa kalan parçanın yere yaptığı basınç ve basınç kuvveti nasıl değişir?', o: ['P değişmez, F yarıya iner', 'P yarıya iner, F değişmez', 'İkisi de yarıya iner', 'İkisi de değişmez'],
+    { do: S => md(S, 'kati', { o: 0, ust: 0, dongu: 0, kes: 0 }), q: { gizle: ['bsK'], goster: S => { S.kes = 1; }, t: 'Dik kenarlı düzgün bir tuğla düşey doğrultuda tam ortadan kesilip bir yarısı kaldırılırsa kalan parçanın yere yaptığı basınç ve basınç kuvveti nasıl değişir?', o: ['P değişmez, F yarıya iner', 'P yarıya iner, F değişmez', 'İkisi de yarıya iner', 'İkisi de değişmez'],
       s: ['G yarıya iner → F yarıya iner.', 'S de yarıya iner → P = F / S <em>değişmez</em> ✓'], n: ['Düzgün katılarda P = h · d · g olarak da yazılabilir; h ve d değişmediği için P değişmez.'] } },
-    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0 }), q: { t: 'Taban alanları eşit üç kapta (düz, ağzı geniş, ağzı dar) 30 cm yüksekliğinde su vardır. Tabandaki su basınçları P<sub>1</sub>, P<sub>2</sub>, P<sub>3</sub> arasındaki ilişki nedir?', o: ['P<sub>1</sub> = P<sub>2</sub> = P<sub>3</sub>', 'P<sub>2</sub> > P<sub>1</sub> > P<sub>3</sub>', 'P<sub>3</sub> > P<sub>1</sub> > P<sub>2</sub>', 'P<sub>1</sub> > P<sub>2</sub> = P<sub>3</sub>'], f: ['bsA', 'bsB', 'bsC'],
+    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0, karis: 0 }), q: { gizle: ['bsA', 'bsB', 'bsC'], t: 'Taban alanları eşit üç kapta (düz, ağzı geniş, ağzı dar) 30 cm yüksekliğinde su vardır. Tabandaki su basınçları P<sub>1</sub>, P<sub>2</sub>, P<sub>3</sub> arasındaki ilişki nedir?', o: ['P<sub>1</sub> = P<sub>2</sub> = P<sub>3</sub>', 'P<sub>2</sub> > P<sub>1</sub> > P<sub>3</sub>', 'P<sub>3</sub> > P<sub>1</sub> > P<sub>2</sub>', 'P<sub>1</sub> > P<sub>2</sub> = P<sub>3</sub>'], f: ['bsA', 'bsB', 'bsC'],
       s: ['P = h · d · g; h ve d üçünde aynı.', 'P = 0,3 · 1000 · 10 = 3000 Pa → <em>hepsi eşit</em> ✓'], n: ['Ağzı geniş kapta daha çok su olması basıncı artırmaz.'] } },
-    { q: { t: 'Aynı üç kapta suyun tabana uyguladığı kuvvet F ile suyun ağırlığı G için hangisi doğrudur?', o: ['Düz kapta F = G, ağzı geniş kapta F < G, ağzı dar kapta F > G', 'Üçünde de F = G', 'Ağzı geniş kapta F > G, ağzı dar kapta F < G', 'Üçünde de F < G'], f: ['bsK'],
+    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0, karis: 0 }), q: { gizle: ['bsK'], t: 'Aynı üç kapta suyun tabana uyguladığı kuvvet F ile suyun ağırlığı G için hangisi doğrudur?', o: ['Düz kapta F = G, ağzı geniş kapta F < G, ağzı dar kapta F > G', 'Üçünde de F = G', 'Ağzı geniş kapta F > G, ağzı dar kapta F < G', 'Üçünde de F < G'], f: ['bsK'],
       s: ['F = P · S üç kapta eşit (90 N).', 'Ağırlıklar: düz 90 N, ağzı geniş ≈ 145 N, ağzı dar ≈ 64 N.', 'Ağzı geniş: <em>F < G</em> · ağzı dar: <em>F > G</em> ✓'], n: ['Eğik duvarlar suya dik tepki kuvveti uygular. Ağzı geniş kapta bu tepkinin düşey bileşeni yukarı (suyun bir kısmını duvar taşır); ağzı dar kapta aşağıdır (su tabana daha çok bastırır).'] } },
-    { do: S => md(S, 'sivi', { dolum: 1, tt: 0, hs: [0, 0, 0], iz: [[], [], []], kos: 1 }), q: { t: 'Boş kaplar eşit debili musluklarla dolduruluyor. Ağzı geniş kabın tabanındaki basıncın zamana göre grafiği nasıldır?', o: ['Eğimi giderek azalan eğri', 'Doğrusal', 'Eğimi giderek artan eğri', 'Önce artan sonra azalan'], f: ['bsP'],
+    { do: S => md(S, 'sivi', { dolum: 1, tt: 0, hs: [0, 0, 0], iz: [[], [], []], iki: 0 }), q: { gizle: ['bsP'], goster: S => { S.kos = 1; }, t: 'Boş kaplar eşit debili musluklarla dolduruluyor. Ağzı geniş kabın tabanındaki basıncın zamana göre grafiği nasıldır?', o: ['Eğimi giderek azalan eğri', 'Doğrusal', 'Eğimi giderek artan eğri', 'Önce artan sonra azalan'], f: ['bsP'],
       s: ['Eşit sürede eşit hacim girer; yukarıda kesit genişledikçe seviye daha yavaş yükselir.', 'P ∝ h olduğundan grafiğin eğimi <em>azalır</em> ✓'], n: ['Ağzı dar kapta tersi olur: eğim artar. Düz kapta doğrusal.'] } },
-    { do: S => md(S, 'sivi', { dolum: 0, iki: 1, h: 1.5 }), q: { t: 'Düz kapta 20 cm su ve üstünde 10 cm yağ (d = 0,8 g/cm³) vardır. Kap tabanındaki toplam sıvı basıncı kaç Pa\'dır?', o: ['2800', '3000', '2000', '2400'], f: ['bsA'],
+    { do: S => md(S, 'sivi', { dolum: 0, iki: 1, h: 1.5, karis: 0 }), q: { gizle: ['bsA'], t: 'Düz kapta 20 cm su ve üstünde 10 cm yağ (d = 0,8 g/cm³) vardır. Kap tabanındaki toplam sıvı basıncı kaç Pa\'dır?', o: ['2800', '3000', '2000', '2400'], f: ['bsA'],
       s: ['Yağ: 0,1 · 800 · 10 = 800 Pa', 'Su: 0,2 · 1000 · 10 = 2000 Pa', 'Toplam: <em>2800 Pa</em> ✓'], n: ['Karışmayan sıvılarda her katmanın basıncı üst üste eklenir.'] } },
-    { q: { t: 'Aynı düz kaptaki yağ ve su karıştırılabilseydi kap tabanındaki sıvı basıncı nasıl değişirdi?', o: ['Değişmezdi', 'Artardı', 'Azalırdı', 'Sıfır olurdu'],
+    { do: S => md(S, 'sivi', { dolum: 0, iki: 1, h: 1.5, karis: 0 }), q: { gizle: ['bsA'], goster: S => { S.karis = 1; }, t: 'Aynı düz kaptaki yağ ve su karıştırılabilseydi kap tabanındaki sıvı basıncı nasıl değişirdi?', o: ['Değişmezdi', 'Artardı', 'Azalırdı', 'Sıfır olurdu'],
       s: ['Düz kapta tabandaki kuvvet sıvıların toplam ağırlığına eşittir; ağırlık ve taban alanı değişmez.', 'P = G / S <em>değişmez</em> ✓'], n: ['Ağzı geniş ya da dar kaplarda bu sonuç geçerli olmayabilir; çünkü F, G\'ye eşit değildir.'] } },
     { q: { t: 'Barajların duvarları için;<br>I. Tabana doğru kalınlaşır.<br>II. Duvara etki eden su basıncı derinlikle artar.<br>III. Su basıncı barajın genişliğine bağlıdır.<br>yargılarından hangileri doğrudur?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'],
       s: ['P = h d g: basınç derinlikle artar (II). Bu yüzden duvar tabanda kalındır (I).', 'Basınç gölün genişliğine ya da su miktarına bağlı değildir (III yanlış). <em>I ve II</em> ✓'], n: ['Dalgıç kıyafetleri ve denizaltılar da aynı nedenle derinlik için güçlendirilir.'] } },
   ] });
   const s2 = gorev(sBs, { yk: 'TYT8-g3', no: 3, icon: '🧪', name: 'Soru sistemi: U borusu, hidrolik, akış, gaz', task: 'U borusunda seviye farkı, birleşik kaplar, hidrolik lift, Bernoulli, açık hava ve gaz basıncı.', steps: [
-    { do: S => md(S, 'ubor', { yag: 1 }), sub: 'U borusunda su; sol kolda yağ.', go: '▶︎ Başlat' },
-    { q: { t: 'U borusunun sol koluna su ile karışmayan 15 cm yüksekliğinde sıvı (d = 0,8 g/cm³) dökülüyor. Sağ kolda, sınır düzleminin üstündeki su sütunu kaç cm olur?', o: ['12', '15', '18,75', '8'], f: ['bsA', 'bsB'],
+    { do: S => md(S, 'ubor', { yag: 0, yagH: 1.5 }), sub: 'U borusunda su.', go: '▶︎ Başlat' },
+    { do: S => md(S, 'ubor', { yag: 0, yagH: 1.5 }), q: { gizle: ['bsA', 'bsB', 'bsC'], goster: S => { S.kos = 1; }, t: 'U borusunun sol koluna su ile karışmayan 15 cm yüksekliğinde sıvı (d = 0,8 g/cm³) dökülüyor. Sağ kolda, sınır düzleminin üstündeki su sütunu kaç cm olur?', o: ['12', '15', '18,75', '8'], f: ['bsA', 'bsB'],
       s: ['Sınır düzleminde basınçlar eşit: 15 · 0,8 = h · 1', '<em>h = 12 cm</em> ✓'], n: ['Az yoğun sıvının sütunu daha uzun olur.'] } },
-    { q: { t: 'Aynı durumda sağ koldaki su seviyesi başlangıçtaki seviyesine göre kaç cm yükselmiştir? (Kolların kesitleri eşit)', o: ['6', '12', '3', '15'], f: ['bsB'],
+    { do: S => md(S, 'ubor', { yag: 1, yagH: 1.5 }), q: { gizle: ['bsB', 'bsC'], t: 'Aynı durumda sağ koldaki su seviyesi başlangıçtaki seviyesine göre kaç cm yükselmiştir? (Kolların kesitleri eşit)', o: ['6', '12', '3', '15'], f: ['bsB'],
       s: ['Sınır sol kolda x iner, sağda su x yükselir: sınırın üstündeki su 2x = 12 cm', '<em>x = 6 cm</em> ✓'], n: ['Kesitler eşitse bir kolda inen sıvı kadar öteki kolda çıkar.'] } },
-    { do: S => md(S, 'hid', { itis: 1 }), q: { t: 'Hidrolik liftte küçük pistonun alanı 0,02 m², büyük pistonun alanı 0,5 m²\'dir. 1200 kg\'lık aracı dengede tutmak için küçük pistona kaç N kuvvet uygulanmalıdır?', o: ['480', '12 000', '300', '600'], f: ['bsK'],
+    { do: S => md(S, 'hid', { itis: 0, s1: 0.02, s2: 0.5, mk: 1200, x1: 75 }), q: { gizle: ['bsT', 'bsK'], goster: S => { S.kos = 1; }, t: 'Hidrolik liftte küçük pistonun alanı 0,02 m², büyük pistonun alanı 0,5 m²\'dir. 1200 kg\'lık aracı dengede tutmak için küçük pistona kaç N kuvvet uygulanmalıdır?', o: ['480', '12 000', '300', '600'], f: ['bsK'],
       s: [`${F('F<sub>1</sub>', '0,02')} = ${F('12 000', '0,5')}`, 'F<sub>1</sub> = 12 000 · 0,04 = <em>480 N</em> ✓'], n: ['Pistonlar aynı yükseklikte değilse yükseklik farkının sıvı basıncı da hesaba katılır.'] } },
-    { q: { t: 'Aynı lifte küçük piston 75 cm itilirse araç kaç cm yükselir?', o: ['3', '75', '30', '1,5'], f: ['bsA', 'bsB'],
+    { do: S => md(S, 'hid', { itis: 0, s1: 0.02, s2: 0.5, mk: 1200, x1: 75 }), q: { gizle: ['bsB'], goster: S => { S.kos = 1; }, t: 'Aynı lifte küçük piston 75 cm itilirse araç kaç cm yükselir?', o: ['3', '75', '30', '1,5'], f: ['bsA', 'bsB'],
       s: ['S<sub>1</sub> x<sub>1</sub> = S<sub>2</sub> x<sub>2</sub>: 0,02 · 75 = 0,5 · x<sub>2</sub>', '<em>x<sub>2</sub> = 3 cm</em> ✓'], n: ['İş korunur: F<sub>1</sub> · x<sub>1</sub> = F<sub>2</sub> · x<sub>2</sub>.'] } },
-    { do: S => md(S, 'akis', { hiz: 1 }), q: { t: 'Su, kesiti daralan yatay borudan akıyor. Dar kısımda suyun hızı ve basıncı geniş kısma göre nasıldır?', o: ['Hız büyük, basınç küçük', 'Hız küçük, basınç büyük', 'İkisi de büyük', 'İkisi de aynı'], f: ['bsv0', 'bsv1'],
+    { do: S => md(S, 'akis', { hiz: 0.0001 }), q: { gizle: ['bsK', 'bsv0', 'bsv1', 'bsv2'], goster: S => { S.hiz = 1; }, t: 'Su, kesiti daralan yatay borudan akıyor. Dar kısımda suyun hızı ve basıncı geniş kısma göre nasıldır?', o: ['Hız büyük, basınç küçük', 'Hız küçük, basınç büyük', 'İkisi de büyük', 'İkisi de aynı'], f: ['bsv0', 'bsv1'],
       s: ['Birim zamanda geçen hacim aynı: A<sub>1</sub>v<sub>1</sub> = A<sub>2</sub>v<sub>2</sub> → dar kısımda <em>hız büyük</em>.', 'Bernoulli: hızın büyük olduğu yerde <em>basınç küçük</em> ✓'], n: ['Manometre borusundaki su yüksekliği o noktadaki basıncı gösterir.'] } },
     { q: { t: 'I. Fırtınada çatıların uçması<br>II. Hızlı geçen kamyonun yanındaki bisikletlinin kamyona doğru çekilmesi<br>III. Suya bırakılan tahtanın yüzmesi<br>olaylarından hangileri akışkanların hızı ile basıncı arasındaki ilişkiyle açıklanır?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'],
       s: ['I ve II: hızlanan hava bölgesinde basınç düşer → Bernoulli.', 'III kaldırma kuvvetidir. <em>I ve II</em> ✓'], n: ['Uçak kanadı, parfüm pompası, Bunsen beki de Bernoulli örnekleridir.'] } },
-    { do: S => md(S, 'gaz', { irt: 0, gazP: 90 }), q: { t: 'Deniz seviyesinde (P<sub>0</sub> = 76 cmHg) kapalı bir kaba bağlı açık uçlu cıvalı manometrede cıva, açık kolda gaz tarafından 14 cm daha yüksektedir. Gazın basıncı kaç cmHg\'dir?', o: ['90', '62', '76', '14'], f: ['bsB'],
+    { do: S => md(S, 'gaz', { irt: 0, gazP: 90 }), q: { gizle: ['bsK'], t: 'Deniz seviyesinde (P<sub>0</sub> = 76 cmHg) kapalı bir kaba bağlı açık uçlu cıvalı manometrede cıva, açık kolda gaz tarafından 14 cm daha yüksektedir. Gazın basıncı kaç cmHg\'dir?', o: ['90', '62', '76', '14'], f: ['bsB'],
       s: ['Gaz tarafındaki cıva yüzeyinden geçen yatay düzlemde basınçlar eşit.', 'P<sub>gaz</sub> = P<sub>0</sub> + 14 = <em>90 cmHg</em> ✓'], n: ['Gaz tarafındaki cıva daha yüksekte olsaydı P<sub>gaz</sub> = P<sub>0</sub> − Δh olurdu.'] } },
-    { do: S => md(S, 'gaz', { irt: 2000, gazP: 90 }), q: { t: 'Torricelli deneyi deniz seviyesinden 2000 m yüksekliğe taşınırsa;<br>I. Tüpteki cıva yüksekliği azalır.<br>II. Tüp daha kalın olsaydı cıva yüksekliği değişirdi.<br>III. Açık hava basıncı azalır.<br>yargılarından hangileri doğrudur?', o: ['I ve III', 'Yalnız I', 'I ve II', 'I, II ve III'], f: ['bsA'],
+    { do: S => md(S, 'gaz', { irt: 0, gazP: 90 }), q: { gizle: ['bsK'], goster: S => { S.irt = 2000; }, t: 'Torricelli deneyi deniz seviyesinden 2000 m yüksekliğe taşınırsa;<br>I. Tüpteki cıva yüksekliği azalır.<br>II. Tüp daha kalın olsaydı cıva yüksekliği değişirdi.<br>III. Açık hava basıncı azalır.<br>yargılarından hangileri doğrudur?', o: ['I ve III', 'Yalnız I', 'I ve II', 'I, II ve III'], f: ['bsA'],
       s: ['Yükseklik arttıkça açık hava basıncı azalır (III) → cıva sütunu kısalır (I).', 'Cıva yüksekliği tüpün kalınlığına bağlı değildir (II yanlış). <em>I ve III</em> ✓'], n: ['Barometre altimetre olarak da kullanılır.'] } },
   ] });
   const s3 = gorev(sBs, { yk: 'TYT8-g4', no: 4, icon: '⚓', name: 'Soru sistemi: kaldırma kuvveti', task: 'Dinamometreyle kaldırma kuvveti, özkütle bulma, kısmen batma, yüzme ve askıda kalma.', steps: [
-    { do: S => md(S, 'kald', { cis: 'demir', ind: 1 }), sub: 'Dinamometreye asılı blok su içinde.', go: '▶︎ Başlat' },
-    { q: { t: 'Havada 45 N gösteren dinamometreye asılı cisim tamamen suya batırılınca dinamometre 30 N gösteriyor. Cismin hacmi kaç dm³\'tür? (d<sub>su</sub> = 1 kg/dm³)', o: ['1,5', '3', '4,5', '1'], f: ['bsT', 'bsF'],
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 0, V: 1.5, indH: 1 }), sub: 'Dinamometreye asılı blok.', go: '▶︎ Başlat' },
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 0, V: 1.5, indH: 1 }), q: { gizle: ['bsF', 'bsK'], goster: S => { S.kos = 1; }, t: 'Havada 45 N gösteren dinamometreye asılı cisim tamamen suya batırılınca dinamometre 30 N gösteriyor. Cismin hacmi kaç dm³\'tür? (d<sub>su</sub> = 1 kg/dm³)', o: ['1,5', '3', '4,5', '1'], f: ['bsT', 'bsF'],
       s: ['F<sub>k</sub> = 45 − 30 = 15 N', 'V = F<sub>k</sub> / (d g) = 15 / (1000 · 10) m³ = 0,0015 m³ = <em>1,5 dm³</em> ✓'], n: ['Cisim tamamen battığı için batan hacim cismin hacmidir.'] } },
-    { q: { t: 'Aynı cismin özkütlesi kaç g/cm³\'tür?', o: ['3', '1,5', '2', '4,5'], f: ['bsG', 'bsF'],
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 1, V: 1.5, indH: 1 }), q: { gizle: ['bsK'], t: 'Aynı cismin özkütlesi kaç g/cm³\'tür?', o: ['3', '1,5', '2', '4,5'], f: ['bsG', 'bsF'],
       s: ['§1. YOL', 'm = 4,5 kg, V = 1,5 dm³ → d = 4,5 / 1,5 = <em>3 g/cm³</em> ✓', '§2. YOL', `${F('d<sub>cisim</sub>', 'd<sub>su</sub>')} = ${F('G', 'F<sub>k</sub>')} = ${F('45', '15')} = 3 → <em>3 g/cm³</em> ✓`], n: ['Tamamen batan cisimde G / F<sub>k</sub> oranı özkütleler oranına eşittir.'] } },
-    { do: S => md(S, 'kald', { cis: 'demir', ind: 0.767 }), q: { t: 'Havada 30 N gelen 1 dm³\'lük cisim hacminin yarısı suya batacak şekilde tutuluyor. Dinamometre kaç N gösterir?', o: ['25', '20', '15', '30'], f: ['bsT', 'bsF'],
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 0, V: 1, indH: 0.767 }), q: { gizle: ['bsT', 'bsF', 'bsK'], goster: S => { S.kos = 1; }, t: 'Havada 30 N gelen 1 dm³\'lük cisim hacminin yarısı suya batacak şekilde tutuluyor. Dinamometre kaç N gösterir?', o: ['25', '20', '15', '30'], f: ['bsT', 'bsF'],
       s: ['F<sub>k</sub> = 0,5 · 0,001 · 1000 · 10 = 5 N', 'T = 30 − 5 = <em>25 N</em> ✓'], n: ['Kaldırma kuvveti batan hacimle doğru orantılıdır.'] } },
-    { do: S => md(S, 'kald', { cis: 'tahta', ind: 1 }), q: { t: 'Özkütlesi 0,7 g/cm³ olan bir tahta blok suda yüzüyor. Hacminin yüzde kaçı su içindedir?', o: ['70', '30', '100', '50'], f: ['bsF', 'bsG'],
+    { do: S => md(S, 'kald', { cis: 'tahta', ind: 0, V: 1, dt: 0.7, indH: 1 }), q: { gizle: ['bsK'], goster: S => { S.kos = 1; }, t: 'Özkütlesi 0,7 g/cm³ olan bir tahta blok suda yüzüyor. Hacminin yüzde kaçı su içindedir?', o: ['70', '30', '100', '50'], f: ['bsF', 'bsG'],
       s: [`Yüzen cisimde F<sub>k</sub> = G → ${F('V<sub>batan</sub>', 'V')} = ${F('0,7', '1')}`, '<em>%70</em> ✓'], n: ['Buz (0,92) suda hacminin %92\'si batık yüzer: buzdağının görünen kısmı küçüktür.'] } },
-    { q: { t: 'Tatlı suda yüzen tahta blok tuzlu suya (d = 1,1 g/cm³) konursa kaldırma kuvveti ve batan hacmi nasıl değişir?', o: ['F<sub>k</sub> değişmez, batan hacim azalır', 'F<sub>k</sub> artar, batan hacim azalır', 'F<sub>k</sub> değişmez, batan hacim artar', 'İkisi de değişmez'],
+    { do: S => md(S, 'kald', { cis: 'tahta', ind: 1, V: 1, dt: 0.7, indH: 1 }), q: { t: 'Tatlı suda yüzen tahta blok tuzlu suya (d = 1,1 g/cm³) konursa kaldırma kuvveti ve batan hacmi nasıl değişir?', o: ['F<sub>k</sub> değişmez, batan hacim azalır', 'F<sub>k</sub> artar, batan hacim azalır', 'F<sub>k</sub> değişmez, batan hacim artar', 'İkisi de değişmez'],
       s: ['Yine yüzer: F<sub>k</sub> = G <em>değişmez</em>.', 'd<sub>sıvı</sub> arttığından aynı F<sub>k</sub> için daha az hacim batar ✓'], n: ['Gemiler tuzlu denizde tatlı sudakinden daha az batar.'] } },
-    { do: S => md(S, 'kald', { cis: 'askida', ind: 1 }), q: { t: 'Su içinde bırakıldığı yerde kalan bir cisim için;<br>I. Özkütlesi suyun özkütlesine eşittir.<br>II. Kaldırma kuvveti ağırlığına eşittir.<br>III. Daha derine indirilirse kaldırma kuvveti artar.<br>yargılarından hangileri doğrudur?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'], f: ['bsF', 'bsG'],
+    { do: S => md(S, 'kald', { cis: 'askida', ind: 0, V: 1, indH: 1 }), q: { goster: S => { S.kos = 1; }, t: 'Su içinde bırakıldığı yerde kalan bir cisim için;<br>I. Özkütlesi suyun özkütlesine eşittir.<br>II. Kaldırma kuvveti ağırlığına eşittir.<br>III. Daha derine indirilirse kaldırma kuvveti artar.<br>yargılarından hangileri doğrudur?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'], f: ['bsF', 'bsG'],
       s: ['Askıda kalma: d<sub>c</sub> = d<sub>s</sub> (I) ve F<sub>k</sub> = G (II).', 'Tamamen batmış cisimde batan hacim değişmez → F<sub>k</sub> derinlikle değişmez (III yanlış). <em>I ve II</em> ✓'], n: ['Basınç derinlikle artar ama alt ve üst yüzey arasındaki basınç farkı değişmez.'] } },
   ] });
   FZ.konuEk('TYT', 'Basınç ve Kaldırma Kuvveti', { dersler: [h1, h2, h3], gorevler: [s1, s2, s3] });
+  const t1 = gorev(sBs, { yk: 'TYT8-g5', no: 5, tuzak: true, icon: '🪤', name: 'Tuzak sorular · basınç ve kaldırma', task: 'Basınç ve kaldırma kuvvetinde en sık yapılan yanlışlar.', steps: [
+    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0 }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Taban alanları eşit, ağzı geniş ve ağzı dar iki kapta aynı yükseklikte su var. Ağzı geniş kapta daha çok su olduğuna göre tabandaki basınçlar için hangisi doğrudur?', o: ['Eşittir', 'Ağzı geniş kapta büyüktür', 'Ağzı dar kapta büyüktür', 'Su miktarıyla orantılıdır'], f: ['bsA', 'bsB'],
+      s: ['P = h d g → yalnız derinlik ve özkütle → <em>eşit</em> ✓'], n: ['TUZAK: "Çok su, çok basınç" sanmak.'] } },
+    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0 }), q: { gizle: ['bsK'], t: 'Ağzı dar bir kaptaki suyun tabana uyguladığı kuvvet için hangisi doğrudur?', o: ['Suyun ağırlığından büyüktür', 'Suyun ağırlığına eşittir', 'Suyun ağırlığından küçüktür', 'Sıfırdır'], f: ['bsK'],
+      s: ['F = P · S; kabın yan duvarları suyu aşağı iter → <em>F > G</em> ✓'], n: ['TUZAK: her kapta F = G sanmak; yalnız düz kapta eşit.'] } },
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 0.85, V: 1, indH: 1 }), q: { goster: S => { S.kos = 1; }, t: 'Tamamen suya batmış bir taş daha derine indirilirse kaldırma kuvveti nasıl değişir?', o: ['Değişmez', 'Artar', 'Azalır', 'Önce artar sonra azalır'], f: ['bsF'],
+      s: ['F<sub>k</sub> = V<sub>batan</sub> d g; batan hacim değişmez → <em>değişmez</em> ✓'], n: ['TUZAK: basınç arttığı için kaldırma kuvveti de artar sanmak. Basınç artar ama alt–üst farkı aynı kalır.'] } },
+    { q: { t: 'Aynı hacimli demir ve tahta bloklar tamamen suya batırılıp tutuluyor. Kaldırma kuvvetleri için hangisi doğrudur?', o: ['Eşittir', 'Demirde büyüktür', 'Tahtada büyüktür', 'Ağırlıklarına eşittir'],
+      s: ['İkisinin de batan hacmi aynı → <em>eşit</em> ✓'], n: ['TUZAK: kaldırma kuvvetinin cismin ağırlığına ya da maddesine bağlı olduğunu sanmak.'] } },
+    { do: S => md(S, 'akis', { hiz: 0.0001 }), q: { gizle: ['bsK'], goster: S => { S.hiz = 1; }, t: 'Kesiti daralan bir borudan akan suyun dar kısımdaki basıncı için hangisi doğrudur?', o: ['Küçüktür', 'Büyüktür', 'Aynıdır', 'Sıfırdır'], f: ['bsv1'],
+      s: ['Dar kısımda hız büyük → basınç <em>küçük</em> ✓'], n: ['TUZAK: sıkışan yerde basınç artar sanmak (Bernoulli tersini söyler).'] } },
+    { do: S => md(S, 'kati', { o: 0, ust: 0, kes: 0, dongu: 0 }), q: { gizle: ['bsK'], goster: S => { S.kes = 1; }, t: 'Masadaki dik kenarlı düzgün bir tuğla düşey olarak tam ortadan kesilip bir yarısı alınırsa masaya yapılan basınç ne olur?', o: ['Değişmez', 'Yarıya iner', 'İki katına çıkar', 'Dörtte birine iner'], f: ['bsK'],
+      s: ['G ve S birlikte yarıya iner → P = G/S <em>değişmez</em> ✓'], n: ['TUZAK: ağırlık azaldı diye basınç azalır sanmak.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Basınç ve Kaldırma Kuvveti', { gorevler: [t1] });
+})();
+</script>
+<script>// Kitap düzeninde HİKÂYE MODU + SORU SİSTEMİ · TYT Isı ve Sıcaklık · Genleşme
+// Sorular özgündür; kitaplardaki soru TİPLERİ örnek alınmıştır.
+(function () {
+  const { V3, sahne, gorev, ders, ok, etiket, kart, kutu, top, silindir, THREE } = FZ;
+  const fs = x => (+(+x).toFixed(1)).toString().replace('.', ',');
+  const SIVI = (renk = 0x3b82f6, op = 0.6) => new THREE.MeshLambertMaterial({ color: renk, transparent: true, opacity: op, depthWrite: false });
+  const CAM = () => new THREE.MeshPhongMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.22, shininess: 100, specular: 0xffffff, side: THREE.DoubleSide, depthWrite: false });
+  // Termometre: cam boru + hazne + kırmızı sıvı; a.ayarla(oran 0..1)
+  const termometre = (g, x, z, boy = 1.8) => { const a = new THREE.Group(); a.position.set(x, 0, z); g.add(a);
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, boy, 10), CAM()); c.position.y = boy / 2 + 0.15; a.add(c);
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); h.position.y = 0.12; a.add(h);
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); a.add(s);
+    for (let i = 0; i <= 10; i++) kutu(a, 0.1, 0.012, 0.01, 0x111827, 0.1, 0.25 + i * (boy - 0.2) / 10, 0.05, { edge: false });
+    a.ayarla = k => { const L = 0.05 + Math.max(0, Math.min(1, k)) * (boy - 0.2); s.scale.y = L; s.position.y = 0.2 + L / 2; }; a.boy = boy; return a; };
+  const tencere = (g, x, m) => { const a = new THREE.Group(); a.position.set(x, 0.5, 0); g.add(a);
+    const d = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.55, 0.9, 24, 1, true), FZ.metal(0x9ca3af)); d.material.side = THREE.DoubleSide; d.position.y = 0.45; a.add(d);
+    const t = new THREE.Mesh(new THREE.CircleGeometry(0.55, 24), FZ.metal(0x6b7280)); t.rotation.x = -Math.PI / 2; t.position.y = 0.01; a.add(t);
+    [-1, 1].forEach(s => { const k = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.03, 6, 12, Math.PI), new THREE.MeshLambertMaterial({ color: 0x111827 })); k.position.set(s * 0.66, 0.75, 0); k.rotation.z = s * Math.PI / 2; a.add(k); });
+    const su = new THREE.Mesh(new THREE.CylinderGeometry(0.57, 0.55, 1, 24), SIVI()); a.add(su); a.su = su; a.m = m;
+    a.seviye = m => { const h = 0.22 * m; su.scale.y = h; su.position.y = h / 2 + 0.01; }; a.seviye(m); return a; };
+
+  // TOK: madde – öz ısı tablosu (cal/g·°C)
+  const C = { su: 1, buz: 0.5, demir: 0.11, bakir: 0.09, aluminyum: 0.22 };
+  const sIs = sahne({ icon: '🌡️', cam: [[2.3, 3.4, 11], [2.3, 1.3, 0]], plate: [12, 5, 0, 0], data: [['Suyun öz ısısı', '1 cal/g·°C'], ['Buzun erime ısısı', '80 cal/g']],
+    cam2: S => ({ tencere: [[2.3, 3.4, 11], [2.3, 1.3, 0]], karisim: [[2.1, 3.2, 10], [2.1, 1.3, 0]], termo: [[2.1, 3, 9.5], [2.1, 1.6, 0]], halka: [[2.2, 3.2, 9.5], [2.2, 1.6, 0]], ray: [[2.2, 3.4, 9], [2.2, 0.6, 0]] })[S.mod],
+    S0: () => ({ mod: 'tencere', ms: [1, 2, 3], T0: [20, 20, 20], T: [20, 20, 20], cs: [1, 1, 1], kos: 0, Q: 0, mk: [200, 100], Tk: [80, 20], kar: 0, Tx: [20, 120], Ty: [-10, 140], Tc: 40, isi: 0, kh: 0, gun: 0 }),
+    kur(g) {
+      const G = {}; ['tencere', 'karisim', 'termo', 'halka', 'ray'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
+      const oc = [-2.4, 0, 2.4].map(x => { const o = FZ.ocak(G.tencere, 1); o.position.x = x; return o; });
+      const tn = [-2.4, 0, 2.4].map((x, i) => tencere(G.tencere, x, i + 1));
+      const tm = [-2.4, 0, 2.4].map(x => { const t = termometre(G.tencere, x + 0.25, 0.1, 1.5); t.position.y = 0.6; return t; });
+      // karışım: iki beher → kalorimetre
+      const bh = [-1.6, 1.6].map((x, i) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.2, 24, 1, true), CAM()); c.position.set(x, 0.62, 0); G.karisim.add(c); const s = silindir(G.karisim, 0.5, 0.47, 1, i ? 0x60a5fa : 0xef4444, x, 0.5, 0, { op: 0.6, edge: false }); return s; });
+      const kal = new THREE.Group(); kal.position.set(0, 0, -1.3); G.karisim.add(kal);
+      const kd = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.4, 28, 1, true), FZ.metal(0xd1d5db)); kd.material.side = THREE.DoubleSide; kd.position.y = 0.7; kal.add(kd);
+      const kks = silindir(kal, 0.75, 0.75, 1, 0x8b5cf6, 0, 0.5, 0, { op: 0.65, edge: false });
+      const ktm = termometre(G.karisim, 0.35, -1.3, 2); ktm.position.y = 0.5;
+      // termometreler: X, Celsius, Y
+      const tt = [-1.6, 0, 1.6].map(x => termometre(G.termo, x, 0, 2.6));
+      // halka–küre ve delikli levha
+      const halka = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.1, 10, 32), FZ.metal(0xb45309)); halka.rotation.x = Math.PI / 2; halka.position.set(-1.2, 2, 0); G.halka.add(halka);
+      kutu(G.halka, 0.08, 2, 0.08, 0x374151, -1.8, 1, 0); kutu(G.halka, 0.6, 0.06, 0.06, 0x374151, -1.5, 2, 0);
+      const kure = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 16), FZ.metal(0x9ca3af)); kure.position.set(-1.2, 2.55, 0); G.halka.add(kure);
+      const hal = FZ.ocak(G.halka, 0.7); hal.position.set(-1.2, 0, 0);
+      const lev = new THREE.Mesh(new THREE.RingGeometry(0.35, 1, 40), FZ.metal(0x9ca3af)); lev.material.side = THREE.DoubleSide; lev.position.set(1.6, 1.6, 0); G.halka.add(lev);
+      // raylar
+      const ray = [-1.55, 1.55].map(x => { const r = kutu(G.ray, 3, 0.18, 0.12, 0x6b7280, x, 0.3, 0); r.material = FZ.metal(0x6b7280); return r; });
+      for (let i = 0; i < 12; i++) kutu(G.ray, 0.18, 0.1, 1, 0x78350f, -2.9 + i * 0.52, 0.12, 0);
+      const gunes = top(G.ray, 0.35, 0xfacc15, 2.6, 3, -1, { edge: false });
+      ['k2a', 'k2b', 'k2c', 'k2d'].forEach(i => etiket(i, '', '#1e3a8a')); kart('k2K', '', '#F5C400');
+      return { G, oc, tn, tm, bh, kks, ktm, tt, halka, kure, lev, ray, gunes };
+    },
+    tick(S, dt, o) {
+      Object.entries(o.G).forEach(([k, gr]) => gr.visible = S.mod === k);
+      const L = ['k2a', 'k2b', 'k2c'];
+      if (S.mod === 'tencere') {
+        if (S.kos) { S.Q = Math.min(S.Qmax || 6000, S.Q + dt * 1500); if (S.Q >= (S.Qmax || 6000)) S.kos = 0; }
+        for (let i = 0; i < 3; i++) { o.tn[i].seviye(S.ms[i]); S.T[i] = S.T0[i] + S.Q / (S.ms[i] * 100 * S.cs[i]); o.tm[i].ayarla(S.T[i] / 100); o.oc[i].alev.visible = !!S.kos;
+          FZ.setTag(L[i], `${['K', 'L', 'M'][i]}: ${S.ms[i] * 100} g · ${fs(S.T[i])} °C`); FZ.show(L[i], V3([-2.4, 0, 2.4][i], 2.6, 0), 1); }
+        FZ.setTag('k2K', `Eşit güçlü ocaklar · her birine verilen ısı Q = ${Math.round(S.Q)} cal`); FZ.show('k2K', V3(0, 3.4, 0), 1);
+      } else if (S.mod === 'karisim') {
+        const [m1, m2] = S.mk, [T1, T2] = S.Tk, Td = (m1 * T1 + m2 * T2) / (m1 + m2);
+        if (S.kos) { S.kar = Math.min(1, S.kar + dt * 0.4); if (S.kar >= 1) S.kos = 0; }
+        o.bh.forEach((b, i) => { const f = 1 - S.kar; b.scale.y = Math.max(0.01, f * S.mk[i] / 200); b.position.y = 0.02 + b.scale.y / 2; });
+        const Tn = S.kar < 1 ? (T1 + T2) / 2 + (Td - (T1 + T2) / 2) * S.kar : Td; o.kks.scale.y = Math.max(0.01, S.kar * (m1 + m2) / 300); o.kks.position.y = o.kks.scale.y / 2 + 0.02;
+        o.kks.material.color.setRGB(0.4 + 0.5 * Tn / 100, 0.3, 1 - 0.6 * Tn / 100); o.ktm.ayarla(Tn / 100);
+        FZ.setTag('k2a', `${m1} g · ${T1} °C`); FZ.show('k2a', V3(-1.6, 1.6, 0), 1); FZ.setTag('k2b', `${m2} g · ${T2} °C`); FZ.show('k2b', V3(1.6, 1.6, 0), 1);
+        FZ.setTag('k2c', S.kar >= 1 ? `Denge: ${fs(Td)} °C` : '…'); FZ.show('k2c', V3(0, 2.7, -1.3), 1);
+        FZ.setTag('k2K', 'Isı kaybı yok: verilen ısı = alınan ısı'); FZ.show('k2K', V3(0, 3.6, 0), 1);
+      } else if (S.mod === 'termo') {
+        const k = (S.Tc - 0) / 100; const kx = S.Tx[0] + k * (S.Tx[1] - S.Tx[0]), ky = S.Ty[0] + k * (S.Ty[1] - S.Ty[0]);
+        o.tt.forEach(t => t.ayarla(0.1 + 0.8 * k));
+        [[`X: ${fs(kx)} °X`, -1.6], [`${S.Tc} °C`, 0], [`Y: ${fs(ky)} °Y`, 1.6]].forEach(([h, x], i) => { FZ.setTag(L[i], h); FZ.show(L[i], V3(x, 3.2, 0), 1); });
+        FZ.setTag('k2K', `X: buz ${S.Tx[0]}, kaynama ${S.Tx[1]} · Y: buz ${S.Ty[0]}, kaynama ${S.Ty[1]}`); FZ.show('k2K', V3(0, 3.9, 0), 1);
+      } else if (S.mod === 'halka') {
+        if (S.kos) { S.isi = Math.min(1, S.isi + dt * 0.3); if (S.isi >= 1) S.kos = 0; }
+        const k = 1 + 0.12 * S.isi; o.halka.scale.set(k, k, 1); o.halka.material.color.setRGB(0.7 + 0.3 * S.isi, 0.35, 0.04);
+        const gecer = 0.5 * k - 0.1 > 0.5 - 0.005; o.kure.position.y = gecer ? Math.max(1.0, o.kure.position.y - dt * 1.2) : 2.55;
+        o.lev.scale.setScalar(1 + 0.12 * S.isi); o.lev.material.color.setRGB(0.6 + 0.4 * S.isi, 0.6 - 0.2 * S.isi, 0.6 - 0.4 * S.isi);
+        FZ.setTag('k2a', gecer ? 'Halka genişledi: küre geçti' : 'Küre halkadan geçemiyor'); FZ.show('k2a', V3(-1.2, 3.4, 0), 1);
+        FZ.setTag('k2b', `Delik yarıçapı ×${fs(1 + 0.12 * S.isi)}`); FZ.show('k2b', V3(1.6, 3, 0), 1);
+      } else {
+        const T = S.gun ? 45 : 5, bos = 0.24 - (T - 5) / 40 * 0.2; o.ray[0].position.x = -1.5 - bos / 2; o.ray[1].position.x = 1.5 + bos / 2; o.gunes.visible = !!S.gun;
+        FZ.setTag('k2a', `T = ${T} °C · boşluk ${fs(bos * 10)} mm`); FZ.show('k2a', V3(0, 1.2, 0.3), 1);
+        FZ.setTag('k2K', 'ΔL = L<sub>0</sub> · λ · ΔT'); FZ.show('k2K', V3(0, 2.4, 0), 1);
+      }
+    },
+    qp: () => V3(0, 3.6, 0) });
+  const md = (S, mod, x) => Object.assign(S, { mod, kos: 0 }, x || {});
+
+  const h1 = ders(sIs, { yk: 'TYT5-d4', no: 4, icon: '📖', name: 'Hikâye: Üç tencere, bir termos ve uydurma termometre', task: 'Isı–sıcaklık, öz ısı ve ısı sığası, sıcaklık değişimi, ısıl denge, termometre dönüşümleri.', notlar: ['Isı enerjidir (cal, J); sıcaklık ise ortalama kinetik enerjinin göstergesidir (°C, K).', 'Q = m · c · ΔT · ısı sığası C = m · c.', 'Isı alışverişinde verilen ısı = alınan ısı; ısı akışı sıcaklıklar eşitlenince durur.'], steps: [
+    { do: S => md(S, 'tencere', { ms: [1, 2, 3], cs: [1, 1, 1], T0: [20, 20, 20], Q: 0 }), sub: 'Ece annesine yardım ediyor: ocakta 100 g, 200 g ve 300 g su olan üç tencere var. Üç ocak eşit güçte.', go: '▶︎ Ocakları yak' },
+    { do: S => { S.Qmax = 6000; S.kos = 1; }, sub: 'Üç tencereye de eşit sürede eşit ısı veriliyor…', until: S => !S.kos },
+    { k: { tur: 'gozlem', b: 'Aynı ısı, farklı sıcaklık artışı', f: ['k2a', 'k2b', 'k2c'], m: ['Her tencere 6000 cal aldı ama K 60 °C, L 30 °C, M 20 °C ısındı.', `${FM('Q = m · c · ΔT')} → ${FM(`ΔT = ${F('Q', 'm · c')}`)} · kütle büyükse sıcaklık az artar.`] } },
+    { k: { tur: 'kavram', b: 'Isı ile sıcaklık farklıdır', m: ['<em>Isı</em>: sıcaklık farkı yüzünden aktarılan enerji (kalori, joule). Kalorimetre kabıyla dolaylı ölçülür.', '<em>Sıcaklık</em>: taneciklerin ortalama hareket enerjisinin göstergesi; termometreyle ölçülür.', '1 cal: 1 g suyun sıcaklığını 1 °C artıran ısı ≈ 4,18 J.'] } },
+    { do: S => md(S, 'tencere', { ms: [2, 2, 2], cs: [1, 0.5, 0.25], T0: [20, 20, 20], Q: 0 }), sub: 'Annesi üç tencereye eşit kütlede farklı sıvılar koydu: su, zeytinyağı ve özel bir yağ.', go: '▶︎ Isıt' },
+    { do: S => { S.Qmax = 3000; S.kos = 1; }, sub: 'Isınıyor…', until: S => !S.kos },
+    { k: { tur: 'kavram', b: 'Öz ısı ve ısı sığası', f: ['k2a', 'k2b', 'k2c'], m: ['Öz ısısı (c) küçük olan madde aynı ısıyla daha çok ısınır: K 15, L 30, M 60 °C arttı.', `Öz ısı maddeyi tanıtır (ayırt edicidir). Isı sığası: ${FM('C = m · c')} · madde miktarına bağlıdır.`, 'Neden su yavaş ısınır? Öz ısısı büyüktür (1 cal/g·°C). Bu yüzden deniz kenarında sıcaklık farkı azdır.'] } },
+    { do: S => md(S, 'karisim', { mk: [200, 100], Tk: [80, 20], kar: 0 }), sub: 'Ece 80 °C\'deki 200 g suyu, 20 °C\'deki 100 g suyla bir termos kabında karıştırıyor.', go: '▶︎ Karıştır' },
+    { p: { t: 'Karışımın denge sıcaklığı nasıl olur?', o: ['50 °C (ortalama)', '60 °C', '40 °C', '80 °C'], d: 1 } },
+    { do: S => { S.kos = 1; }, sub: 'Sıcak su ısı veriyor, soğuk su alıyor…', until: S => S.kar >= 1 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Isıl denge', f: ['k2c'], m: [`${FM('Q<sub>verilen</sub> = Q<sub>alınan</sub>')}: 200 · 1 · (80 − T) = 100 · 1 · (T − 20) → <em>T = 60 °C</em>`, 'Denge sıcaklığı ısı sığası büyük olana (200 g) daha yakındır. Ortalama ancak ısı sığaları eşitse doğrudur.'] } },
+    { k: { tur: 'dikkat', b: 'UYARI', m: ['Isı her zaman sıcaklığı yüksek olandan düşük olana akar; iç enerjisi büyük olandan değil.', 'Isı alan cismin sıcaklığı her zaman artmaz: hal değişirken sabit kalır (Q = m · L).'] } },
+    { do: S => md(S, 'termo', { Tx: [20, 120], Ty: [-10, 140], Tc: 40 }), sub: 'Ece kendi termometresini yaptı: buz eriyorken 20, su kaynarken 120 gösteriyor (X). Arkadaşınınki −10 ve 140 (Y).', wait: 2 },
+    { k: { tur: 'kavram', b: 'Termometre dönüşümü', f: ['k2a', 'k2b', 'k2c'], m: [`${FM(`${F('X − X<sub>donma</sub>', 'X<sub>kaynama</sub> − X<sub>donma</sub>')} = ${F('C − 0', '100 − 0')}`)}`, '40 °C → X: 20 + 0,4 · 100 = <em>60 °X</em> · Y: −10 + 0,4 · 150 = <em>50 °Y</em>.', 'Neden? Bütün termometrelerde donma–kaynama arası aynı oranla bölünür; yalnız bölme sayıları farklıdır.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [`${FM('Q = m c ΔT')} · ${FM('C = m c')} · ${FM('Q<sub>verilen</sub> = Q<sub>alınan</sub>')}`, 'Termometreler: (okunan − donma) / (kaynama − donma) hep aynı.'] } },
+  ] });
+  const h2 = ders(sIs, { yk: 'TYT5-d5', no: 5, icon: '📖', name: 'Hikâye: Halkadan geçmeyen küre ve yazın uzayan raylar', task: 'Boyca, yüzeyce ve hacimce genleşme, delik ve halka genleşmesi, genleşme katsayısı, bimetal, günlük hayat.', notlar: ['ΔL = L₀ · λ · ΔT · ΔA = A₀ · 2λ · ΔT · ΔV = V₀ · 3λ · ΔT', 'Isınan levhadaki delik de levha gibi büyür.', 'Genleşme katsayısı (λ) ayırt edicidir.'], steps: [
+    { do: S => md(S, 'halka', { isi: 0 }), sub: 'Okul laboratuvarında öğretmen bakır bir halkanın üstüne metal bir küre koydu. Küre halkadan geçemiyor.', go: '▶︎ Halkayı ısıt' },
+    { p: { t: 'Yalnız halka ısıtılırsa ne olur?', o: ['Halka büzülür, küre hiç geçmez', 'Halka genişler, küre geçer', 'Değişmez', 'Küre büyür'], d: 1 } },
+    { do: S => { S.kos = 1; }, sub: 'Halka ısınıyor…', until: S => S.isi >= 1 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Isınan halka her yöne genleşir', f: ['k2a', 'k2b'], m: ['Halkanın iç çapı da büyüdü, küre geçti. Delikli levhada da delik <em>büyür</em>: delik, levhanın "eksik parçası" gibi genleşir.', 'Neden? Isınan maddenin tanecikleri daha hızlı titreşip birbirinden uzaklaşır.'] } },
+    { k: { tur: 'kavram', b: 'Genleşme formülleri', m: [`${FM('ΔL = L<sub>0</sub> · λ · ΔT')} boyca · ${FM('ΔA = A<sub>0</sub> · 2λ · ΔT')} yüzeyce · ${FM('ΔV = V<sub>0</sub> · 3λ · ΔT')} hacimce`, 'λ: genleşme katsayısı, maddeyi tanıtır. Uzama ilk boyla ve sıcaklık değişimiyle doğru orantılıdır.'] } },
+    { do: S => md(S, 'ray', { gun: 0 }), sub: 'Ece trenle köyüne gidiyor. Kışın raylar arasında boşluk var.', go: '▶︎ Yaz gelsin' },
+    { do: S => { S.gun = 1; }, sub: 'Yazın güneşte raylar ısınıyor…', wait: 2.5 },
+    { k: { tur: 'gunluk', b: 'Genleşme günlük hayatta', f: ['k2a'], m: ['Ray ve köprü derzlerinde boşluk bırakılır; elektrik telleri yazın sarkar.', 'Sıkışan kavanoz kapağı sıcak suya tutulunca açılır (metal camdan çok genleşir). Bimetal şeritler termostatlarda kullanılır.'] } },
+    { k: { tur: 'dikkat', b: 'Suyun farklı davranışı', m: ['Su 0 °C\'den 4 °C\'ye ısınırken <em>büzülür</em>; 4 °C\'de özkütlesi en büyüktür. Göller bu yüzden yüzeyden donar.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: ['Isınan cisim ve içindeki delik büyür · ΔL ∝ L<sub>0</sub>, λ, ΔT · su 0–4 °C arası istisna.'] } },
+  ] });
+
+  const g1 = gorev(sIs, { yk: 'TYT5-g6', no: 6, icon: '🧪', name: 'Soru sistemi: ısı, sıcaklık, ısıl denge, termometre', task: 'Eşit ısı alan kaplar, öz ısı tablosu, ısıl denge, buz–su, termometre dönüşümü, ısı iletimi.', data: [['Suyun öz ısısı', '1 cal/g·°C'], ['Buzun öz ısısı', '0,5 cal/g·°C'], ['Buzun erime ısısı', '80 cal/g']], steps: [
+    { do: S => md(S, 'tencere', { ms: [1, 2, 3], cs: [1, 1, 1], T0: [20, 20, 20], Q: 0 }), sub: 'Eşit güçlü üç ocak.', go: '▶︎ Başlat' },
+    { do: S => { S.Qmax = 6000; S.kos = 1; }, q: { t: 'K, L, M kaplarında 20 °C\'de sırasıyla 100 g, 200 g ve 300 g su vardır. Eşit güçlü ocaklarda eşit süre ısıtılıyor. Son sıcaklıklar T<sub>K</sub>, T<sub>L</sub>, T<sub>M</sub> arasındaki ilişki nedir? (Kaynama olmuyor)', o: ['T<sub>K</sub> > T<sub>L</sub> > T<sub>M</sub>', 'T<sub>K</sub> = T<sub>L</sub> = T<sub>M</sub>', 'T<sub>M</sub> > T<sub>L</sub> > T<sub>K</sub>', 'T<sub>L</sub> > T<sub>K</sub> > T<sub>M</sub>'], f: ['k2a', 'k2b', 'k2c'],
+      s: ['Eşit ısı: Q aynı → ΔT = Q / (m c), m büyüdükçe ΔT küçük.', '<em>T<sub>K</sub> > T<sub>L</sub> > T<sub>M</sub></em> ✓'], n: ['Isı sığası büyük olan daha yavaş ısınır.'] } },
+    { q: { t: 'Aynı kaplarda K\'deki su 6000 cal aldıysa sıcaklığı kaç °C\'ye çıkar?', o: ['80', '60', '70', '100'], f: ['k2a'],
+      s: [`ΔT = ${F('6000', '100 · 1')} = 60 °C`, 'T = 20 + 60 = <em>80 °C</em> ✓'], n: ['Son sıcaklık = ilk sıcaklık + ΔT.'] } },
+    { do: S => md(S, 'tencere', { ms: [2, 2, 2], cs: [1, 0.5, 0.25], T0: [20, 20, 20], Q: 3000 }), q: { t: 'Eşit kütleli X, Y, Z sıvılarına eşit ısı verilince sıcaklık artışları 15, 30 ve 60 °C oluyor. Öz ısıları c<sub>X</sub>, c<sub>Y</sub>, c<sub>Z</sub> arasındaki ilişki nedir?', o: ['c<sub>X</sub> > c<sub>Y</sub> > c<sub>Z</sub>', 'c<sub>Z</sub> > c<sub>Y</sub> > c<sub>X</sub>', 'c<sub>X</sub> = c<sub>Y</sub> = c<sub>Z</sub>', 'c<sub>Y</sub> > c<sub>X</sub> > c<sub>Z</sub>'], f: ['k2a', 'k2b', 'k2c'],
+      s: ['m ve Q eşit → c ∝ 1/ΔT', '<em>c<sub>X</sub> > c<sub>Y</sub> > c<sub>Z</sub></em> ✓'], n: ['Öz ısısı büyük madde yavaş ısınır, yavaş soğur.'] } },
+    { q: { t: 'Öz ısıları: alüminyum 0,22, demir 0,11, bakır 0,09 cal/g·°C.<br>I. Eşit kütleli alüminyum ve demire eşit ısı verilirse demir daha çok ısınır.<br>II. 100 g demirin ısı sığası 11 cal/°C\'dir.<br>III. Eşit kütleli bakır ve demir eşit ısı verirse bakır daha çok soğur.<br>yargılarından hangileri doğrudur?', o: ['I, II ve III', 'Yalnız I', 'I ve II', 'II ve III'],
+      s: ['I: c küçük → ΔT büyük ✓ · II: C = m c = 100 · 0,11 = 11 ✓', 'III: bakırın c\'si küçük → aynı ısıda daha çok sıcaklık değişimi ✓ → <em>I, II ve III</em>'], n: ['Tablo sorularında önce formülü yaz, sabitleri belirle, sonra orantı kur.'] } },
+    { do: S => md(S, 'karisim', { mk: [200, 100], Tk: [80, 20], kar: 1 }), q: { t: '70 °C\'deki 300 g su ile 10 °C\'deki 100 g su karıştırılıyor. Isı kaybı yoksa denge sıcaklığı kaç °C\'dir?', o: ['55', '40', '50', '60'], f: ['k2c'],
+      s: ['§1. YOL', '300 (70 − T) = 100 (T − 10) → 21000 − 300T = 100T − 1000 → <em>T = 55 °C</em> ✓', '§2. YOL', `T = ${F('300 · 70 + 100 · 10', '400')} = ${F('22 000', '400')} = <em>55 °C</em> ✓`], n: ['Aynı madde karıştırılınca denge sıcaklığı kütlelere göre ağırlıklı ortalamadır.'] } },
+    { q: { t: '0 °C\'deki 50 g buz, 60 °C\'deki 200 g suya atılıyor. Isı kaybı yoksa denge sıcaklığı kaç °C olur?', o: ['32', '48', '30', '0'],
+      s: ['Buzun erimesi: 50 · 80 = 4000 cal → su 4000 = 200 · ΔT → 20 °C soğur, 40 °C\'ye iner (buz tamamen erir).', 'Sonra 50 g (0 °C) ile 200 g (40 °C): T = (50 · 0 + 200 · 40) / 250 = <em>32 °C</em> ✓'], n: ['Önce buzun erimesi için yeterli ısı olup olmadığına bakılır; yoksa denge 0 °C olur ve bir kısım buz kalır.'] } },
+    { q: { t: 'Başlangıç sıcaklıkları farklı K ve L cisimleri yalıtılmış kapta ısıl dengeye geliyor.<br>I. Isı alışverişi sıcaklıklar eşitlenince durur.<br>II. Isı her zaman iç enerjisi büyük olandan küçük olana akar.<br>III. Verilen ısı alınan ısıya eşittir.<br>yargılarından hangileri kesinlikle doğrudur?', o: ['I ve III', 'Yalnız I', 'I ve II', 'I, II ve III'],
+      s: ['Isı sıcaklığı yüksek olandan akar (II yanlış).', 'I ve III doğru → <em>I ve III</em> ✓'], n: ['Büyük bir göl (iç enerjisi büyük) küçük bir sıcak demirden ısı alır.'] } },
+    { do: S => md(S, 'termo', { Tx: [20, 120], Ty: [-10, 140], Tc: 40 }), q: { t: 'X termometresi buzun erime noktasını 20 °X, suyun kaynama noktasını 120 °X gösteriyor. 40 °C kaç °X\'tir?', o: ['60', '40', '50', '48'], f: ['k2a', 'k2b'],
+      s: [`${F('X − 20', '120 − 20')} = ${F('40', '100')} → X − 20 = 40`, '<em>X = 60 °X</em> ✓'], n: ['Bölme sayısı 100 olduğu için X, °C\'den sabit 20 fazladır.'] } },
+    { q: { t: 'Aynı ortamdaki Y termometresi buzu −10 °Y, kaynayan suyu 140 °Y gösteriyor. X ve Y termometrelerinin aynı değeri gösterdiği sıcaklık kaç °X\'tir?', o: ['80', '20', '50', '−10'], f: ['k2c'],
+      s: [`${F('X − 20', '100')} = ${F('X + 10', '150')} → 150X − 3000 = 100X + 1000`, '50X = 4000 → <em>X = 80 °X</em> ✓'], n: ['Bu tip sorularda iki dönüşüm eşitlenir; okunan değerler aynı alınır.'] } },
+    { q: { t: 'Metal saplı tavada yemek pişirilirken sap da ısınıyor. Isı sapa hangi yolla ulaşır ve neden plastik sap tercih edilir?', o: ['İletimle; plastik ısıyı iyi iletmez', 'Işımayla; plastik ışığı yansıtır', 'Konveksiyonla; plastik ısıyı depolar', 'İletimle; plastik çabuk ısınır'],
+      s: ['Katılarda ısı tanecikten taneciğe <em>iletimle</em> yayılır.', 'Plastik yalıtkandır; ısıyı iyi iletmez ✓'], n: ['Sıvı ve gazlarda konveksiyon (akım), boşlukta ışıma.'] } },
+  ] });
+  const g2 = gorev(sIs, { yk: 'TYT5-g7', no: 7, icon: '🔩', name: 'Soru sistemi: genleşme', task: 'Halka–küre, delik ve levha, çubuk uzaması, genleşme katsayısı karşılaştırma, raylar, suyun davranışı.', steps: [
+    { do: S => md(S, 'halka', { isi: 0 }), sub: 'Halka, küre ve delikli levha.', go: '▶︎ Başlat' },
+    { q: { t: 'Aynı sıcaklıktaki X küresi Y halkasından geçemiyor. Küre ve halka aynı maddeden yapılmıştır. Hangisi yapılırsa küre halkadan kesinlikle geçer?', o: ['Yalnız halkayı ısıtmak', 'İkisini eşit ısıtmak', 'Yalnız küreyi ısıtmak', 'İkisini eşit soğutmak'], f: ['k2a'],
+      s: ['Aynı madde, aynı ΔT: oran korunur → geçemez.', 'Yalnız halka ısınırsa iç çapı büyür → <em>geçer</em> ✓'], n: ['Yalnız küreyi soğutmak da işe yarar.'] } },
+    { do: S => { S.kos = 1; }, q: { t: 'Ortasında delik bulunan metal levha ısıtılıyor. Levhanın dış yarıçapı r<sub>1</sub>, delik yarıçapı r<sub>2</sub> ve levha kalınlığı x nasıl değişir?', o: ['Üçü de artar', 'r<sub>1</sub> artar, r<sub>2</sub> azalır, x artar', 'r<sub>1</sub> artar, r<sub>2</sub> ve x değişmez', 'Üçü de değişmez'], f: ['k2b'],
+      s: ['Isınan cisim her boyutunda genleşir; delik de büyür.', '<em>Üçü de artar</em> ✓'], n: ['Deliğin küçüldüğünü sanmak en sık yapılan yanlıştır.'] } },
+    { q: { t: '2 m uzunluğundaki metal çubuğun genleşme katsayısı 1,2 · 10<sup>−5</sup> 1/°C\'dir. Sıcaklığı 50 °C artırılırsa çubuk kaç mm uzar?', o: ['1,2', '0,6', '12', '2,4'],
+      s: ['ΔL = L<sub>0</sub> λ ΔT = 2 · 1,2 · 10<sup>−5</sup> · 50 = 1,2 · 10<sup>−3</sup> m', '<em>1,2 mm</em> ✓'], n: ['Birim dönüştürmeye dikkat: 10<sup>−3</sup> m = 1 mm.'] } },
+    { q: { t: 'Aynı maddeden yapılmış K (L, ΔT), L (2L, ΔT/2), M (L/2, 4ΔT) çubuklarının uzama miktarları arasındaki ilişki nedir?', o: ['ΔL<sub>M</sub> > ΔL<sub>K</sub> = ΔL<sub>L</sub>', 'ΔL<sub>K</sub> = ΔL<sub>L</sub> = ΔL<sub>M</sub>', 'ΔL<sub>L</sub> > ΔL<sub>K</sub> > ΔL<sub>M</sub>', 'ΔL<sub>K</sub> > ΔL<sub>L</sub> > ΔL<sub>M</sub>'],
+      s: ['ΔL ∝ L<sub>0</sub> · ΔT: K → 1, L → 2 · ½ = 1, M → ½ · 4 = 2', '<em>ΔL<sub>M</sub> > ΔL<sub>K</sub> = ΔL<sub>L</sub></em> ✓'], n: ['Aynı madde → λ aynı; yalnız L<sub>0</sub> · ΔT çarpımına bak.'] } },
+    { q: { t: 'Boyları eşit X ve Y çubukları eşit ısıtılınca X\'in uzaması Y\'ninkinin 2 katı oluyor. Bu iki metalden yapılan bimetal şerit ısıtılırsa nasıl bükülür?', o: ['Y tarafına (X dış yayda)', 'X tarafına (Y dış yayda)', 'Bükülmez', 'Önce X sonra Y tarafına'],
+      s: ['λ<sub>X</sub> > λ<sub>Y</sub> → X daha çok uzar.', 'Çok uzayan dış yayda kalır: şerit <em>Y tarafına</em> bükülür ✓'], n: ['Soğutulunca tersi: X tarafına bükülür.'] } },
+    { do: S => md(S, 'ray', { gun: 1 }), q: { t: 'I. Demiryolu raylarının arasında boşluk bırakılması<br>II. Elektrik tellerinin yazın sarkması<br>III. Kışın su borularının patlaması<br>olaylarından hangileri ısınan maddelerin genleşmesiyle açıklanır?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'], f: ['k2a'],
+      s: ['I ve II ısınınca uzama (genleşme).', 'III suyun donarken genleşmesidir (soğuma ile hacim artışı; istisna). <em>I ve II</em> ✓'], n: ['Su donarken hacmi artar, bu yüzden boruları çatlatır.'] } },
+    { q: { t: 'Su 0 °C\'den 8 °C\'ye kadar ısıtılıyor. Hacminin sıcaklıkla değişimi nasıldır?', o: ['Önce azalır, 4 °C\'den sonra artar', 'Sürekli artar', 'Sürekli azalır', 'Önce artar sonra azalır'],
+      s: ['0–4 °C arasında su ısınınca büzülür, 4 °C\'den sonra genleşir.', '<em>Önce azalır, sonra artar</em> ✓ (özkütle 4 °C\'de en büyük)'], n: ['Göllerin dibi kışın 4 °C\'de kalır, canlılar yaşar.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Isı ve Sıcaklık', { dersler: [h1, h2], gorevler: [g1, g2] });
+})();
+</script>
+<script>// Kitap düzeninde HİKÂYE MODU + SORU SİSTEMİ · TYT Fizik Bilimine Giriş · Madde ve Özellikleri (madde bilgisi, karışımlar, dayanıklılık, adezyon–kohezyon)
+(function () {
+  const { V3, sahne, gorev, ders, ok, etiket, kart, kutu, top, silindir, THREE } = FZ;
+  const fs = x => (+(+x).toFixed(2)).toString().replace('.', ',');
+  const SIVI = (renk, op = 0.6) => new THREE.MeshLambertMaterial({ color: renk, transparent: true, opacity: op, depthWrite: false });
+  const CAM = () => new THREE.MeshPhongMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.22, shininess: 100, specular: 0xffffff, side: THREE.DoubleSide, depthWrite: false });
+  // ölçü aletleri: cetvel, kronometre, dinamometre, termometre, ampermetre
+  const cetvel = g => { const a = new THREE.Group(); g.add(a); kutu(a, 1.6, 0.03, 0.25, 0xfde68a, 0, 0.015, 0); for (let i = 0; i <= 16; i++) kutu(a, 0.01, 0.005, i % 5 ? 0.06 : 0.12, 0x111827, -0.78 + i * 0.1, 0.033, -0.08, { edge: false }); return a; };
+  const kronometre = g => { const a = new THREE.Group(); g.add(a); const k = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.1, 24), FZ.metal(0xd1d5db)); k.rotation.x = Math.PI / 2; a.add(k);
+    const y = new THREE.Mesh(new THREE.CircleGeometry(0.26, 24), new THREE.MeshBasicMaterial({ color: 0xffffff })); y.position.z = 0.051; a.add(y); const ib = kutu(a, 0.02, 0.22, 0.01, 0xdc2626, 0, 0.1, 0.06, { edge: false });
+    silindir(a, 0.05, 0.05, 0.12, 0x9ca3af, 0, 0.36, 0, { edge: false }); a.ibre = ib; return a; };
+  const ampermetre = g => { const a = new THREE.Group(); g.add(a); kutu(a, 0.6, 0.45, 0.3, 0x1f2937, 0, 0.225, 0); const y = new THREE.Mesh(new THREE.CircleGeometry(0.2, 20, 0, Math.PI), new THREE.MeshBasicMaterial({ color: 0xfef9c3 })); y.position.set(0, 0.17, 0.152); a.add(y);
+    kutu(a, 0.01, 0.16, 0.01, 0xdc2626, 0.03, 0.25, 0.16, { edge: false }).rotation.z = -0.5; [-0.18, 0.18].forEach((x, i) => silindir(a, 0.04, 0.04, 0.06, i ? 0xdc2626 : 0x111827, x, 0.48, 0.05, { edge: false })); const l = FZ.levha(a, 'A', 0.12, 0.12, '#fef9c3', '#111827', 0, 0.08, 0.16); return a; };
+  // Eşit kollu terazi: a.kol (dönen), a.kefe[0/1]; a.ayarla(eğim)
+  const terazi = g => { const a = new THREE.Group(); g.add(a); kutu(a, 0.8, 0.1, 0.5, 0x78350f, 0, 0.05, 0); silindir(a, 0.05, 0.05, 1.6, 0x9ca3af, 0, 0.85, 0, { edge: false });
+    const kol = new THREE.Group(); kol.position.y = 1.65; a.add(kol); kutu(kol, 2.6, 0.06, 0.06, 0x9ca3af, 0, 0, 0);
+    a.kefe = [-1.2, 1.2].map(x => { const k = new THREE.Group(); a.add(k); [-0.2, 0.2].forEach(dz => { const ip = silindir(k, 0.006, 0.006, 0.7, 0x111827, 0, -0.35, dz, { edge: false }); }); const t = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.36, 0.05, 24), FZ.metal(0xd4a72c)); t.position.y = -0.72; k.add(t); k.x0 = x; return k; });
+    a.kol = kol; a.ayarla = th => { kol.rotation.z = th; a.kefe.forEach((k, i) => { const s = i ? 1 : -1; k.position.set(s * 1.2 * Math.cos(th), 1.65 + s * 1.2 * Math.sin(th), 0); }); }; a.ayarla(0); return a; };
+
+  const sMd = sahne({ icon: '⚖️', cam: [[2.2, 3.2, 10], [2.2, 1.2, 0]], plate: [12, 5, 0, 0], data: [['Suyun özkütlesi', '1 g/cm³']],
+    cam2: S => ({ lab: [[2.0, 3.2, 8.5], [2.0, 1, 0]], terazi: [[2.2, 3, 9], [2.2, 1.2, 0]], karisim: [[2.2, 3.4, 10], [2.2, 1.2, 0]], dayan: [[2.2, 3, 9], [2.2, 0.9, 0]] })[S.mod],
+    S0: () => ({ mod: 'lab', alet: 0, sol: [], sag: [], d1: 1, d2: 0.8, v1: 1, v2: 1, kar: 0, kos: 0, k: 1 }),
+    kur(g) {
+      const G = {}; ['lab', 'terazi', 'karisim', 'dayan'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
+      kutu(G.lab, 5, 0.12, 2, 0xb08150, 0, 0.9, 0); [-2.3, 2.3].forEach(x => kutu(G.lab, 0.12, 0.9, 1.8, 0x78350f, x, 0.45, 0));
+      const al = []; const c = cetvel(G.lab); c.position.set(-1.7, 0.96, 0.3); al.push(c);
+      const kr = kronometre(G.lab); kr.position.set(-0.6, 1.3, 0); al.push(kr);
+      const am = ampermetre(G.lab); am.position.set(0.4, 0.96, 0); al.push(am);
+      const tz = FZ.terazi(G.lab); tz.position.set(1.6, 0.96, 0); tz.scale.setScalar(0.8); al.push(tz);
+      const din = new THREE.Group(); din.position.set(2.0, 2.4, 0.6); G.lab.add(din); const dg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), FZ.metal()); din.add(dg); silindir(din, 0.008, 0.008, 0.4, 0x111827, 0, -0.6, 0, { edge: false }); al.push(din);
+      const ter = terazi(G.terazi); ter.position.x = 0;
+      const blk = []; for (let i = 0; i < 6; i++) { const m = kutu(G.terazi, 0.3, 0.3, 0.3, 0xef4444, 0, 0, 0); m.visible = false; blk.push(m); }
+      // karışım: iki beher + karışım kabı + yoğunluk kulesi
+      const bh = [-1.6, 1.6].map((x, i) => { const c2 = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.4, 24, 1, true), CAM()); c2.position.set(x, 0.72, 0); G.karisim.add(c2); return silindir(G.karisim, 0.5, 0.48, 1, i ? 0xfacc15 : 0x3b82f6, x, 0.5, 0, { op: 0.6, edge: false }); });
+      const kk = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.8, 24, 1, true), CAM()); kk.position.set(0, 0.92, -1.4); G.karisim.add(kk);
+      const ks = silindir(G.karisim, 0.67, 0.67, 1, 0x22c55e, 0, 0.5, -1.4, { op: 0.6, edge: false });
+      // dayanıklılık: üç küp + tabure + koltuk
+      const kup = [1, 2, 3].map((a, i) => kutu(G.dayan, a * 0.4, a * 0.4, a * 0.4, 0xf59e0b, -2.2 + i * 1.6 + a * 0.08, a * 0.2, 0));
+      const tab = new THREE.Group(); tab.position.set(2.8, 0, 0); G.dayan.add(tab); silindir(tab, 0.4, 0.4, 0.08, 0xb08150, 0, 0.9, 0); [0, 1, 2].forEach(i => { const a = i / 3 * 6.28, l = silindir(tab, 0.04, 0.04, 0.9, 0x78350f, Math.cos(a) * 0.3, 0.45, Math.sin(a) * 0.3); l.rotation.set(Math.sin(a) * 0.12, 0, -Math.cos(a) * 0.12); });
+      ['k3a', 'k3b', 'k3c', 'k3d', 'k3e'].forEach(i => etiket(i, '', '#1e3a8a')); kart('k3K', '', '#F5C400');
+      return { G, al, ter, blk, bh, ks, kup };
+    },
+    tick(S, dt, o) {
+      Object.entries(o.G).forEach(([k, gr]) => gr.visible = S.mod === k);
+      if (S.mod === 'lab') {
+        const AD = [['Cetvel', 'uzunluk · metre (m)'], ['Kronometre', 'zaman · saniye (s)'], ['Ampermetre', 'akım · amper (A)'], ['Terazi', 'kütle · kilogram (kg)'], ['Dinamometre', 'kuvvet · newton (N)']];
+        o.al.forEach((a, i) => { a.scale.setScalar((i === 3 ? 0.8 : 1) * (i === S.alet ? 1.15 + 0.05 * Math.sin(S.t * 4) : 1)); });
+        o.al[1].ibre.rotation.z = -S.t; const [ad, ne] = AD[S.alet]; FZ.setTag('k3a', `${ad}: ${ne}`); FZ.show('k3a', o.al[S.alet].position.clone().add(V3(0, 0.9, 0.3)), 1);
+        FZ.setTag('k3K', S.alet === 4 ? 'Türetilmiş: kuvvet (N = kg·m/s²)' : 'Temel büyüklük'); FZ.show('k3K', V3(0, 2.9, 0), 1);
+      } else if (S.mod === 'terazi') {
+        const m = a => a.reduce((x, y) => x + y.m, 0), ml = m(S.sol), mr = m(S.sag), th = Math.max(-0.25, Math.min(0.25, (ml - mr) * 0.08));
+        o.ter.kol.rotation.z += (th - o.ter.kol.rotation.z) * Math.min(1, dt * 3); o.ter.ayarla(o.ter.kol.rotation.z);
+        let n = 0; [[S.sol, 0], [S.sag, 1]].forEach(([L, s]) => { const k = o.ter.kefe[s]; L.forEach((b, j) => { const m2 = o.blk[n++]; m2.visible = true; m2.material.color.setHex(b.c); m2.position.set(k.position.x - 0.2 + j * 0.34, k.position.y - 0.52, 0); FZ.setTag(['k3a', 'k3b', 'k3c', 'k3d', 'k3e'][Math.min(4, n - 1)], b.ad); FZ.show(['k3a', 'k3b', 'k3c', 'k3d', 'k3e'][Math.min(4, n - 1)], m2.position.clone().add(V3(0, 0.35, 0.2)), 1); }); });
+        for (; n < o.blk.length; n++) o.blk[n].visible = false;
+        FZ.setTag('k3K', Math.abs(th) < 0.01 ? 'Terazi dengede' : th > 0 ? 'Sol kefe ağır' : 'Sağ kefe ağır'); FZ.show('k3K', V3(0, 3, 0), 1);
+      } else if (S.mod === 'karisim') {
+        if (S.kos) { S.kar = Math.min(1, S.kar + dt * 0.4); if (S.kar >= 1) S.kos = 0; }
+        o.bh.forEach((b, i) => { const v = [S.v1, S.v2][i]; b.scale.y = Math.max(0.01, (1 - S.kar) * v); b.position.y = 0.04 + b.scale.y / 2; });
+        o.ks.scale.y = Math.max(0.01, S.kar * (S.v1 + S.v2) * 0.8); o.ks.position.y = 0.04 + o.ks.scale.y / 2;
+        const dk = (S.d1 * S.v1 + S.d2 * S.v2) / (S.v1 + S.v2);
+        FZ.setTag('k3a', `d<sub>1</sub> = ${fs(S.d1)} · V<sub>1</sub> = ${S.v1 * 100} cm³`); FZ.show('k3a', V3(-1.6, 1.8, 0), 1);
+        FZ.setTag('k3b', `d<sub>2</sub> = ${fs(S.d2)} · V<sub>2</sub> = ${S.v2 * 100} cm³`); FZ.show('k3b', V3(1.6, 1.8, 0), 1);
+        FZ.setTag('k3c', S.kar >= 1 ? `d<sub>k</sub> = ${fs(dk)} g/cm³` : '…'); FZ.show('k3c', V3(0, 2.3, -1.4), 1);
+        FZ.setTag('k3K', 'd<sub>k</sub> = (m<sub>1</sub> + m<sub>2</sub>) / (V<sub>1</sub> + V<sub>2</sub>)'); FZ.show('k3K', V3(0, 3.2, 0), 1);
+      } else {
+        o.kup.forEach((m, i) => { const a = i + 1; FZ.setTag(['k3a', 'k3b', 'k3c'][i], `${a} kat · ${F('1', String(a))}`); FZ.show(['k3a', 'k3b', 'k3c'][i], m.position.clone().add(V3(0, a * 0.2 + 0.5, 0)), 1); });
+        FZ.setTag('k3K', 'Dayanıklılık ∝ kesit / hacim'); FZ.show('k3K', V3(0.4, 2.4, 0), 1);
+      }
+    },
+    qp: () => V3(0, 3.4, 0) });
+  const md = (S, mod, x) => Object.assign(S, { mod, kos: 0 }, x || {});
+  const B = (ad, m, c) => ({ ad, m, c });
+
+  const h1 = ders(sMd, { yk: 'TYT1-d2', no: 2, icon: '📖', name: 'Hikâye: Ece laboratuvarda — fizik nedir, neyi ölçer?', task: 'Fiziğin alt dalları, bilimsel yöntem, temel ve türetilmiş büyüklükler, skaler ve vektörel büyüklükler.', notlar: ['Temel büyüklükler (7): uzunluk m, kütle kg, zaman s, akım A, sıcaklık K, madde miktarı mol, ışık şiddeti cd.', 'Türetilmiş büyüklükler temel büyüklüklerden elde edilir: hız m/s, kuvvet N, enerji J…', 'Vektörel büyüklüğün yönü vardır (hız, kuvvet, ivme); skalerin yoktur (kütle, zaman, enerji).'], steps: [
+    { do: S => md(S, 'lab', { alet: 0 }), sub: 'Ece, lisenin ilk fizik dersinde laboratuvara girdi. Masada beş ölçü aleti duruyordu.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'merak', b: 'Fizik neyi inceler?', m: ['Fizik; madde, enerji ve bunların etkileşimini inceler. Gözlem ve deneye dayanır, sonuçlarını matematikle ifade eder.'] } },
+    { k: { tur: 'kavram', b: 'Bilimsel yöntem', m: ['Gözlem → problem → hipotez → deney → sonuç → teori/kanun.', 'Bilimsel bilgi değişebilir; yeni kanıtlarla güncellenir. Kişisel görüş bilimsel bilgi değildir.'] } },
+    { do: S => { S.alet = 0; }, sub: 'Öğretmen önce cetveli gösterdi…', wait: 1.8 },
+    { do: S => { S.alet = 1; }, sub: 'Sonra kronometreyi…', wait: 1.8 },
+    { do: S => { S.alet = 2; }, sub: 'Ampermetreyi…', wait: 1.8 },
+    { do: S => { S.alet = 3; }, sub: 'Teraziyi…', wait: 1.8 },
+    { k: { tur: 'kavram', b: 'Temel büyüklükler (SI)', f: ['k3a'], m: ['Uzunluk (m), kütle (kg), zaman (s), elektrik akımı (A), sıcaklık (K), madde miktarı (mol), ışık şiddeti (cd).', 'Bu yedisi başka büyüklüklerle tanımlanmaz; bütün ölçümlerin temelidir.'] } },
+    { do: S => { S.alet = 4; }, sub: 'En son dinamometreyi gösterdi: kuvvet ölçer.', wait: 1.8 },
+    { k: { tur: 'kavram', b: 'Türetilmiş, skaler ve vektörel', f: ['k3K'], m: ['Kuvvet türetilmiştir: N = kg · m/s². Hız (m/s), enerji (J), basınç (Pa), özkütle (kg/m³) de türetilmiştir.', '<em>Vektörel</em>: büyüklük + yön (hız, kuvvet, ivme, yer değiştirme). <em>Skaler</em>: yalnız büyüklük (kütle, zaman, enerji, sıcaklık, sürat).'] } },
+    { k: { tur: 'kavram', b: 'Fiziğin alt dalları', m: ['Mekanik (hareket, kuvvet) · Termodinamik (ısı) · Elektromanyetizma · Optik (ışık) · Atom ve nükleer fizik · Katıhal (yarı iletkenler) · Yüksek enerji ve plazma fiziği.', 'Örnek: güneş paneli → katıhal; MR cihazı → elektromanyetizma ve nükleer; uzay aracı → mekanik.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: ['7 temel büyüklük · diğerleri türetilmiş · vektör = büyüklük + yön · bilim deneye dayanır ve değişebilir.'] } },
+  ] });
+  const h2 = ders(sMd, { yk: 'TYT2-d4', no: 4, icon: '📖', name: 'Hikâye: Kuyumcudaki terazi ve meyve suyu karışımı', task: 'Kütle ve hacim, eşit kollu terazi, özkütle ayırt ediciliği, karışımların özkütlesi, dayanıklılık.', notlar: ['d = m / V; özkütle ayırt edicidir, kütle ve hacim değildir.', 'Karışım: d = (m₁ + m₂) / (V₁ + V₂); eşit hacim (d₁+d₂)/2, eşit kütle 2d₁d₂/(d₁+d₂).', 'Dayanıklılık ∝ kesit alanı / hacim; boyutlar k katına çıkınca 1/k katına iner.'], steps: [
+    { do: S => md(S, 'terazi', { sol: [], sag: [] }), sub: 'Ece kuyumcu dedesini ziyaret etti. Dükkânda eski bir eşit kollu terazi vardı.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'kavram', b: 'Kütle ve eşit kollu terazi', m: ['Kütle madde miktarıdır (kg), her yerde aynıdır. Eşit kollu terazi kütleleri karşılaştırır: kefeler dengedeyse kütleler eşittir.'] } },
+    { do: S => { S.sol = [B('K', 2, 0xef4444)]; S.sag = [B('L', 1, 0x3b82f6), B('L', 1, 0x3b82f6)]; }, sub: 'Dedesi sol kefeye bir K bileziği, sağa iki özdeş L yüzüğü koydu: terazi dengede.', wait: 2.5 },
+    { do: S => { S.sol = [B('K', 2, 0xef4444), B('M', 1.5, 0x22c55e)]; S.sag = [B('L', 1, 0x3b82f6), B('L', 1, 0x3b82f6), B('L', 1, 0x3b82f6)]; }, sub: 'Sonra sola bir M küpesi, sağa bir L yüzüğü daha ekledi. Sol kefe ağır bastı.', wait: 2.5 },
+    { k: { tur: 'ornek', b: 'Teraziden sıralama', f: ['k3K'], m: ['1. durum: m<sub>K</sub> = 2m<sub>L</sub>. 2. durum: m<sub>K</sub> + m<sub>M</sub> > 3m<sub>L</sub> → m<sub>M</sub> > m<sub>L</sub>.', 'Kural: dengede eşitlik yaz, ağır basan tarafı eşitsizlikle göster, sonra birleştir.'] } },
+    { k: { tur: 'kavram', b: 'Özkütle ayırt edicidir', m: [`${FM(`d = ${F('m', 'V')}`)} · altın 19,3, gümüş 10,5, bakır 8,9 g/cm³.`, 'Dedesi bileziğin altın olup olmadığını özkütlesinden anlar: kütleyi terazi, hacmi taşırma kabı verir.'] } },
+    { do: S => md(S, 'karisim', { d1: 1, d2: 0.8, v1: 1, v2: 1, kar: 0 }), sub: 'Eve dönen Ece, 100 cm³ su ile 100 cm³ alkollü bir sıvıyı (d = 0,8) karıştırıyor.', go: '▶︎ Karıştır' },
+    { do: S => { S.kos = 1; }, sub: 'Karışıyor…', until: S => S.kar >= 1 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Karışımın özkütlesi', f: ['k3c'], m: [`${FM(`d<sub>k</sub> = ${F('m<sub>1</sub> + m<sub>2</sub>', 'V<sub>1</sub> + V<sub>2</sub>')}`)} = (100 + 80) / 200 = <em>0,9 g/cm³</em>`, 'Eşit hacimde karışımda d<sub>k</sub> aritmetik ortalamadır. Karışımın özkütlesi iki sıvınınkinin arasındadır.'] } },
+    { k: { tur: 'dikkat', b: 'UYARI · Eşit kütle', m: [`Eşit kütleler karışırsa: ${FM(`d<sub>k</sub> = ${F('2 d<sub>1</sub> d<sub>2</sub>', 'd<sub>1</sub> + d<sub>2</sub>')}`)} · özkütlesi küçük sıvıya daha yakındır (onun hacmi büyük).`] } },
+    { do: S => md(S, 'dayan'), sub: 'Son olarak Ece neden fillerin ince bacaklı olmadığını merak etti. Kenarları 1, 2, 3 birim küplere baktı.', wait: 2 },
+    { k: { tur: 'kavram', b: 'Dayanıklılık', f: ['k3a', 'k3b', 'k3c'], m: [`${FM(`Dayanıklılık ∝ ${F('kesit alanı', 'hacim')}`)} · küp için 1/a.`, 'Neden? Taşıma gücü kesitle (a²), ağırlık hacimle (a³) artar. Boyut büyüdükçe cisim kendi ağırlığına zor dayanır.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: ['d = m/V ayırt edici · karışım d = Σm/ΣV · dayanıklılık 1/boyut.'] } },
+  ] });
+
+  const g1 = gorev(sMd, { yk: 'TYT1-g3', no: 3, icon: '🔬', name: 'Soru sistemi: fizik bilimine giriş', task: 'Temel–türetilmiş büyüklük, birim eşleştirme, skaler–vektör, bilimsel yöntem, fiziğin alt dalları.', steps: [
+    { do: S => md(S, 'lab', { alet: 0 }), sub: 'Laboratuvar masası.', go: '▶︎ Başlat' },
+    { do: S => { S.alet = 1; }, q: { t: 'Aşağıdaki büyüklük–SI birimi eşleştirmelerinden hangisi doğrudur?', o: ['Zaman – saniye, sıcaklık – kelvin', 'Zaman – dakika, sıcaklık – derece', 'Uzunluk – kilometre, kütle – gram', 'Akım – volt, kütle – newton'], f: ['k3a'],
+      s: ['SI\'da zaman <em>saniye</em>, sıcaklık <em>kelvin</em>, uzunluk metre, kütle kilogram, akım amper ✓'], n: ['Dakika, °C, km, g SI temel birimi değildir.'] } },
+    { do: S => { S.alet = 4; }, q: { t: 'I. Kuvvet<br>II. Elektrik akımı<br>III. Özkütle<br>IV. Madde miktarı<br>büyüklüklerinden hangileri türetilmiştir?', o: ['I ve III', 'II ve IV', 'I, II ve III', 'Yalnız I'], f: ['k3K'],
+      s: ['Akım (A) ve madde miktarı (mol) temeldir.', 'Kuvvet (kg·m/s²) ve özkütle (kg/m³) türetilmiş → <em>I ve III</em> ✓'], n: ['7 temel büyüklüğü ezberlemek bu soruları kolaylaştırır.'] } },
+    { q: { t: 'Hız, kütle, kuvvet, enerji, ivme, zaman büyüklüklerinden kaç tanesi vektöreldir?', o: ['3', '2', '4', '6'],
+      s: ['Vektörel: hız, kuvvet, ivme → <em>3</em> ✓', 'Skaler: kütle, enerji, zaman.'], n: ['Yönü olan her büyüklük vektöreldir; sürat skaler, hız vektöreldir.'] } },
+    { q: { t: 'Bir öğrenci "Sarkacın periyodu ipin boyuna bağlıdır" der ve farklı ip boylarıyla periyodu ölçer.<br>Öğrencinin söylediği ifade bilimsel yöntemin hangi basamağıdır?', o: ['Hipotez', 'Gözlem', 'Teori', 'Kanun'],
+      s: ['Test edilecek geçici açıklama <em>hipotezdir</em>; ölçümler deneydir ✓'], n: ['Teori: çok kez doğrulanmış açıklama; kanun: doğadaki düzenliliğin ifadesi.'] } },
+    { q: { t: 'Güneş paneli, MR cihazı ve dürbün sırasıyla fiziğin hangi alt dallarıyla doğrudan ilgilidir?', o: ['Katıhal – elektromanyetizma – optik', 'Optik – mekanik – termodinamik', 'Mekanik – optik – katıhal', 'Termodinamik – nükleer – mekanik'],
+      s: ['Güneş paneli yarı iletken (katıhal), MR manyetik alan (elektromanyetizma), dürbün mercek (optik) ✓'], n: ['Bir teknoloji birden çok alt dalla ilgili olabilir; soruda en doğrudan olan aranır.'] } },
+  ] });
+  const g2 = gorev(sMd, { yk: 'TYT2-g4', no: 4, icon: '⚖️', name: 'Soru sistemi: madde, karışım, dayanıklılık', task: 'Eşit kollu terazi sıralama, özkütle tablosu, karışım özkütlesi, dayanıklılık, adezyon–kohezyon.', steps: [
+    { do: S => md(S, 'terazi', { sol: [B('K', 2, 0xef4444)], sag: [B('L', 1, 0x3b82f6), B('L', 1, 0x3b82f6)] }), sub: 'Eşit kollu terazi.', go: '▶︎ Başlat' },
+    { q: { t: 'Eşit kollu terazide 1 K = 2 L dengede; 1 K + 1 M ise 3 L\'den ağır basıyor. K, L, M kütleleri için hangisi kesinlikle doğrudur?', o: ['m<sub>K</sub> > m<sub>L</sub> ve m<sub>M</sub> > m<sub>L</sub>; K ile M karşılaştırılamaz', 'm<sub>L</sub> > m<sub>K</sub> > m<sub>M</sub>', 'm<sub>K</sub> = m<sub>L</sub> = m<sub>M</sub>', 'm<sub>M</sub> < m<sub>L</sub>'], f: ['k3K'],
+      s: ['m<sub>K</sub> = 2m<sub>L</sub> → m<sub>K</sub> > m<sub>L</sub>', '2m<sub>L</sub> + m<sub>M</sub> > 3m<sub>L</sub> → m<sub>M</sub> > m<sub>L</sub>', 'K ile M karşılaştırılamaz ✓'], n: ['Teraziden çıkan her bilgi bir eşitlik ya da eşitsizliktir; olmayan bilgiyi uydurma.'] } },
+    { q: { t: 'Özkütleleri: altın 19,3, gümüş 10,5, bakır 8,9 g/cm³. Kütlesi 193 g olan bir bilezik suya batırılınca 12 cm³ su taşıyor. Bilezik için ne söylenebilir?', o: ['Saf altın değildir; daha hafif bir metal karışmıştır', 'Saf altındır', 'Saf gümüştür', 'Saf bakırdır'],
+      s: ['d = 193 / 12 ≈ 16,1 g/cm³', 'Altından küçük → içinde özkütlesi küçük metal var ✓'], n: ['Arşimet\'in taç hikâyesindeki yöntem budur.'] } },
+    { do: S => md(S, 'karisim', { d1: 1, d2: 0.8, v1: 1, v2: 1, kar: 1 }), q: { t: 'Özkütleleri 1,2 g/cm³ ve 0,8 g/cm³ olan iki sıvıdan sırasıyla 200 cm³ ve 100 cm³ karıştırılıyor. Karışımın özkütlesi kaç g/cm³\'tür?', o: [F('16', '15'), '1', '0,9', '2'], f: ['k3c'],
+      s: ['m = 240 + 80 = 320 g, V = 300 cm³', `d<sub>k</sub> = ${F('320', '300')} = <em>${F('16', '15')} g/cm³</em> ✓`], n: ['Hacimler farklıyken ortalama alınmaz; toplam kütle / toplam hacim.'] } },
+    { q: { t: 'Özkütleleri d ve 3d olan sıvılardan eşit kütlede karıştırılıyor. Karışımın özkütlesi kaç d\'dir?', o: ['1,5', '2', '1,33', '2,5'],
+      s: [`d<sub>k</sub> = ${F('2 · d · 3d', 'd + 3d')} = ${F('6d', '4')} = <em>1,5d</em> ✓`], n: ['Eşit kütlede sonuç az yoğun sıvıya yakındır.'] } },
+    { do: S => md(S, 'dayan'), q: { t: 'Aynı maddeden yapılmış küp biçimli X, Y, Z cisimlerinin kenarları sırasıyla a, 2a, 3a\'dır. Dayanıklılıkları D<sub>X</sub>, D<sub>Y</sub>, D<sub>Z</sub> arasındaki ilişki nedir?', o: ['D<sub>X</sub> > D<sub>Y</sub> > D<sub>Z</sub>', 'D<sub>Z</sub> > D<sub>Y</sub> > D<sub>X</sub>', 'D<sub>X</sub> = D<sub>Y</sub> = D<sub>Z</sub>', 'D<sub>Y</sub> > D<sub>X</sub> > D<sub>Z</sub>'], f: ['k3a', 'k3b', 'k3c'],
+      s: ['D ∝ 1/a → büyüdükçe azalır: <em>D<sub>X</sub> > D<sub>Y</sub> > D<sub>Z</sub></em> ✓'], n: ['Minyatür modeller gerçek yapıdan daha dayanıklıdır.'] } },
+    { q: { t: 'Bir mobilya ustası aynı tahtadan bir tabure ve bütün boyutları 2 katı olan büyük bir tabure yapıyor. Büyük taburenin;<br>I. Ağırlığı 8 katıdır.<br>II. Ayak kesitleri 4 katıdır.<br>III. Kendi ağırlığına dayanıklılığı yarıya iner.<br>yargılarından hangileri doğrudur?', o: ['I, II ve III', 'Yalnız I', 'I ve II', 'II ve III'],
+      s: ['Hacim 2³ = 8 (I) · kesit 2² = 4 (II) · dayanıklılık 4/8 = ½ (III)', '<em>I, II ve III</em> ✓'], n: ['Büyük yapılarda ayaklar orantısız kalın yapılır.'] } },
+    { q: { t: 'I. Su damlasının küre biçimini alması<br>II. Suyun cam boruda yükselmesi<br>III. Cıvanın cam boruda alçalması<br>olayları sırasıyla hangi kavramlarla açıklanır?', o: ['Kohezyon (yüzey gerilimi) – adezyon > kohezyon – kohezyon > adezyon', 'Adezyon – kohezyon – adezyon', 'Kohezyon – kohezyon – adezyon', 'Adezyon – adezyon – kohezyon'],
+      s: ['Damla: kohezyon kaynaklı yüzey gerilimi.', 'Su–cam: adezyon büyük → yükselir · cıva–cam: kohezyon büyük → alçalır ✓'], n: ['Hidrofil kumaş suyu emer (adezyon), su itici kumaş emmez.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Fizik Bilimine Giriş', { dersler: [h1], gorevler: [g1] });
+  FZ.konuEk('TYT', 'Madde ve Özellikleri', { dersler: [h2], gorevler: [g2] });
+  const t1 = gorev(sMd, { yk: 'TYT1-g4', no: 4, tuzak: true, icon: '🪤', name: 'Tuzak sorular · fizik bilimine giriş', task: 'Büyüklük, birim ve bilimsel yöntemde sık yapılan yanlışlar.', steps: [
+    { do: S => md(S, 'lab', { alet: 3 }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Ağırlık ile kütle için hangisi doğrudur?', o: ['Ağırlık vektörel ve N; kütle skaler ve kg', 'İkisi de kg ile ölçülür', 'Kütle yere göre değişir', 'Ağırlık skalerdir'],
+      s: ['Ağırlık bir kuvvettir: vektörel, newton. Kütle madde miktarı: skaler, kg ✓'], n: ['TUZAK: günlük dildeki "kilom" ifadesi; aslında kütle. Ay\'da ağırlık azalır, kütle değişmez.'] } },
+    { q: { t: 'Sıcaklığın SI birimi hangisidir?', o: ['Kelvin', 'Santigrat derece', 'Kalori', 'Joule'],
+      s: ['SI temel birimi <em>kelvin</em> ✓; kalori ve joule enerji (ısı) birimidir.'], n: ['TUZAK: °C\'yi SI birimi sanmak.'] } },
+    { q: { t: 'Bilimsel bir teori için hangisi doğrudur?', o: ['Yeni kanıtlarla değiştirilebilir', 'Kesin doğrudur, değişmez', 'Kişisel görüştür', 'Kanuna dönüşür'],
+      s: ['Bilimsel bilgi yeni kanıtlarla <em>değişebilir</em> ✓'], n: ['TUZAK: teorinin zamanla kanuna dönüştüğünü sanmak; teori açıklar, kanun tanımlar.'] } },
+  ] });
+  const t2 = gorev(sMd, { yk: 'TYT2-g5', no: 5, tuzak: true, icon: '🪤', name: 'Tuzak sorular · madde ve özellikleri', task: 'Özkütle, karışım, dayanıklılık ve yüzey olaylarında sık yapılan yanlışlar.', steps: [
+    { do: S => md(S, 'karisim', { d1: 1, d2: 0.8, v1: 1, v2: 1, kar: 1 }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Bir demir çubuk ikiye kesiliyor. Parçalardan birinin özkütlesi için hangisi doğrudur?', o: ['Değişmez', 'Yarıya iner', 'İki katına çıkar', 'Kütleye bağlı olarak artar'],
+      s: ['Kütle ve hacim birlikte yarıya iner → <em>d değişmez</em> ✓'], n: ['TUZAK: kütle azaldı diye özkütle de azalır sanmak.'] } },
+    { q: { t: 'Özkütleleri 1 ve 3 g/cm³ olan sıvılardan 100\'er gram karıştırılırsa karışımın özkütlesi kaç g/cm³ olur?', o: ['1,5', '2', '4', '1'], f: ['k3c'],
+      s: ['Eşit kütle: 2 · 1 · 3 / (1 + 3) = <em>1,5</em> ✓'], n: ['TUZAK: eşit kütlede de ortalama (2) almak; ortalama yalnız eşit hacimde geçerli.'] } },
+    { q: { t: 'Bir cismin bütün boyutları 2 katına çıkarılırsa dayanıklılığı ne olur?', o: ['Yarıya iner', 'İki katına çıkar', 'Değişmez', 'Dört katına çıkar'],
+      s: ['Kesit 4, hacim 8 katı → 4/8 = <em>½</em> ✓'], n: ['TUZAK: büyük cisim daha sağlamdır sanmak.'] } },
+    { q: { t: 'Cam boruda suyun yükselmesinin nedeni hangisidir?', o: ['Su–cam adezyonunun su–su kohezyonundan büyük olması', 'Kohezyonun adezyondan büyük olması', 'Açık hava basıncı', 'Suyun özkütlesinin küçük olması'],
+      s: ['Kılcallıkta su yükselir çünkü <em>adezyon > kohezyon</em> ✓'], n: ['TUZAK: adezyon ile kohezyonu karıştırmak.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Fizik Bilimine Giriş', { gorevler: [t1] });
+  FZ.konuEk('TYT', 'Madde ve Özellikleri', { gorevler: [t2] });
+})();
+</script>
+<script>// Kitap düzeninde HİKÂYE MODU + SORU SİSTEMİ + TUZAK SORULAR · TYT Doğrusal Hareket · Newton'un Hareket Yasaları · Enerji ve Hareket
+(function () {
+  const { V3, sahne, gorev, ders, ok, etiket, kart, kutu, top, silindir, THREE } = FZ;
+  const fs = x => (+(+x).toFixed(1)).toString().replace('.', ',');
+  const duz = (g, renk) => { const l = FZ.cizgi(g, renk); l.material.dashSize = 100; l.material.gapSize = 0; return l; };
+  const koli = (g) => { const a = new THREE.Group(); g.add(a); kutu(a, 1, 1, 1, 0xc08a4a, 0, 0.5, 0); kutu(a, 1.01, 0.12, 0.2, 0xd6c08a, 0, 1.0, 0, { edge: false }); kutu(a, 0.2, 0.12, 1.01, 0xd6c08a, 0, 1.0, 0, { edge: false }); return a; };
+  // raylı yol profili (enerji): x ∈ [−4,4]
+  const RY = x => 0.35 + (x < -1 ? 1.3 * (1 + Math.cos(Math.PI * (x + 4) / 3)) : x < 2.5 ? 0.6 * (1 - Math.cos(2 * Math.PI * (x + 1) / 3.5)) : 0);
+  const RYs = x => RY(x);
+  const sHk = sahne({ icon: '🚗', cam: [[1.8, 3.6, 12], [1.8, 1.2, 0]], plate: [13, 5, 0, 0], data: [['g', '10 m/s²']],
+    cam2: S => ({ yol: [[1.6, 4.6, 11], [1.6, 0.9, 0]], kutu: [[2.0, 3.2, 10], [2.0, 0.9, 0]], ray: [[1.6, 3.6, 12], [1.6, 1.4, 0]] })[S.mod],
+    S0: () => ({ mod: 'yol', t: 0, tk: 0, kos: 0, x1: 0, v1: 10, a1: 0, x2: 60, v2: -5, a2: 0, iz: [[], []], F: 20, m: 5, mus: 0.4, muk: 0.3, xk: -2, vk: 0, sp: 0, xr: -3.9, vr: 0, Q: 0, mr: 2, fr: 0 }),
+    kur(g) {
+      const G = {}; ['yol', 'kutu', 'ray'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
+      FZ.yol(G.yol, 10, 2, 0, 0.6); const a1 = FZ.araba(G.yol, 0xef4444), a2 = FZ.araba(G.yol, 0x2563eb); a1.scale.setScalar(0.5); a2.scale.setScalar(0.5);
+      for (let i = 0; i <= 10; i++) { kutu(G.yol, 0.04, 0.01, 0.3, 0xffffff, -4.5 + i * 0.9, 0.04, 1.7, { edge: false }); etiket('k4m' + i, `${i * 10}`, '#1f232c'); }
+      const pano = kutu(G.yol, 4.4, 2.6, 0.05, 0x111827, 1.8, 3.2, -1.6, { edge: false }); const eks = duz(G.yol, 0xe5e7eb), c1 = duz(G.yol, 0xef4444), c2 = duz(G.yol, 0x3b82f6);
+      kutu(G.kutu, 9, 0.1, 2, 0x9ca3af, 0, 0.05, 0); const kz = kutu(G.kutu, 3, 0.11, 2, 0x7f1d1d, 2, 0.055, 0, { edge: false });
+      const kl = koli(G.kutu); const ece = FZ.insan(G.kutu, 0xdb2777, 1);
+      const rp = []; for (let i = 0; i <= 120; i++) { const x = -4 + i / 15; rp.push(V3(x, RYs(x), 0)); }
+      [-0.3, 0.3].forEach(z => { const L = duz(G.ray, 0x6b7280); FZ.setLine(L, rp.map(p => V3(p.x, p.y, z))); });
+      for (let i = 0; i < 40; i++) { const x = -4 + i * 0.2; kutu(G.ray, 0.08, 0.05, 0.8, 0x78350f, x, RYs(x) - 0.04, 0, { edge: false }); if (RYs(x) > 0.5) kutu(G.ray, 0.06, RYs(x) - 0.1, 0.06, 0xf59e0b, x, (RYs(x) - 0.1) / 2, -0.35, { edge: false }); }
+      kutu(G.ray, 1.5, 0.02, 1, 0x7f1d1d, 3.25, 0.36, 0, { edge: false });
+      const vg = new THREE.Group(); G.ray.add(vg); kutu(vg, 0.5, 0.3, 0.5, 0xdc2626, 0, 0.2, 0); [-0.17, 0.17].forEach(x => [-0.26, 0.26].forEach(z => { const t = silindir(vg, 0.07, 0.07, 0.04, 0x111827, x, 0.05, z, { edge: false }); t.rotation.x = Math.PI / 2; }));
+      const bar = ['#16a34a', '#2563eb', '#dc2626'].map((c, i) => kutu(G.ray, 0.3, 1, 0.2, parseInt(c.slice(1), 16), 1.6 + i * 0.45, 2.5, -1.2, { edge: false }));
+      const O = { F: ok(0xec4899, 'k4F'), f: ok(0xdc2626, 'k4f'), mg: ok(0x475569, 'k4g'), N: ok(0x0ea5e9, 'k4N'), v: ok(0x16a34a, 'k4v'), v1: ok(0xef4444, 'k4v1'), v2: ok(0x2563eb, 'k4v2') };
+      [['k4F', 'F', '#db2777'], ['k4f', 'f<sub>s</sub>', '#dc2626'], ['k4g', 'mg', '#475569'], ['k4N', 'N', '#0284c7'], ['k4v', 'v', '#16a34a'], ['k4v1', '', '#dc2626'], ['k4v2', '', '#2563eb']].forEach(([i, h, c]) => etiket(i, h, c));
+      ['Ek', 'Ep', 'Q'].forEach((n, i) => etiket('k4b' + i, n, ['#16a34a', '#2563eb', '#dc2626'][i])); kart('k4K', '', '#F5C400'); kart('k4P', 'konum – zaman', '#475569');
+      return { G, a1, a2, pano, eks, c1, c2, kl, ece, vg, bar, O };
+    },
+    tick(S, dt, o) {
+      Object.entries(o.G).forEach(([k, gr]) => gr.visible = S.mod === k); Object.values(o.O).forEach(a => a.visible = false);
+      const A = (a, p, d, L, id) => { if (L < 0.03) return; FZ.setArrow(a, p, d, L); FZ.show(id, p.clone().add(d.clone().normalize().multiplyScalar(L + 0.28)), 1); };
+      if (S.mod === 'yol') {
+        if (S.kos) { S.tk += dt * 0.8; const T = S.tson || 6; if (S.tk >= T) { S.tk = T; S.kos = 0; } const L1 = S.iz[0], L2 = S.iz[1]; L1.push([S.tk, S.x1 + S.v1 * S.tk + S.a1 * S.tk * S.tk / 2]); L2.push([S.tk, S.x2 + S.v2 * S.tk + S.a2 * S.tk * S.tk / 2]); }
+        const t = S.tk, X1 = S.x1 + S.v1 * t + S.a1 * t * t / 2, X2 = S.x2 + S.v2 * t + S.a2 * t * t / 2, V1 = S.v1 + S.a1 * t, V2 = S.v2 + S.a2 * t, px = x => -4.5 + x * 0.09;
+        o.a1.position.set(px(X1), 0.03, 0.15); o.a2.position.set(px(X2), 0.03, 1.05); o.a1.rotation.y = V1 < 0 ? Math.PI : 0; o.a2.rotation.y = V2 < 0 ? Math.PI : 0;
+        A(o.O.v1, V3(px(X1), 0.8, 0.15), V3(Math.sign(V1) || 1, 0, 0), Math.abs(V1) * 0.08, 'k4v1'); FZ.setTag('k4v1', `${fs(Math.abs(V1))} m/s`);
+        A(o.O.v2, V3(px(X2), 0.8, 1.05), V3(Math.sign(V2) || 1, 0, 0), Math.abs(V2) * 0.08, 'k4v2'); FZ.setTag('k4v2', `${fs(Math.abs(V2))} m/s`);
+        for (let i = 0; i <= 10; i++) FZ.show('k4m' + i, V3(-4.5 + i * 0.9, 0.05, 2.1), 1);
+        const X = tt => -0.2 + tt / (S.tson || 6) * 4, Y = x => 2.0 + x / 100 * 2.3, Z = -1.55; FZ.setLine(o.eks, [V3(X(0), Y(100), Z), V3(X(0), Y(0), Z), V3(X(S.tson || 6) + 0.1, Y(0), Z)]);
+        [[o.c1, S.iz[0]], [o.c2, S.iz[1]]].forEach(([c, L]) => { if (L.length > 1) FZ.setLine(c, L.map(([tt, x]) => V3(X(tt), Y(Math.max(0, Math.min(100, x))), Z))); else c.visible = false; });
+        FZ.show('k4P', V3(1.8, 4.7, -1.55), 1); FZ.setTag('k4K', `t = ${fs(t)} s`); FZ.show('k4K', V3(-3.2, 3.6, 0), 1);
+      } else if (S.mod === 'kutu') {
+        const mg = S.m * 10, xm = -2 + S.xk, inKz = xm > 0.5 && xm < 3.5, mus = inKz ? S.mus : S.sp, muk = inKz ? S.muk : S.sp; let f = 0, a = 0;
+        if (S.vk === 0 && Math.abs(S.F) <= mus * mg) f = -S.F; else { f = -(Math.sign(S.vk) || Math.sign(S.F)) * muk * mg; a = (S.F + f) / S.m; }
+        if (S.kos) { S.vk += a * dt; if (S.vk < 0 && S.F === 0) S.vk = 0; S.xk += S.vk * dt * 0.5; if (xm > 4) S.kos = 0; }
+        o.kl.position.set(xm, 0.1, 0); o.kl.scale.setScalar(0.6 + S.m * 0.04); const h = 0.6 + S.m * 0.04, c = V3(xm, 0.1 + h / 2, h / 2 + 0.05);
+        o.ece.position.set(xm - h / 2 - 0.45, 0.1, 0); o.ece.visible = S.F > 0; if (S.F > 0) [0, 1].forEach(i => FZ.koluUzat(o.ece, i, V3(xm - h / 2, 0.1 + h * 0.6, i ? -0.1 : 0.1)));
+        A(o.O.F, V3(xm - h / 2 - 0.02, 0.1 + h * 0.6, h / 2 + 0.05), V3(1, 0, 0), S.F * 0.03, 'k4F');
+        A(o.O.f, V3(xm + (Math.sign(f) || 1) * h / 2, 0.13, h / 2 + 0.05), V3(Math.sign(f) || -1, 0, 0), Math.abs(f) * 0.03, 'k4f'); FZ.setTag('k4f', inKz ? (S.vk ? 'f<sub>k</sub>' : 'f<sub>s</sub>') : 'f');
+        A(o.O.mg, c, V3(0, -1, 0), mg * 0.03, 'k4g'); A(o.O.N, V3(xm + 0.2, 0.1, h / 2 + 0.05), V3(0, 1, 0), mg * 0.03, 'k4N');
+        A(o.O.v, V3(xm, 0.1 + h + 0.3, 0), V3(1, 0, 0), S.vk * 0.25, 'k4v');
+        FZ.setTag('k4K', `m = ${S.m} kg · F = ${S.F} N · ${inKz ? `μ<sub>s</sub> = ${fs(S.mus)}, μ<sub>k</sub> = ${fs(S.muk)}` : 'sürtünmesiz'} · a = ${fs(a)} m/s²`); FZ.show('k4K', V3(0.5, 2.6, 0), 1);
+      } else {
+        const g = 10, h0 = RYs(-3.9) - 0.35;
+        if (S.kos) for (let k = 0; k < 6; k++) { const d = dt / 6, x = S.xr, sl = (RYs(x + 0.01) - RYs(x - 0.01)) / 0.02, cs = 1 / Math.sqrt(1 + sl * sl);
+          let a = -g * sl * cs; if (x > 2.5 && x < 4 && S.fr) a -= Math.sign(S.vr) * 0.3 * g; S.vr += a * d; const dx = S.vr * cs * d * 0.5; S.xr += dx; if (x > 2.5 && x < 4 && S.fr) S.Q += 0.3 * S.mr * g * Math.abs(dx) * 2; if (S.xr > 3.95) { S.xr = 3.95; S.vr = 0; S.kos = 0; } if (Math.abs(S.vr) < 0.02 && x > 2.5) { S.kos = 0; S.vr = 0; } }
+        const y = RYs(S.xr), sl = (RYs(S.xr + 0.01) - RYs(S.xr - 0.01)) / 0.02; o.vg.position.set(S.xr, y, 0); o.vg.rotation.z = Math.atan(sl);
+        const hm = (y - 0.35) * 10, E0 = S.mr * g * h0 * 10, Ep = S.mr * g * hm, Ek = Math.max(0, E0 - Ep - S.Q);
+        [Ek, Ep, S.Q].forEach((E, i) => { const L = Math.max(0.01, E / E0 * 2); o.bar[i].scale.y = L; o.bar[i].position.y = 1.6 + L / 2; FZ.show('k4b' + i, V3(1.6 + i * 0.45, 1.35, -1.2), 1); });
+        FZ.setTag('k4K', `E<sub>k</sub> ${Math.round(Ek)} J · E<sub>p</sub> ${Math.round(Ep)} J · ısı ${Math.round(S.Q)} J (h<sub>0</sub> = ${Math.round(h0 * 10)} m, m = ${S.mr} kg)`); FZ.show('k4K', V3(0.4, 4.4, 0), 1);
+      }
+    },
+    qp: () => V3(0.4, 4, 0) });
+  const md = (S, mod, x) => Object.assign(S, { mod, kos: 0 }, x || {});
+  const yolK = (S, x1, v1, a1, x2, v2, a2, tson = 6) => md(S, 'yol', { x1, v1, a1, x2, v2, a2, tk: 0, iz: [[], []], tson });
+  const kutuK = (S, F, m, mus, muk, sp = 0) => md(S, 'kutu', { F, m, mus, muk, sp, xk: 0, vk: 0 });
+  const rayK = (S, fr) => md(S, 'ray', { xr: -3.9, vr: 0, Q: 0, fr });
+
+  const h1 = ders(sHk, { yk: 'TYT3-d4', no: 4, icon: '📖', name: 'Hikâye: Okul yolunda iki araba', task: 'Konum, yol, yer değiştirme, sürat–hız, düzgün doğrusal hareket, konum–zaman grafiği, karşılaşma.', notlar: ['x = v · t (düzgün doğrusal hareket) · konum–zaman grafiğinin eğimi hızdır.', 'Yol skaler, yer değiştirme vektördür.'], steps: [
+    { do: S => yolK(S, 0, 10, 0, 60, -5, 0, 4), sub: 'Sabah Ece\'nin babası kırmızı arabayla (sol) okula gidiyor, karşıdan mavi bir araba geliyor. Panoda konum–zaman grafiği çizilecek.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'kavram', b: 'Konum, yol ve yer değiştirme', m: ['Konum: başlangıç noktasına göre yer (+/− yönlü). Yer değiştirme: son konum − ilk konum (vektör). Yol: gidilen toplam uzunluk (skaler).', `Sürat = ${F('yol', 'zaman')} · hız = ${F('yer değiştirme', 'zaman')}`] } },
+    { p: { t: 'Kırmızı araba 0 m\'den 10 m/s ile, mavi 60 m\'den 5 m/s ile birbirine doğru gidiyor. Kaçıncı saniyede karşılaşırlar?', o: ['6', '4', '3', '12'], d: 1 } },
+    { do: S => { S.kos = 1; }, sub: 'Arabalar ilerliyor; grafik çiziliyor…', until: S => !S.kos },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Karşılaşma = grafiklerin kesişmesi', f: ['k4P', 'k4K'], m: [`Aradaki uzaklık her saniye 10 + 5 = 15 m kapanır: ${FM(`t = ${F('60', '15')}`)} = <em>4 s</em> (40 m\'de).`, 'Grafikte iki doğrunun kesiştiği an karşılaşma anıdır.'] } },
+    { k: { tur: 'kavram', b: 'Düzgün doğrusal hareket', m: [`${FM('x = v · t')} · konum–zaman grafiği doğrudur, <em>eğimi hızdır</em>.`, 'Eğimi negatif doğru: araç (−) yönde gidiyor (mavi araba). Yatay doğru: duruyor.'] } },
+    { do: S => yolK(S, 0, 0, 4, 0, 10, 0, 5), sub: 'Okul çıkışı: kırmızı araba durgun halden 4 m/s² ivmeyle kalkıyor, mavi araba yanından 10 m/s ile geçiyor.', go: '▶︎ Başlat' },
+    { do: S => { S.kos = 1; }, sub: 'Kırmızı araba hızlanıyor…', until: S => !S.kos },
+    { k: { tur: 'kavram', b: 'Düzgün hızlanan hareket', f: ['k4P'], m: [`${FM('v = v<sub>0</sub> + a t')} · ${FM(`x = v<sub>0</sub> t + ${F('1', '2')} a t<sup>2</sup>`)}`, 'Konum–zaman grafiği eğri olur; eğimi (hız) giderek artar. Kırmızı araba 5 s\'de mavi arabaya yetişir: 2t² = 10t → t = 5 s.'] } },
+    { k: { tur: 'dikkat', b: 'UYARI · Grafik okuma', m: ['x–t grafiğinde eğim hız, v–t grafiğinde eğim ivme, v–t grafiğinin altındaki alan yer değiştirmedir.', 'Hız ile ivme aynı yönlüyse hızlanır, zıt yönlüyse yavaşlar.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [`${FM('x = v t')} · karşılaşma ${FM(`t = ${F('d', 'v<sub>1</sub> + v<sub>2</sub>')}`)} · yetişme ${FM(`t = ${F('d', 'v<sub>1</sub> − v<sub>2</sub>')}`)}`] } },
+  ] });
+  const h2 = ders(sHk, { yk: 'TYT3-d5', no: 5, icon: '📖', name: 'Hikâye: Taşınma günü — koliyi itmek', task: 'Kuvvet, net kuvvet, eylemsizlik, F = ma, etki–tepki, statik ve kinetik sürtünme.', notlar: ['Statik sürtünme en çok μs·N; kayınca kinetik sürtünme μk·N (genelde daha küçük).', 'Sürtünme kuvveti harekete (ya da hareket eğilimine) zıttır.'], steps: [
+    { do: S => kutuK(S, 0, 5, 0.4, 0.3), sub: 'Ece\'nin ailesi taşınıyor. 5 kg\'lık bir koli halının (koyu bölge) üstüne itilecek.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'kavram', b: 'Kuvvetler', f: ['k4g', 'k4N'], m: ['Koliye ağırlık (mg) düşey aşağı, zeminin tepki kuvveti (N) yüzeyden koliye, yukarı etki eder. Dengede eşittirler ama etki–tepki çifti değildir.'] } },
+    { do: S => kutuK(S, 20, 5, 0.4, 0.3), sub: 'Ece sürtünmesiz parkede koliyi 20 N ile itiyor…', go: '▶︎ İt' },
+    { do: S => { S.kos = 1; }, sub: 'Koli hızlanıyor…', until: S => S.xk > 2.3 },
+    { k: { tur: 'kavram', b: 'F = m · a', f: ['k4K'], m: [`${FM('F<sub>net</sub> = m · a')} → a = 20 / 5 = 4 m/s² (parkede).`, 'Halıya girince sürtünme başlar: f<sub>k</sub> = μ<sub>k</sub> · N = 0,3 · 50 = 15 N → a = (20 − 15) / 5 = 1 m/s².'] } },
+    { do: S => { S.kos = 1; }, sub: 'Koli halıda…', until: S => !S.kos },
+    { do: S => kutuK(S, 15, 5, 0.4, 0.3), sub: 'Şimdi koli halının ortasında duruyor; Ece 15 N ile itiyor.', wait: 0.1 },
+    { do: S => { S.xk = 3.5; S.vk = 0; }, p: { t: 'Halıda duran koliye (μ<sub>s</sub> = 0,4) 15 N kuvvet uygulanırsa ne olur?', o: ['Kayar, a = 3 m/s²', 'Kımıldamaz; sürtünme 15 N', 'Kımıldamaz; sürtünme 20 N', 'Kayar, a = 0'], d: 1 } },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Statik sürtünme', f: ['k4f'], m: ['f<sub>s,max</sub> = 0,4 · 50 = 20 N > 15 N → koli kımıldamaz; sürtünme kuvvet kadar, <em>15 N</em>.', 'Statik sürtünme sabit değildir: 0\'dan f<sub>s,max</sub>\'a kadar uygulanan kuvvete eşit olur.'] } },
+    { k: { tur: 'kavram', b: 'Newton\'un üç yasası', m: ['1. Eylemsizlik: net kuvvet sıfırsa durur ya da sabit hızla gider.', '2. F<sub>net</sub> = m a · 3. Etki–tepki: Ece koliyi iterken koli de Ece\'yi eşit ve zıt kuvvetle iter (farklı cisimlere etki eder).'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [`${FM('F<sub>net</sub> = m a')} · ${FM('f<sub>k</sub> = μ<sub>k</sub> N')} · f<sub>s</sub> ≤ μ<sub>s</sub> N · etki–tepki farklı cisimlerde.`] } },
+  ] });
+  const h3 = ders(sHk, { yk: 'TYT4-d3', no: 3, icon: '📖', name: 'Hikâye: Lunaparkta enerji treni', task: 'Kinetik ve potansiyel enerji, mekanik enerjinin korunumu, sürtünmede ısıya dönüşüm, iş ve güç.', notlar: ['Ek = ½mv² · Ep = mgh · sürtünmesiz yolda Ek + Ep sabit.', 'Sürtünme kuvvetinin işi ısıya dönüşür: Q = f · s.'], steps: [
+    { do: S => rayK(S, 0), sub: 'Ece lunaparkta. 2 kg\'lık oyuncak vagon 26 m yükseklikten durgun bırakılacak (ölçekli model).', go: '▶︎ Vagonu bırak' },
+    { do: S => { S.kos = 1; }, sub: 'Vagon iniyor; enerji çubukları değişiyor…', until: S => S.xr > 1.9 || !S.kos },
+    { k: { tur: 'kavram', b: 'Enerji dönüşümü', f: ['k4b0', 'k4b1'], m: [`${FM('E<sub>p</sub> = m g h')} yükseklikten, ${FM(`E<sub>k</sub> = ${F('1', '2')} m v<sup>2</sup>`)} hızdan gelir.`, 'İnerken E<sub>p</sub> azalır, E<sub>k</sub> artar; sürtünme yoksa toplamları sabittir.'] } },
+    { k: { tur: 'ornek', b: 'Küçük örnek', m: ['En alçak noktada (h ≈ 0) bütün enerji kinetiktir: ½ · 2 · v² = 2 · 10 · 26 → v ≈ 23 m/s.', 'Hız kütleye bağlı değil: ağır vagon da aynı hızla iner.'] } },
+    { do: S => rayK(S, 1), sub: 'Şimdi rayın sonuna fren bölgesi (koyu) açıldı.', go: '▶︎ Tekrar bırak' },
+    { do: S => { S.kos = 1; }, sub: 'Vagon fren bölgesinde yavaşlıyor…', until: S => !S.kos },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Enerji kaybolmaz, ısıya dönüşür', f: ['k4b2', 'k4K'], m: ['Fren bölgesinde sürtünme kuvveti iş yaptı: kinetik enerji <em>ısıya</em> dönüştü. Toplam enerji korundu.', `${FM('W = F · x')} · ${FM(`P = ${F('W', 't')}`)} (güç: birim zamanda yapılan iş, watt).`] } },
+    { k: { tur: 'ozet', b: 'Özet', m: ['E<sub>k</sub> + E<sub>p</sub> + ısı = sabit · iş = kuvvet × yol · güç = iş / zaman.'] } },
+  ] });
+
+  const g1 = gorev(sHk, { yk: 'TYT3-g5', no: 5, icon: '🛣️', name: 'Soru sistemi: doğrusal hareket ve grafikler', task: 'Konum–zaman, hız–zaman grafikleri, karşılaşma, yetişme, sürat–hız, ortalama hız.', steps: [
+    { do: S => yolK(S, 0, 10, 0, 60, -5, 0, 4), sub: 'İki araba.', go: '▶︎ Başlat' },
+    { do: S => { S.kos = 1; }, q: { t: 'K aracı x = 0\'dan +10 m/s, L aracı x = 60 m\'den −5 m/s ile sabit hızla hareket ediyor. Karşılaştıkları konum kaç m\'dir?', o: ['40', '30', '20', '60'], f: ['k4P'],
+      s: ['t = 60 / (10 + 5) = 4 s', 'x = 10 · 4 = <em>40 m</em> ✓'], n: ['Konum–zaman grafiklerinin kesiştiği nokta.'] } },
+    { do: S => yolK(S, 0, 0, 4, 0, 10, 0, 5), q: { t: 'Durgun K aracı 4 m/s² ivmeyle kalkarken yanından L aracı 10 m/s sabit hızla geçiyor. K, L\'ye kaçıncı saniyede yetişir?', o: ['5', '2,5', '10', '4'],
+      s: ['2t² = 10t → <em>t = 5 s</em> ✓'], n: ['Yetiştiği anda K\'nin hızı 20 m/s, L\'ninkinin 2 katıdır.'] } },
+    { q: { t: 'Konum–zaman grafiği yatay doğru olan bir araç için hangisi doğrudur?', o: ['Durmaktadır', 'Sabit hızla gitmektedir', 'Düzgün hızlanmaktadır', 'Geri dönmektedir'],
+      s: ['Eğim = hız = 0 → <em>duruyor</em> ✓'], n: ['Hız–zaman grafiğinde yatay doğru ise sabit hız demektir. Eksenlere dikkat!'] } },
+    { q: { t: 'Bir koşucu doğuya 40 m, sonra batıya 10 m koşmayı 10 s\'de tamamlıyor. Ortalama sürati ve ortalama hızının büyüklüğü kaç m/s\'dir?', o: ['5 ve 3', '3 ve 5', '5 ve 5', '4 ve 3'],
+      s: ['Yol 50 m → sürat 5 m/s', 'Yer değiştirme 30 m (doğu) → hız <em>3 m/s</em> ✓'], n: ['Sürat ≥ hızın büyüklüğü.'] } },
+    { q: { t: 'Hız–zaman grafiği (0, 0) noktasından (4 s, 20 m/s) noktasına giden doğru olan aracın 0–4 s aralığındaki yer değiştirmesi kaç m\'dir?', o: ['40', '80', '20', '5'],
+      s: ['v–t grafiğinin altındaki alan: ½ · 4 · 20 = <em>40 m</em> ✓', 'İvme = eğim = 5 m/s².'], n: ['v–t alan = yer değiştirme; v–t eğim = ivme.'] } },
+    { q: { t: 'Paralel raylarda aynı yöne giden 200 m uzunluğundaki X treni 25 m/s, 100 m uzunluğundaki Y treni 15 m/s hızla gidiyor. X, Y\'yi arkadan yakaladığı andan tamamen geçene kadar kaç s geçer?', o: ['30', '20', '10', '7,5'],
+      s: ['Göreli hız 25 − 15 = 10 m/s', 'Alınacak göreli yol 200 + 100 = 300 m → <em>30 s</em> ✓'], n: ['Geçme problemlerinde iki trenin boyu toplanır.'] } },
+  ] });
+  const g2 = gorev(sHk, { yk: 'TYT3-g6', no: 6, icon: '📦', name: 'Soru sistemi: Newton yasaları ve sürtünme', task: 'Net kuvvet, F–a, statik–kinetik sürtünme, farklı yüzeyler, makaralı sistemler, etki–tepki.', data: [['g', '10 m/s²']], steps: [
+    { do: S => kutuK(S, 20, 5, 0.4, 0.3), sub: '5 kg\'lık koli.', go: '▶︎ Başlat' },
+    { do: S => { S.kos = 1; }, q: { t: 'Sürtünmesiz yatay düzlemde 5 kg\'lık koliye 20 N yatay kuvvet uygulanıyor. İvmesi kaç m/s²\'dir?', o: ['4', '100', '0,25', '20'], f: ['k4F', 'k4K'],
+      s: ['a = F / m = 20 / 5 = <em>4 m/s²</em> ✓'], n: ['Ağırlık ve tepki dengededir; hareketi yatay net kuvvet belirler.'] } },
+    { do: S => { kutuK(S, 15, 5, 0.4, 0.3); S.xk = 3.5; }, q: { t: 'μ<sub>s</sub> = 0,4 ve μ<sub>k</sub> = 0,3 olan zeminde duran 5 kg\'lık koliye 15 N yatay kuvvet uygulanıyor. Sürtünme kuvveti kaç N\'dur?', o: ['15', '20', '0', '5'], f: ['k4f'],
+      s: ['f<sub>s,max</sub> = 0,4 · 50 = 20 N > 15 N → kaymaz', 'Statik sürtünme = <em>15 N</em> ✓'], n: ['"μN" her zaman sürtünme değildir; cisim kaymıyorsa sürtünme uygulanan kuvvete eşittir.'] } },
+    { do: S => { kutuK(S, 30, 5, 0.4, 0.3); S.xk = 3.5; S.kos = 1; }, q: { t: 'Aynı koliye 30 N kuvvet uygulanırsa ivmesi kaç m/s² olur?', o: ['3', '6', '2', '4'], f: ['k4f', 'k4K'],
+      s: ['30 > 20 → kayar; f<sub>k</sub> = 0,3 · 50 = 15 N', 'a = (30 − 15) / 5 = <em>3 m/s²</em> ✓'], n: ['Kayan cisme kinetik sürtünme etki eder.'] } },
+    { q: { t: 'Aynı koli sırasıyla tahta, beton ve buz zeminde aynı hızla kayarken sürtünme kuvvetleri f<sub>T</sub>, f<sub>B</sub>, f<sub>Z</sub>. Sürtünme katsayıları beton > tahta > buz ise ilişki nedir?', o: ['f<sub>B</sub> > f<sub>T</sub> > f<sub>Z</sub>', 'f<sub>T</sub> = f<sub>B</sub> = f<sub>Z</sub>', 'f<sub>Z</sub> > f<sub>T</sub> > f<sub>B</sub>', 'f<sub>T</sub> > f<sub>B</sub> > f<sub>Z</sub>'],
+      s: ['f<sub>k</sub> = μ<sub>k</sub> N; N aynı (mg).', 'μ büyükse f büyük → <em>f<sub>B</sub> > f<sub>T</sub> > f<sub>Z</sub></em> ✓'], n: ['Kinetik sürtünme hıza ve yüzey alanına bağlı değildir.'] } },
+    { q: { t: 'Kuvvet–ivme grafiğinde K\'nin doğrusu 4 N\'da 2 m/s², L\'ninki 4 N\'da 1 m/s² gösteriyor. m<sub>K</sub>/m<sub>L</sub> oranı kaçtır?', o: [F('1', '2'), '2', '1', '4'],
+      s: ['m = F / a: m<sub>K</sub> = 2 kg, m<sub>L</sub> = 4 kg', `${F('m<sub>K</sub>', 'm<sub>L</sub>')} = <em>${F('1', '2')}</em> ✓`], n: ['F–a grafiğinin eğimi kütledir; a–F grafiğinde eğim 1/m.'] } },
+    { q: { t: 'Sürtünmesiz masadaki 3 kg\'lık cisim, makaradan geçen iple 2 kg\'lık asılı cisme bağlı. Sistemin ivmesi kaç m/s²\'dir?', o: ['4', '2', '10', '6,7'],
+      s: ['Sistemi hareket ettiren asılı cismin ağırlığı: 20 N', 'a = 20 / (3 + 2) = <em>4 m/s²</em> ✓', 'İp gerilmesi T = 3 · 4 = 12 N (asılı cismin ağırlığından küçük).'], n: ['İp gerilmesi asılı cismin ağırlığına eşit değildir; sistem ivmeliyse daha küçüktür.'] } },
+    { q: { t: 'Masa üzerinde duran kitap için;<br>I. Kitabın ağırlığı ile masanın kitaba tepkisi etki–tepki çiftidir.<br>II. Kitabın masaya uyguladığı kuvvet ile masanın kitaba uyguladığı kuvvet etki–tepki çiftidir.<br>III. Kitaba etki eden net kuvvet sıfırdır.<br>yargılarından hangileri doğrudur?', o: ['II ve III', 'Yalnız I', 'I ve III', 'I, II ve III'],
+      s: ['I yanlış: ikisi de kitaba etki eder (denge çifti).', 'II doğru (farklı cisimler) · III doğru → <em>II ve III</em> ✓'], n: ['Ağırlığın tepkisi kitabın Dünya\'yı çekmesidir.'] } },
+  ] });
+  const g3 = gorev(sHk, { yk: 'TYT4-g3', no: 3, icon: '🎢', name: 'Soru sistemi: enerji, iş, güç', task: 'Ek–Ep oranları, enerji korunumu, sürtünmeyle ısı, enerji–konum grafiği, iş ve güç, verim.', data: [['g', '10 m/s²']], steps: [
+    { do: S => rayK(S, 0), sub: 'Raylı yol.', go: '▶︎ Başlat' },
+    { do: S => { S.kos = 1; }, q: { t: 'Sürtünmesiz rayda 2 kg\'lık vagon 20 m yükseklikten durgun bırakılıyor. 5 m yükseklikteki noktada kinetik enerjisi kaç J\'dür?', o: ['300', '100', '400', '200'], f: ['k4b0', 'k4b1'],
+      s: ['E<sub>k</sub> = mg(h<sub>0</sub> − h) = 2 · 10 · 15 = <em>300 J</em> ✓'], n: ['Sürtünmesiz yolda mekanik enerji korunur.'] } },
+    { q: { t: 'Aynı vagonun 5 m yükseklikteki noktada kinetik enerjisinin potansiyel enerjisine oranı kaçtır?', o: ['3', '1/3', '4', '1'],
+      s: ['E<sub>k</sub> = 300 J, E<sub>p</sub> = 2 · 10 · 5 = 100 J', 'Oran = <em>3</em> ✓'], n: ['Oran (h<sub>0</sub> − h)/h ile de bulunur: 15/5.'] } },
+    { do: S => rayK(S, 1), q: { t: 'Vagon sonradan fren bölgesinde duruyor. Bölgede sürtünme kuvveti 50 N ise vagon (yerde, 20 m yükseklikten bırakılmış) kaç m sonra durur?', o: ['8', '4', '20', '40'], f: ['k4b2'],
+      s: ['Bütün enerji ısıya: mgh = f · s → 400 = 50 · s', '<em>s = 8 m</em> ✓'], n: ['Sürtünme kuvvetinin işi negatiftir; mekanik enerji ısıya dönüşür.'] } },
+    { q: { t: 'Yerden 2 m yükseklikten bırakılan top yere çarpıp en çok 1,5 m yükseliyor. Çarpmada mekanik enerjisinin yüzde kaçını kaybetmiştir? (Hava direnci yok)', o: ['25', '75', '50', '15'],
+      s: ['Kayıp = mg(2 − 1,5) / mg · 2 = 0,5 / 2', '<em>%25</em> ✓'], n: ['Kaybolan enerji ısıya ve sese dönüşür.'] } },
+    { q: { t: '600 N ağırlığındaki Ahmet 3 m yüksekliğindeki merdiveni 4 s\'de, Mehmet (600 N) aynı merdiveni 6 s\'de çıkıyor. Hangisi doğrudur?', o: ['İşleri eşit, Ahmet\'in gücü büyük', 'Ahmet daha çok iş yapar', 'Güçleri eşit', 'Mehmet\'in gücü büyük'],
+      s: ['W = mgh = 1800 J ikisinde de.', 'P = W/t → Ahmet 450 W, Mehmet 300 W ✓'], n: ['İş süreye bağlı değildir; güç süreye bağlıdır.'] } },
+    { q: { t: 'Gücü 2 kW olan bir motor 200 kg\'lık yükü 10 s\'de 8 m yükseltiyor. Motorun verimi yüzde kaçtır?', o: ['80', '100', '40', '60'],
+      s: ['Yararlı iş = 200 · 10 · 8 = 16 000 J', 'Harcanan = 2000 · 10 = 20 000 J → verim <em>%80</em> ✓'], n: ['Verim her zaman %100\'den küçüktür.'] } },
+  ] });
+
+  // ======================= TUZAK SORULAR (her konunun en sonunda) =======================
+  const t1 = gorev(sHk, { yk: 'TYT3-g7', no: 7, tuzak: true, icon: '🪤', name: 'Tuzak sorular · hareket ve kuvvet', task: 'Sınavda en çok yapılan hareket ve Newton yanlışları.', data: [['g', '10 m/s²']], steps: [
+    { do: S => kutuK(S, 0, 5, 0.4, 0.3), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Sabit hızla düz yolda giden bir arabaya etki eden net kuvvet için hangisi doğrudur?', o: ['Sıfırdır', 'Hareket yönündedir', 'Harekete zıttır', 'Hızla orantılıdır'],
+      s: ['Sabit hız → ivme 0 → F<sub>net</sub> = <em>0</em> ✓ (motorun itişi ile sürtünme–hava direnci dengede)'], n: ['TUZAK: "Hareket varsa hareket yönünde net kuvvet vardır" düşüncesi.'] } },
+    { q: { t: 'Yukarı atılan top en tepe noktasındayken (hava direnci yok) için hangisi doğrudur?', o: ['Hızı sıfır, ivmesi g (aşağı)', 'Hızı ve ivmesi sıfır', 'Hızı sıfır, net kuvvet sıfır', 'İvmesi yukarı yönlü'],
+      s: ['Tepede an hız sıfır; ağırlık hâlâ etki eder → a = g, <em>aşağı</em> ✓'], n: ['TUZAK: "Durduysa ivmesi de sıfırdır" sanmak.'] } },
+    { do: S => { kutuK(S, 10, 5, 0.4, 0.3); S.xk = 3.5; }, q: { t: 'μ<sub>s</sub> = 0,4 olan zeminde duran 5 kg\'lık kutuya 10 N yatay kuvvet uygulanıyor. Sürtünme kuvveti kaç N\'dur?', o: ['10', '20', '15', '0'], f: ['k4f'],
+      s: ['20 N\'a kadar kaymaz; sürtünme uygulanan kuvvete eşit: <em>10 N</em> ✓'], n: ['TUZAK: μN = 20 N yazmak.'] } },
+    { q: { t: 'Atın arabayı çektiği kuvvet ile arabanın atı çektiği kuvvet eşit ve zıt olduğuna göre sistem nasıl hareket eder?', o: ['Atın ayaklarına yerden gelen sürtünme kuvveti sistemi hızlandırır', 'Kuvvetler birbirini götürdüğü için hareket edemez', 'At daha büyük kuvvet uyguladığı için', 'Araba atı ittiği için'],
+      s: ['Etki–tepki kuvvetleri farklı cisimlere etki eder; birbirini götürmez.', 'Sisteme dışarıdan etki eden net kuvvet yerin sürtünmesidir ✓'], n: ['TUZAK: etki–tepkiyi aynı cisme uygulamak.'] } },
+    { q: { t: 'Bir araç 1 saat 60 km/h, sonraki 1 saat 100 km/h hızla aynı yönde gidiyor. Ortalama hızı kaç km/h\'tir?', o: ['80', '75', '160', '70'],
+      s: ['Yol 160 km, süre 2 h → <em>80 km/h</em> ✓'], n: ['Burada süreler eşit olduğu için ortalama doğru çıkar; yollar eşit olsaydı (60 ve 100 km/h ile eşit yollar) ortalama 75 km/h olurdu.'] } },
+    { q: { t: 'Asansörde duran 50 kg\'lık kişi için asansör sabit hızla yukarı çıkarken tabanın kişiye tepkisi kaç N\'dur?', o: ['500', '550', '450', '0'],
+      s: ['Sabit hız → ivme 0 → N = mg = <em>500 N</em> ✓'], n: ['TUZAK: "Yukarı çıkıyorsa ağır basar" demek. Yalnız ivmelenirken değişir.'] } },
+  ] });
+  const t2 = gorev(sHk, { yk: 'TYT4-g4', no: 4, tuzak: true, icon: '🪤', name: 'Tuzak sorular · enerji', task: 'İş, enerji ve güç konusunda en sık yapılan yanlışlar.', data: [['g', '10 m/s²']], steps: [
+    { do: S => rayK(S, 0), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Elinde 10 kg\'lık çantayla 20 m yatay yolda sabit hızla yürüyen kişinin çantayı taşıyan kuvvetinin yaptığı iş kaç J\'dür?', o: ['0', '2000', '200', '100'],
+      s: ['Kuvvet yukarı, yer değiştirme yatay (90°) → <em>iş 0</em> ✓'], n: ['TUZAK: yorulmayı iş sanmak.'] } },
+    { q: { t: 'Aynı yükseklikten sürtünmesiz farklı eğimli iki rampadan bırakılan özdeş cisimlerin tabandaki hızları için hangisi doğrudur?', o: ['Eşittir', 'Dik rampada büyüktür', 'Uzun rampada büyüktür', 'Kütleye bağlıdır'],
+      s: ['mgh = ½mv² → v = √(2gh), yalnız h\'ye bağlı → <em>eşit</em> ✓ (süreler farklı)'], n: ['TUZAK: dik rampada daha hızlı varır sanmak; daha kısa sürede varır ama aynı hızla.'] } },
+    { q: { t: 'Hızı 2 katına çıkan cismin kinetik enerjisi kaç katına çıkar?', o: ['4', '2', '8', '√2'],
+      s: ['E<sub>k</sub> ∝ v² → <em>4 katı</em> ✓'], n: ['TUZAK: doğru orantı sanmak.'] } },
+    { q: { t: 'Sürtünmeli yolda yavaşlayıp duran bir cismin enerjisi için hangisi doğrudur?', o: ['Kinetik enerji ısıya dönüşür; toplam enerji korunur', 'Enerji yok olur', 'Kinetik enerji potansiyele dönüşür', 'Mekanik enerji korunur'],
+      s: ['Sürtünmenin işi kinetik enerjiyi ısıya çevirir. Enerji yok olmaz ✓'], n: ['TUZAK: "Enerji kayboldu" demek; mekanik enerji azalır, toplam enerji korunur.'] } },
+    { q: { t: 'Güç birimi olan watt hangisine eşittir?', o: ['J/s', 'J · s', 'N · m', 'kWh'],
+      s: ['P = W / t → <em>J/s</em> ✓', 'kWh ve N·m (J) enerji birimidir.'], n: ['TUZAK: kWh\'yi güç birimi sanmak.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Hareket ve Kuvvet', { dersler: [h1, h2], gorevler: [g1, g2, t1] });
+  FZ.konuEk('TYT', 'Enerji', { dersler: [h3], gorevler: [g3, t2] });
+})();
+</script>
+<script>// Kitap düzeninde HİKÂYE + SORU SİSTEMİ + TUZAK · TYT Elektrostatik (durgun elektrik, elektriksel kuvvet, elektrik alan) ·
+// Elektrik ve Manyetizma (akım–direnç, Ohm, üreteçler, güç, lambalar, mıknatıslar)
+(function () {
+  const { V3, sahne, gorev, ders, ok, etiket, kart, kutu, top, silindir, THREE } = FZ;
+  const fs = x => (+(+x).toFixed(2)).toString().replace('.', ',');
+
+  // ----------------- ELEKTROSTATİK: mevcut iki iletken küre sahnesi -----------------
+  const sEs = FZ.taban('TYT', 'Elektrostatik');
+  const dk = (S, a, b, ra = 0.6, rb = 0.6, d = 4) => Object.assign(S, { qa: a, qb: b, ra, rb, d, dok: 0, faz: 0, paylasti: 0 });
+  const he = ders(sEs, { yk: 'TYT6-d7', no: 7, icon: '📖', name: 'Hikâye: Kış sabahı — kapı kolu çarpınca', task: 'Yük, iletken–yalıtkan, dokunma ile yük paylaşımı, Coulomb kuvveti, uzaklıkla değişim, elektrik alan.', notlar: ['Yük korunur; dokunan iletkenler yükü yarıçapla orantılı paylaşır.', 'F = k·q₁·q₂/d² · E = k·q/d² · alan çizgileri (+)\'dan çıkar.'], steps: [
+    { do: S => dk(S, 6, -2), sub: 'Kış sabahı Ece yün kazağını çıkarıp kapı koluna dokununca çarpıldı. Okulda öğretmeni iki metal küreyle aynı olayı gösterdi: K küresi +6q, L küresi −2q.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'kavram', b: 'Neden çarpıldı?', m: ['Kazağa sürtünen Ece\'nin vücudu yüklendi. Metal kola dokununca yükler iletken üzerinden hızla aktı: küçük bir kıvılcım.', 'İletkenlerde (metal, insan vücudu) yükler hareket edebilir; yalıtkanlarda (plastik, cam) konduğu yerde kalır.'] } },
+    { k: { tur: 'kavram', b: 'Coulomb kuvveti', f: ['e6F', 'e6F2'], m: [`${FM(`F = k ${F('q<sub>1</sub> · q<sub>2</sub>', 'd<sup>2</sup>')}`)} · zıt yükler çeker, aynı yükler iter.`, 'İki küreye etki eden kuvvetler eşit büyüklükte ve zıt yönlüdür (yükleri farklı olsa bile).'] } },
+    { p: { t: 'Küreler birbirine dokundurulup eski yerlerine konursa aralarındaki kuvvet nasıl olur?', o: ['Çekme olarak kalır', 'İtme olur', 'Sıfır olur', 'Değişmez'], d: 1 } },
+    { sub: 'Küreleri dokunduralım.', go: '▶︎ Dokundur' },
+    { do: S => { S.dok = 1; }, sub: 'Yükler paylaşılıyor…', until: S => S.faz >= 2 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Toplam yük korunur', f: ['e6a', 'e6b'], m: ['Toplam: +6q − 2q = +4q → özdeş kürelerde ikiye bölünür: her biri +2q.', 'Artık ikisi de (+): kuvvet <em>itme</em> oldu. Büyüklük: k · 2q · 2q / d² = 4kq²/d² (önce 12kq²/d²) → F\'nin 1/3\'ü.'] } },
+    { do: S => dk(S, 9, 0, 0.4, 0.8), sub: 'Öğretmen şimdi küçük (r) +9q yüklü küreyi büyük (2r) nötr küreye dokunduruyor.', go: '▶︎ Dokundur' },
+    { do: S => { S.dok = 1; }, sub: 'Paylaşım…', until: S => S.faz >= 2 },
+    { k: { tur: 'gozlem', sonuc: true, b: 'Yarıçapla orantılı paylaşım', f: ['e6a', 'e6b'], m: [`${FM(`${F('q<sub>1</sub>', 'q<sub>2</sub>')} = ${F('r<sub>1</sub>', 'r<sub>2</sub>')}`)} → 9q, 1 : 2 bölünür: <em>+3q</em> ve <em>+6q</em>.`, 'Neden? Dokunma sonunda iki kürenin potansiyelleri eşitlenir; V = kq/r olduğu için q ∝ r.'] } },
+    { k: { tur: 'kavram', b: 'Elektrik alan', m: [`Yükün çevresindeki etki bölgesi: ${FM(`E = k ${F('q', 'd<sup>2</sup>')}`)} · ${FM('F = q · E')}`, 'Alan çizgileri (+) yükten çıkar, (−) yüke girer; birbirini kesmez; sık olduğu yerde alan büyüktür.'] } },
+    { k: { tur: 'dikkat', b: 'UYARI · İçten ve dıştan dokunma', m: ['İçi boş iletken kürenin <em>içine</em> dokunan iletken bütün yükünü verir (yük dış yüzeyde toplanır).', 'Topraklanan iletken yükünü toprağa verir; yakında yüklü cisim varsa zıt işaretle yüklü kalabilir.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [`Yük korunur · paylaşım ∝ r · ${FM(`F = k ${F('q<sub>1</sub>q<sub>2</sub>', 'd<sup>2</sup>')}`)} · ${FM(`E = k ${F('q', 'd<sup>2</sup>')}`)}`] } },
+  ] });
+  const ge = gorev(sEs, { yk: 'TYT6-g4', no: 4, icon: '⚡', name: 'Soru sistemi: durgun elektrik, kuvvet, alan', task: 'Sırayla dokunma, farklı yarıçaplar, kuvvet oranı, uzaklık değişimi, elektroskop, alan.', steps: [
+    { do: S => dk(S, 12, 0), sub: 'İki iletken küre.', go: '▶︎ Başlat' },
+    { q: { t: 'Özdeş iletken K, L, M, N kürelerinin yükleri sırasıyla +16q, 0, 0, 0. K önce L\'ye, sonra M\'ye, sonra N\'ye dokundurulup ayrılıyor. Son durumda K\'nin yükü kaç q olur?', o: ['+2q', '+4q', '+8q', '+16q/3'],
+      s: ['K–L: 8q, 8q · K–M: 4q, 4q · K–N: 2q, 2q', 'K = <em>+2q</em> ✓'], n: ['Özdeş kürede her dokunmada K\'nin yükü yarıya iner.'] } },
+    { do: S => { dk(S, 9, -3, 0.4, 0.8); S.dok = 1; }, q: { t: 'Yarıçapı r olan +9q yüklü küre, yarıçapı 2r olan −3q yüklü küreye dokundurulup ayrılıyor. Küçük kürenin son yükü kaç q\'dur?', o: ['+2q', '+3q', '+4q', '+6q'], f: ['e6a', 'e6b'],
+      s: ['Toplam +6q; 1 : 2 paylaşım', 'Küçük: <em>+2q</em>, büyük: +4q ✓'], n: ['Toplamı işaretiyle al, sonra yarıçap oranında böl.'] } },
+    { do: S => dk(S, 6, -2), q: { t: 'Özdeş +6q ve −2q yüklü küreler d uzaklıkta F kuvvetiyle çekiliyor. Dokundurulup aynı yerlere konunca aralarındaki kuvvet kaç F olur?', o: [`${F('1', '3')} (itme)`, `${F('1', '3')} (çekme)`, 'F (itme)', `${F('4', '3')} (itme)`], f: ['e6F'],
+      s: ['Önce: k · 6q · 2q / d² = 12kq²/d² = F', 'Sonra: +2q, +2q → 4kq²/d² = <em>F/3, itme</em> ✓'], n: ['Yük işaretleri aynı olunca kuvvet itmeye döner.'] } },
+    { q: { t: 'İki noktasal yük arasındaki uzaklık 3 katına çıkarılır ve yüklerden biri 2 katına çıkarılırsa kuvvet kaç F olur?', o: [F('2', '9'), F('2', '3'), '6', F('1', '9')],
+      s: [`F' = F · ${F('2', '3<sup>2</sup>')} = <em>${F('2', '9')} F</em> ✓`], n: ['F ∝ q₁q₂/d².'] } },
+    { q: { t: 'Eşkenar üçgenin köşelerinde +q, +q ve −q yükleri var. −q yüküne etki eden bileşke kuvvetin yönü hakkında ne söylenebilir?', o: ['Diğer iki yükün orta noktasına doğrudur', 'Diğer iki yükün orta noktasından uzağa doğrudur', 'Sıfırdır', 'Yüklerden birine doğrudur'],
+      s: ['Her iki +q yükü −q\'yu eşit kuvvetle kendine çeker.', 'Bileşke, iki kuvvetin açıortayında: iki +q\'nun <em>orta noktasına doğru</em> ✓'], n: ['Eşit büyüklükteki iki vektörün bileşkesi açıortay üzerindedir.'] } },
+    { q: { t: '(+) yüklü elektroskoba (−) yüklü çubuk dokundurulup uzaklaştırılıyor. Çubuğun yükü elektroskobunkinden büyükse yapraklar son durumda nasıldır?', o: ['(−) yükle açıktır', '(+) yükle daha çok açıktır', 'Kapalıdır', 'Önce kapanır sonra (+) ile açılır'],
+      s: ['Dokunmada toplam yük paylaşılır; çubuğun (−) yükü büyük → toplam (−).', 'Yapraklar <em>(−) yükle açık</em> ✓ (geçerken bir an kapanır)'], n: ['Dokunma ile elektriklenmede cisimler aynı işaretle yüklenir.'] } },
+    { q: { t: '+q yükünden d uzaklıkta elektrik alan E\'dir. 2d uzaklıkta +4q yükünün oluşturduğu alan kaç E olur?', o: ['1', '2', '4', F('1', '2')],
+      s: [`E' = k · 4q / (2d)² = kq/d² = <em>E</em> ✓`], n: ['E ∝ q/d²; yük 4 katı, uzaklık 2 katı → değişmez.'] } },
+  ] });
+  const te = gorev(sEs, { yk: 'TYT6-g5', no: 5, tuzak: true, icon: '🪤', name: 'Tuzak sorular · elektrostatik', task: 'Elektrostatikte en sık yapılan yanlışlar.', steps: [
+    { do: S => dk(S, 4, 2), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: '+4q ve +2q yüklü iki küre arasındaki kuvvetler için hangisi doğrudur?', o: ['İki küreye etki eden kuvvetler eşittir', '+4q küresine daha büyük kuvvet etki eder', '+2q küresine daha büyük kuvvet etki eder', 'Kuvvetler yüklerle orantılı paylaşılır'], f: ['e6F', 'e6F2'],
+      s: ['Etki–tepki: kuvvetler <em>eşit ve zıt</em> ✓'], n: ['TUZAK: yükü büyük olanın daha çok itildiğini sanmak.'] } },
+    { q: { t: 'Nötr bir cisim yüklü bir çubuğa çekiliyorsa çubuğun yükü hakkında ne söylenebilir?', o: ['Çubuk (+) ya da (−) olabilir', 'Çubuk kesinlikle (+)\'dır', 'Çubuk kesinlikle (−)\'dir', 'Çubuk nötrdür'],
+      s: ['Nötr cisim kutuplanır ve her yüklü cisme çekilir ✓'], n: ['TUZAK: çekilme gördüğünde "zıt yüklü" demek. Kesin bilgi yalnız itmeden çıkar.'] } },
+    { q: { t: 'Cam çubuk ipeğe sürtülünce cam (+) yüklenir. Bunun nedeni hangisidir?', o: ['Camdan ipeğe elektron geçmesi', 'İpekten cama proton geçmesi', 'Camda proton oluşması', 'İpekten cama elektron geçmesi'],
+      s: ['Katılarda hareket eden <em>elektrondur</em>: cam elektron kaybeder ✓'], n: ['TUZAK: proton aktarımı sanmak.'] } },
+    { q: { t: 'Elektrik alan çizgileri için hangisi yanlıştır?', o: ['Birbirini keserler', '(+) yükten çıkarlar', 'Sık oldukları yerde alan büyüktür', '(−) yüke girerler'],
+      s: ['Alan çizgileri <em>kesişmez</em>; bir noktada alanın tek yönü vardır ✓'], n: ['"Yanlıştır" diye sorulan soruda doğru ifadeyi işaretleme tuzağına dikkat.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Elektrostatik', { dersler: [he], gorevler: [ge, te] });
+
+  // ----------------- ELEKTRİK DEVRESİ + MIKNATIS SAHNESİ -----------------
+  const direnc = (g) => { const a = new THREE.Group(); g.add(a); const b = silindir(a, 0.1, 0.1, 0.5, 0xe7d3a8, 0, 0, 0, { edge: false }); b.rotation.z = Math.PI / 2;
+    [0x92400e, 0x111827, 0xdc2626, 0xd4a72c].forEach((c, i) => { const r = silindir(a, 0.105, 0.105, 0.04, c, -0.15 + i * 0.1, 0, 0, { edge: false }); r.rotation.z = Math.PI / 2; }); return a; };
+  const olcer = (g, harf) => { const a = new THREE.Group(); g.add(a); const k = silindir(a, 0.28, 0.28, 0.15, 0x1f2937, 0, 0.075, 0); const y = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), new THREE.MeshBasicMaterial({ color: 0xfef9c3 })); y.rotation.x = -Math.PI / 2; y.position.y = 0.152; a.add(y);
+    FZ.levha(a, harf, 0.22, 0.22, '#fef9c3', '#111827', 0, 0.16, 0).rotation.x = -Math.PI / 2; const ib = kutu(a, 0.01, 0.005, 0.18, 0xdc2626, 0, 0.16, -0.05, { edge: false }); a.ibre = ib; return a; };
+  const anahtar = g => { const a = new THREE.Group(); g.add(a); kutu(a, 0.6, 0.06, 0.25, 0x374151, 0, 0.03, 0); const kol = new THREE.Group(); kol.position.set(-0.22, 0.1, 0); a.add(kol); kutu(kol, 0.44, 0.03, 0.04, 0x9ca3af, 0.22, 0, 0); a.kol = kol; return a; };
+  const miknatis = (g, L = 1.6) => { const a = new THREE.Group(); g.add(a); kutu(a, L / 2, 0.3, 0.3, 0xdc2626, L / 4, 0.15, 0); kutu(a, L / 2, 0.3, 0.3, 0x2563eb, -L / 4, 0.15, 0);
+    FZ.levha(a, 'N', 0.2, 0.2, '#dc2626', '#fff', L / 2 - 0.15, 0.31, 0).rotation.x = -Math.PI / 2; FZ.levha(a, 'S', 0.2, 0.2, '#2563eb', '#fff', -L / 2 + 0.15, 0.31, 0).rotation.x = -Math.PI / 2; return a; };
+  const pusula = g => { const a = new THREE.Group(); g.add(a); silindir(a, 0.22, 0.22, 0.06, 0xd1d5db, 0, 0.03, 0); const ig = new THREE.Group(); ig.position.y = 0.08; a.add(ig);
+    const n = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); n.rotation.z = -Math.PI / 2; n.position.x = 0.09; ig.add(n);
+    const s = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 8), new THREE.MeshLambertMaterial({ color: 0x2563eb })); s.rotation.z = Math.PI / 2; s.position.x = -0.09; ig.add(s); a.ig = ig; return a; };
+  // devre: pil(ler) solda, R1, R2 (lamba) sağda; seri / paralel; ampermetre ana kolda; voltmetre R1'e paralel
+  const sEl = sahne({ icon: '💡', cam: [[2.3, 7.5, 7.5], [2.3, 0, -0.2]], plate: [11, 5, 0, 0], data: [['Üreteç iç direnci', 'önemsiz']],
+    cam2: S => S.mod === 'mikn' ? [[2.3, 6, 6.5], [2.3, 0, 0]] : null,
+    S0: () => ({ mod: 'seri', V: 12, R1: 4, R2: 4, ac: 1, pil: 1, ters: 0, mk: 0, ayr: 0, it: 1 }),
+    kur(g) {
+      const G = { dev: new THREE.Group(), mikn: new THREE.Group() }; g.add(G.dev, G.mikn);
+      kutu(G.dev, 6, 0.05, 3.4, 0xe7d3a8, 0, 0.025, 0, { edge: false });
+      const piller = [0, 1].map(i => { const p = FZ.pil(G.dev, 0.9); p.rotation.x = -Math.PI / 2; return p; });
+      const L1 = FZ.ampul(G.dev, 0.9), L2 = FZ.ampul(G.dev, 0.9);
+      const A = olcer(G.dev, 'A'), Vm = olcer(G.dev, 'V'), an = anahtar(G.dev);
+      const tel = []; for (let i = 0; i < 12; i++) { const l = FZ.cizgi(G.dev, 0x1f2937); l.material.dashSize = 100; l.material.gapSize = 0; tel.push(l); }
+      const el = []; for (let i = 0; i < 18; i++) el.push(top(G.dev, 0.05, 0xef4444, 0, 0, 0, { edge: false, cast: false }));
+      const m1 = miknatis(G.mikn), m2 = miknatis(G.mikn); const pus = []; for (let i = 0; i < 10; i++) pus.push(pusula(G.mikn));
+      const cz = []; for (let i = 0; i < 12; i++) { const l = FZ.cizgi(G.mikn, 0x64748b); cz.push(l); }
+      ['k5a', 'k5b', 'k5c', 'k5d', 'k5e'].forEach(i => etiket(i, '', '#334155')); kart('k5K', '', '#F5C400');
+      return { G, piller, L1, L2, A, Vm, an, tel, el, m1, m2, pus, cz };
+    },
+    tick(S, dt, o) {
+      const mk = S.mod === 'mikn'; o.G.dev.visible = !mk; o.G.mikn.visible = mk;
+      if (!mk) {
+        const par = S.mod === 'paralel', V = S.V * (S.pil === 2 ? (S.ters ? 0 : 2) : 1), y = 0.06;
+        const Req = par ? S.R1 * S.R2 / (S.R1 + S.R2) : S.R1 + S.R2, I = S.ac ? V / Req : 0, I1 = par ? (S.ac ? V / S.R1 : 0) : I, I2 = par ? (S.ac ? V / S.R2 : 0) : I;
+        const P1 = I1 * I1 * S.R1, P2 = I2 * I2 * S.R2; S.I = I; S.V1 = I1 * S.R1;
+        o.piller.forEach((p, i) => { p.visible = i < S.pil; p.position.set(-2.4, 0.2, -0.5 + i * 1.0 * (S.pil === 2 ? 1 : 0)); p.rotation.z = (i === 1 && S.ters) ? Math.PI : 0; });
+        const Y1 = -1.2, Y2 = 1.2;
+        if (par) { o.L1.position.set(0.6, y, Y1 + 0.6); o.L2.position.set(1.8, y, Y1 + 0.6); } else { o.L1.position.set(0, y, Y1); o.L2.position.set(1.4, y, Y1); }
+        o.L1.parla(Math.min(1, P1 / 36)); o.L2.parla(Math.min(1, P2 / 36)); o.L2.visible = S.R2 < 1e6;
+        o.A.position.set(1.0, y, Y2); o.Vm.position.set(par ? 0.6 : 0, y, par ? 0.2 : -0.35); o.an.position.set(-0.8, y, Y2); o.an.kol.rotation.z = S.ac ? 0 : 0.6;
+        o.A.ibre.rotation.y = -0.8 + Math.min(1.6, I * 0.4); o.Vm.ibre.rotation.y = -0.8 + Math.min(1.6, S.V1 * 0.12);
+        const P = (a, b) => [V3(a[0], 0.08, a[1]), V3(b[0], 0.08, b[1])]; let segs;
+        if (par) segs = [P([-2.4, Y1], [2.6, Y1]), P([-2.4, Y2], [2.6, Y2]), P([0.6, Y1], [0.6, Y2]), P([1.8, Y1], [1.8, Y2]), P([-2.4, Y1], [-2.4, -0.2]), P([-2.4, 0.6], [-2.4, Y2])];
+        else segs = [P([-2.4, Y1], [2.6, Y1]), P([2.6, Y1], [2.6, Y2]), P([-2.4, Y2], [2.6, Y2]), P([-2.4, Y1], [-2.4, -0.2]), P([-2.4, (S.pil === 2 ? 1.0 : 0.6)], [-2.4, Y2]), P([-0.3, Y1], [-0.3, -0.35]), P([0.3, Y1], [0.3, -0.35])];
+        o.tel.forEach((l, i) => { if (segs[i]) FZ.setLine(l, segs[i]); else l.visible = false; });
+        S.u = (S.u || 0) + dt * I * 0.15; const yol = [V3(-2.4, 0.1, -0.2), V3(-2.4, 0.1, Y1), V3(2.6, 0.1, Y1), V3(2.6, 0.1, Y2), V3(-2.4, 0.1, Y2), V3(-2.4, 0.1, 0.6)].reverse(); let T = 0; const uz = []; for (let i = 1; i < yol.length; i++) { T += yol[i].distanceTo(yol[i - 1]); uz.push(T); }
+        o.el.forEach((m, i) => { m.visible = I > 0 && !par; if (!m.visible) return; let s = ((S.u + i / o.el.length) % 1) * T, k = 0; while (k < uz.length - 1 && s > uz[k]) k++; const s0 = k ? uz[k - 1] : 0; m.position.copy(yol[k].clone().lerp(yol[k + 1], (s - s0) / (uz[k] - s0))); });
+        FZ.setTag('k5a', `I = ${fs(I)} A`); FZ.show('k5a', o.A.position.clone().add(V3(0, 0.5, 0.45)), 1);
+        FZ.setTag('k5b', `V<sub>1</sub> = ${fs(S.V1)} V`); FZ.show('k5b', o.Vm.position.clone().add(V3(0, 0.5, 0.45)), 1);
+        FZ.setTag('k5c', `R<sub>1</sub> = ${S.R1} Ω`); FZ.show('k5c', o.L1.position.clone().add(V3(0, 1.0, 0)), 1);
+        FZ.setTag('k5d', `R<sub>2</sub> = ${S.R2} Ω`); FZ.show('k5d', o.L2.position.clone().add(V3(0, 1.0, 0)), o.L2.visible ? 1 : 0);
+        FZ.setTag('k5e', `ε = ${V} V`); FZ.show('k5e', V3(-3.0, 0.4, 0), 1);
+        FZ.setTag('k5K', `${par ? 'Paralel' : 'Seri'} · R<sub>eş</sub> = ${fs(Req)} Ω · ${S.ac ? 'anahtar kapalı' : 'anahtar açık'}`); FZ.show('k5K', V3(0, 0.4, -2.2), 1);
+      } else {
+        const d = 1.2 + S.ayr; o.m1.position.set(-d / 2 - 0.8, 0, 0); o.m2.position.set(d / 2 + 0.8, 0, 0); o.m2.rotation.y = S.it ? Math.PI : 0;   // it: N–N karşı karşıya
+        const q = []; const pm = m => { const R = m.rotation.y ? -1 : 1, x = m.position.x; q.push({ p: V3(x + R * 0.8, 0.15, 0), s: 1 }, { p: V3(x - R * 0.8, 0.15, 0), s: -1 }); }; pm(o.m1); pm(o.m2);
+        const B = p => { const b = V3(); q.forEach(c => { const r = p.clone().sub(c.p); const l = Math.max(0.15, r.length()); b.add(r.multiplyScalar(c.s / (l * l * l))); }); return b; };
+        o.pus.forEach((pu, i) => { const a = i / o.pus.length * Math.PI * 2, p = V3(Math.cos(a) * 3.2, 0, Math.sin(a) * 1.6); pu.position.copy(p); const b = B(p.clone().setY(0.15)); pu.ig.rotation.y = -Math.atan2(b.z, b.x); });
+        o.cz.forEach((l, k) => { const c = q[k % 4]; if (c.s < 0) { l.visible = false; return; } const a0 = (k / 12) * Math.PI * 2; let p = c.p.clone().add(V3(Math.cos(a0) * 0.2, 0, Math.sin(a0) * 0.2)); const pts = [p.clone()];
+          for (let s = 0; s < 120; s++) { const b = B(p); if (b.length() < 1e-4) break; p = p.clone().add(b.normalize().multiplyScalar(0.06)); pts.push(p); if (Math.abs(p.x) > 4.5 || Math.abs(p.z) > 2.4 || q.some(o2 => o2.s < 0 && o2.p.distanceTo(p) < 0.18)) break; } FZ.setLine(l, pts); });
+        FZ.setTag('k5K', S.it ? 'Aynı kutuplar (N–N) birbirini iter' : 'Zıt kutuplar (N–S) birbirini çeker'); FZ.show('k5K', V3(0, 0.6, -2), 1);
+      }
+    },
+    qp: () => V3(0, 1, -2) });
+  const dv = (S, x) => Object.assign(S, { mod: 'seri', V: 12, R1: 4, R2: 4, ac: 1, pil: 1, ters: 0 }, x || {});
+  const hd = ders(sEl, { yk: 'TYT7-d3', no: 3, icon: '📖', name: 'Hikâye: Ece\'nin el feneri ve buzdolabı mıknatısı', task: 'Akım, potansiyel farkı, direnç, Ohm yasası, seri–paralel bağlama, üreteç bağlama, ampermetre–voltmetre, elektrik enerjisi ve güç, mıknatıslar.', notlar: ['V = I · R · seri: R toplanır, akım aynı · paralel: 1/R toplanır, gerilim aynı.', 'P = V·I = I²R = V²/R · E = P · t · 1 kWh = 3,6·10⁶ J', 'Ampermetre seri, voltmetre paralel bağlanır.'], steps: [
+    { do: S => dv(S, { ac: 0 }), sub: 'Elektrik kesildi. Ece el fenerinin pilini, iki ampulünü ve tellerini bir tahtaya dizip kendi lambasını kurmaya karar verdi.', go: '▶︎ Hikâyeyi başlat' },
+    { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['<em>Akım</em> (I, amper): birim zamanda geçen yük. Elektronlar (kırmızı) pilin (−) ucundan (+) ucuna akar; akım yönü (+)\'dan (−)\'ye kabul edilir.', '<em>Potansiyel farkı</em> (V, volt): yükleri iten "elektriksel basınç". <em>Direnç</em> (R, ohm): akıma karşı koyma.'] } },
+    { sub: 'Anahtarı kapatalım.', go: '▶︎ Anahtarı kapat' },
+    { do: S => { S.ac = 1; }, sub: 'Akım geçiyor; ampermetre ve voltmetre okunuyor.', wait: 2.5 },
+    { k: { tur: 'kavram', b: 'Ohm yasası', f: ['k5a', 'k5b'], m: [`${FM('V = I · R')} · seri: ${FM('R<sub>eş</sub> = R<sub>1</sub> + R<sub>2</sub>')} = 8 Ω → I = 12 / 8 = <em>1,5 A</em>.`, 'Ampermetre devreye <em>seri</em> (akımı ölçer, direnci çok küçük), voltmetre elemana <em>paralel</em> (gerilimi ölçer, direnci çok büyük) bağlanır.'] } },
+    { do: S => dv(S, { mod: 'paralel' }), sub: 'Ece ampulleri paralel bağladı.', wait: 2.5 },
+    { k: { tur: 'gozlem', b: 'Paralelde daha parlak', f: ['k5K'], m: [`${FM(`${F('1', 'R<sub>eş</sub>')} = ${F('1', 'R<sub>1</sub>')} + ${F('1', 'R<sub>2</sub>')}`)} = 2 Ω → ana akım 6 A, her ampulden 3 A.`, 'Her ampulün uçlarında pilin tam gerilimi (12 V) var: P = V²/R = 36 W (seride 9 W). Evdeki lambalar paraleldir.'] } },
+    { do: S => dv(S, { pil: 2 }), sub: 'Bir pil daha ekledi: önce seri (aynı yönde)…', wait: 2.5 },
+    { do: S => { S.ters = 1; }, sub: '…sonra ters bağladı.', wait: 2.5 },
+    { k: { tur: 'dikkat', b: 'UYARI · Üreteç bağlama', f: ['k5e', 'k5a'], m: ['Seri (aynı yönde) bağlı üreteçlerin gerilimleri <em>toplanır</em>; ters bağlananlar <em>çıkarılır</em> (özdeşlerse ε = 0).', 'Paralel bağlı özdeş üreteçlerin gerilimi bir üreteçinkine eşittir ama daha uzun süre dayanırlar.'] } },
+    { k: { tur: 'kavram', b: 'Elektrik enerjisi ve güç', m: [`${FM('P = V · I = I<sup>2</sup> R')} · ${FM('E = P · t')} · lambanın parlaklığı gücüyle orantılıdır.`, '1 kWh = 1000 W · 3600 s = 3,6 · 10<sup>6</sup> J. 2000 W ısıtıcı 3 saatte 6 kWh harcar.'] } },
+    { do: S => Object.assign(S, { mod: 'mikn', it: 0, ayr: 0.6 }), sub: 'Işıklar gelince Ece buzdolabındaki iki mıknatısı aldı ve etrafına pusulalar dizdi.', wait: 2.5 },
+    { k: { tur: 'kavram', b: 'Mıknatıslar', f: ['k5K'], m: ['Her mıknatısın N ve S kutbu vardır; mıknatıs kırılsa da her parça yine N ve S kutuplu olur.', 'Zıt kutuplar çeker, aynı kutuplar iter. Alan çizgileri N\'den çıkar, S\'ye girer; pusula iğnesinin N ucu alan yönünü gösterir.'] } },
+    { do: S => { S.it = 1; }, sub: 'Mıknatıslardan birini çevirdi: N kutupları karşı karşıya.', wait: 2.5 },
+    { k: { tur: 'gunluk', b: 'Mıknatıs türleri ve kullanım', m: ['Doğal (manyetit), yapay kalıcı (çubuk, U, halka), elektromıknatıs (bobin + demir çekirdek, akım kesilince mıknatıslık biter).', 'Hurda ayırma, kapı zilleri, MR, hoparlör elektromıknatıs kullanır. Demir, nikel, kobalt çekilir; tahta, bakır, alüminyum çekilmez.'] } },
+    { k: { tur: 'ozet', b: 'Özet', m: [`${FM('V = I R')} · seri: akım aynı · paralel: gerilim aynı · ${FM('P = V I')} · 1 kWh = 3,6·10<sup>6</sup> J · N–S çeker, N–N iter.`] } },
+  ] });
+  const gd = gorev(sEl, { yk: 'TYT7-g3', no: 3, icon: '🔌', name: 'Soru sistemi: akım, direnç, Ohm, üreteç, güç', task: 'Direnç tablosu, eşdeğer direnç, ampermetre–voltmetre okuma, üreteç bağlama, lamba parlaklığı, kWh, mıknatıslar.', data: [['Üreteç iç direnci', 'önemsiz']], steps: [
+    { do: S => dv(S), sub: 'Seri devre.', go: '▶︎ Başlat' },
+    { q: { t: 'Aynı maddeden X (L, A), Y (2L, A), Z (L/2, 2A) telleri yapılıyor. Dirençleri arasındaki ilişki nedir?', o: ['R<sub>Y</sub> > R<sub>X</sub> > R<sub>Z</sub>', 'R<sub>X</sub> = R<sub>Y</sub> = R<sub>Z</sub>', 'R<sub>Z</sub> > R<sub>X</sub> > R<sub>Y</sub>', 'R<sub>X</sub> > R<sub>Y</sub> > R<sub>Z</sub>'],
+      s: ['R = ρL/A: X → 1, Y → 2, Z → (½)/2 = ¼', '<em>R<sub>Y</sub> > R<sub>X</sub> > R<sub>Z</sub></em> ✓'], n: ['Direnç boyla doğru, kesitle ters orantılıdır.'] } },
+    { q: { t: '12 V\'luk üretece 4 Ω ve 4 Ω\'luk ampuller seri bağlı. Ampermetre ve R<sub>1</sub>\'e bağlı voltmetre kaç değer gösterir?', o: ['1,5 A ve 6 V', '3 A ve 12 V', '1,5 A ve 12 V', '3 A ve 6 V'], f: ['k5a', 'k5b'],
+      s: ['R<sub>eş</sub> = 8 Ω → I = 1,5 A', 'V<sub>1</sub> = 1,5 · 4 = <em>6 V</em> ✓'], n: ['Seri bağlı özdeş dirençler gerilimi eşit paylaşır.'] } },
+    { do: S => dv(S, { mod: 'paralel', R1: 6, R2: 3 }), q: { t: '12 V\'luk üretece 6 Ω ve 3 Ω\'luk dirençler paralel bağlanıyor. Ana koldaki akım kaç A\'dir?', o: ['6', '2', '4', '1,33'], f: ['k5K'],
+      s: ['R<sub>eş</sub> = 6 · 3 / 9 = 2 Ω', 'I = 12 / 2 = <em>6 A</em> ✓ (6 Ω\'dan 2 A, 3 Ω\'dan 4 A)'], n: ['Paralelde küçük dirençten büyük akım geçer.'] } },
+    { q: { t: 'Aynı devrede hangi direnç daha çok ısınır (güç)?', o: ['3 Ω (24 W ve 48 W\'den 48 W)', '6 Ω', 'Eşit', 'Hiçbiri'],
+      s: ['Paralelde V aynı: P = V²/R → 6 Ω: 24 W, 3 Ω: <em>48 W</em> ✓'], n: ['Seride tersi: akım aynı, P = I²R → büyük direnç daha çok ısınır.'] } },
+    { do: S => dv(S, { pil: 2, ters: 1 }), q: { t: 'Her biri 12 V olan iki pilden biri ters bağlanırsa 8 Ω\'luk devreden geçen akım kaç A olur?', o: ['0', '3', '1,5', '6'], f: ['k5e'],
+      s: ['Ters bağlı özdeş üreteçler birbirini götürür: ε = 0 → <em>I = 0</em> ✓'], n: ['Aynı yönde seri bağlansalardı 24 V → 3 A.'] } },
+    { q: { t: 'Bir evde 2000 W ütü günde 1 saat, 100 W lamba günde 5 saat çalışıyor. 30 günde harcanan enerji kaç kWh\'tir?', o: ['75', '2,5', '60', '15'],
+      s: ['Günlük: 2 kWh + 0,5 kWh = 2,5 kWh', '30 gün: <em>75 kWh</em> ✓'], n: ['kWh = kW × saat.'] } },
+    { q: { t: '220 V\'luk prize bağlı 1100 W\'lık ütü ile 2200 W\'lık fırın birlikte çalışıyor. Sigortadan geçen akım kaç A\'dir?', o: ['15', '10', '5', '3300'],
+      s: ['Paralel bağlı: I = P/V → 5 A + 10 A = <em>15 A</em> ✓'], n: ['Sigorta bu akımın üstündeki değerle seçilir.'] } },
+    { do: S => Object.assign(S, { mod: 'mikn', it: 1, ayr: 0.6 }), q: { t: 'Çubuk mıknatıs ortasından ikiye kırılıyor. Parçalar için hangisi doğrudur?', o: ['Her parçanın N ve S kutbu olur', 'Bir parça yalnız N, diğeri yalnız S olur', 'Parçalar mıknatıslığını kaybeder', 'Kırılan uçlar nötr kalır'],
+      s: ['Mıknatıs ne kadar bölünürse bölünsün her parça <em>iki kutupludur</em> ✓'], n: ['Tek kutuplu mıknatıs yoktur.'] } },
+    { q: { t: 'Hangi karışım bir mıknatısla ayrıştırılabilir?', o: ['Demir tozu – kum', 'Bakır tozu – kum', 'Alüminyum – tahta', 'Tuz – şeker'],
+      s: ['Mıknatıs yalnız demir, nikel, kobalt gibi ferromanyetik maddeleri çeker ✓'], n: ['Bakır ve alüminyum metal oldukları halde mıknatısa çekilmez.'] } },
+  ] });
+  const td = gorev(sEl, { yk: 'TYT7-g4', no: 4, tuzak: true, icon: '🪤', name: 'Tuzak sorular · elektrik ve manyetizma', task: 'Devre ve mıknatıs sorularında en sık yapılan yanlışlar.', steps: [
+    { do: S => dv(S), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Seri devrede akım lambalardan geçerken "harcanır" mı?', o: ['Hayır, seri devrenin her noktasında akım aynıdır', 'Evet, ilk lambadan sonra azalır', 'Evet, son lambada sıfırdır', 'Lambanın direncine göre artar'], f: ['k5a'],
+      s: ['Yük korunur; seri kolda <em>akım her yerde aynı</em> ✓. Harcanan enerjidir.'], n: ['TUZAK: akımın lambalarda tükendiğini sanmak.'] } },
+    { q: { t: 'Paralel bağlı lambalara yeni bir lamba daha paralel eklenirse eşdeğer direnç ne olur?', o: ['Azalır', 'Artar', 'Değişmez', 'İki katına çıkar'],
+      s: ['Paralel kol eklemek akıma yeni yol açar → R<sub>eş</sub> <em>azalır</em> ✓'], n: ['TUZAK: direnç eklenince hep artar sanmak (yalnız seride artar).'] } },
+    { q: { t: 'Voltmetre devreye yanlışlıkla seri bağlanırsa ne olur?', o: ['Devreden neredeyse akım geçmez', 'Lambalar daha parlak yanar', 'Ampermetre gibi çalışır', 'Sigorta atar'],
+      s: ['Voltmetrenin direnci çok büyüktür → akım çok küçülür ✓'], n: ['TUZAK: ölçü aletlerinin yerini karıştırmak. Ampermetre paralel bağlanırsa kısa devre olur.'] } },
+    { q: { t: '220 V için yapılmış 60 W ve 100 W lambalar seri bağlanırsa hangisi daha parlak yanar?', o: ['60 W', '100 W', 'Eşit', 'İkisi de yanmaz'],
+      s: ['R = V²/P → 60 W lambanın direnci büyük', 'Seride akım aynı, P = I²R → <em>60 W</em> daha parlak ✓'], n: ['TUZAK: etiketteki gücü büyük olanın her zaman parlak yandığını sanmak.'] } },
+    { do: S => Object.assign(S, { mod: 'mikn', it: 0, ayr: 0.6 }), q: { t: 'Pusula iğnesinin N ucu Dünya\'nın coğrafi kuzeyini gösterir. Buna göre Dünya\'nın coğrafi kuzeyinde hangi manyetik kutup vardır?', o: ['Manyetik güney (S) kutbu', 'Manyetik kuzey (N) kutbu', 'Kutup yoktur', 'Hem N hem S'],
+      s: ['N ucu kendisini çeken zıt kutba yönelir → coğrafi kuzeyde manyetik <em>S</em> kutbu vardır ✓'], n: ['TUZAK: coğrafi ve manyetik kutupları aynı sanmak.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Elektrik ve Manyetizma', { dersler: [hd], gorevler: [gd, td] });
+})();
+</script>
+<script>// Notlar · "BU SORUYU ÇÖZMEK İÇİN" bilgileri (cevabı vermeden, soruyu çözmeye yetecek bilgi)
+// Formülü çözümden kendiliğinden çıkmayan kavram soruları için. Anahtar: soru metninin başı.
+(function () {
+  const B = [
+    ['İp koparsa cisim nasıl hareket eder', ['Cismi çembersel yolda tutan merkezcil kuvveti ip sağlar.', 'Kuvvet etki etmeyen cisim hızını (yön ve büyüklük) korur (eylemsizlik). Çembersel harekette hız her an yörüngeye teğettir.']],
+    ['Ağırlık ile kütle', ['Kütle: madde miktarı, birimi kg, yere göre değişmez.', 'Ağırlık: cisme etki eden çekim kuvveti, G = m · g, birimi newton; g yere göre değişir.', 'Yönü olan büyüklükler vektöreldir.']],
+    ['Sıcaklığın SI birimi', ['SI temel büyüklükleri ve birimleri: uzunluk m, kütle kg, zaman s, akım A, sıcaklık K, madde miktarı mol, ışık şiddeti cd.']],
+    ['Bilimsel bir teori', ['Bilimsel bilgi gözlem ve deneye dayanır; yeni kanıtlarla değiştirilebilir.', 'Teori olayları açıklar; kanun doğadaki düzenliliği tanımlar. Biri diğerine dönüşmez.']],
+    ['Bir demir çubuk ikiye kesiliyor', ['d = m / V', 'Özkütle maddeyi tanıtan (ayırt edici) bir özelliktir.']],
+    ['Özkütleleri 1 ve 3 g/cm³', ['Karışımın özkütlesi: toplam kütle / toplam hacim.', 'Her sıvının hacmi V = m / d ile bulunur.']],
+    ['Bir cismin bütün boyutları 2 katına', ['Dayanıklılık ∝ kesit alanı / hacim', 'Boyutlar k katına çıkınca alan k², hacim k³ katına çıkar.']],
+    ['Cam boruda suyun yükselmesinin', ['Kohezyon: aynı cins moleküller arası çekim. Adezyon: farklı cins moleküller arası çekim.', 'Sıvı, kabı ıslatıyorsa ince boruda yükselir; ıslatmıyorsa alçalır.']],
+    ['Araba artık 20 m/s sabit hızla', ['Sabit hızla giden cisimde ivme sıfırdır: F<sub>net</sub> = m · a = 0.', 'İleri yöndeki kuvvetler, geri yöndeki kuvvetleri dengeler.']],
+    ['Sabit hızla düz yolda giden', ['F<sub>net</sub> = m · a (Newton\'un 2. yasası)', 'Sabit hız: hızın büyüklüğü ve yönü değişmez → ivme sıfır.']],
+    ['μ<sub>s</sub> = 0,4 olan zeminde duran 5 kg', ['En büyük statik sürtünme: f<sub>s,max</sub> = μ<sub>s</sub> · N', 'Cisim kaymıyorsa sürtünme kuvveti, uygulanan kuvveti dengeleyecek kadardır (f<sub>s,max</sub>\'ı geçemez).']],
+    ['Atın arabayı çektiği kuvvet', ['Etki–tepki kuvvetleri eşit, zıt yönlü ve FARKLI cisimlere etki eder.', 'Bir sistemin hızlanması için sisteme DIŞARIDAN net kuvvet etki etmelidir.']],
+    ['Elinde 10 kg', ['W = F · x · cosθ', 'İş, kuvvetin yer değiştirme doğrultusundaki bileşeni ile yapılır.']],
+    ['Hızı 2 katına çıkan', ['E<sub>k</sub> = ½ · m · v²']],
+    ['Sürtünmeli yolda yavaşlayıp', ['Sürtünme kuvvetinin yaptığı iş mekanik enerjiyi ısıya dönüştürür.', 'Enerjinin korunumu: enerji yoktan var edilemez, var olan yok edilemez.']],
+    ['Güç birimi olan watt', ['P = W / t', 'İş/enerji birimi joule (J), zaman birimi saniye (s).']],
+    ['Ortasında delik bulunan metal levha', ['Isınan katının tanecikleri birbirinden uzaklaşır: cisim her boyutunda genleşir.', 'ΔL = L<sub>0</sub> · λ · ΔT · ΔA = A<sub>0</sub> · 2λ · ΔT']],
+    ['K kabında 80 °C', ['Sıcaklık: ortalama kinetik enerjinin göstergesi. İç enerji: taneciklerin toplam enerjisi (madde miktarına bağlı).', 'Isı, sıcaklığı yüksek olandan düşük olana akar.']],
+    ['Sıcaklığı 20 °C artırılan', ['K = °C + 273', 'Celsius ve Kelvin ölçeklerinde bir bölmenin büyüklüğü aynıdır.']],
+    ['Tencerede ısıtılan suyun sıcaklığı 10 °C', ['C / 100 = (F − 32) / 180', 'Donma–kaynama arası: 100 Celsius bölmesi = 180 Fahrenheit bölmesi.']],
+    ['0 °C\'deki buz 0 °C\'deki suya', ['Hal değişimi sırasında sıcaklık sabit kalır; alınan ısı Q = m · L tanecikler arası bağları koparmaya harcanır.', 'Erime sırasında hacim ve özkütle değişebilir.']],
+    ['20 °C\'deki 200 g su ile 80 °C', ['Q = m · c · ΔT', 'Isıl dengede: verilen ısı = alınan ısı.']],
+    ['İç enerjisi çok büyük olan 10 °C', ['Isı akışının yönünü sıcaklık farkı belirler.', 'Isı akışı sıcaklıklar eşitlenince durur.']],
+    ['Güneş altında özdeş siyah', ['Isı yayılma yolları: iletim (dokunarak), konveksiyon (akışkan hareketiyle), ışıma (boşlukta da yayılır).', 'Koyu yüzeyler ışığı çok soğurur; açık renkli yüzeyler çok yansıtır.']],
+    ['Ortasında dairesel delik bulunan', ['Isınan cisim her boyutunda genleşir.', 'ΔA = A<sub>0</sub> · 2λ · ΔT']],
+    ['Su 0 °C\'den 4 °C', ['d = m / V', 'Su 0–4 °C arasında farklı davranır; özkütlesi 4 °C\'de en büyüktür.']],
+    ['Özdeş iki iletken kürenin yükleri +6q', ['Dokunan iletkenler toplam yükü paylaşır; yük korunur.', 'Özdeş kürelerde toplam yük eşit bölünür. Toplam yük işaretiyle alınır.']],
+    ['(+) yüklü bir elektroskoba bir X', ['Elektroskoba aynı işaretli cisim yaklaşırsa yapraklar daha çok açılır.', 'Zıt işaretli cisim ya da nötr iletken yaklaşırsa elektronlar yer değiştirir, yapraklardaki yük azalır.']],
+    ['+4q ve +2q yüklü iki küre', ['F = k · q<sub>1</sub> · q<sub>2</sub> / d²', 'Newton\'un 3. yasası: iki cismin birbirine uyguladığı kuvvetler eşit ve zıt yönlüdür.']],
+    ['Nötr bir cisim yüklü bir çubuğa', ['Yüklü cisim nötr cismi kutuplar: yakın tarafta zıt, uzak tarafta aynı işaretli yük toplanır.', 'Yakın taraftaki çekme kuvveti, uzak taraftaki itmeden büyüktür.']],
+    ['Cam çubuk ipeğe sürtülünce', ['Atomda proton çekirdekte, elektron çekirdeğin çevresindedir.', 'Sürtünmede cisimler arasında yer değiştiren tanecik türünü düşün.']],
+    ['Elektrik alan çizgileri için', ['Alan çizgileri (+) yükten çıkar, (−) yüke girer.', 'Bir noktadaki alanın yönü çizgiye teğettir; çizgiler sıklaştıkça alan büyür.']],
+    ['Seri devrede akım lambalardan', ['Seri bağlı elemanlar tek bir yol üzerindedir.', 'Yük korunur: birim zamanda bir noktadan giren yük kadar yük çıkar.']],
+    ['Paralel bağlı lambalara yeni', ['1 / R<sub>eş</sub> = 1 / R<sub>1</sub> + 1 / R<sub>2</sub> + …']],
+    ['Voltmetre devreye yanlışlıkla seri', ['Voltmetrenin iç direnci çok büyüktür; ampermetreninki çok küçüktür.', 'I = V / R<sub>eş</sub>']],
+    ['220 V için yapılmış 60 W ve 100 W', ['R = V² / P (etiket değerlerinden)', 'Seri bağlı elemanlardan aynı akım geçer: P = I² · R']],
+    ['Pusula iğnesinin N ucu', ['Pusula iğnesi küçük bir mıknatıstır; zıt kutuplar çeker.', 'İğnenin N ucu, kendisini çeken kutba yönelir.']],
+    ['Taban alanları eşit, ağzı geniş', ['P = h · d · g']],
+    ['Aynı hacimli demir ve tahta', ['F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g']],
+    ['Kesiti daralan bir borudan', ['Süreklilik: A<sub>1</sub> · v<sub>1</sub> = A<sub>2</sub> · v<sub>2</sub>', 'Bernoulli: akışkanın hızlandığı yerde basıncı değişir.']],
+    ['Masadaki dik kenarlı düzgün bir tuğla', ['P = G / S', 'Düzgün katılarda P = h · d · g olarak da yazılabilir.']],
+    ['Kaynak daha büyük genlikle', ['Dalganın hızı ortamın özelliklerine (yayda gerilme ve birim uzunluk kütlesi) bağlıdır.', 'v = λ · f']],
+    ['Bir ışın düzlem aynaya, ayna yüzeyiyle', ['Gelme ve yansıma açıları NORMALE göre ölçülür; normal yüzeye diktir.', 'Gelme açısı = yansıma açısı']],
+    ['Tepe noktasında topun hızı', ['Eğik atışta yatay hız sabittir: v<sub>x</sub> = v<sub>0</sub> · cosα', 'Tepe noktasında düşey hız sıfırdır.']],
+    ['Aynı renkteki ışığın şiddeti', ['Bir fotonun enerjisi E = h · f, yalnız frekansa bağlıdır.', 'Işık şiddeti birim zamanda gelen foton sayısıyla ilgilidir.']],
+    ['Aşağıdakilerden hangisi vektörel', ['Vektörel büyüklük: büyüklüğü ve yönü olan (hız, kuvvet, ivme, yer değiştirme).', 'Skaler büyüklük: yalnız büyüklüğü olan (kütle, zaman, enerji, sıcaklık, sürat).']],
+    ['Yukarı atılan top en tepe noktasındayken', ['Hava direnci yoksa havadaki cisme yalnız ağırlık (mg, düşey aşağı) etki eder.', 'a = F<sub>net</sub> / m']],
+    ['Asansörde duran 50 kg', ['Kişiye etki eden kuvvetler: ağırlık (mg, aşağı) ve tabanın tepkisi (N, yukarı).', 'N − mg = m · a (yukarı yön +)', 'Sabit hızda ivme sıfırdır.']],
+    ['Bir kaptaki suyun kütlesi iki katına', ['Q = m · c · ΔT · ısı sığası C = m · c', 'Öz ısı ve sıcaklık maddenin miktarına bağlı değildir; ısı sığası ve iç enerji bağlıdır.']],
+    ['Ağzı dar bir kaptaki suyun tabana', ['F = P · S = h · d · g · S', 'Kap duvarı eğikse duvarın suya uyguladığı tepki kuvvetinin düşey bileşenini düşün.']],
+    ['Tamamen suya batmış bir taş', ['F<sub>k</sub> = V<sub>batan</sub> · d<sub>sıvı</sub> · g']],
+    ['Durgun dolaba 20 N yatay kuvvet', ['Cisim kımıldamıyorsa net kuvvet sıfırdır: uygulanan kuvvet ile statik sürtünme dengededir.', 'f<sub>s</sub> ≤ μ<sub>s</sub> · N']],
+    ['0,5 kg\'lık top duvara 20 m/s', ['Δp = m · v<sub>son</sub> − m · v<sub>ilk</sub> (vektörel: yön değişince işarete dikkat)', 'İtme = F · Δt = Δp']],
+    ['Çubuğa etki eden manyetik kuvvetin', ['F = B · I · L (akım alana dik)', 'I = ε / R · ε = B · L · v']],
+    ['Yüzey merkezli kübik (FCC)', ['Köşedeki atom 8 hücreye ortaktır (⅛), yüzeydeki atom 2 hücreye (½), içteki atom 1 hücreye aittir.', 'Kübün 8 köşesi ve 6 yüzü vardır.']],
+  ];
+  const duz = t => t.replace(/<[^>]+>/g, '');
+  Object.values(FZ.HAZIR).forEach(h => (h.gorevler || []).forEach(M => M.steps.forEach(st => { if (!st.q || st.q.b) return; const t = duz(st.q.t);
+    const e = B.find(([k]) => t.startsWith(duz(k))); if (e) st.q.b = e[1]; })));
+})();
+</script>
+<script>// Bütün konu dosyaları yüklendikten sonra: "Tuzak sorular" görevleri her konunun soru listesinin EN SONUNA alınır
+// ve görev numaraları sıraya göre yeniden verilir (yıldızlar yk anahtarıyla saklandığı için kaybolmaz).
+(function () {
+  const tuzakMi = m => m.tuzak || /^Tuzak/i.test(m.name || '');
+  Object.values(FZ.HAZIR).forEach(h => {
+    if (!h.gorevler) return;
+    const L = h.gorevler.filter(m => !tuzakMi(m)).concat(h.gorevler.filter(tuzakMi));
+    h.gorevler.length = 0; L.forEach(m => h.gorevler.push(m));
+    h.gorevler.forEach((m, i) => { if (m.yk) m.no = i + 1; });
+    (h.dersler || []).forEach((m, i) => { if (m.yk) m.no = i + 1; });
+  });
 })();
 </script>
 </body></html>
