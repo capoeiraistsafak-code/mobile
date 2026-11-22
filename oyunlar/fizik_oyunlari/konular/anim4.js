@@ -18,16 +18,16 @@
     silindir(e, 0.2, 0.17, 0.16, 0x92400e, 0, 1.7, 0, { edge: false });            // mantar tıpa (yalıtkan)
     const cb = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.35, 10), FZ.metal()); cb.position.set(0, 1.45, 0); e.add(cb);
     const topuz = FZ.metalTop(e, 0.2, 0, 2.2, 0);
-    const pv = [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(0, 0.85, 0.02); e.add(p);
-      const y = kutu(p, 0.1, 0.62, 0.012, 0xfbbf24, 0, -0.31, 0, { edge: false }); y.material.emissive = new THREE.Color(0x92400e); y.material.emissiveIntensity = 0.3; p.s = s; return p; });
+    const pv = [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(0, 0.95, 0.02); e.add(p);
+      const y = kutu(p, 0.17, 0.8, 0.015, 0xfbbf24, s * 0.06, -0.4, 0, { edge: false }); /* altın varak yaprak */ y.material.emissive = new THREE.Color(0x92400e); y.material.emissiveIntensity = 0.3; p.s = s; return p; });
     e.aci = 0; e.topuz = topuz;
-    e.yaprakNokta = (s, d) => V3(x + s * Math.sin(e.aci) * d, 0.85 - Math.cos(e.aci) * d, 0.09);
-    e.ayarla = (q, dt) => { const hedef = Math.min(0.8, Math.abs(q) * 0.2); e.aci += (hedef - e.aci) * Math.min(1, dt * 3); pv.forEach(p => p.rotation.z = p.s * e.aci); };
+    e.yaprakNokta = (s, d) => V3(x + s * (Math.sin(e.aci) * d + 0.06 * Math.cos(e.aci)), 0.95 - Math.cos(e.aci) * d, 0.1);
+    e.ayarla = (q, dt) => { const hedef = Math.min(0.95, Math.abs(q) * 0.16); e.aci += (hedef - e.aci) * Math.min(1, dt * 3); pv.forEach(p => p.rotation.z = p.s * e.aci); };
     return e; };
   // Elektroskop yük noktaları: knob ve yapraklar
   const eskYuk = (e, x, qTop, qYap) => { const L = [], nT = Math.round(Math.abs(qTop)), nY = Math.round(Math.abs(qYap)), sT = Math.sign(qTop), sY = Math.sign(qYap);
     cember(V3(x, 2.2, 0), 0.24, nT, Math.PI * 0.15, Math.PI * 0.85, 0.12).forEach(p => L.push({ p, s: sT }));
-    for (let i = 0; i < nY; i++) { const s = i % 2 ? 1 : -1, k = Math.floor(i / 2); L.push({ p: e.yaprakNokta(s, 0.2 + k * 0.14), s: sY }); }
+    for (let i = 0; i < nY; i++) { const s = i % 2 ? 1 : -1, k = Math.floor(i / 2); L.push({ p: e.yaprakNokta(s, 0.3 + (k % 4) * 0.13), s: sY }); }
     return L; };
 
   // =====================================================================
@@ -36,7 +36,7 @@
   const CIFT = [['Ebonit', 'Yün', -1, 0x1f2937, 0xe7d3a8], ['Cam', 'İpek', 1, 0x93c5fd, 0xf5f5f4], ['Plastik tarak', 'Saç', -1, 0x7c3aed, 0x92400e]];
   const KAG = Array.from({ length: 9 }, (_, i) => ({ x: 0.55 + (i % 5) * 0.42, z: i < 5 ? 0.25 : -0.25, d: 0.15 * i, it: i % 3 === 0 }));
   const sLab = sahne({ icon: '⚡', cam: [[1, 3.4, 12.5], [1, 1.5, 0]], plate: [12, 5, 0, 0],
-    cam2: S => S.mod === 'faraday' ? [[0.9, 6.2, 10], [0.9, 1.7, 0]] : [[1, 3.4, 12.5], [1, 1.5, 0]],
+    cam2: S => S.mod === 'faraday' ? [[0.9, 6.2, 10], [0.9, 1.7, 0]] : S.mod === 'elskop' ? [[0.9, 3.0, 10.5], [0.9, 2.5, 0]] : [[1, 3.4, 12.5], [1, 1.5, 0]],
     data: [['Kırmızı nokta', '(+) yük'], ['Mavi nokta', '(−) yük']],
     S0: () => ({ mod: 'surt', ci: 0, n: 0, surt: 0, yak: 0, kag: 0, ea: 0, ak: 0, eq: 0, cub: 1, ey: 0, fz: 0, sen: 'A', fkos: 0 }),
     kur(g) {
@@ -53,7 +53,7 @@
       const toprak = new THREE.Group(); toprak.position.set(1.5, 0.05, 0); G.etki.add(toprak); [0.5, 0.34, 0.18].forEach((w, i) => kutu(toprak, w, 0.04, 0.04, 0x16a34a, 0, -i * 0.1 + 0.2, 0, { edge: false }));
       // --- elektroskop + çubuk ---
       const esk = elektroskop(G.elskop, 0.3);
-      const scubuk = yatay(G.elskop, 2, 0.1, 0x1f2937, -4, 2.2, 0, { edge: false });
+      const scubuk = silindir(G.elskop, 0.1, 0.1, 1.6, 0x1f2937, 0.3, 4.6, 0, { edge: false });   // çubuk yukarıdan topuza iner
       // --- Faraday kabı ---
       const FK = V3(-0.45, 1.7, 0), R = 1;
       const kap = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 24, 0, Math.PI * 2, 0.42, Math.PI - 0.42), new THREE.MeshPhongMaterial({ color: 0xb8c0cc, specular: 0xffffff, shininess: 90, transparent: true, opacity: 0.42, side: THREE.DoubleSide, depthWrite: false }));
@@ -115,13 +115,15 @@
         FZ.show('esT', V3(0.2, 3.4, 0), 1);
       } else if (S.mod === 'elskop') {
         S.ey += (S.yak - S.ey) * Math.min(1, dt * 1.5);
-        o.scubuk.position.x = -4 + S.ey * 2.8; o.scubuk.material.color.setHex(S.cub === 0 ? 0x94a3b8 : S.cub > 0 ? 0x93c5fd : 0x1f2937);
-        const c = S.cub * 5, yap = S.cub === 0 ? S.eq * 0.6 * (1 - 0.3 * S.ey) : S.eq * 0.6 + c * 0.8 * S.ey, tp = S.eq - yap;
+        o.scubuk.position.set(0.3, 4.55 - S.ey * 1.2, 0); o.scubuk.material.color.setHex(S.cub === 0 ? 0x94a3b8 : S.cub > 0 ? 0x93c5fd : 0x1f2937);
+        // yük korunumu: topuz + yapraklar = elektroskobun yükü (eq); yaklaşan çubuk elektronları iter/çeker (etki)
+        const c = S.cub * 5, yap = Math.round(S.cub === 0 ? S.eq * 0.6 * (1 - 0.35 * S.ey) : S.eq * 0.6 + c * 0.8 * S.ey), tp = S.eq - yap;
         o.esk.ayarla(yap, dt); eskYuk(o.esk, 0.3, tp, yap).forEach(y => L.push(y));
-        if (S.cub) for (let i = 0; i < 5; i++) L.push({ p: V3(o.scubuk.position.x - 0.8 + i * 0.4, 2.33, 0.06), s: S.cub });
-        FZ.setTag('esA', `Elektroskop: ${S.eq ? isaret(S.eq) : 'nötr'}`); FZ.show('esA', V3(0.3, -0.35, 0.6), 1);
-        FZ.setTag('esB', S.cub === 0 ? 'Nötr iletken' : S.cub > 0 ? 'Cam (+)' : 'Ebonit (−)'); FZ.show('esB', V3(o.scubuk.position.x + 0.4, 2.75, 0), S.ey > 0.05 ? 1 : 0);
-        FZ.setTag('esT', `Yapraklardaki yük: ${Math.abs(yap) < 0.3 ? '≈ 0 (kapalı)' : (yap > 0 ? '+' : '−') + ' (açık)'}`); FZ.show('esT', V3(0.6, 3.5, 0), 1);
+        if (S.cub) for (let i = 0; i < 5; i++) L.push({ p: V3(0.3 + 0.12, o.scubuk.position.y - 0.7 + i * 0.3, 0.06), s: S.cub });
+        FZ.setTag('esA', `Elektroskop: ${S.eq ? isaret(S.eq) : 'nötr'}`); FZ.show('esA', V3(-1.2, 0.5, 0.4), 1);
+        FZ.setTag('esB', S.cub === 0 ? 'Nötr iletken' : S.cub > 0 ? 'Cam çubuk: +5q' : 'Ebonit çubuk: −5q'); FZ.show('esB', V3(1.25, o.scubuk.position.y + 0.3, 0), 1);
+        FZ.setTag('esT', `topuz ${isaret(tp)}<br>${Math.abs(yap) < 1 ? 'yapraklar kapalı' : 'yapraklar açık'}`); FZ.show('esT', V3(1.75, 2.45, 0.3), 1);
+        FZ.setTag('esC', `yapraklar ${isaret(yap)}`); FZ.show('esC', V3(1.35, 0.6, 0.3), 1);
       } else {
         // Faraday kabı · sen A: kap +6 yüklü, deneme küresi iç/dış yüzeye değer · sen B: kap nötr, +4 yüklü top içeri iner
         if (S.fkos) { S.fz = Math.min(S.sen === 'A' ? 4 : 2, S.fz + dt * 0.55); if (S.fz >= (S.sen === 'A' ? 4 : 2)) S.fkos = 0; }
@@ -205,7 +207,7 @@
     { do: S => { S.yak = 1; }, sub: 'Nötr iletken kutuplanıyor…', wait: 2.6 },
     { k: { tur: 'dikkat', b: 'Nötr iletken de kapatır', f: ['esT'], m: ['Nötr iletken yaklaşınca yapraklar <em>biraz kapanır</em>.', 'Sonuç: yapraklar kapanıyorsa cisim zıt yüklü <em>ya da</em> nötr iletken olabilir. Açılıyorsa cisim kesinlikle <em>aynı</em> işaretlidir.'] } },
     { x: { b: 'Kendin dene', m: ['Elektroskobun yükünü ve çubuğu seç.'],
-      kay: [{ ad: 'eq', etiket: 'Elektroskop', min: -4, max: 4, adim: 4, deger: 4, birim: 'q', set: (S, v) => eskBasla(S, v, S._cub == null ? 1 : S._cub) },
+      kay: [{ ad: 'eq', etiket: 'Elektroskop', min: -4, max: 4, adim: 4, deger: 4, birim: 'q', set: (S, v) => { eskBasla(S, v, S._cub == null ? 1 : S._cub); S.yak = 1; } },
             { ad: 'cub', etiket: 'Çubuk (−1, 0, +1)', min: -1, max: 1, adim: 1, deger: 1, birim: '', set: (S, v) => { eskBasla(S, S._eq == null ? 4 : S._eq, v); S.yak = 1; } }],
       olc: S => { const e = S._eq, c = S._cub; const sonuc = c === 0 ? (e ? 'biraz kapanır' : 'değişmez') : !e ? 'açılır' : Math.sign(e) === c ? 'daha çok açılır' : 'önce kapanır (çok yaklaşırsa yeniden açılır)';
         return `Elektroskop ${e ? isaret(e) : 'nötr'} · çubuk ${c === 0 ? 'nötr iletken' : c > 0 ? '(+)' : '(−)'}<br>Yapraklar <em>${sonuc}</em>`; } } },
