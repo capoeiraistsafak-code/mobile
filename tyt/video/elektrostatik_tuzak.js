@@ -173,9 +173,10 @@ window.KONU = {
    init: kur(3, 'D'),
    steps: [{d: 3.6, o: [], f: s => { const yk = ease(prog(s, 0, 1.0)) * (1 - ease(prog(s, 2.6, 3.4))), ay = ease(prog(s, 0.6, 1.6)) * (1 - ease(prog(s, 2.8, 3.6)));
        at('p3c', 'transform', `translate(${-220 + 310 * yk} 0)`); at('p3c', 'opacity', yk > 0.02 ? 1 : 0);
-       for (let j = 0; j < 6; j++) { const a = j * 1.05, bx = 280 + 30 * Math.cos(a) - 5, by = 75 + 30 * Math.sin(a);
-         at('p3e' + j, 'x', lerp(bx - 8, 240 - 5 + 6 * Math.cos(a), ay)); at('p3e' + j, 'y', lerp(by + 6, 75 + 36 * Math.sin(a) * 0.9 + 6, ay));
-         at('p3p' + j, 'x', lerp(bx + 8, 320 - 5 + 6 * Math.cos(a), ay)); at('p3p' + j, 'y', lerp(by + 6, 75 + 36 * Math.sin(a) * 0.9 + 6, ay)); } }},
+       // iletkende yalnız elektronlar hareket eder: + (proton) yerinde kalır, − (elektron) çubuğa yakın yüze kayar
+       for (let j = 0; j < 6; j++) { const px = [262, 300, 250, 312, 268, 296][j], py = [48, 52, 78, 80, 104, 102][j];
+         at('p3p' + j, 'x', px + 10 - 5); at('p3p' + j, 'y', py + 6);
+         at('p3e' + j, 'x', lerp(px - 10, 236 + 6 * (j % 2), ay) - 5); at('p3e' + j, 'y', lerp(py, 40 + j * 14, ay) + 6); } }},
      ...ADIM([[1, 2, 3], [4, 5], [6, 7, 8, 9, 10]])],
    late: () => kutuIsik(3, 'D')},
 
@@ -305,9 +306,8 @@ window.KONU = {
     KUTU(9, 6) + CV(10, 160, 4, 'E'),
    init: kur(9, 'E'),
    steps: [{d: 3.6, o: [], f: s => { const k = ease(prog(s, 0.2, 2.2));
-       for (let j = 0; j < 10; j++) { const ic = [95 + (j % 4) * 18, 62 + Math.floor(j / 4) * 18];
-         const dis = j < 4 ? [190 - j * 8, 72 + (j % 2) * 14] : [[60, 50], [100, 34], [145, 46], [60, 112], [100, 126], [145, 112]][j - 4];
-         at('p9q' + j, 'x', lerp(ic[0], dis[0], k) - 5); at('p9q' + j, 'y', lerp(ic[1], dis[1], k) + 6); }
+       for (let j = 0; j < 10; j++) { const dis = j < 4 ? [190 - j * 8, 72 + (j % 2) * 14] : [[60, 50], [100, 34], [145, 46], [60, 112], [100, 126], [145, 112]][j - 4];
+         at('p9q' + j, 'x', dis[0] - 5); at('p9q' + j, 'y', dis[1] + 6); at('p9q' + j, 'opacity', prog(k, j * 0.08, j * 0.08 + 0.2)); }
        at('p9s', 'opacity', s > 2.6 && s < 3.4 ? (Math.sin(s * 40) > 0 ? 1 : 0.4) : 0); }},
      ...ADIM([[1, 2, 3], [4, 5], [6, 7, 8, 9, 10]])],
    late: () => kutuIsik(9, 'E')},

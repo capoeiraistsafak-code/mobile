@@ -19,6 +19,7 @@ Bu format üç formatın birleşimidir:
 - Yanlış öncül notunda **hüküm başta** yazılır ("II ✗ yanlış: delik küçülmez, levha gibi büyür"); doğru bilgi asla "✗" ile bitmez.
 - Öncül cümlelerinde özne net olmalı (ör. "**levha** ısıtıldıktan sonra", "bilye, ısıtıldıktan sonra" değil).
 - Her sorunun cevabı yayından önce tek tek çözülerek kontrol edilir.
+- **Çözümler ve animasyonlar fizik kanunlarına uygun olur.** Örnek: iletkende yalnız elektronlar hareket eder; animasyonda "+" (proton) yürümez, yerinde kalır ya da yüzeyde belirir. Kuvvetlerin yönü ve büyüklüğü (etki-tepki, itme-çekme) doğru çizilir.
 
 ## 2. Görünüm
 
