@@ -553,9 +553,14 @@ const R3 = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, alpha: tr
 R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const cam = new THREE.PerspectiveCamera(36, 1920 / 1080, 0.1, 200);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x6b7a90, 1.15));
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6b7a90, 0.95));
 const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(5, 12, 7); sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 12, bottom: -12, far: 60 }); scene.add(sun);
+sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 12, bottom: -12, near: 0.5, far: 60 }); sun.shadow.camera.updateProjectionMatrix();
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02; sun.shadow.radius = 3; scene.add(sun); scene.add(sun.target);
+// Bütün sahnelerde gölge: sonradan eklenen her katı cisim gölge düşürür ve gölge alır (yarı saydam cam/sıvı ve çizgiler hariç)
+function golgeTara() { scene.traverse(o => { if (!o.isMesh || o.userData.golgesiz) return; const m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m || m.isMeshBasicMaterial && !o.userData.golgeli) { o.receiveShadow = false; return; }
+  const saydam = m.transparent && (m.opacity ?? 1) < 0.55; o.castShadow = !saydam; o.receiveShadow = true; }); }
+setInterval(golgeTara, 700); setTimeout(golgeTara, 50);
 const EDGE = new THREE.LineBasicMaterial({ color: 0x1f2937 });
 function mesh(geo, color, opt = {}) {
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color, side: opt.side || THREE.FrontSide, transparent: !!opt.op, opacity: opt.op || 1 }));

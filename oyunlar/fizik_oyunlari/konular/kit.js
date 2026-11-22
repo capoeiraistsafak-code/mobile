@@ -130,17 +130,23 @@
     a.parla = p => { p = Math.max(0, Math.min(1, p)); cam.material.emissiveIntensity = 1.3 * p; cam.material.opacity = 0.45 + 0.4 * p; tel.material.emissive = tel.material.emissive || new THREE.Color(); tel.material.emissive.setHex(0xfbbf24); tel.material.emissiveIntensity = 2 * p; hale.material.opacity = 0.4 * p; hale.scale.setScalar(0.6 + 0.8 * p); };
     a.parla(0); return a; };
   // İnsan (kurşun asker gibi): ayaklar y = 0, boy ≈ 1,8·b, +x yönüne bakar; a.kollar
-  FZ.insan = (g, renk = 0x2563eb, b = 1) => { const a = new THREE.Group(); a.scale.setScalar(b); g.add(a);
-    [-0.1, 0.1].forEach(z => { ekle(a, M(new THREE.CylinderGeometry(0.075, 0.07, 0.8, 8), 0x1f2937), 0, 0.42, z); ekle(a, M(new THREE.BoxGeometry(0.22, 0.08, 0.12), 0x111827), 0.04, 0.04, z); });
-    ekle(a, M(new THREE.CylinderGeometry(0.2, 0.17, 0.62, 10), renk), 0, 1.12, 0);                    // gövde
-    ekle(a, M(new THREE.CylinderGeometry(0.175, 0.175, 0.06, 10), 0x111827), 0, 0.84, 0);            // kemer
-    a.kollar = [-0.26, 0.26].map(z => { const k = new THREE.Group(); k.position.set(0, 1.38, z); a.add(k); ekle(k, M(new THREE.CylinderGeometry(0.06, 0.055, 0.6, 7), renk), 0, -0.3, 0); ekle(k, M(new THREE.SphereGeometry(0.06, 8, 6), 0xf1c27d), 0, -0.62, 0); return k; });
-    ekle(a, M(new THREE.CylinderGeometry(0.06, 0.06, 0.08, 8), 0xf1c27d), 0, 1.46, 0);
-    ekle(a, M(new THREE.SphereGeometry(0.15, 12, 10), 0xf1c27d), 0, 1.62, 0);                        // baş
-    ekle(a, M(new THREE.CylinderGeometry(0.13, 0.15, 0.14, 10), 0x111827), 0, 1.77, 0);              // şapka
-    ekle(a, M(new THREE.BoxGeometry(0.1, 0.02, 0.2), 0x111827), 0.15, 1.71, 0);                      // siper
-    [-0.05, 0.05].forEach(z => ekle(a, M(new THREE.SphereGeometry(0.018, 5, 4), 0x111827), 0.14, 1.64, z));   // gözler
-    return a; };
+  // İnsan (kurşun asker sadeliğinde): ayaklar y = 0, boy ≈ 1,8·b, +x yönüne bakar; kiz: uzun saç + at kuyruğu + etek; a.kollar
+  FZ.insan = (g, renk = 0x2563eb, b = 1, kiz = false) => { const a = new THREE.Group(); a.scale.setScalar(b); g.add(a);
+    const TEN = 0xf1c27d, SAC = kiz ? 0x5b3a1e : 0x2b1d12;
+    [-0.1, 0.1].forEach(z => { ekle(a, M(new THREE.CylinderGeometry(kiz ? 0.055 : 0.075, kiz ? 0.05 : 0.07, 0.8, 8), kiz ? TEN : 0x1f3a6b), 0, 0.42, z); ekle(a, M(new THREE.BoxGeometry(0.22, 0.08, 0.12), kiz ? 0xbe185d : 0x111827), 0.04, 0.04, z); });
+    if (kiz) ekle(a, M(new THREE.CylinderGeometry(0.19, 0.32, 0.42, 14), renk), 0, 0.78, 0);       // etek
+    else ekle(a, M(new THREE.CylinderGeometry(0.2, 0.18, 0.16, 10), 0x1f3a6b), 0, 0.84, 0);        // pantolon üstü
+    ekle(a, M(new THREE.CylinderGeometry(kiz ? 0.16 : 0.21, kiz ? 0.15 : 0.17, 0.6, 10), renk), 0, 1.15, 0);   // gövde (erkekte omuz geniş)
+    a.kollar = [-1, 1].map(sz => { const k = new THREE.Group(); k.position.set(0, 1.38, sz * (kiz ? 0.21 : 0.27)); a.add(k); ekle(k, M(new THREE.CylinderGeometry(0.055, 0.05, 0.6, 7), kiz ? TEN : renk), 0, -0.3, 0); ekle(k, M(new THREE.SphereGeometry(0.06, 8, 6), TEN), 0, -0.62, 0); return k; });
+    ekle(a, M(new THREE.CylinderGeometry(0.055, 0.06, 0.09, 8), TEN), 0, 1.47, 0);
+    ekle(a, M(new THREE.SphereGeometry(0.15, 14, 12), TEN), 0, 1.63, 0);                              // baş
+    ekle(a, M(new THREE.SphereGeometry(0.158, 14, 10, 0, Math.PI * 2, 0, kiz ? 1.9 : 1.25), SAC), -0.012, 1.64, 0);   // saç
+    if (kiz) { const at = ekle(a, M(new THREE.CylinderGeometry(0.06, 0.03, 0.42, 8), SAC), -0.2, 1.48, 0); at.rotation.z = -0.35;   // at kuyruğu
+      ekle(a, M(new THREE.SphereGeometry(0.04, 8, 6), 0xec4899), -0.15, 1.7, 0); }                  // toka
+    [-0.05, 0.05].forEach(z => ekle(a, M(new THREE.SphereGeometry(0.018, 5, 4), 0x111827), 0.14, 1.65, z));   // gözler
+    const agiz = ekle(a, M(new THREE.TorusGeometry(0.035, 0.008, 4, 10, Math.PI), 0xb91c1c), 0.145, 1.585, 0); agiz.rotation.set(0, Math.PI / 2, Math.PI);
+    a.kiz = kiz; return a; };
+  FZ.kiz = (g, renk = 0xdb2777, b = 1) => FZ.insan(g, renk, b, true);
   // Lokomotif: +x yönüne bakar, tekerlek altı y = 0, boy ≈ 3
   FZ.tren = (g, renk = 0xdc2626) => { const a = new THREE.Group(); g.add(a);
     ekle(a, M(new THREE.BoxGeometry(3, 0.16, 0.9), 0x1f2937), 0, 0.3, 0);                            // şasi
@@ -258,4 +264,21 @@
   FZ.koluUzat = (ins, i, hedef) => { const k = ins.kollar[i]; ins.updateMatrixWorld(true); const omz = k.getWorldPosition(V3()); const yerel = ins.worldToLocal(hedef.clone()), oml = ins.worldToLocal(omz.clone()), d = yerel.sub(oml);
     const L = d.length(); k.rotation.set(Math.atan2(-d.z, Math.hypot(d.x, -d.y)) * 0, 0, 0); const dir = d.clone().normalize();
     k.quaternion.setFromUnitVectors(V3(0, -1, 0), dir); k.scale.set(1, Math.max(0.3, L / 0.65), 1); };
+
+  // ---------- Dokular (hafif, tuval ile üretilir; bir kez oluşturulur) ----------
+  const DOKU = {};
+  const tuval = (w, h, ciz) => { const c = document.createElement('canvas'); c.width = w; c.height = h; ciz(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; };
+  const rnd = (a => () => (a = (a * 16807) % 2147483647) / 2147483647)(12345);
+  FZ.doku = ad => DOKU[ad] || (DOKU[ad] = ({
+    tugla: () => tuval(128, 64, (x, w, h) => { x.fillStyle = '#b5482e'; x.fillRect(0, 0, w, h); for (let i = 0; i < 900; i++) { const v = rnd(); x.fillStyle = v < .5 ? 'rgba(90,25,15,.25)' : 'rgba(230,140,100,.22)'; x.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 2, 1 + rnd() * 2); }
+      x.strokeStyle = 'rgba(70,20,10,.35)'; x.lineWidth = 2; x.strokeRect(1, 1, w - 2, h - 2); }),
+    sunger: () => tuval(128, 128, (x, w, h) => { x.fillStyle = '#f7d23a'; x.fillRect(0, 0, w, h); for (let i = 0; i < 520; i++) { const r = .8 + rnd() * 2.6; x.fillStyle = rnd() < .7 ? 'rgba(180,140,10,.55)' : 'rgba(255,240,140,.6)'; x.beginPath(); x.arc(rnd() * w, rnd() * h, r, 0, 6.3); x.fill(); } }),
+    ovma: () => tuval(64, 64, (x, w, h) => { x.fillStyle = '#2f7d32'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(20,60,20,.7)'; for (let i = 0; i < 120; i++) { x.beginPath(); const a = rnd() * w, b = rnd() * h; x.moveTo(a, b); x.lineTo(a + (rnd() - .5) * 14, b + (rnd() - .5) * 14); x.stroke(); } }),
+    tahta: () => tuval(128, 64, (x, w, h) => { x.fillStyle = '#b5844f'; x.fillRect(0, 0, w, h); for (let i = 0; i < 26; i++) { x.strokeStyle = `rgba(110,70,30,${.15 + rnd() * .25})`; x.lineWidth = 1 + rnd() * 2; x.beginPath(); const y = rnd() * h; x.moveTo(0, y); x.bezierCurveTo(w * .3, y + (rnd() - .5) * 8, w * .7, y + (rnd() - .5) * 8, w, y + (rnd() - .5) * 6); x.stroke(); } }),
+    beton: () => tuval(128, 128, (x, w, h) => { x.fillStyle = '#9ca3af'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1400; i++) { x.fillStyle = rnd() < .5 ? 'rgba(60,60,70,.18)' : 'rgba(240,240,245,.18)'; x.fillRect(rnd() * w, rnd() * h, 1.5, 1.5); } }),
+    metalFirca: () => tuval(128, 32, (x, w, h) => { x.fillStyle = '#c7ccd4'; x.fillRect(0, 0, w, h); for (let i = 0; i < 160; i++) { x.strokeStyle = `rgba(${rnd() < .5 ? '90,95,105' : '250,250,255'},.25)`; x.beginPath(); const y = rnd() * h; x.moveTo(0, y); x.lineTo(w, y); x.stroke(); } }),
+  })[ad]());
+  FZ.dokuMat = (ad, ops = {}) => new THREE.MeshStandardMaterial(Object.assign({ map: FZ.doku(ad), roughness: .85, metalness: 0 }, ops));
+  // Tuğla: delikli harman tuğlası görünümü; boyutlar w (x), h (y), d (z)
+  FZ.tugla = (g, w = 1, h = .5, d = .25) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), FZ.dokuMat('tugla')); m.castShadow = m.receiveShadow = true; g.add(m); return m; };
 })();

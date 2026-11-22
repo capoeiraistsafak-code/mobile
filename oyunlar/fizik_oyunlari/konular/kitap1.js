@@ -29,11 +29,12 @@
     S0: () => ({ mod: 'kati', o: 0, ust: 0, dongu: 0, kes: 0, karis: 0, yagH: 1, s1: 0.01, s2: 0.25, mk: 1000, x1: 50, V: 1, dt: 0.6, indH: 1, h: 1.5, dolum: 0, tt: 0, hs: [0, 0, 0], iz: [[], [], []], iki: 0, yag: 0, itis: 0, hiz: 1, irt: 0, gazP: 86, cis: 'demir', ind: 0, kos: 0 }),
     kur(g) {
       const G = {}; MODLAR.forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
-      const ece = FZ.insan(g, 0xdb2777, 1.15);
+      const ece = FZ.kiz(g, 0xdb2777, 1.15);
       // KATI: sünger (üst yüzü çöker) + tuğla
-      const sg = new THREE.BoxGeometry(3.2, 0.6, 2, 32, 1, 20), sung = new THREE.Mesh(sg, new THREE.MeshLambertMaterial({ color: 0xfacc15 })); sung.position.set(0.4, 0.3, 0); G.kati.add(sung);
+      const sg = new THREE.BoxGeometry(3.2, 0.6, 2, 48, 1, 30), sung = new THREE.Mesh(sg, FZ.dokuMat('sunger', { roughness: 1 })); sung.position.set(0.4, 0.3, 0); G.kati.add(sung);   // gözenekli bulaşık süngeri
+      const ovma = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.14, 2), FZ.dokuMat('ovma')); ovma.position.set(0.4, -0.07 + 0.0, 0); G.kati.add(ovma); sung.position.y = 0.3 + 0.14; ovma.position.y = 0.07;   // altta yeşil ovma yüzü
       const sp0 = sg.attributes.position.array.slice();
-      const tug = kutu(G.kati, 1, 1, 1, 0xb91c1c, 0, 1, 0); const tug2 = kutu(G.kati, 1, 1, 1, 0xb91c1c, 0, 1, 0);
+      const tug = FZ.tugla(G.kati, 1, 1, 1); const tug2 = FZ.tugla(G.kati, 1, 1, 1);
       // SIVI: üç kap (silindir, ağzı geniş, ağzı dar) + musluklar + P–t panosu
       const kap = KAP.map((rt, i) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt + 0.03, 0.53, KH, 32, 1, true), CAM()); m.position.set(KX[i], KH / 2 + 0.06, 0); G.sivi.add(m);
         kutu(G.sivi, 1.25, 0.06, 1.25, 0x334155, KX[i], 0.03, 0); return m; });
@@ -99,10 +100,10 @@
           for (let i = 0; i < pa.length; i += 3) { const x = o.sp0[i], y = o.sp0[i + 1], z = o.sp0[i + 2]; let yy = y;
             if (y > 0.29) { const ex = Math.max(0, Math.abs(x) - w / 2), ez = Math.max(0, Math.abs(z) - d / 2), e = Math.hypot(ex, ez); yy = 0.3 - dent * Math.max(0, 1 - e / 0.35); } pa[i + 1] = yy; }
           o.sg.attributes.position.needsUpdate = true; o.sg.computeVertexNormals(); }
-        const yb = 0.6 - dent; o.tug.scale.set(w, h, d); o.tug.position.set(0.4, yb + h / 2, 0); o.tug2.visible = !!S.ust; o.tug2.scale.set(w, h, d); o.tug2.position.set(0.4, yb + h * 1.5, 0);
+        const yb = 0.74 - dent; o.tug.scale.set(w, h, d); o.tug.position.set(0.4, yb + h / 2, 0); o.tug2.visible = !!S.ust; o.tug2.scale.set(w, h, d); o.tug2.position.set(0.4, yb + h * 1.5, 0);
         o.ece.position.set(-2.6, 0, 0.3); o.ece.rotation.y = -0.4;
         const top_ = yb + h * (1 + S.ust), c = V3(0.4, yb + h * (1 + S.ust) / 2, d / 2 + 0.05);
-        A(o.oG, c, V3(0, -1, 0), Gt * KN, 'bsG', 0.35); A(o.oN, V3(0.75, yb, d / 2 + 0.05), V3(0, 1, 0), Gt * KN, 'bsN', 0.35);
+        A(o.oG, c.clone().add(V3(-0.2, 0, 0)), V3(0, -1, 0), Gt * KN, 'bsG', -0.55); A(o.oN, V3(0.75, yb, d / 2 + 0.05), V3(0, 1, 0), Gt * KN, 'bsN', 0.35);
         FZ.setTag('bsK', `G = ${Gt} N · S = ${String(Sm).replace('.', ',')} m² · P = ${F('G', 'S')} = <b>${Math.round(P)} Pa</b>`); FZ.show('bsK', V3(0.4, 3.1, 0), 1);
       } else if (S.mod === 'sivi') {
         if (S.dolum) { if (S.kos) S.tt += dt; const Q = 0.55;

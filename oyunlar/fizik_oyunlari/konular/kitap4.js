@@ -16,7 +16,7 @@
       for (let i = 0; i <= 10; i++) { kutu(G.yol, 0.04, 0.01, 0.3, 0xffffff, -4.5 + i * 0.9, 0.04, 1.7, { edge: false }); etiket('k4m' + i, `${i * 10}`, '#1f232c'); }
       const pano = kutu(G.yol, 4.4, 2.6, 0.05, 0x111827, 1.8, 3.2, -1.6, { edge: false }); const eks = duz(G.yol, 0xe5e7eb), c1 = duz(G.yol, 0xef4444), c2 = duz(G.yol, 0x3b82f6);
       kutu(G.kutu, 9, 0.1, 2, 0x9ca3af, 0, 0.05, 0); const kz = kutu(G.kutu, 3, 0.11, 2, 0x7f1d1d, 2, 0.055, 0, { edge: false });
-      const kl = koli(G.kutu); const ece = FZ.insan(G.kutu, 0xdb2777, 1);
+      const kl = koli(G.kutu); const ece = FZ.kiz(G.kutu, 0xdb2777, 1);
       const rp = []; for (let i = 0; i <= 120; i++) { const x = -4 + i / 15; rp.push(V3(x, RYs(x), 0)); }
       [-0.3, 0.3].forEach(z => { const L = duz(G.ray, 0x6b7280); FZ.setLine(L, rp.map(p => V3(p.x, p.y, z))); });
       for (let i = 0; i < 40; i++) { const x = -4 + i * 0.2; kutu(G.ray, 0.08, 0.05, 0.8, 0x78350f, x, RYs(x) - 0.04, 0, { edge: false }); if (RYs(x) > 0.5) kutu(G.ray, 0.06, RYs(x) - 0.1, 0.06, 0xf59e0b, x, (RYs(x) - 0.1) / 2, -0.35, { edge: false }); }
