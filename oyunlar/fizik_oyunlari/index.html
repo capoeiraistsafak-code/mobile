@@ -236,7 +236,12 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
 .m-bas{margin-top:14px;font:900 88px/1.05 Inter;background:linear-gradient(90deg,#fde047 0%,#fb923c 45%,#ef4444 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(249,115,22,.45))}
 .m-alt{margin-top:10px;font:700 36px Inter;color:#cbd5e1}
 .m-alt b{color:#F5C400}
-#cards{margin-top:30px;display:flex;gap:30px}
+#cards{margin-top:30px;display:flex;gap:30px;max-width:1800px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;touch-action:pan-x;padding:6px 6px 18px;scrollbar-width:thin;scrollbar-color:#F5C400 #2a303c;cursor:grab}
+#cards::-webkit-scrollbar{height:12px}#cards::-webkit-scrollbar-thumb{background:#F5C400;border-radius:6px}#cards::-webkit-scrollbar-track{background:#2a303c;border-radius:6px}
+#cards.surukle{cursor:grabbing;scroll-snap-type:none}#cards .card{flex:0 0 auto;scroll-snap-align:start}
+.kartOk{position:absolute;top:50%;transform:translateY(-50%);width:64px;height:120px;border-radius:18px;background:rgba(245,196,0,.92);color:#1f232c;font:900 44px Inter;z-index:3;border:none}
+.kartOk.sol{left:-60px}.kartOk.sag{right:-60px}.kartOk{width:52px}.kartOk.hide{display:none}
+#kartSar{position:relative;max-width:1800px}
 #cards.cok{gap:16px}#cards.cok .card{width:342px;padding:22px 20px 18px}#cards.cok .c-ic{font-size:68px}#cards.cok .c-ad{font-size:31px}#cards.cok .c-ac{font-size:21px}#cards.cok .c-yil{transform:scale(.85);transform-origin:left}
 .card{width:400px;height:450px;background:#2a303c;border:4px solid #4b5566;border-radius:28px;padding:26px 26px 22px;display:flex;flex-direction:column;text-align:left;color:#fff;position:relative}
 .card:hover,.card:focus{border-color:#F5A300}
@@ -1389,7 +1394,22 @@ $('sfKaydet').onclick = () => { const e = $('sfEski').value, y = $('sfYeni').val
 $('mGeri').onclick = () => { SFX.click(); anaDon(); };
 $('bFs2').onclick = () => fullscreen();
 
-function buildMenu() { buildMenu0(); const c = $('cards'); c.classList.toggle('cok', c.children.length > 4); }   // 5 kart: kartlar küçülür, ekrana sığar
+function buildMenu() { buildMenu0(); const c = $('cards'); c.classList.toggle('cok', c.children.length > 4); c.scrollLeft = 0; setTimeout(kartOkGuncelle, 50); }
+// görev/ders kartları: elle (parmak ya da fare) sağa–sola kaydırma + ◀ ▶ düğmeleri
+function kartOkGuncelle() { const c = $('cards'); if (!c || !$('kOkSol')) return; $('kOkSol').classList.toggle('hide', c.scrollLeft < 8); $('kOkSag').classList.toggle('hide', c.scrollLeft + c.clientWidth >= c.scrollWidth - 8); }
+(function () { const c = $('cards'); if (!c || c.parentNode.id === 'kartSar') return;
+  const sar = document.createElement('div'); sar.id = 'kartSar'; c.parentNode.insertBefore(sar, c); sar.appendChild(c);
+  const ol = document.createElement('button'); ol.id = 'kOkSol'; ol.className = 'kartOk sol hide'; ol.textContent = '◀'; const og = document.createElement('button'); og.id = 'kOkSag'; og.className = 'kartOk sag hide'; og.textContent = '▶';
+  sar.appendChild(ol); sar.appendChild(og);
+  ol.onclick = () => { SFX.click(); c.scrollBy({ left: -440, behavior: 'smooth' }); }; og.onclick = () => { SFX.click(); c.scrollBy({ left: 440, behavior: 'smooth' }); };
+  c.addEventListener('scroll', kartOkGuncelle, { passive: true });
+  let bas = null, sl = 0, kaydi = false;
+  c.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') return; bas = e.clientX; sl = c.scrollLeft; kaydi = false; });
+  addEventListener('pointermove', e => { if (bas == null) return; const dx = (e.clientX - bas) / (window.SCALE || 1); if (Math.abs(dx) > 8) { kaydi = true; c.classList.add('surukle'); } if (kaydi) c.scrollLeft = sl - dx; });
+  addEventListener('pointerup', () => { bas = null; c.classList.remove('surukle'); });
+  c.addEventListener('click', e => { if (kaydi) { e.stopPropagation(); e.preventDefault(); kaydi = false; } }, true);
+  c.addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { c.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
+})();   // 5 kart: kartlar küçülür, ekrana sığar
 function buildMenu0() {
   $('cards').innerHTML = '';
   const h = KONU ? HAZIR[KONU.sinav + '|' + KONU.ad] : null;
@@ -1943,11 +1963,16 @@ function sesUyandir(e) {        // her dokunuş/tıklama/tuşta: motor yoksa kur
   if (c.state !== 'running') {
     if (gercek && AU.bekle) sesYenile();                               // önceki dokunuşta uyandırılamadı → temiz motor
     else { AU.bekle = true; c.resume().then(() => { if (AU.ctx === c && c.state === 'running') AU.bekle = false; sesRozet(); }, () => {}); }
-  } else AU.bekle = false;
+  } else { AU.bekle = false;
+    // "running" görünüp saati ilerlemeyen (takılı) motor: kısa süre sonra kontrol et, ilerlemiyorsa sıfırdan kur
+    if (gercek) { const t0 = c.currentTime, z0 = performance.now(); setTimeout(() => { if (AU.ctx === c && c.state === 'running' && performance.now() - z0 > 200 && c.currentTime - t0 < 0.02) { AU.takili = (AU.takili || 0) + 1; sesYenile(); } }, 260); } }
   if (gercek && AU.ctx) { try { const s = AU.ctx.createBufferSource(); s.buffer = AU.ctx.createBuffer(1, 1, 22050); s.connect(AU.ctx.destination); s.start(0); } catch (er) {} }   // kilit açma
   sesRozet();
 }
 ['pointerup', 'touchend', 'click', 'keydown'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));
+['pointerdown', 'touchstart'].forEach(t => addEventListener(t, sesUyandir, { capture: true, passive: true }));   // dokunur dokunmaz (bazı tabletlerde pointerup gelmiyor)
+document.addEventListener('visibilitychange', () => { if (!document.hidden && AU.ctx && AU.ctx.state !== 'running') AU.bekle = true; sesRozet(); });
+addEventListener('pageshow', () => { if (AU.ctx && AU.ctx.state !== 'running') AU.bekle = true; sesRozet(); });
 function sesRozet() { const r = $('sesRozet'); if (!r) return; const kapali = AU.on && AU.sev > 0 && !!AU.ctx && AU.ctx.state !== 'running'; r.classList.toggle('hide', !kapali); }
 $('sesRozet').onclick = () => { sesYenile(); SFX.ok(); setTimeout(sesRozet, 300); };
 setInterval(sesRozet, 1000);

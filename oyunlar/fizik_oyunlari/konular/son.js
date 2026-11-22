@@ -9,4 +9,6 @@
     h.gorevler.forEach((m, i) => { if (m.yk) m.no = i + 1; });
     (h.dersler || []).forEach((m, i) => { if (m.yk) m.no = i + 1; });
   });
+  // ana menüdeki konu yıldız/soru sayıları, sonradan eklenen bütün görevlerle yeniden hesaplansın
+  try { if (FZ.anaKur) FZ.anaKur(); } catch (e) {}
 })();
