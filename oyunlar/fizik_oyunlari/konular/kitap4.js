@@ -68,7 +68,7 @@
   const kutuK = (S, F, m, mus, muk, sp = 0) => md(S, 'kutu', { F, m, mus, muk, sp, xk: 0, vk: 0 });
   const rayK = (S, fr) => md(S, 'ray', { xr: -3.9, vr: 0, Q: 0, fr });
 
-  const h1 = ders(sHk, { yk: 'TYT3-d4', no: 4, icon: '📖', name: 'Hikâye: Okul yolunda iki araba', task: 'Konum, yol, yer değiştirme, sürat–hız, düzgün doğrusal hareket, konum–zaman grafiği, karşılaşma.', notlar: ['x = v · t (düzgün doğrusal hareket) · konum–zaman grafiğinin eğimi hızdır.', 'Yol skaler, yer değiştirme vektördür.'], steps: [
+  const h1 = ders(sHk, { yk: 'TYT3-d4', no: 4, icon: '🚙', name: 'Hikâye: Okul yolunda iki araba', task: 'Konum, yol, yer değiştirme, sürat–hız, düzgün doğrusal hareket, konum–zaman grafiği, karşılaşma.', notlar: ['x = v · t (düzgün doğrusal hareket) · konum–zaman grafiğinin eğimi hızdır.', 'Yol skaler, yer değiştirme vektördür.'], steps: [
     { do: S => yolK(S, 0, 10, 0, 60, -5, 0, 4), sub: 'Sabah Ece\'nin babası kırmızı arabayla (sol) okula gidiyor, karşıdan mavi bir araba geliyor. Panoda konum–zaman grafiği çizilecek.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Konum, yol ve yer değiştirme', m: ['Konum: başlangıç noktasına göre yer (+/− yönlü). Yer değiştirme: son konum − ilk konum (vektör). Yol: gidilen toplam uzunluk (skaler).', `Sürat = ${F('yol', 'zaman')} · hız = ${F('yer değiştirme', 'zaman')}`] } },
     { p: { t: 'Kırmızı araba 0 m\'den 10 m/s ile, mavi 60 m\'den 5 m/s ile birbirine doğru gidiyor. Kaçıncı saniyede karşılaşırlar?', o: ['6', '4', '3', '12'], d: 1 } },
@@ -81,7 +81,7 @@
     { k: { tur: 'dikkat', b: 'UYARI · Grafik okuma', m: ['x–t grafiğinde eğim hız, v–t grafiğinde eğim ivme, v–t grafiğinin altındaki alan yer değiştirmedir.', 'Hız ile ivme aynı yönlüyse hızlanır, zıt yönlüyse yavaşlar.'] } },
     { k: { tur: 'ozet', b: 'Özet', m: [`${FM('x = v t')} · karşılaşma ${FM(`t = ${F('d', 'v<sub>1</sub> + v<sub>2</sub>')}`)} · yetişme ${FM(`t = ${F('d', 'v<sub>1</sub> − v<sub>2</sub>')}`)}`] } },
   ] });
-  const h2 = ders(sHk, { yk: 'TYT3-d5', no: 5, icon: '📖', name: 'Hikâye: Taşınma günü — koliyi itmek', task: 'Kuvvet, net kuvvet, eylemsizlik, F = ma, etki–tepki, statik ve kinetik sürtünme.', notlar: ['Statik sürtünme en çok μs·N; kayınca kinetik sürtünme μk·N (genelde daha küçük).', 'Sürtünme kuvveti harekete (ya da hareket eğilimine) zıttır.'], steps: [
+  const h2 = ders(sHk, { yk: 'TYT3-d5', no: 5, icon: '📦', name: 'Hikâye: Taşınma günü — koliyi itmek', task: 'Kuvvet, net kuvvet, eylemsizlik, F = ma, etki–tepki, statik ve kinetik sürtünme.', notlar: ['Statik sürtünme en çok μs·N; kayınca kinetik sürtünme μk·N (genelde daha küçük).', 'Sürtünme kuvveti harekete (ya da hareket eğilimine) zıttır.'], steps: [
     { do: S => kutuK(S, 0, 5, 0.4, 0.3), sub: 'Ece\'nin ailesi taşınıyor. 5 kg\'lık bir koli halının (koyu bölge) üstüne itilecek.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Kuvvetler', f: ['k4g', 'k4N'], m: ['Koliye ağırlık (mg) düşey aşağı, zeminin tepki kuvveti (N) yüzeyden koliye, yukarı etki eder. Dengede eşittirler ama etki–tepki çifti değildir.'] } },
     { do: S => kutuK(S, 20, 5, 0.4, 0.3), sub: 'Ece sürtünmesiz parkede koliyi 20 N ile itiyor…', go: '▶︎ İt' },
@@ -94,7 +94,7 @@
     { k: { tur: 'kavram', b: 'Newton\'un üç yasası', m: ['1. Eylemsizlik: net kuvvet sıfırsa durur ya da sabit hızla gider.', '2. F<sub>net</sub> = m a · 3. Etki–tepki: Ece koliyi iterken koli de Ece\'yi eşit ve zıt kuvvetle iter (farklı cisimlere etki eder).'] } },
     { k: { tur: 'ozet', b: 'Özet', m: [`${FM('F<sub>net</sub> = m a')} · ${FM('f<sub>k</sub> = μ<sub>k</sub> N')} · f<sub>s</sub> ≤ μ<sub>s</sub> N · etki–tepki farklı cisimlerde.`] } },
   ] });
-  const h3 = ders(sHk, { yk: 'TYT4-d3', no: 3, icon: '📖', name: 'Hikâye: Lunaparkta enerji treni', task: 'Kinetik ve potansiyel enerji, mekanik enerjinin korunumu, sürtünmede ısıya dönüşüm, iş ve güç.', notlar: ['Ek = ½mv² · Ep = mgh · sürtünmesiz yolda Ek + Ep sabit.', 'Sürtünme kuvvetinin işi ısıya dönüşür: Q = f · s.'], steps: [
+  const h3 = ders(sHk, { yk: 'TYT4-d3', no: 3, icon: '🎢', name: 'Hikâye: Lunaparkta enerji treni', task: 'Kinetik ve potansiyel enerji, mekanik enerjinin korunumu, sürtünmede ısıya dönüşüm, iş ve güç.', notlar: ['Ek = ½mv² · Ep = mgh · sürtünmesiz yolda Ek + Ep sabit.', 'Sürtünme kuvvetinin işi ısıya dönüşür: Q = f · s.'], steps: [
     { do: S => rayK(S, 0), sub: 'Ece lunaparkta. 2 kg\'lık oyuncak vagon 26 m yükseklikten durgun bırakılacak (ölçekli model).', go: '▶︎ Vagonu bırak' },
     { do: S => { S.kos = 1; }, sub: 'Vagon iniyor; enerji çubukları değişiyor…', until: S => S.xr > 1.9 || !S.kos },
     { k: { tur: 'kavram', b: 'Enerji dönüşümü', f: ['k4b0', 'k4b1'], m: [`${FM('E<sub>p</sub> = m g h')} yükseklikten, ${FM(`E<sub>k</sub> = ${F('1', '2')} m v<sup>2</sup>`)} hızdan gelir.`, 'İnerken E<sub>p</sub> azalır, E<sub>k</sub> artar; sürtünme yoksa toplamları sabittir.'] } },

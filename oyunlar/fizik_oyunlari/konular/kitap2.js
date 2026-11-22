@@ -89,7 +89,7 @@
     qp: () => V3(0, 3.6, 0) });
   const md = (S, mod, x) => Object.assign(S, { mod, kos: 0 }, x || {});
 
-  const h1 = ders(sIs, { yk: 'TYT5-d4', no: 4, icon: '📖', name: 'Hikâye: Üç tencere, bir termos ve uydurma termometre', task: 'Isı–sıcaklık, öz ısı ve ısı sığası, sıcaklık değişimi, ısıl denge, termometre dönüşümleri.', notlar: ['Isı enerjidir (cal, J); sıcaklık ise ortalama kinetik enerjinin göstergesidir (°C, K).', 'Q = m · c · ΔT · ısı sığası C = m · c.', 'Isı alışverişinde verilen ısı = alınan ısı; ısı akışı sıcaklıklar eşitlenince durur.'], steps: [
+  const h1 = ders(sIs, { yk: 'TYT5-d4', no: 4, icon: '🍲', name: 'Hikâye: Üç tencere, bir termos ve uydurma termometre', task: 'Isı–sıcaklık, öz ısı ve ısı sığası, sıcaklık değişimi, ısıl denge, termometre dönüşümleri.', notlar: ['Isı enerjidir (cal, J); sıcaklık ise ortalama kinetik enerjinin göstergesidir (°C, K).', 'Q = m · c · ΔT · ısı sığası C = m · c.', 'Isı alışverişinde verilen ısı = alınan ısı; ısı akışı sıcaklıklar eşitlenince durur.'], steps: [
     { do: S => md(S, 'tencere', { ms: [1, 2, 3], cs: [1, 1, 1], T0: [20, 20, 20], Q: 0 }), sub: 'Ece annesine yardım ediyor: ocakta 100 g, 200 g ve 300 g su olan üç tencere var. Üç ocak eşit güçte.', go: '▶︎ Ocakları yak' },
     { do: S => { S.Qmax = 6000; S.kos = 1; }, sub: 'Üç tencereye de eşit sürede eşit ısı veriliyor…', until: S => !S.kos },
     { k: { tur: 'gozlem', b: 'Aynı ısı, farklı sıcaklık artışı', f: ['k2a', 'k2b', 'k2c'], m: ['Her tencere 6000 cal aldı ama K 60 °C, L 30 °C, M 20 °C ısındı.', `${FM('Q = m · c · ΔT')} → ${FM(`ΔT = ${F('Q', 'm · c')}`)} · kütle büyükse sıcaklık az artar.`] } },
@@ -106,7 +106,7 @@
     { k: { tur: 'kavram', b: 'Termometre dönüşümü', f: ['k2a', 'k2b', 'k2c'], m: [`${FM(`${F('X − X<sub>donma</sub>', 'X<sub>kaynama</sub> − X<sub>donma</sub>')} = ${F('C − 0', '100 − 0')}`)}`, '40 °C → X: 20 + 0,4 · 100 = <em>60 °X</em> · Y: −10 + 0,4 · 150 = <em>50 °Y</em>.', 'Neden? Bütün termometrelerde donma–kaynama arası aynı oranla bölünür; yalnız bölme sayıları farklıdır.'] } },
     { k: { tur: 'ozet', b: 'Özet', m: [`${FM('Q = m c ΔT')} · ${FM('C = m c')} · ${FM('Q<sub>verilen</sub> = Q<sub>alınan</sub>')}`, 'Termometreler: (okunan − donma) / (kaynama − donma) hep aynı.'] } },
   ] });
-  const h2 = ders(sIs, { yk: 'TYT5-d5', no: 5, icon: '📖', name: 'Hikâye: Halkadan geçmeyen küre ve yazın uzayan raylar', task: 'Boyca, yüzeyce ve hacimce genleşme, delik ve halka genleşmesi, genleşme katsayısı, bimetal, günlük hayat.', notlar: ['ΔL = L₀ · λ · ΔT · ΔA = A₀ · 2λ · ΔT · ΔV = V₀ · 3λ · ΔT', 'Isınan levhadaki delik de levha gibi büyür.', 'Genleşme katsayısı (λ) ayırt edicidir.'], steps: [
+  const h2 = ders(sIs, { yk: 'TYT5-d5', no: 5, icon: '💍', name: 'Hikâye: Halkadan geçmeyen küre ve yazın uzayan raylar', task: 'Boyca, yüzeyce ve hacimce genleşme, delik ve halka genleşmesi, genleşme katsayısı, bimetal, günlük hayat.', notlar: ['ΔL = L₀ · λ · ΔT · ΔA = A₀ · 2λ · ΔT · ΔV = V₀ · 3λ · ΔT', 'Isınan levhadaki delik de levha gibi büyür.', 'Genleşme katsayısı (λ) ayırt edicidir.'], steps: [
     { do: S => md(S, 'halka', { isi: 0 }), sub: 'Okul laboratuvarında öğretmen bakır bir halkanın üstüne metal bir küre koydu. Küre halkadan geçemiyor.', go: '▶︎ Halkayı ısıt' },
     { p: { t: 'Yalnız halka ısıtılırsa ne olur?', o: ['Halka büzülür, küre hiç geçmez', 'Halka genişler, küre geçer', 'Değişmez', 'Küre büyür'], d: 1 } },
     { do: S => { S.kos = 1; }, sub: 'Halka ısınıyor…', until: S => S.isi >= 1 },

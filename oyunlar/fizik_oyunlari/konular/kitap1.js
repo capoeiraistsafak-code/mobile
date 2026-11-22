@@ -186,7 +186,7 @@
     sivi: ['Sıvı basıncı yalnız derinliğe ve sıvının özkütlesine bağlıdır: P = h · d · g. Kabın biçimi ve sıvının miktarı önemli değildir.', 'Tabandaki basınç kuvveti F = P · S. Bu, sıvının ağırlığına yalnız düz kenarlı (silindir/prizma) kaplarda eşittir.'] };
 
   // ======================= HİKÂYE 1 · KATILAR VE SIVILAR =======================
-  const h1 = ders(sBs, { yk: 'TYT8-d2', no: 2, icon: '📖', name: 'Hikâye: Ece\'nin süngeri ve barajın sırrı', task: 'Katıların basıncı, sıvıların basıncı, kap biçimi, karışmayan sıvılar, musluk grafikleri, basınç kuvveti.', notlar: [...NT.kati, ...NT.sivi], steps: [
+  const h1 = ders(sBs, { yk: 'TYT8-d2', no: 2, icon: '🧽', name: 'Hikâye: Ece\'nin süngeri ve barajın sırrı', task: 'Katıların basıncı, sıvıların basıncı, kap biçimi, karışmayan sıvılar, musluk grafikleri, basınç kuvveti.', notlar: [...NT.kati, ...NT.sivi], steps: [
     { do: S => md(S, 'kati', { o: 0, ust: 0 }), sub: 'Ece, bulaşık süngerinin üstüne bir tuğla koydu. Tuğla süngere biraz gömüldü.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'merak', b: 'Aynı tuğla, aynı ağırlık… ama neden bazen derin, bazen sığ iz bırakıyor?', m: ['Ece tuğlayı üç farklı yüzü üstüne koyup süngerdeki izi karşılaştıracak.'], dugme: 'İzleyelim ▶︎' } },
     { k: { tur: 'kavram', b: 'Basınç kuvveti ve basınç', f: ['bsG', 'bsN'], m: ['Tuğla süngere ağırlığı kadar kuvvet uygular: buna <em>basınç kuvveti</em> (F) denir. Burada F = G = 20 N.', `Birim yüzeye düşen kuvvete <em>basınç</em> denir: ${FM(`P = ${F('F', 'S')}`)} · birimi N/m² = pascal (Pa).`] } },
@@ -211,7 +211,7 @@
   ] });
 
   // ======================= HİKÂYE 2 · U BORUSU, KRİKO, AKIŞ, GAZ =======================
-  const h2 = ders(sBs, { yk: 'TYT8-d3', no: 3, icon: '📖', name: 'Hikâye: U borusu, kriko, rüzgâr ve dağdaki barometre', task: 'U boruları ve birleşik kaplar, Pascal ilkesi ve hidrolik lift, akışkanlarda basınç (Bernoulli), açık hava ve gaz basıncı.', notlar: ['U borusunda aynı sıvının içindeki aynı yatay düzlemdeki noktalarda basınç eşittir.', 'Sıvılar üzerlerine uygulanan basıncı her yöne aynen iletir (Pascal).', 'Akışkanın hızlandığı yerde basıncı düşer (Bernoulli).', 'Açık hava basıncı deniz seviyesinde 76 cmHg\'dir; yükseldikçe azalır.'], steps: [
+  const h2 = ders(sBs, { yk: 'TYT8-d3', no: 3, icon: '🚗', name: 'Hikâye: U borusu, kriko, rüzgâr ve dağdaki barometre', task: 'U boruları ve birleşik kaplar, Pascal ilkesi ve hidrolik lift, akışkanlarda basınç (Bernoulli), açık hava ve gaz basıncı.', notlar: ['U borusunda aynı sıvının içindeki aynı yatay düzlemdeki noktalarda basınç eşittir.', 'Sıvılar üzerlerine uygulanan basıncı her yöne aynen iletir (Pascal).', 'Akışkanın hızlandığı yerde basıncı düşer (Bernoulli).', 'Açık hava basıncı deniz seviyesinde 76 cmHg\'dir; yükseldikçe azalır.'], steps: [
     { do: S => md(S, 'ubor', { yag: 0 }), sub: 'Ece okulun laboratuvarında içinde su olan bir U borusu buldu. İki koldaki su aynı seviyedeydi.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Birleşik kaplar', m: ['Tabandan bağlı kaplarda aynı sıvı <em>aynı seviyede</em> durur (kabın biçimi ne olursa olsun).', 'Çaydanlığın ağzı ile gövdesi, şehir su depoları ve su terazisi bu ilkeyle çalışır.'] } },
     { p: { t: 'Sol kola 10 cm yağ (d = 0,8 g/cm³) dökülürse yağın üst yüzeyi ile sağdaki su yüzeyi arasında ne olur?', o: ['Su yüzeyi daha yüksekte olur', 'Yağ yüzeyi daha yüksekte olur', 'Aynı seviyede olur', 'Yağ suyun altına iner'], d: 1 } },
@@ -236,7 +236,7 @@
   ] });
 
   // ======================= HİKÂYE 3 · KALDIRMA KUVVETİ =======================
-  const h3 = ders(sBs, { yk: 'TYT8-d4', no: 4, icon: '📖', name: 'Hikâye: Taş batar, tahta yüzer, balık askıda', task: 'Kaldırma kuvveti, dinamometreyle ölçme, yüzme–askıda kalma–batma, batan hacim oranı.', notlar: ['Kaldırma kuvveti cisme sıvı tarafından yukarı doğru uygulanır; büyüklüğü taşırılan sıvının ağırlığına eşittir.', 'Kaldırma kuvveti cismin özkütlesine değil, batan hacmine ve sıvının özkütlesine bağlıdır.'], steps: [
+  const h3 = ders(sBs, { yk: 'TYT8-d4', no: 4, icon: '⚓', name: 'Hikâye: Taş batar, tahta yüzer, balık askıda', task: 'Kaldırma kuvveti, dinamometreyle ölçme, yüzme–askıda kalma–batma, batan hacim oranı.', notlar: ['Kaldırma kuvveti cisme sıvı tarafından yukarı doğru uygulanır; büyüklüğü taşırılan sıvının ağırlığına eşittir.', 'Kaldırma kuvveti cismin özkütlesine değil, batan hacmine ve sıvının özkütlesine bağlıdır.'], steps: [
     { do: S => md(S, 'kald', { cis: 'demir', ind: 0 }), sub: 'Ece, havuzda ağır bir taşı su içindeyken kolayca kaldırabildiğini fark etti. Laboratuvarda bunu ölçmeye karar verdi.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Havada ölçüm', f: ['bsT', 'bsG'], m: ['1 L hacimli metal blok dinamometreye asıldı: 30 N gösteriyor. Havadayken ip gerilmesi T = G = 30 N.'] } },
     { p: { t: 'Blok tamamen suya batırılırsa dinamometre kaç N gösterir?', o: ['30 N', '20 N', '40 N', '0'], d: 1 } },

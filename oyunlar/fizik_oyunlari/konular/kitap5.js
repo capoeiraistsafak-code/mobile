@@ -7,7 +7,7 @@
   // ----------------- ELEKTROSTATİK: mevcut iki iletken küre sahnesi -----------------
   const sEs = FZ.taban('TYT', 'Elektrostatik');
   const dk = (S, a, b, ra = 0.6, rb = 0.6, d = 4) => Object.assign(S, { qa: a, qb: b, ra, rb, d, dok: 0, faz: 0, paylasti: 0 });
-  const he = ders(sEs, { yk: 'TYT6-d7', no: 7, icon: '📖', name: 'Hikâye: Kış sabahı — kapı kolu çarpınca', task: 'Yük, iletken–yalıtkan, dokunma ile yük paylaşımı, Coulomb kuvveti, uzaklıkla değişim, elektrik alan.', notlar: ['Yük korunur; dokunan iletkenler yükü yarıçapla orantılı paylaşır.', 'F = k·q₁·q₂/d² · E = k·q/d² · alan çizgileri (+)\'dan çıkar.'], steps: [
+  const he = ders(sEs, { yk: 'TYT6-d7', no: 7, icon: '⚡', name: 'Hikâye: Kış sabahı — kapı kolu çarpınca', task: 'Yük, iletken–yalıtkan, dokunma ile yük paylaşımı, Coulomb kuvveti, uzaklıkla değişim, elektrik alan.', notlar: ['Yük korunur; dokunan iletkenler yükü yarıçapla orantılı paylaşır.', 'F = k·q₁·q₂/d² · E = k·q/d² · alan çizgileri (+)\'dan çıkar.'], steps: [
     { do: S => dk(S, 6, -2), sub: 'Kış sabahı Ece yün kazağını çıkarıp kapı koluna dokununca çarpıldı. Okulda öğretmeni iki metal küreyle aynı olayı gösterdi: K küresi +6q, L küresi −2q.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Neden çarpıldı?', m: ['Kazağa sürtünen Ece\'nin vücudu yüklendi. Metal kola dokununca yükler iletken üzerinden hızla aktı: küçük bir kıvılcım.', 'İletkenlerde (metal, insan vücudu) yükler hareket edebilir; yalıtkanlarda (plastik, cam) konduğu yerde kalır.'] } },
     { k: { tur: 'kavram', b: 'Coulomb kuvveti', f: ['e6F', 'e6F2'], m: [`${FM(`F = k ${F('q<sub>1</sub> · q<sub>2</sub>', 'd<sup>2</sup>')}`)} · zıt yükler çeker, aynı yükler iter.`, 'İki küreye etki eden kuvvetler eşit büyüklükte ve zıt yönlüdür (yükleri farklı olsa bile).'] } },
@@ -116,7 +116,7 @@
     },
     qp: () => V3(0, 1, -2) });
   const dv = (S, x) => Object.assign(S, { mod: 'seri', V: 12, R1: 4, R2: 4, ac: 1, pil: 1, ters: 0 }, x || {});
-  const hd = ders(sEl, { yk: 'TYT7-d3', no: 3, icon: '📖', name: 'Hikâye: Ece\'nin el feneri ve buzdolabı mıknatısı', task: 'Akım, potansiyel farkı, direnç, Ohm yasası, seri–paralel bağlama, üreteç bağlama, ampermetre–voltmetre, elektrik enerjisi ve güç, mıknatıslar.', notlar: ['V = I · R · seri: R toplanır, akım aynı · paralel: 1/R toplanır, gerilim aynı.', 'P = V·I = I²R = V²/R · E = P · t · 1 kWh = 3,6·10⁶ J', 'Ampermetre seri, voltmetre paralel bağlanır.'], steps: [
+  const hd = ders(sEl, { yk: 'TYT7-d3', no: 3, icon: '🔦', name: 'Hikâye: Ece\'nin el feneri ve buzdolabı mıknatısı', task: 'Akım, potansiyel farkı, direnç, Ohm yasası, seri–paralel bağlama, üreteç bağlama, ampermetre–voltmetre, elektrik enerjisi ve güç, mıknatıslar.', notlar: ['V = I · R · seri: R toplanır, akım aynı · paralel: 1/R toplanır, gerilim aynı.', 'P = V·I = I²R = V²/R · E = P · t · 1 kWh = 3,6·10⁶ J', 'Ampermetre seri, voltmetre paralel bağlanır.'], steps: [
     { do: S => dv(S, { ac: 0 }), sub: 'Elektrik kesildi. Ece el fenerinin pilini, iki ampulünü ve tellerini bir tahtaya dizip kendi lambasını kurmaya karar verdi.', go: '▶︎ Hikâyeyi başlat' },
     { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['<em>Akım</em> (I, amper): birim zamanda geçen yük. Elektronlar (kırmızı) pilin (−) ucundan (+) ucuna akar; akım yönü (+)\'dan (−)\'ye kabul edilir.', '<em>Potansiyel farkı</em> (V, volt): yükleri iten "elektriksel basınç". <em>Direnç</em> (R, ohm): akıma karşı koyma.'] } },
     { sub: 'Anahtarı kapatalım.', go: '▶︎ Anahtarı kapat' },
