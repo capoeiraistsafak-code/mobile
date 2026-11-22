@@ -1688,7 +1688,7 @@ let SON_Q = null;
 const _tmp = document.createElement('div');
 const kartFormul = k => { _tmp.innerHTML = (k.m || []).join(' '); return [..._tmp.querySelectorAll('.fm')].map(e => e.outerHTML); };
 function dersKartlari(M) { const L = []; for (let i = 0; i <= Math.min(GAME.i, M.steps.length - 1); i++) { const st = M.steps[i]; if (st && st.k) L.push(st.k); } return L; }
-function dersFormulleri(M) { const g = new Set(), L = []; dersKartlari(M).forEach(k => kartFormul(k).forEach(h => { _tmp.innerHTML = h; const t = _tmp.textContent.replace(/\s+/g, ''); if (!g.has(t)) { g.add(t); L.push(h); } })); return L; }
+function dersFormulleri(M) { const g = new Set(), L = []; dersKartlari(M).forEach(k => kartFormul(k).forEach(h => { _tmp.innerHTML = h; const t = _tmp.textContent.replace(/[\s·×*]+/g, ''); if (!g.has(t)) { g.add(t); L.push(h); } })); return L; }
 function formulYaz() { const M = GAME.M, el = $('bForm'); if (!M || !M.ders || !el) return; const L = dersFormulleri(M);
   el.innerHTML = L.map(h => `<div>${h}</div>`).join(''); $('bFormH').classList.toggle('hide', !L.length); el.scrollTop = el.scrollHeight; }
 function notIcerik() {
@@ -1956,4 +1956,5 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
 <script src="konular/anim5.js"></script>
 <script src="konular/anim6.js"></script>
 <script src="konular/anim7.js"></script>
+<script src="konular/kitap1.js"></script>
 </body></html>

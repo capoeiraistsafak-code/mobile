@@ -1,0 +1,76 @@
+# PDF taraması: soru TİPLERİ (birebir soru değil)
+## TYT
+- Fizik bilimine giriş: SI temel/türetilmiş birim tablosu eşleştirme; skaler-vektör; bilimsel yöntem (gözlem/hipotez/deney) I-II-III; fiziğin alt dalları–teknoloji eşleştirme; araştırma kurumları
+- Madde: karışım özkütlesi (eşit hacim/eşit kütle, kap çizimleri); tablo ile alaşım/cisim tanıma; taşırma kabı + dereceli silindir; eşit kollu terazi ile K,L,M kütle sıralama; m–V grafiği eğim/özkütle; bardak su+bilye kütle hesabı
+- Dayanıklılık: koltuk/tabure ayak, halat kesitleri, bar grafik (yük taşıma), boyut k kat
+- Adezyon/kohezyon/kılcallık: kumaş ıslanma, su–cıva boruları, günlük örnek I-II-III
+- Katı basıncı: L-tuğla konumları (P,F karşılaştır), küp masaya, eğik düzlemde cisim, piezoelektrik, makara+ip yükü azalınca P, kova içi su doldurma
+- Sıvı basıncı: kaba musluktan akış → P–t grafiği seçme; karışmayan sıvılar P_A/P_B; kesik koni/ters koni kap tabana F ve P (F<G, F=G, F>G); K,L,M kapları eşit ağırlık sıvı → F sütun grafiği; baraj/beton kalınlığı
+- Akışkan basıncı (Bernoulli): uçak kanadı, rüzgarda çadır/cam, musluk altındaki top; boru daralması hız-basınç; hortum
+- U boruları / birleşik kaplar / hidrolik lift: iki sıvı seviye farkı; piston denge F1/S1=F2/S2; pistona cisim konunca seviye
+- Gaz basıncı: kapalı kap gaz + manometre; açık hava basıncı yükseklikle; barometre; elektrik santrali bacası (sıcak hava)
+- Kaldırma kuvveti: buz eriyince seviye (su/tuzlu); tahta-demir denge konumları; cisimler ipli/ipsiz; dereceli kapta düzgün kesitli cismin bölmeleri; kapalı kaptaki K (hava piston) basınç; X,Y,Z kütle sıralama
+- Isı-sıcaklık: özdeş tencereler farklı ısı alımı; termometre X–Y dönüşümü; tablo ile özısı karşılaştırma; ısıl denge son sıcaklık tablosu; buz–su karışımı; hal değişim grafiği; ısı iletimi (tava sapı); buz erime (kap duvarı)
+- Genleşme: halka/delik genleşmesi; metal levha boyut tablosu (r1,r2,x artar/azalır); çubuk duvar; λ karşılaştırma (küre halkadan geçer mi); bimetal
+- Doğrusal hareket: konum–zaman grafiği yorumu; sürat vs hız (yol vs yer değiştirme tablo); x–t grafiğinden karşılaşma; v–t; paralel raylarda trenler; aynı yönde iki araba yetişme
+- Newton: sürtünme statik/kinetik (F–f grafiği), farklı zeminlerde (tahta/beton/buz) f sıralama; makaraya bağlı X–Y sistemi μ ile hareket eder mi (I-II-III); F–a grafiği K,L,N kütle sıralama; F,2F,3F ile durgun kutular f sıralama; asansörde/eğik düzlem hız-ivme-net kuvvet tablosu; yatay yolda KL–LM kuvvet sürtünme
+- Enerji: E_k / E_p oranı noktalar arası (raylı yol); E–konum grafiği seçme (Şekil I/II); güç = iş/zaman (yarışma); meteor sürtünme ısı; yere çarpmada enerji kaybı %; sürtünmeli yolda vagon tepe; silindirlerin düşey konuma getirilmesi iş (K,L,M); hareket tepe-çukur noktaları
+- Durgun elektrik: K,L,M,N küreleri sırayla dokunma son yükler tablosu; içten/dıştan dokunma (içi boş küre!); topraklama; elektroskop P/S yaklaştır-dokundur (açılır/kapanır tablo); iki elektroskop topuz birleştirme; boya tabancası (elektrostatik boyama), fotokopi; yüklü küre ile nötr cisim çekme
+- Elektriksel kuvvet: iletken küreler dokunup ayrılınca yeni kuvvet F'; eşkenar üçgende üç yük bileşke yön; yük miktarı bar grafiği + kuvvet; ipli küreler açı; doğru üzerinde q3 dengesi
+- Elektrik alan: alan çizgisi (+ çıkar − girer), eşit yüklerin arası, levha arası düzgün alan, d mesafede E (I-II-III), noktaların E sıralaması
+- Akım–direnç: tablo (boy, kesit) R sıralama; renk kodlu direnç; bar grafik kesit/boy; birleşik dirençler Reş (seri/paralel/köprü); ampermetre-voltmetre yerleşimi; V–I grafiği eğim
+- Ohm/üreteç: seri/paralel üreteç akım oranı; ters bağlı pil; pil ömrü (seri/paralel); voltmetre okuması; anahtar açılınca akım
+- Güç/ısı: elektrik sayacı (kWh), tablo ile günlük enerji en çok alet; fırın kWh fatura; priz–sigorta akımı (P=VI); ısıtıcı
+- Lambalar: tablo (boy, kesit) teller; I–V grafiği tel sıralama; ampermetre/voltmetre doğru yerleşim (I,II,III,IV noktaları); S anahtarı kapanınca K,L parlaklık tablosu; özdeş lambalar farklı bağlamalar parlaklık sıralama; evde fırın+ütü sigorta akımı (P=VI)
+- Mıknatıslar: manyetik ayrıştırma (demir-tahta karışımı); kırık mıknatıs kutupları; dinamometre ile iki mıknatıs F,P değişimi; mıknatıs dizisi sürtünmesiz ivme; demir tozu dağılımı → kutup tablo; köpük/kâğıt kalınlığı ile çekim; pusula ibresi yönü; elektromıknatıs (bobin), pusula yönleri; mıknatıs çubuk kuvvet sıralama (tavana asılı dinamometre T)
+- Işık: fotometre (E=I/d²), yağ lekesi kaybolması; noktasal kaynak perde aydınlanma; filtre ile şiddet oranı; aydınlanma tanımları
+- Gölge: noktasal/geniş kaynak tam-yarı gölge şekli seçme; Güneş tutulması (gözlemci görünümleri); kaynak hareketi → gölge alanı değişimi; kafes üzerinde gölge en küçük; Ay kırmızı renk
+- Düzlem ayna: paralel aynalarda görüntü sayısı/yerleri; kareli zeminde görüş alanı (gözlemci hangi noktaları görür); ayna dönünce; açılı aynalar N=360/α−1; aynaya yaklaşma hızı
+- Küresel aynalar: çukur/tümsek ışın çizimi (kareli), F-M; görüntü boyu bar grafiği; kaşık/top yüzeyi görüntü; "R" harfi görüntüsü seçme; tam gölge düzenekleri
+- Kırılma: n sıralama ışın yolundan (X,Y,Z ortamları); tam yansımalı prizmalar (yansıma sayısı); yarım küre cam ışın yolu seçme; kareli zeminde n hesap (hangi noktaya gider)
+- Renkler: renkli spot ışıklar altında cisimlerin görünen rengi/sıcaklık; prizma dağılma, ışık+boya renkleri, renk çarkı (tamamlayıcı); renkli kaynak + engel gölge renkleri; göz koni hücreleri
+- Mercekler: kareli zeminde ışın çizimi (ince/kalın kenarlı, F); görüntü boyu bar grafiği; büyüteç; mercek türü ve odak tablosu; iki mercekten geçen ışın f oranı; kutudaki optik araç bulma; ayna+mercek düzeneği ışın yolu
+- Dalgalar: yay atması hızı v=√(F/μ) (F, μ değişimi); serbest/sabit uç yansıma; ince–kalın yay geçişi; atmaların üst üste binmesi şekil seçme; enine/boyuna dalga sınıflama
+- Su dalgaları: derin-sığ hız, λ; dalga leğeni (takoz ile) üstten görünüm seçme; tsunami; frekans/stroboskop; düzlemsel engelde yansıma kareli; derinlik bölmeleri λ tablosu
+- Ses: tel boyu/kesiti frekans tablosu; deney tablosu (uzaklık, rüzgar, sıcaklık, süre); ekolokasyon örnekleri; şişe üfleme/vurma frekans; ortam–sıcaklık hız tablosu; K,L dalga çizimleri (şiddet/frekans); radyo sesi açınca genlik
+- Deprem: Richter/büyüklük/şiddet; sismograf iki şehir yorumu
+## Ortak soru KALIPLARI (TYT): I-II-III öncüllü "hangileri doğru"; tablo seçmeli (artar/azalır/değişmez) şıkları; sıralama (K>L>M); oran (X/Y); grafik seçme (5 grafik şıkkı); şekil seçme; kareli zemin; günlük hayat bağlamlı yeni nesil (resimli senaryo); deney tablosu yorumlama
+## AYT
+- Vektörler: kareli düzlemde vektör toplama/bileşke koordinatı; eşit büyüklüklü üç vektör bileşke açı I-II-III; kuvvetlerin etkisinde cismin hareket yönü/biteceği nokta; iki kişinin farklı yönlerde çekmesi (koli) en hızlı yön; sabit hızlı cisme üç kuvvet → üçüncü kuvvet
+- Kesişen kuvvetler (Lami): makaralı sistem açı ile T ve P (sin37/cos37) tablo; ip kısaltılınca T değişimi; salıncak/oyuncak denge yay kuvveti; açılı ipler T1,T2 artar/azalır; yay seri/paralel uzama; eğik düzlemde yaylar x oranı
+- Tork: musluktan dolan kabın desteklere tepkisi zamanla; çubuk üstünde su sızan kova T1,T2; top kayıp nereye gelince devrilir; çubuk ucu duvara menteşe + ip T (sin37); makaralı çubuk kütle oranı; menteşeli kalas; ipe asılı çubuk T1/T2 oranı
+- Kütle/ağırlık merkezi: dikdörtgen bloklar devrilme (eğik düzlem açısı); levhaların asılı dengesi (hangi konum); dairesel levhalar; ortak kütle merkezi koordinatı (kareli L, M, N); bükülmüş tel çubuklar KM koordinatı; X,Y,Z,T levhalar O'ya uzaklık
+- Basit makineler: eğik düzlem+makara sistem; kalas uzunluğu kuvvet kazancı; vida (h=n·a); makas (kesme kuvveti nerede en fazla); dişli çark yönü/tur sayısı (K,L,M,N); makara/el arabası/budama makası kuvvet kazancı
+- Bağıl hareket: yolda araçlar gözlemciye göre hız; kavşakta araçlar (kuzey/doğu); K'ye göre L'nin hızı vektör yönü (kareli); v–t grafiğinden bağıl yavaşlama; x–t grafiğinden bağıl hız
+- Nehir problemleri: akıntı hızı ile karşı kıyıya varış süresi/noktası; yüzücü açı ile; iki yüzücü karşılaştırma; kayık yere göre hız grafiği
+- Sabit ivmeli hareket: x–t, v–t, a–t grafikleri dönüşüm; ivme–hız aynı/zıt yön zaman aralıkları; ortalama hız; yavaşlama
+- Newton (AYT): v–t grafiği iki cisim (K,L) ortalama hız/ivme I-II-III; uçak rüzgarda rota; makaralı X–Y ivme tablosu; ivmeli araçta asılı cismin ipin konumu (şekil seçme); kamyon yükleri devrilmeden max ivme sıralama; fren izi → sürtünme katsayısı; F–t grafiği → f–t grafiği seçme; masada K–L sistemi 37 N ile ivme; günlük hayatta etki-tepki örnekleri
+- Enerji (AYT): yaydan fırlayan cisim E_K/E_N oranı; eğik düzlem sürtünmeli bölge nerede durur; tabla üstüne düşen top yay sıkışması; eğik atış tepe enerjisi; lunapark rayında çember içi hız; yaylı sistemde potansiyel enerji toplamı; makaralı sistem h kaldırma işi; pompa gücü (verim)
+- Atışlar: farklı yüksekliklerden yatay atış X_K, X_L karşılaştırma I-II-III; basamaklara yatay atış kaçıncı basamağa düşer; eğik atış h/x oranı; yay ile fırlatma serbest düşme vs yatay atış; düşey atış iki bilye karşılaşma; uçaktan paket bırakma; binadan iki cisim yatay atış KL uzaklığı; kareli düzlemde eğik atış hangi noktadan geçer
+- İtme–momentum: çarpışma sonrası hız tablosu; esnek çarpışma m oranı; tamamen esnek olmayan (yapışma) hız; Newton beşiği şekil seçme; çarpışma testi mankene itme; buz pateni ayrılma (momentum korunumu I-II-III); F–t grafiği seçme (itme=Δp); bağlı arabalar patlama
+- Çembersel: rotor (dönme silindiri) μ_min = g/(ω²r); silindir ω artınca f, N I-II-III; viraj eğimi/sürtünme; ip kopunca taşın yolu (I..V yönleri); dönen çubukta K,L çizgisel hız-açısal hız-merkezcil kuvvet
+- Dönme kinetik enerjisi: Dünya'daki kişilerin eylemsizlik momenti; dans eden kişiler kol açık/kapalı I sıralama; dolu/içi boş küre/halka I sıralama; çubuk farklı eksen I oranı; kayışla bağlı kasnaklar E oranı; eğik düzlemde yuvarlanan silindir/küre hız sıralama ve süre; makaralı sistem (m, I) hız
+- Açısal momentum: Dünya üzerindeki kişiler (ekvator/Ankara) ω, L, I; dönen diske yürüyen çocuk; boruda çekilen ip ile dönen cisim yeni ω; platformda kollarını kapatan çocuk E oranı; makaraya sarılı ip
+- Kepler/çekim: alan yasası (A1/A2 oranı sürelerden); periyot yasası T²∝r³ (4r yarıçap → T); gezegen tablosu (kütle, yarıçap) kurtulma hızı/g en büyük; iki kütle arası kuvvet uzaklık değişince; Ay'da ağırlık/sporcu zıplama yüksekliği; dinamometre Ay–Dünya
+- Basit harmonik: yay-kütle T=2π√(m/k), genlik T'yi etkilemez; denge konumundan 2x ayrılınca T ve v_max; yay kesilince k; seri/paralel yaylarda T oranı; eğik düzlem/düşey yay frekans sıralama; sarkaç periyodu etkileyenler I..V; sarkaç küçük açı süre (L,g)
+- Elektriksel kuvvet (AYT): doğru üzerinde q dengesi hangi aralıkta; eşkenar üçgende F sıralama; kareli düzlemde bileşke yön; ipli asılı yüklü küreler açı/kütle I-II-III; dinamometreye asılı kürelerin ayrılması; doğru üzerinde K,L,M küreleri dengede yük oranları
+- Elektrik alan (AYT): noktalarda E sıralama/yön; kare köşelerindeki yükler merkezde E; eşkenar üçgen köşeler E yönleri tablo; kareli düzlemde E vektörü hangi numara; ipe asılı yüklü cisim düzgün alanda (açı artırma koşulları)
+- Potansiyel: q_L, q_M değerleri V=0 noktası için; eş potansiyel eğriler V sıralama; çember üzerinde yük taşıma V, E değişimi; dokunma sonrası potansiyeller/yüzey alan; sistem potansiyel enerjisi U1/U2
+- Düzgün elektrik alan: levhalar arasında elektron/proton yolları şekil seçme; E1,E2,E3 bölgelerinde parçacık hareket türü tablo; levhalar arası K'den bırakılan parçacık hız (V,d,q,m bağımlılığı); a,t,v tablo d artınca; parçacık yolu (kareli M-N noktası); havada asılı parçacık q hesabı
+- Sığaç: pile bağlı/bağlı değil d değişince q,C,V,E,W tablo; yalıtkan malzeme ekleme; kondansatör depo enerji
+- Manyetik alan: düz telin halka yapılması B oranı; iki halka merkezde bileşke B; iki paralel telin ortasında B yön/büyüklük değişimi (I-II-III); X,Y telleri arasında K noktası B tablosu; çeyrek/yarım çember B
+- Manyetik kuvvet: kütle spektrometresi Na+/Cl- yolları tablo; düzgün E ve B alanında yüklü parçacık (hız seçici) I-II-III; E bölgesi → B bölgesi yön tablosu; mıknatıs kutupları arasında proton yolu; parçacık yarıçap oranı R_K/R_L; ivme oranı a1/a2 için gereken nicelikler; akım taşıyan çerçevede kuvvet yönleri
+- İndüksiyon: hareketli çubuk (KL) iki raylı devre akım yönü/kuvvet tablo; tel çerçeve alana girerken akım; dönen çubuk uçları potansiyel farkı ε=½Bωl²; manyetik alanda yüklenen pil benzetmesi (şekil seçme); KM–PS çubukları potansiyel tablosu; anahtar açılınca makara akımı (öz-indüksiyon grafiği) zaman aralıkları; Tesla çerçeve akım yönü/değer
+- Alternatif akım: direnç/bobin/kondansatör–frekans grafik tanıma (X_L, X_C); devre elemanı seçme (DC'de lamba yanar mı); rezonans koşulları; frekans artınca etkin akım, empedans I-II-III; hoparlör filtresi (bas/tiz → bobin/kondansatör); kondansatörlü lamba devreleri hangileri yanar
+- Transformatör: kablo uçlarını bağlama N1/N2 tablo (110 V → 220 V); seri bağlı transformatörler çıkış gerilimi; enerji iletiminde yüksek gerilim nedeni; V_PR/V_P'R' oranı
+- Su dalgalarında girişim: merkez doğrusu, katar/düğüm çizgileri; P,R noktaları hangi çizgide (tablo); A,B,C noktalarında max genlik; λ ve x hesap (cm); kaynak frekansı artınca düğüm çizgisi I-II-III; girişim koşulları; kırınım etkileyenler
+- Işık teorileri / Young: Δx=Lλ/d, ortam değişince Δx=Lλ/(dn); yeşil→kırmızı I-II-III; tek yarık kırınım merkez genişlik; kaynak kaydırma merkez aydınlık yönü; cam ekleme; X/Y bölmesi suyla doldurma N sayısı; x1/x2 oranı (2. aydınlık, 3. karanlık); yüzeyde ördekler (B, C noktaları)
+- Doppler/EM: EM spektrum sıralama (frekans/enerji/dalga boyu); radyo vs görünür ışık I-II-III; ambulans sesi
+- Doppler: ambulans siren frekansı (yaklaşan/uzaklaşan/aynı hız gözlemciler) şıklı
+- Atom modelleri: H enerji düzeyleri – Lyman/Balmer/Paschen ışıma türü (mor ötesi/görünür/kızıl ötesi) tablo; uyarılma enerjisi (13,6 eV, 1. → 2.); elektron ile uyarma (E_k kalan); n=5 düzeyinden kaç çizgi (Balmer); Bohr açısal momentum nħ; Cs atomu E kinetik
+- Atom altı / Big Bang: kuark içerenler (proton/nötron/elektron); baryon–lepton gruplama; parçacık–karşıt parçacık yok olma; uud/udd kuark sayıları tablo; Higgs; parçacık-karşıt parçacık I-II-III
+- Radyoaktivite: α, β−, β+, γ, elektron yakalama sonrası Z ve A; kararlılık; α,β,γ ortak özellikler (yük, sapma); n→p+e+X lepton sayısı korunumu (antinötrino); 2α+β- sonrası
+- Modern fizik / görelilik: farklı hızlardaki gemilerden lazer hızı (hepsi c); trendeki saat/uzunluk I-II-III; levha hareket yönünde a,b,θ hangisi azalır; postülalar; v=0,6c ile 10m×20m duvar boyutları
+- Siyah cisim/foton: T sıralama λ_max'tan (Wien); ışıma şiddeti–dalga boyu eğrileri; foton özellikleri I-II-III; Planck hipotezi
+- Fotoelektrik/Compton: E_k–f grafiği (eşik), metaller E_k tablosu; ışık şiddeti/frekans artınca ampermetre (akım) I-IV; Compton saçılan foton dalga boyu; E_k oranı (iki metal, iki frekans)
+- Teknolojik uygulamalar: nanoteknoloji (lotus etkisi); süperiletken/LED/LCD/lazer/MR/röntgen; kuantum tünelleme

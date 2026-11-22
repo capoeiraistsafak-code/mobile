@@ -34,6 +34,10 @@ Akıllı tahtada oynatılmak için hazırlanmış, seslendirmesiz (alt yazılı)
 - **Elektrik ve Manyetizma:** seri/paralel lamba sökme, 60 W–100 W, elektron ve akım yönü, ev tüketimi ve güvenlik
 - **AYT:** Newton (dolap sürtünme + laboratuvar soruları), Elektrik alan çizgileri (tek yük, dipol, iki + yük, paralel levhalar, q₃ dengesi), Çembersel hareket laboratuvarı (döner tabla, konik sarkaç, tümsek–çukur, viraj), Kepler, yazılı soruları
 
+### Kitap düzeninde hikâye modu (`konular/kitap*.js`)
+Konu anlatımı, ders kitaplarının sırasıyla (tanım → formül → UYARI → küçük örnek → günlük hayat → özet) ama **hikâye gibi** ilerler: bir karakterin başından geçen olay 3D olarak oynar, Başlat/Duraklat ile izlenir, alt yazılar okunur, formüller yeri geldiğinde "neden?" açıklamasıyla gelir ve sol kutuda (FORMÜLLER) ile Notlar'da birikir. Her konunun ardından aynı 3D düzenek üzerinde **soru sistemi** vardır (kitaplardaki bütün soru çeşitleri; sorular özgündür).
+- Hazır: **Basınç ve Kaldırma Kuvveti** (katı, sıvı, akışkan, U borusu/hidrolik, gaz basıncı, kaldırma kuvveti): 3 hikâye + 3 soru sistemi.
+
 Konu dosyaları: `konular/tyt1-3.js`, `konular/ayt1-6.js`, `konular/uni1-5.js`, `konular/anim1-7.js` (ortak araçlar `konular/kit.js`). Sorular özgündür; yayınevi sorularından kopya yoktur.
 
 # AYT · Çembersel Hareket
