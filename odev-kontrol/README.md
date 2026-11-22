@@ -55,7 +55,10 @@ Program bu bilgisayarda, internetsiz çalışan üç küçük sinir ağı (Tenso
 **Kendini eğitme:**
 
 1. Sonuç ekranında program yanlış okuduysa öğrencinin aslında işaretlediğini ya da yazdığını düzeltin.
-2. Her düzeltme bir eğitim örneği olur. Ağ ve kural çok emin olduğu okumalardan kendi kendine de örnek çıkarır.
+2. Her düzeltme bir eğitim örneği olur.
+   - **Boşta öğrenme:** Öğrenci ödevi okununca program, çok emin olduğu okumaları **geçici yedeğe** yazar. Fotoğrafın kopyası alınmaz, yalnızca okunan harf, rakam ve şık parçaları saklanır.
+   - Program boş kalınca (varsayılan 60 saniye) bu yedeklerle kendini eğitir. Kullandığı yedeği siler, sıradakine geçer.
+   - Siz bir iş yapmaya başlayınca (fotoğraf yükleme, tıklama, yazma) eğitim hemen durur, böylece program yavaşlamaz.
 3. Yeterli düzeltme birikince (varsayılan 10) ağ kendiliğinden eğitilir. **Yapay Zekâ** sekmesindeki **Şimdi eğit** düğmesiyle siz de başlatabilirsiniz.
 4. Yeni eğitim, ayrılan sınama örneklerinde eskisinden kötü sonuç verirse kabul edilmez.
 

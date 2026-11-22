@@ -418,7 +418,7 @@
    * Ağı örneklerle eğitir. ornekler: [{x: Uint8Array, y: 0/1 ya da 0-9, agirlik?}]
    * Sonuç: {kayip, dogruluk}
    */
-  async function egit(model, tur, ornekler, { epoch = 6, ogrenmeOrani = 0.001, cesit = true, ilerleme } = {}) {
+  async function egit(model, tur, ornekler, { epoch = 6, ogrenmeOrani = 0.001, cesit = true, ilerleme, durdur } = {}) {
     derle(model, tur, ogrenmeOrani);
     // Ağırlıklı örnekler (ör. öğretmen düzeltmeleri) eğitimde o kadar kez tekrarlanır.
     const coklu = ornekler.flatMap((o) => Array(Math.max(1, Math.round(o.agirlik || 1))).fill(o));
@@ -426,6 +426,7 @@
     const xs = tensor(tur, karisik.map((o) => (cesit && Math.random() < 0.6 ? cesitlendir(tur, o.x) : o.x)));
     const ys = tf.tensor2d(karisik.map((o) => [o.y]), [karisik.length, 1]);
     let son = {};
+    let durduruldu = false;
     await model.fit(xs, ys, {
       epochs: epoch,
       batchSize: 32,
@@ -436,11 +437,18 @@
           son = l;
           if (ilerleme) await ilerleme(e + 1, epoch, l);
         },
+        // durdur() true dönerse (ör. öğretmen programı kullanmaya başladı) eğitim bir sonraki adımda durur.
+        onBatchEnd: async () => {
+          if (durdur && durdur()) {
+            model.stopTraining = true;
+            durduruldu = true;
+          }
+        },
       },
     });
     xs.dispose();
     ys.dispose();
-    return { kayip: son.loss, dogruluk: son.acc ?? son.accuracy };
+    return { kayip: son.loss, dogruluk: son.acc ?? son.accuracy, durduruldu };
   }
 
   /** Ağın bir örnek kümesindeki doğruluğu (0-1). */

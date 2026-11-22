@@ -31,8 +31,14 @@ KENDİNİ NASIL EĞİTİR?
     "Doğru okundu" kutusundan öğrencinin aslında işaretlediğini seçin; yazılı cevapta
     (sayı ya da kelime) "Düzelt" kutusuna öğrencinin yazdığını yazın. Her düzeltme bir
     eğitim örneğidir; kelimelerde her harf ayrı bir örnek olur.
-  - Ağ ve eski kural ikisi de çok emin ve aynı fikirdeyse, program o okumadan da
-    kendi kendine örnek çıkarır (Yapay Zekâ sekmesinden kapatılabilir).
+  - Öğrenci ödevlerinden boşta öğrenme: ödev okununca program çok emin olduğu okumaları
+    (doğru cevapla aynı okunan sayılar ve kelimeler, ağ ile kuralın aynı okuduğu şıklar) "geçici
+    yedeğe" yazar. Fotoğrafın kopyası alınmaz, yalnızca okunan parçalar saklanır (ödev başına
+    birkaç KB). Program boş kalınca (varsayılan 60 saniye: iş sırası boş, öğretmen bir şeye
+    tıklamıyor, yazmıyor) bir yedekle ağ biraz eğitilir, o yedek silinir, sıradakine geçilir.
+    Öğretmen bir iş yapmaya başlayınca eğitim hemen durur; o yedek silinmez, sonra yeniden denenir.
+    Eğitimden sonra ağ eskisinden kötüyse eski hâli korunur. Öğretmenin düzelttiği soru yedekten
+    çıkarılır. Yapay Zekâ sekmesinden kapatılabilir, bekleme süresi değiştirilebilir.
   - Yeterli düzeltme birikince (varsayılan: 10) ağ kendiliğinden eğitilir; Yapay Zekâ
     sekmesindeki "Şimdi eğit" ile siz de başlatabilirsiniz.
   - Koruma: Düzeltmelerin bir kısmı sınama için ayrılır. Yeni eğitim bu sınamada eskisinden

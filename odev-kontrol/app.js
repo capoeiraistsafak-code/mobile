@@ -17,6 +17,7 @@ const VARSAYILAN_AYARLAR = {
   yzKullan: true, // * şıkları sinir ağı okusun (kapalıysa eşik kuralı)
   yzKendiOgren: true, // * ağ ve kural çok emin ve aynı fikirdeyse o okumadan da öğrensin
   yzOtoEgit: 10, // * bu kadar yeni öğretmen düzeltmesi birikince kendiliğinden eğit (0 = kapalı)
+  yzBostaBekle: 60, // * program bu kadar saniye boş kalınca geçici yedeklerle kendini eğitir
 };
 // Yapay test sayfalarıyla ayarlanmış okuma eşikleri (gerçek ödevlerle yeniden bakılmalı).
 const T = {
@@ -38,13 +39,13 @@ let A = { ...VARSAYILAN_AYARLAR }; // geçerli ayarlar
 // ---------------------------------------------------------------------------
 // Kalıcı depolama (tarayıcının IndexedDB'si)
 // ---------------------------------------------------------------------------
-const STORES = ["siniflar", "ogrenciler", "kazanimlar", "kaynaklar", "odevler", "sayfalar", "gonderimler", "yzOrnekler"];
+const STORES = ["siniflar", "ogrenciler", "kazanimlar", "kaynaklar", "odevler", "sayfalar", "gonderimler", "yzOrnekler", "egitimKuyrugu"];
 const D = Object.fromEntries(STORES.map((s) => [s, new Map()]));
 const DB = {
   db: null,
   async open() {
     this.db = await new Promise((res, rej) => {
-      const r = indexedDB.open("odev-kontrol", 2);
+      const r = indexedDB.open("odev-kontrol", 3);
       r.onupgradeneeded = () => {
         const var_ = r.result.objectStoreNames;
         for (const s of STORES) if (!var_.contains(s)) r.result.createObjectStore(s, { keyPath: "id", autoIncrement: true });
@@ -989,6 +990,7 @@ async function yzYukle() {
     const harfKaynak = kaynak.harf || window.YZ_BASLANGIC.harf;
     YZ.harf = harfKaynak ? await YapayZeka.modelAc(harfKaynak) : null;
     YZ.bilgi = kayit?.isaret ? kayit : { surum: 0, gecmis: [], baslangic: true };
+    YZ.bosta = (await DB.req("kv", "readonly", (st) => st.get("yzBosta"))) || null;
     YZ.hazir = true;
     YZ.hata = null;
   } catch (e) {
@@ -1005,7 +1007,7 @@ async function yzKaydet(isaretAgi, rakamAgi, harfAgi, gecmisEk) {
     isaret: await YapayZeka.modelPaketle(isaretAgi),
     rakam: await YapayZeka.modelPaketle(rakamAgi),
     harf: harfAgi ? await YapayZeka.modelPaketle(harfAgi) : null,
-    gecmis: [...(eski.gecmis || []), ...(gecmisEk ? [gecmisEk] : [])],
+    gecmis: [...(eski.gecmis || []), ...(gecmisEk ? [gecmisEk] : [])].slice(-300),
     sonDuzeltmeSayisi: list("yzOrnekler", (o) => o.kaynak === "ogretmen").length,
   };
   await DB.req("kv", "readwrite", (st) => st.put(kayit, "yzModel"));
@@ -1055,24 +1057,138 @@ async function yzOku(r) {
   }
 }
 
-/** Kendi kendine öğrenme: ağ ve kural çok emin ve aynı fikirdeyse bu okumadan örnek çıkar. */
-async function yzOtomatikOrnekler(g) {
+// ---------------------------------------------------------------------------
+// BOŞTA KENDİNİ EĞİTME
+// Öğrenci ödevi okununca, programın çok emin olduğu okumalar "geçici yedek" olarak saklanır
+// (fotoğrafın kopyası değil; yalnızca okunan harf/rakam/şık parçaları, birkaç KB).
+// Program boşta kalınca (iş yok, öğretmen bir şeye dokunmuyor) bu yedeklerle ağ biraz eğitilir,
+// kullanılan yedek silinir ve sıradakine geçilir. Öğretmen bir iş yapmaya başlarsa eğitim hemen durur.
+// ---------------------------------------------------------------------------
+const BOSTA = { sonHareket: Date.now(), calisiyor: false, durdur: false };
+function bostaDurdur() {
+  BOSTA.sonHareket = Date.now();
+  if (BOSTA.calisiyor) BOSTA.durdur = true;
+}
+for (const olay of ["pointerdown", "keydown", "wheel", "touchstart"]) addEventListener(olay, bostaDurdur, { capture: true, passive: true });
+
+/** Okunan ödevden, programın çok emin olduğu okumaları geçici yedeğe yazar. */
+async function yzKuyrugaEkle(g) {
   if (!A.yzKendiOgren || !YZ.hazir) return;
-  for (const c of g.cevaplar) {
-    if (!c.yz || !c.kural) continue;
-    const eminYz = Object.values(c.yz).every((p) => p > 0.95 || p < 0.05);
-    const ayni = c.kural.durum === c.durum && c.kural.isaret === c.isaret;
-    if (!eminYz || !ayni || c.durum === "multi") continue;
-    for (const [h, x] of Object.entries(c.kirp)) await DB.put("yzOrnekler", { tur: "isaret", x, y: c.yz[h] >= 0.5 ? 1 : 0, kaynak: "otomatik", gonderimId: g.id, no: c.no, tarih: simdi() });
+  const sayfa = D.sayfalar.get(g.sayfaId);
+  const ornekler = [];
+  for (const c of g.cevaplar || []) {
+    const q = sayfa?.sorular.find((x) => x.no === c.no);
+    if (c.yz && c.kural && c.kirp) {
+      // Şık: sinir ağı her şıktan çok emin ve eşik kuralıyla aynı fikirde.
+      const eminYz = Object.values(c.yz).every((p) => p > 0.95 || p < 0.05);
+      const ayni = c.kural.durum === c.durum && c.kural.isaret === c.isaret;
+      if (eminYz && ayni && c.durum !== "multi") for (const [h, x] of Object.entries(c.kirp)) ornekler.push({ tur: "isaret", x, y: c.yz[h] >= 0.5 ? 1 : 0, no: c.no });
+    } else if (c.tip === "yazili" && c.tur === "kelime" && q?.dogruCevap) {
+      // Kelime: doğru cevaba çok benziyor ve harf sayısı tutuyor → harfler doğru cevabın harfleri.
+      const hedef = YapayZeka.sadeKelime(q.dogruCevap);
+      if ((c.benzerlik ?? 0) >= 0.9 && c.parcalar?.length === hedef.length) [...hedef].forEach((ch, i) => ornekler.push({ tur: "harf", x: c.parcalar[i].x, y: YapayZeka.harfSinifi(ch), no: c.no }));
+    } else if (c.tip === "yazili" && c.parcalar?.length && q?.dogruCevap) {
+      // Sayı: okunan sayı doğru cevapla aynı ve ağ emin.
+      const hedef = sadeCevap(q.dogruCevap);
+      if (/^\d+$/.test(hedef) && c.okunan === hedef && c.guven >= 0.9 && c.parcalar.length === hedef.length) [...hedef].forEach((ch, i) => ornekler.push({ tur: "rakam", x: c.parcalar[i].x, y: +ch, no: c.no }));
+    }
   }
-  // Otomatik örnekler sınırsız büyümesin: en yeni 3000 kalsın.
-  const oto = list("yzOrnekler", (o) => o.kaynak === "otomatik").sort((a, b) => a.id - b.id);
-  for (const o of oto.slice(0, Math.max(0, oto.length - 3000))) await DB.del("yzOrnekler", o.id);
+  // Aynı ödev yeniden okunduysa eski yedeği at.
+  for (const k of list("egitimKuyrugu", (k) => k.gonderimId === g.id)) await DB.del("egitimKuyrugu", k.id);
+  if (ornekler.length) await DB.put("egitimKuyrugu", { gonderimId: g.id, tarih: simdi(), ornekler });
+}
+
+/** Her 10 saniyede bir: program boştaysa geçici yedeklerden birini eğitimde kullanır. */
+async function bostaKontrol() {
+  if (!A.yzKendiOgren || BOSTA.calisiyor || YZ.egitimde || !YZ.hazir || sirada > 0 || !D.egitimKuyrugu.size) return;
+  if (Date.now() - BOSTA.sonHareket < (A.yzBostaBekle ?? 60) * 1000) return;
+  await bostaEgit();
+}
+setInterval(() => bostaKontrol().catch((e) => console.error(e)), 10000);
+
+async function bostaEgit() {
+  // Ödevi silinmiş (ör. örnek veriler kaldırılmış) yedekler eğitilmeden atılır.
+  for (const k of list("egitimKuyrugu", (k) => !D.gonderimler.has(k.gonderimId))) await DB.del("egitimKuyrugu", k.id);
+  const kayit = list("egitimKuyrugu").sort((a, b) => a.id - b.id)[0];
+  if (!kayit) return;
+  BOSTA.calisiyor = true;
+  BOSTA.durdur = false;
+  YZ.egitimde = true;
+  YZ.ilerleme = "Boşta kendini eğitiyor (bir şeye tıklarsanız durur)";
+  motorDurumu();
+  if (G.tab === "yz") yenidenCiz();
+  const yeniAglar = {};
+  const sonuc = { tarih: simdi(), neden: "bosta", turler: {} };
+  const karistir = (d) => [...d].sort(() => Math.random() - 0.5);
+  try {
+    for (const tur of ["isaret", "rakam", "harf"]) {
+      const yeni = kayit.ornekler.filter((o) => o.tur === tur);
+      if (!yeni.length || !YZ[tur]) continue;
+      // Eski bilgisini unutmasın: başlangıç örneklerinden ve öğretmen örneklerinden bir kısmı da eğitime girer;
+      // başka bir kısmıyla önce/sonra sınanır. Kötüleşirse yeni hâli kabul edilmez.
+      const tekrar = karistir(window.YZ_BASLANGIC.tekrar[tur] || []).map(([x, y]) => ({ x: YapayZeka.b64.oku(x), y }));
+      const ogretmen = karistir(list("yzOrnekler", (o) => o.tur === tur && (o.kaynak === "ogretmen" || o.kaynak === "dosya")));
+      const kontrol = [...tekrar.slice(0, 200), ...ogretmen.slice(0, 100)];
+      const egitim = [...yeni.map((o) => ({ ...o, agirlik: 2 })), ...tekrar.slice(200, 400), ...ogretmen.slice(100, 250)];
+      const eski = YZ[tur];
+      const once = await YapayZeka.dogruluk(eski, tur, kontrol);
+      const ag = await YapayZeka.modelAc(await YapayZeka.modelPaketle(eski));
+      const r = await YapayZeka.egit(ag, tur, egitim, { epoch: 2, ogrenmeOrani: 0.0003, durdur: () => BOSTA.durdur });
+      if (r.durduruldu || BOSTA.durdur) {
+        ag.dispose();
+        break;
+      }
+      const sonra = await YapayZeka.dogruluk(ag, tur, kontrol);
+      const kabul = sonra >= once - 0.01;
+      sonuc.turler[tur] = { ogretmen: 0, otomatik: yeni.length, once: { sinama: once }, sonra: { sinama: sonra }, kabul };
+      if (kabul) yeniAglar[tur] = ag;
+      else ag.dispose();
+      await new Promise((r) => setTimeout(r, 0));
+    }
+    if (BOSTA.durdur) {
+      // Öğretmen bir iş yapmaya başladı: bu yedek silinmez, sonra yeniden denenir.
+      for (const ag of Object.values(yeniAglar)) ag.dispose();
+      return;
+    }
+    const istat = (await DB.req("kv", "readonly", (st) => st.get("yzBosta"))) || { odev: 0, ornek: 0, kabul: 0, red: 0 };
+    istat.odev++;
+    istat.ornek += kayit.ornekler.length;
+    istat.son = simdi();
+    if (Object.keys(yeniAglar).length) {
+      istat.kabul++;
+      await yzKaydet(yeniAglar.isaret || YZ.isaret, yeniAglar.rakam || YZ.rakam, yeniAglar.harf || YZ.harf, sonuc);
+      for (const [tur, ag] of Object.entries(yeniAglar)) {
+        YZ[tur].dispose();
+        YZ[tur] = ag;
+      }
+    } else if (Object.keys(sonuc.turler).length) istat.red++;
+    await DB.req("kv", "readwrite", (st) => st.put(istat, "yzBosta"));
+    YZ.bosta = istat;
+    // İşi biten geçici yedek silinir.
+    await DB.del("egitimKuyrugu", kayit.id);
+  } catch (e) {
+    console.error(e);
+    for (const ag of Object.values(yeniAglar)) ag.dispose?.();
+  } finally {
+    BOSTA.calisiyor = false;
+    YZ.egitimde = false;
+    YZ.ilerleme = "";
+    motorDurumu();
+    if (G.tab === "yz") yenidenCiz();
+  }
+  // Sıradaki yedeğe geç (program hâlâ boştaysa).
+  if (!BOSTA.durdur && D.egitimKuyrugu.size) setTimeout(() => bostaKontrol().catch((e) => console.error(e)), 500);
 }
 
 /** Öğretmen düzeltmesi → eğitim örnekleri (aynı soru için eskileri silinir). */
 async function yzDuzeltmeKaydet(g, c) {
   for (const o of list("yzOrnekler", (o) => o.gonderimId === g.id && o.no === c.no)) await DB.del("yzOrnekler", o.id);
+  // Öğretmen düzelttiği soru için programın kendi okuması artık geçerli değil.
+  for (const k of list("egitimKuyrugu", (k) => k.gonderimId === g.id)) {
+    const kalan = k.ornekler.filter((o) => o.no !== c.no);
+    if (!kalan.length) await DB.del("egitimKuyrugu", k.id);
+    else if (kalan.length !== k.ornekler.length) await DB.put("egitimKuyrugu", { ...k, ornekler: kalan });
+  }
   if (c.tip === "yazili" && c.tur === "kelime") {
     const yazi = YapayZeka.sadeKelime(c.duzeltmeYazi ?? "");
     if (c.duzeltmeYazi != null && yazi.length === c.parcalar.length)
@@ -1579,6 +1695,7 @@ let sira = Promise.resolve();
 let sirada = 0;
 function siraya(fn) {
   sirada++;
+  bostaDurdur();
   motorDurumu();
   const p = sira.then(fn, fn).finally(() => {
     sirada--;
@@ -1631,7 +1748,7 @@ async function gonderimIsle(g) {
     const r = await ogrenciSayfasiOku(g.foto, sayfalar);
     if (!r.eslesti) throw new Error("Fotoğraf bu ödevin sayfalarına benzemiyor. Doğru sayfa mı? Bütün sayfa görünüyor mu?");
     Object.assign(g, { durum: "bitti", hata: null, sayfaId: r.sayfaId, kaplama: r.kaplama, eslesme: r.puan, murekkep: r.sayfaMurekkep, yazili: r.sayfaMurekkep >= T.pageMinInk || r.cevaplar.some((c) => (c.tip === "yazili" ? c.parcalar.length : c.durum !== "none")), cevaplar: r.cevaplar });
-    await yzOtomatikOrnekler(g);
+    await yzKuyrugaEkle(g);
   } catch (e) {
     console.error(e);
     g.durum = "hata";
@@ -2679,7 +2796,8 @@ EKRAN.yz = (el) => {
       <div class="stat"><b>${ornek("isaret", "ogretmen")}</b>İşaret düzeltmesi</div>
       <div class="stat"><b>${ornek("rakam", "ogretmen")}</b>Rakam düzeltmesi</div>
       <div class="stat"><b>${ornek("harf", "ogretmen")}</b>Harf düzeltmesi</div>
-      <div class="stat"><b>${ornek("isaret", "otomatik")}</b>Kendi öğrendiği örnek</div>
+      <div class="stat"><b>${ornek("isaret", "otomatik") + (YZ.bosta?.ornek || 0)}</b>Ödevlerden kendi öğrendiği örnek</div>
+      <div class="stat"><b>${D.egitimKuyrugu.size}</b>Geçici yedekte bekleyen ödev</div>
       <div class="stat"><b>${ornek("harf", "dosya") + ornek("rakam", "dosya")}</b>Dosyalardan örnek</div>
       <div class="stat"><b>${Math.max(0, yeni)}</b>Eğitimi bekleyen düzeltme</div>
     </div>
@@ -2691,11 +2809,22 @@ EKRAN.yz = (el) => {
           <div class="toolbar"><button class="btn primary" id="yzEgit" ${YZ.egitimde || !YZ.hazir ? "disabled" : ""}>🧠 Şimdi eğit</button></div>
           <div class="form-grid">
             <label>Şıkları yapay zekâ okusun<select id="yzKullan"><option value="1" ${A.yzKullan ? "selected" : ""}>Evet</option><option value="0" ${!A.yzKullan ? "selected" : ""}>Hayır (eşik kuralı)</option></select></label>
-            <label>Kendi kendine öğrensin<select id="yzKendi"><option value="1" ${A.yzKendiOgren ? "selected" : ""}>Evet (çok emin olduğu okumalardan)</option><option value="0" ${!A.yzKendiOgren ? "selected" : ""}>Hayır (sadece düzeltmelerden)</option></select></label>
+            <label>Öğrenci ödevlerinden boşta kendi kendine öğrensin<select id="yzKendi"><option value="1" ${A.yzKendiOgren ? "selected" : ""}>Evet (çok emin olduğu okumalardan)</option><option value="0" ${!A.yzKendiOgren ? "selected" : ""}>Hayır (sadece düzeltmelerden)</option></select></label>
+            <label>Program kaç saniye boş kalınca öğrensin<input type="number" id="yzBekle" min="10" max="3600" value="${A.yzBostaBekle ?? 60}"></label>
             <label>Kendiliğinden eğit: her … düzeltmede<input type="number" id="yzOto" min="0" max="500" value="${A.yzOtoEgit}"></label>
           </div>
           <p class="muted small">0 yazarsanız kendiliğinden eğitmez; "Şimdi eğit" ile siz başlatırsınız.</p>
           <button class="btn" id="yzAyar">💾 Kaydet</button></div>
+        <div class="card"><h2>⏳ Öğrenci ödevlerinden boşta öğrenme</h2>
+          <p class="muted small" style="margin-top:0">Öğrenci ödevi okununca program, çok emin olduğu okumaları (doğru cevapla aynı okunan sayılar ve kelimeler, emin olduğu şıklar) <b>geçici yedeğe</b> yazar. Fotoğrafın kopyası alınmaz; yalnızca okunan harf, rakam ve şık parçaları saklanır. Program ${A.yzBostaBekle ?? 60} saniye boş kalınca (iş sırası boş, siz bir şeye tıklamıyorsunuz) bu yedeklerle kendini biraz eğitir. Kullandığı yedeği siler, sıradakine geçer. Siz bir iş yapmaya başlayınca eğitim hemen durur, program yavaşlamaz.</p>
+          <table>
+            <tr><td>Durum</td><td class="sag"><b>${!A.yzKendiOgren ? "Kapalı" : BOSTA.calisiyor ? `<span class="spinner"></span> Şu an öğreniyor` : D.egitimKuyrugu.size ? "Program boş kalınca başlayacak" : "Bekleyen yedek yok"}</b></td></tr>
+            <tr><td>Geçici yedekte bekleyen</td><td class="sag"><b>${D.egitimKuyrugu.size} ödev · ${list("egitimKuyrugu").reduce((t, k) => t + k.ornekler.length, 0)} parça · ~${Math.ceil(list("egitimKuyrugu").reduce((t, k) => t + k.ornekler.length, 0) * 0.8)} KB</b></td></tr>
+            <tr><td>Şimdiye kadar öğrendiği ödev</td><td class="sag"><b>${YZ.bosta?.odev || 0}</b>${YZ.bosta?.son ? ` <span class="small muted">(son: ${tarihYaz(YZ.bosta.son)})</span>` : ""}</td></tr>
+            <tr><td>Ağı güncelleyen / kabul edilmeyen</td><td class="sag"><b>${YZ.bosta?.kabul || 0} / ${YZ.bosta?.red || 0}</b></td></tr>
+          </table>
+          <p class="small muted">Kabul edilmeyen: eğitimden sonra ağ eskisinden kötü sonuç verdi, eski hâli korundu (yedek yine silinir).</p>
+          ${D.egitimKuyrugu.size ? `<button class="btn small danger" id="yzKuyrukSil">🗑️ Geçici yedekleri sil</button>` : ""}</div>
         <div class="card"><h2>Yedek</h2>
           <p class="muted small" style="margin-top:0">Yapay zekânın öğrendikleri (ağlar ve bütün eğitim örnekleri, dosyalardan eklenenler dahil) tek bir dosyaya kaydedilir. Başka bir bilgisayara taşıyabilir ya da sonra geri yükleyebilirsiniz. (Ayarlar'daki genel yedek de yapay zekâyı içerir.)</p>
           <div class="toolbar"><button class="btn primary" id="yzDisa">📤 Eğitimi dışa aktar</button><label class="btn">📥 Eğitimi içe aktar<input type="file" id="yzIce" accept=".json" class="dosya-input"></label></div>
@@ -2704,7 +2833,7 @@ EKRAN.yz = (el) => {
       <div>
         <div class="card"><h2>Eğitim geçmişi</h2>
           ${gecmis.length ? `<div class="tablewrap"><table><tr><th>Tarih</th><th>Ağ</th><th class="sag">Örnek</th><th>Sınama doğruluğu</th><th>Sonuç</th></tr>
-            ${gecmis.flatMap((g) => Object.entries(g.turler || {}).map(([t, v]) => `<tr><td class="small">${tarihYaz(g.tarih)}${g.neden === "otomatik" ? " (oto)" : g.neden === "dosya" ? " (dosya)" : ""}</td><td>${AG_ADI[t]}</td><td class="sag">${v.ogretmen}+${v.otomatik}</td><td>${yuzde(v.once.sinama)} → ${yuzde(v.sonra.sinama)}</td><td>${v.kabul ? `<span class="chip green">Güncellendi</span>` : `<span class="chip orange">Eskisi korundu</span>`}</td></tr>`)).join("")}</table></div>`
+            ${gecmis.flatMap((g) => Object.entries(g.turler || {}).map(([t, v]) => `<tr><td class="small">${tarihYaz(g.tarih)}${g.neden === "otomatik" ? " (oto)" : g.neden === "dosya" ? " (dosya)" : g.neden === "bosta" ? " (boşta)" : ""}</td><td>${AG_ADI[t]}</td><td class="sag">${v.ogretmen}+${v.otomatik}</td><td>${yuzde(v.once.sinama)} → ${yuzde(v.sonra.sinama)}</td><td>${v.kabul ? `<span class="chip green">Güncellendi</span>` : `<span class="chip orange">Eskisi korundu</span>`}</td></tr>`)).join("")}</table></div>`
             : `<p class="muted">Henüz eğitim yapılmadı; başlangıç modeli kullanılıyor.</p>`}</div>
         <div class="card"><h2>Başlangıç modeli</h2><p class="small muted" style="margin-top:0">${esc(b.aciklama)}</p>
           <table><tr><td>İşaret ağı (denenmemiş sayfalarda)</td><td class="sag"><b>${yuzde(b.olcum.isaretDeneme)}</b></td></tr>
@@ -2717,10 +2846,17 @@ EKRAN.yz = (el) => {
       </div>
     </div>`;
   el.querySelector("#yzEgit").onclick = () => yzEgit("elle");
+  const kuyrukSil = el.querySelector("#yzKuyrukSil");
+  if (kuyrukSil) kuyrukSil.onclick = async () => {
+    if (!confirm("Geçici yedekler silinsin mi? Bu ödevlerden henüz öğrenilmemiş olanlar öğrenilmeyecek.")) return;
+    for (const k of list("egitimKuyrugu")) await DB.del("egitimKuyrugu", k.id);
+    ciz();
+  };
   dosyaEgitimBagla(el);
   el.querySelector("#yzAyar").onclick = async () => {
     A.yzKullan = el.querySelector("#yzKullan").value === "1";
     A.yzKendiOgren = el.querySelector("#yzKendi").value === "1";
+    A.yzBostaBekle = Math.max(10, Math.min(3600, +el.querySelector("#yzBekle").value || 60));
     A.yzOtoEgit = Math.max(0, Math.min(500, +el.querySelector("#yzOto").value || 0));
     await DB.saveAyarlar();
     sonucKarti(true, "Yapay zekâ ayarları kaydedildi");
