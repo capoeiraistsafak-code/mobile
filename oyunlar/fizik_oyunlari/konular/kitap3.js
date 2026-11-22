@@ -55,8 +55,8 @@
         FZ.setTag('k3K', Math.abs(th) < 0.01 ? 'Terazi dengede' : th > 0 ? 'Sol kefe ağır' : 'Sağ kefe ağır'); FZ.show('k3K', V3(0, 3, 0), 1);
       } else if (S.mod === 'karisim') {
         if (S.kos) { S.kar = Math.min(1, S.kar + dt * 0.4); if (S.kar >= 1) S.kos = 0; }
-        o.bh.forEach((b, i) => { const v = [S.v1, S.v2][i]; b.scale.y = Math.max(0.01, (1 - S.kar) * v); b.position.y = 0.04 + b.scale.y / 2; });
-        o.ks.scale.y = Math.max(0.01, S.kar * (S.v1 + S.v2) * 0.8); o.ks.position.y = 0.04 + o.ks.scale.y / 2;
+        o.bh.forEach((b, i) => { const v = [S.v1, S.v2][i]; b.scale.y = Math.max(0.01, Math.min(1.3, (1 - S.kar) * v)); b.position.y = 0.04 + b.scale.y / 2; });
+        o.ks.scale.y = Math.max(0.01, Math.min(1.7, S.kar * (S.v1 + S.v2) * 0.8)); o.ks.position.y = 0.04 + o.ks.scale.y / 2;
         const dk = (S.d1 * S.v1 + S.d2 * S.v2) / (S.v1 + S.v2);
         FZ.setTag('k3a', `d<sub>1</sub> = ${fs(S.d1)} · V<sub>1</sub> = ${S.v1 * 100} cm³`); FZ.show('k3a', V3(-1.6, 1.8, 0), 1);
         FZ.setTag('k3b', `d<sub>2</sub> = ${fs(S.d2)} · V<sub>2</sub> = ${S.v2 * 100} cm³`); FZ.show('k3b', V3(1.6, 1.8, 0), 1);

@@ -62,8 +62,8 @@
       } else if (S.mod === 'karisim') {
         const [m1, m2] = S.mk, [T1, T2] = S.Tk, Td = (m1 * T1 + m2 * T2) / (m1 + m2);
         if (S.kos) { S.kar = Math.min(1, S.kar + dt * 0.4); if (S.kar >= 1) S.kos = 0; }
-        o.bh.forEach((b, i) => { const f = 1 - S.kar; b.scale.y = Math.max(0.01, f * S.mk[i] / 200); b.position.y = 0.02 + b.scale.y / 2; });
-        const Tn = S.kar < 1 ? (T1 + T2) / 2 + (Td - (T1 + T2) / 2) * S.kar : Td; o.kks.scale.y = Math.max(0.01, S.kar * (m1 + m2) / 300); o.kks.position.y = o.kks.scale.y / 2 + 0.02;
+        o.bh.forEach((b, i) => { const f = 1 - S.kar; b.scale.y = Math.max(0.01, Math.min(1.1, f * S.mk[i] / 200)); b.position.y = 0.02 + b.scale.y / 2; });
+        const Tn = S.kar < 1 ? (T1 + T2) / 2 + (Td - (T1 + T2) / 2) * S.kar : Td; o.kks.scale.y = Math.max(0.01, Math.min(1.3, S.kar * (m1 + m2) / 300)); o.kks.position.y = o.kks.scale.y / 2 + 0.02;
         o.kks.material.color.setRGB(0.4 + 0.5 * Tn / 100, 0.3, 1 - 0.6 * Tn / 100); o.ktm.ayarla(Tn / 100);
         FZ.setTag('k2a', `${m1} g · ${T1} °C`); FZ.show('k2a', V3(-1.6, 1.6, 0), 1); FZ.setTag('k2b', `${m2} g · ${T2} °C`); FZ.show('k2b', V3(1.6, 1.6, 0), 1);
         FZ.setTag('k2c', S.kar >= 1 ? `Denge: ${fs(Td)} °C` : '…'); FZ.show('k2c', V3(0, 2.7, -1.3), 1);

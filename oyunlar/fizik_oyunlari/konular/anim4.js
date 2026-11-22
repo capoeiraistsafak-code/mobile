@@ -20,9 +20,11 @@
     const topuz = FZ.metalTop(e, 0.2, 0, 2.2, 0);
     const pv = [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(0, 0.95, 0.02); e.add(p);
       const y = kutu(p, 0.17, 0.8, 0.015, 0xfbbf24, s * 0.06, -0.4, 0, { edge: false }); /* altın varak yaprak */ y.material.emissive = new THREE.Color(0x92400e); y.material.emissiveIntensity = 0.3; p.s = s; return p; });
+    // Yaprak dış köşesi camın iç yüzeyine en fazla ~%85 yaklaşabilir: tepe x = 0,145·cos a + 0,8·sin a ≤ 0,52 → a ≤ 0,48 rad
+    const ACI_MAX = 0.48;
     e.aci = 0; e.topuz = topuz;
     e.yaprakNokta = (s, d) => V3(x + s * (Math.sin(e.aci) * d + 0.06 * Math.cos(e.aci)), 0.95 - Math.cos(e.aci) * d, 0.1);
-    e.ayarla = (q, dt) => { const hedef = Math.min(0.95, Math.abs(q) * 0.16); e.aci += (hedef - e.aci) * Math.min(1, dt * 3); pv.forEach(p => p.rotation.z = p.s * e.aci); };
+    e.ayarla = (q, dt) => { const hedef = ACI_MAX * (1 - Math.exp(-Math.abs(q) * 0.35));   /* yük arttıkça açılır ama doyar: yaprak ucu hiçbir zaman camı geçmez */ e.aci += (hedef - e.aci) * Math.min(1, dt * 3); pv.forEach(p => p.rotation.z = p.s * e.aci); };
     return e; };
   // Elektroskop yük noktaları: knob ve yapraklar
   const eskYuk = (e, x, qTop, qYap) => { const L = [], nT = Math.round(Math.abs(qTop)), nY = Math.round(Math.abs(qYap)), sT = Math.sign(qTop), sY = Math.sign(qYap);
@@ -123,7 +125,7 @@
         FZ.setTag('esA', `Elektroskop: ${S.eq ? isaret(S.eq) : 'nötr'}`); FZ.show('esA', V3(-1.2, 0.5, 0.4), 1);
         FZ.setTag('esB', S.cub === 0 ? 'Nötr iletken' : S.cub > 0 ? 'Cam çubuk: +5q' : 'Ebonit çubuk: −5q'); FZ.show('esB', V3(1.25, o.scubuk.position.y + 0.3, 0), 1);
         FZ.setTag('esT', `topuz ${isaret(tp)}<br>${Math.abs(yap) < 1 ? 'yapraklar kapalı' : 'yapraklar açık'}`); FZ.show('esT', V3(1.75, 2.45, 0.3), 1);
-        FZ.setTag('esC', `yapraklar ${isaret(yap)}`); FZ.show('esC', V3(1.35, 0.6, 0.3), 1);
+        FZ.setTag('esC', `yapraklar ${isaret(yap)}`); FZ.show('esC', V3(1.6, 0.55, 0.3), 1);
       } else {
         // Faraday kabı · sen A: kap +6 yüklü, deneme küresi iç/dış yüzeye değer · sen B: kap nötr, +4 yüklü top içeri iner
         if (S.fkos) { S.fz = Math.min(S.sen === 'A' ? 4 : 2, S.fz + dt * 0.55); if (S.fz >= (S.sen === 'A' ? 4 : 2)) S.fkos = 0; }

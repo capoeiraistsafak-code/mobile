@@ -48,7 +48,7 @@
       else { const q = FZ.ease((p - 0.5) / 0.5); x = KAB_X; y = SU_Y + 0.6 + side / 2 + (son - SU_Y - 0.6 - side / 2) * q; }
       o.kup.position.set(x, y, 0);
       o.igne.visible = yuz && p >= 1 && S.push > 0; o.igne.position.set(0.05, y + side / 2 + 0.8, 0);
-      const h = Math.max(0.01, Vb * akan * 0.016); o.silSu.scale.y = h / 0.01; o.silSu.position.y = h / 2 + 0.02;
+      const h = Math.min(2.5, Math.max(0.01, Vb * akan * 0.016)); o.silSu.scale.y = h / 0.01; o.silSu.position.y = h / 2 + 0.02;
       o.damla.visible = S.kos && akan > 0 && akan < 1; o.damla.position.y = 0.4 + h + ((S.t * 2) % 1) * (SU_Y - 0.4 - h);
       FZ.setTag('ozT', p < 0.05 ? `${fs(m)} g` : '0 g'); FZ.show('ozT', V3(TER_X, 1.25, 0.6), 1);
       FZ.setTag('ozV', `${fs(Vb * akan)} cm³`); FZ.show('ozV', V3(SIL_X, 2.95, 0.4), 1);

@@ -1533,7 +1533,7 @@ function ask(q) {
   $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
 }
 // ---- Konu anlatımı kartları: tür etiketiyle (MERAK, KAVRAM, ÇÖZÜMLÜ ÖRNEK, DİKKAT, ÖZET...) ----
-const TURLER = { merak: ['MERAK', '#8b5cf6'], kavram: ['KAVRAM', '#2563eb'], gozlem: ['GÖZLEM', '#0891b2'], ornek: ['ÇÖZÜMLÜ ÖRNEK', '#16a34a'], dikkat: ['DİKKAT · KAVRAM YANILGISI', '#dc2626'], ozet: ['ÖZET', '#F5A300'], gunluk: ['GÜNLÜK HAYAT', '#db2777'] };
+const TURLER = { merak: ['MERAK', '#8b5cf6'], tanim: ['TANIM · NEDİR?', '#0f766e'], tarih: ['KİM BULDU · BİRİM · ÖLÇME', '#a16207'], kavram: ['KAVRAM', '#2563eb'], gozlem: ['GÖZLEM', '#0891b2'], ornek: ['ÇÖZÜMLÜ ÖRNEK', '#16a34a'], dikkat: ['DİKKAT · KAVRAM YANILGISI', '#dc2626'], ozet: ['ÖZET', '#F5A300'], gunluk: ['GÜNLÜK HAYAT', '#db2777'] };
 function kartBasla(etiket, renk, baslik) {
   $('qn').textContent = etiket; $('qn').style.background = renk; $('qn').style.color = '#fff';
   $('qt').innerHTML = baslik; $('qt').classList.add('ders'); $('opts').innerHTML = ''; $('fb').textContent = ''; $('fb').className = ''; $('qnext').classList.add('hide'); $('sol').innerHTML = '';
@@ -2155,6 +2155,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
 <script src="konular/kitap3.js"></script>
 <script src="konular/kitap4.js"></script>
 <script src="konular/kitap5.js"></script>
+<script src="konular/tanimlar.js"></script>
 <script src="konular/bilgi.js"></script>
 <script src="konular/son.js"></script>
 </body></html>
