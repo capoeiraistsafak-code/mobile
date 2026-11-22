@@ -212,7 +212,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 #ciz.acik{pointer-events:auto;cursor:crosshair}
 #ciz.lazer{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='7' fill='%23ff2d2d' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 12 12,crosshair}
 #bCiz.on{background:#ec4899;border-color:#ec4899;color:#fff}
-#palet{position:absolute;left:516px;top:130px;z-index:7;display:flex;flex-wrap:wrap;width:640px;align-items:center;gap:6px;background:rgba(36,41,52,.97);border:3px solid #ec4899;border-radius:20px;padding:8px 12px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+#palet{position:absolute;left:516px;top:130px;z-index:7;display:flex;flex-direction:column;width:max-content;gap:6px;background:rgba(36,41,52,.97);border:3px solid #ec4899;border-radius:20px;padding:8px 12px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
 #palet button{height:66px;min-width:58px;border-radius:14px;background:#3a4150;color:#fff;font:800 15px/1.1 Inter;border:2px solid #556070;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px}
 #palet button i{font-style:normal;font-size:26px;line-height:1}
 #palet button.on{background:#ec4899;border-color:#fff;color:#fff}
@@ -230,7 +230,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 #palet .ayr{width:2px;height:50px;background:#556070}
 #palet #pDok.on{background:#22c55e;border-color:#fff;color:#0b2b16}
 #durRozet.pal{top:300px}
-#palet .sat{flex-basis:100%;height:0}
+#palet .pSat{display:flex;flex-wrap:nowrap;align-items:center;gap:6px}#palet .bos{flex:1;min-width:10px}
 #palet .mod{display:flex;border:2px solid #556070;border-radius:16px;overflow:hidden;opacity:.45}
 #palet .mod.akt{opacity:1;border-color:#f472b6}
 #palet .mod button{border:none;border-radius:0;height:62px;min-width:86px;background:#2a303c}
@@ -471,13 +471,17 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
   <div id="cark" class="hide"><div class="tek"><canvas id="carkC" width="340" height="340"></canvas><div class="imx" id="carkI"></div></div>
     <div class="sag"><div class="onz" id="carkO"></div><button class="kp" id="carkTamam">Tamam</button></div></div>
   <div id="palet" class="hide">
+    <div class="pSat">
     <button id="pKalem" class="on" title="Kalem: çizim kalır (K)"><i>✏︎</i>Kalem</button>
     <button id="pLazer" title="Lazer: çizim kısa sürede kaybolur (L)"><i>◉</i>Lazer</button>
     <button id="pSilgi" title="Silgi (S)"><i>⌀</i>Silgi</button>
-    <span class="etk">Silgi:</span>
-    <div class="mod" id="pMod"><button id="pParca" title="Silginin değdiği kısmı siler"><i>✂︎</i>Parça parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
+    <div class="mod" id="pMod" title="Silgi türü"><button id="pParca" title="Silginin değdiği kısmı siler"><i>✂︎</i>Parça</button><button id="pTum" title="Silginin değdiği çizginin tamamını siler"><i>━</i>Tüm çizgi</button></div>
     <button id="pTem" title="Bütün çizimleri sil"><i>⌫</i>Temizle</button>
-    <span class="sat"></span>
+    <span class="bos"></span>
+    <button id="pKucuk" data-p="palet" title="Paleti küçült (yukarı kaydır); çizim açık kalır"><i>▲</i>Küçült</button>
+    <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
+    </div>
+    <div class="pSat">
     <button class="renk on" data-r="#ff0000" style="background:#ff0000" title="Kırmızı"></button>
     <button class="renk" data-r="#ffee00" style="background:#ffee00" title="Sarı"></button>
     <button class="renk" data-r="#0066ff" style="background:#0066ff" title="Mavi"></button>
@@ -485,11 +489,10 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
     <button class="renk" data-r="#a100ff" style="background:#a100ff" title="Mor"></button>
     <button class="renk" data-r="#ffffff" style="background:#ffffff" title="Beyaz"></button>
     <button class="renk cark" id="pCark" title="Renk çemberi: istediğin rengi seç"></button>
-    <span class="ayr"></span>
+    <span class="bos"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
-    <button id="pSekil" title="Çizip kalemi bir an bekletince düzgün şekle dönüşür (daire, elips, kare, dikdörtgen, üçgen, yıldız, çizgi)" style="min-width:96px"></button>
-    <button id="pKucuk" data-p="palet" title="Paleti küçült (yukarı kaydır); çizim açık kalır"><i>▲</i>Küçült</button>
-    <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
+    <button id="pSekil" title="Çizip kalemi bir an bekletince düzgün şekle dönüşür (daire, elips, kare, dikdörtgen, üçgen, çokgen, yıldız, çizgi)" style="min-width:96px"></button>
+    </div>
   </div>
   <button id="paletMini" class="sekmeK hide" title="Çizim paletini aç">✏️ <i id="pmRenk"></i> Palet ▾</button>
   <button id="canlEt" class="hide" title="Canlandırmayı geç">🎬 Canlandırma · geçmek için dokun ▶</button>
@@ -2165,32 +2168,65 @@ const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 function rdp(P, eps) { if (P.length < 3) return P.slice(); const a = P[0], b = P[P.length - 1]; let mx = -1, mi = 0; const L = dist(a, b) || 1;
   for (let i = 1; i < P.length - 1; i++) { const d = Math.abs((b.x - a.x) * (a.y - P[i].y) - (a.x - P[i].x) * (b.y - a.y)) / L; if (d > mx) { mx = d; mi = i; } }
   if (mx <= eps) return [a, b]; const l = rdp(P.slice(0, mi + 1), eps), r = rdp(P.slice(mi), eps); return l.slice(0, -1).concat(r); }
+// Şekil tanıma: çizgiye her aday şekli (çizgi, kırık çizgi, daire, elips, üçgen, dörtgen/dikdörtgen/kare, çokgen, yıldız) UYDURUR,
+// çizilen noktaların şekle ortalama uzaklığını (boyuta göre) ölçer ve EN AZ HATALI olanı seçer. Hiçbiri iyi uymazsa çizim olduğu gibi kalır.
 function sekilTani(P) {
-  if (P.length < 8) return null; let L = 0; for (let i = 1; i < P.length; i++) L += dist(P[i], P[i - 1]); if (L < 60) return null;
-  const xs = P.map(p => p.x), ys = P.map(p => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), w = x1 - x0, h = y1 - y0;
-  const kapali = dist(P[0], P[P.length - 1]) < Math.max(30, 0.18 * L);
-  if (!kapali) { return dist(P[0], P[P.length - 1]) / L > 0.88 ? [P[0], P[P.length - 1]] : null; }
-  const c = { x: P.reduce((s, p) => s + p.x, 0) / P.length, y: P.reduce((s, p) => s + p.y, 0) / P.length };
-  // kapalı eğriyi merkezden en uzak noktadan başlat, RDP ile köşeleri bul
-  let fi = 0; P.forEach((p, i) => { if (dist(p, c) > dist(P[fi], c)) fi = i; });
-  const Q = P.slice(fi).concat(P.slice(0, fi)).concat([P[fi]]);
-  let ui = 0; Q.forEach((q, i) => { if (dist(q, Q[0]) > dist(Q[ui], Q[0])) ui = i; });
-  const eps = Math.max(8, 0.045 * L); let V = rdp(Q.slice(0, ui + 1), eps).slice(0, -1).concat(rdp(Q.slice(ui), eps).slice(0, -1));
-  for (let tur = 0; tur < 3; tur++) { const Y = []; V.forEach(v => { if (!Y.length || dist(v, Y[Y.length - 1]) > 0.07 * L) Y.push(v); }); if (Y.length > 2 && dist(Y[0], Y[Y.length - 1]) < 0.07 * L) Y.pop();
-    V = Y.filter((v, i) => { const a = Y[(i - 1 + Y.length) % Y.length], b = Y[(i + 1) % Y.length], u = { x: a.x - v.x, y: a.y - v.y }, w2 = { x: b.x - v.x, y: b.y - v.y };
-      const cs = (u.x * w2.x + u.y * w2.y) / ((Math.hypot(u.x, u.y) * Math.hypot(w2.x, w2.y)) || 1); return cs > -0.94; }); }
+  sekilTani.son = '';
+  if (P.length < 6) return null; let L = 0; for (let i = 1; i < P.length; i++) L += dist(P[i], P[i - 1]); if (L < 50) return null;
+  const ornekle = (A, n, kapaliMi) => { const B = kapaliMi ? A.concat([A[0]]) : A; let T = 0; const d = [0]; for (let i = 1; i < B.length; i++) { T += dist(B[i], B[i - 1]); d.push(T); }
+    const O = []; let k = 1; for (let m = 0; m < n; m++) { const t = T * m / (kapaliMi ? n : n - 1); while (k < B.length - 1 && d[k] < t) k++; const a = B[k - 1], b = B[k], u = (t - d[k - 1]) / ((d[k] - d[k - 1]) || 1);
+      O.push({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u }); } return O; };
+  const segD = (p, a, b) => { const dx = b.x - a.x, dy = b.y - a.y, l2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2)); return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy); };
+  const yolD = (p, S) => { let m = 1e9; for (let i = 1; i < S.length; i++) m = Math.min(m, segD(p, S[i - 1], S[i])); return m; };
+  const xs = P.map(p => p.x), ys = P.map(p => p.y), w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys), boy = Math.hypot(w, h) || 1;
+  // hata: çizilen noktalar → şekil ve şeklin köşe/örnek noktaları → çizim (iki yönlü; köşesi kesilmiş şekil de cezalandırılır)
+  const hata = (S, Q) => { const SQ = ornekle(S, 48, false); let a = 0, b = 0; Q.forEach(q => a += yolD(q, S)); SQ.forEach(q => b += yolD(q, Q.concat([Q[0]]))); return (a / Q.length + b / SQ.length) / 2 / boy; };
   const kapat = A => A.concat([A[0]]);
-  const R = P.map(p => dist(p, c)), ort = R.reduce((a, b) => a + b, 0) / R.length, sap = Math.sqrt(R.reduce((a, r) => a + (r - ort) ** 2, 0) / R.length) / ort;
-  if (V.length >= 9 && V.length <= 12) {                         // yıldız: uç noktaları merkezden belirgin uzak
-    const rs = V.map(v => dist(v, c)).sort((a, b) => a - b), ic = rs.slice(0, 5).reduce((a, b) => a + b, 0) / 5, dis = rs.slice(-5).reduce((a, b) => a + b, 0) / 5;
-    if (dis > 1.5 * ic) { const tepe = V.reduce((m, v) => dist(v, c) > dist(m, c) ? v : m), a0 = Math.atan2(tepe.y - c.y, tepe.x - c.x), S = [];
-      for (let k = 0; k < 10; k++) { const r = k % 2 ? dis * 0.42 : dis, a = a0 + k * Math.PI / 5; S.push({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) }); } return kapat(S); } }
-  if (V.length === 3) return kapat(V);
-  if (V.length === 4 && sap > 0.06) { const kare = Math.abs(w - h) < 0.15 * Math.max(w, h), s2 = Math.max(w, h) / 2, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-    return kare ? kapat([{ x: cx - s2, y: cy - s2 }, { x: cx + s2, y: cy - s2 }, { x: cx + s2, y: cy + s2 }, { x: cx - s2, y: cy + s2 }]) : kapat([{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }]); }
-  if (V.length >= 4 || sap < 0.2) { const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, daire = Math.abs(w - h) < 0.14 * Math.max(w, h), rx = daire ? (w + h) / 4 : w / 2, ry = daire ? rx : h / 2, S = [];
-    for (let k = 0; k <= 72; k++) { const a = k / 72 * Math.PI * 2; S.push({ x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) }); } return S; }
-  return null; }
+  const uc = dist(P[0], P[P.length - 1]), kapali = uc < Math.max(28, 0.2 * L);
+  if (!kapali) {                                                   // AÇIK çizgi: düz çizgi ya da 2–3 parçalı kırık çizgi (ok, açı, eğik düzlem…)
+    if (uc / L > 0.9) { sekilTani.son = 'çizgi'; return [P[0], P[P.length - 1]]; }
+    const Q = ornekle(P, 64, false), V = rdp(Q, Math.max(6, 0.035 * L));
+    if (V.length <= 4) { const e = Q.reduce((t, q) => t + yolD(q, V), 0) / Q.length / boy;
+      const kisa = Math.min(...V.slice(1).map((v, i) => dist(v, V[i])));
+      if (e < 0.025 && kisa > 0.1 * L) { sekilTani.son = 'kırık çizgi'; return V; } }
+    return null; }
+  const Q = ornekle(P, 72, true), n = Q.length, c = { x: Q.reduce((t, p) => t + p.x, 0) / n, y: Q.reduce((t, p) => t + p.y, 0) / n };
+  const aday = [];
+  // ELİPS / DAİRE: noktaların kovaryansından eksenler (çevre üzerindeki düzgün noktalarda eksen yönündeki varyans = a²/2)
+  let sxx = 0, syy = 0, sxy = 0; Q.forEach(p => { const dx = p.x - c.x, dy = p.y - c.y; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; }); sxx /= n; syy /= n; sxy /= n;
+  const tr = sxx + syy, de = Math.sqrt(Math.max(0, (sxx - syy) ** 2 / 4 + sxy * sxy)), l1 = tr / 2 + de, l2 = Math.max(1, tr / 2 - de), th = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+  let ra = Math.sqrt(2 * l1), rb = Math.sqrt(2 * l2); const daire = rb / ra > 0.86; if (daire) ra = rb = (ra + rb) / 2;
+  const EL = []; for (let k = 0; k <= 72; k++) { const a = k / 72 * 2 * Math.PI, x = ra * Math.cos(a), y = rb * Math.sin(a); EL.push({ x: c.x + x * Math.cos(th) - y * Math.sin(th), y: c.y + x * Math.sin(th) + y * Math.cos(th) }); }
+  aday.push({ ad: daire ? 'daire' : 'elips', S: EL, e: hata(EL, Q) });
+  // ÇOKGEN: kapalı eğriyi merkezden en uzak noktadan başlatıp RDP ile köşeleri bul, kısa kenarları ve düz açıları birleştir
+  let fi = 0; Q.forEach((p, i) => { if (dist(p, c) > dist(Q[fi], c)) fi = i; });
+  const R = Q.slice(fi).concat(Q.slice(0, fi)).concat([Q[fi]]); let ui = 0; R.forEach((q, i) => { if (dist(q, R[0]) > dist(R[ui], R[0])) ui = i; });
+  const kose = eps => { let V = rdp(R.slice(0, ui + 1), eps).slice(0, -1).concat(rdp(R.slice(ui), eps).slice(0, -1));
+    for (let tur = 0; tur < 3; tur++) { const Y = []; V.forEach(v => { if (!Y.length || dist(v, Y[Y.length - 1]) > 0.06 * L) Y.push(v); }); if (Y.length > 2 && dist(Y[0], Y[Y.length - 1]) < 0.06 * L) Y.pop();
+      V = Y.filter((v, i) => { const a = Y[(i - 1 + Y.length) % Y.length], b = Y[(i + 1) % Y.length], u = { x: a.x - v.x, y: a.y - v.y }, w2 = { x: b.x - v.x, y: b.y - v.y };
+        return (u.x * w2.x + u.y * w2.y) / ((Math.hypot(u.x, u.y) * Math.hypot(w2.x, w2.y)) || 1) > -0.92; }); } return V; };
+  const gor = new Set();
+  [0.025, 0.035, 0.05, 0.07].forEach(f => { const V = kose(Math.max(5, f * L)); if (V.length < 3 || V.length > 12 || gor.has(V.length)) return; gor.add(V.length);
+    let S = V.slice(), ad = ['', '', '', 'üçgen', 'dörtgen', 'beşgen', 'altıgen'][V.length] || 'çokgen';
+    if (V.length === 4) {                                          // açılar ~90° ise dikdörtgen/kare (döndürülmüş olabilir)
+      const dik = V.every((v, i) => { const a = V[(i + 3) % 4], b = V[(i + 1) % 4], u = { x: a.x - v.x, y: a.y - v.y }, w2 = { x: b.x - v.x, y: b.y - v.y };
+        return Math.abs((u.x * w2.x + u.y * w2.y) / ((Math.hypot(u.x, u.y) * Math.hypot(w2.x, w2.y)) || 1)) < 0.3; });
+      if (dik) { let ang = 0, sw = 0; V.forEach((v, i) => { const b = V[(i + 1) % 4]; let a = Math.atan2(b.y - v.y, b.x - v.x); a = ((a % (Math.PI / 2)) + Math.PI / 2) % (Math.PI / 2); const l = dist(v, b); ang += l * Math.cos(4 * a); sw += l * Math.sin(4 * a); });
+        let A = Math.atan2(sw, ang) / 4; if (Math.abs(A) < 0.09) A = 0;   // neredeyse yataysa tam yatay
+        const ux = Math.cos(A), uy = Math.sin(A), pr = Q.map(p => ({ u: (p.x - c.x) * ux + (p.y - c.y) * uy, v: -(p.x - c.x) * uy + (p.y - c.y) * ux }));
+        let u0 = Math.min(...pr.map(q => q.u)), u1 = Math.max(...pr.map(q => q.u)), v0 = Math.min(...pr.map(q => q.v)), v1 = Math.max(...pr.map(q => q.v));
+        const kare = Math.abs((u1 - u0) - (v1 - v0)) < 0.13 * Math.max(u1 - u0, v1 - v0); if (kare) { const m = ((u1 - u0) + (v1 - v0)) / 4, cu = (u0 + u1) / 2, cv = (v0 + v1) / 2; u0 = cu - m; u1 = cu + m; v0 = cv - m; v1 = cv + m; }
+        S = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map(([u, v]) => ({ x: c.x + u * ux - v * uy, y: c.y + u * uy + v * ux })); ad = kare ? 'kare' : 'dikdörtgen'; } }
+    if (V.length >= 8 && V.length % 2 === 0) {                     // yıldız: köşeler merkeze bir uzak bir yakın sırayla
+      const r = V.map(v => dist(v, c)), tek = r.filter((_, i) => i % 2), cift = r.filter((_, i) => !(i % 2)), mt = tek.reduce((a, b) => a + b) / tek.length, mc = cift.reduce((a, b) => a + b) / cift.length;
+      if (Math.max(mt, mc) > 1.45 * Math.min(mt, mc)) { const dis = Math.max(mt, mc), ic = Math.min(mt, mc), k = V.length / 2, tepe = V[mt > mc ? 1 : 0], a0 = Math.atan2(tepe.y - c.y, tepe.x - c.x); S = [];
+        for (let j = 0; j < 2 * k; j++) { const rr = j % 2 ? ic : dis, a = a0 + j * Math.PI / k; S.push({ x: c.x + rr * Math.cos(a), y: c.y + rr * Math.sin(a) }); } ad = k + ' köşeli yıldız'; } }
+    if (V.length > 6 && !/yıldız/.test(ad)) return;              // çok köşeli (yıldız olmayan) çokgen aslında eğridir → elips/daire karar versin
+    S = kapat(S); aday.push({ ad, S, e: hata(S, Q) * (1 + 0.12 * Math.max(0, V.length - 4)) }); });
+  aday.sort((a, b) => a.e - b.e); const en = aday[0];
+  if (!en || en.e > 0.05) return null;                             // hiçbiri iyi uymuyor → serbest çizim kalsın
+  sekilTani.son = en.ad; return en.S; }
+window.__sekilTani = sekilTani;
 setInterval(() => { if (!CZ.sekil || !CZ.acik) return; const now = performance.now();
   CZ.aktif.forEach((c, id) => { if (c.arac !== 'kalem' || c.donmus) return; const son = c.n[c.n.length - 1];
     if (!c.durN || dist(son, c.durN) > 6) { c.durN = son; c.durT = now; return; }
