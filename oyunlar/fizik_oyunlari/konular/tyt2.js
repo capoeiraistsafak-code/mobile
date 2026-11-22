@@ -192,20 +192,20 @@
     kur(g) {
       for (let i = 0; i < 4; i++) { const a = YOL[i], b = YOL[i + 1], L = a.distanceTo(b), m = silindir(g, 0.05, 0.05, L, 0x94a3b8, (a.x + b.x) / 2, (a.y + b.y) / 2, 0, { edge: false });
         if (a.x === b.x) {} else m.rotation.z = Math.PI / 2; }
-      kutu(g, 0.5, 1.2, 0.6, 0x111827, -3, 1.8, 0); levha(g, 'PİL', 0.9, 0.3, '#111827', '#F5C400', -3, 1.8, 0.31);
-      const amp = [top(g, 0.38, 0xfef08a, -1, 3.3, 0, { op: 0.9 }), top(g, 0.38, 0xfef08a, 1, 3.3, 0, { op: 0.9 })];
-      const el = []; for (let i = 0; i < 16; i++) el.push(top(g, 0.07, 0x60a5fa, 0, 0, 0, { edge: false, cast: false }));
+      const pil = FZ.pil(g, 1.3); pil.position.set(-3, 1.8, 0);   // (+) ucu yukarıda
+      const amp = [-1, 1].map(x => { const a = FZ.ampul(g, 1.1); a.position.set(x, 3.3, 0); return a; });
+      const el = []; for (let i = 0; i < 16; i++) el.push(top(g, 0.07, 0xef4444, 0, 0, 0, { edge: false, cast: false }));
       const pusula = new THREE.Group(); pusula.position.set(0, 0.32, 1.3); g.add(pusula);
       const ig1 = FZ.mesh(new THREE.ConeGeometry(0.1, 0.6, 8), 0xef4444, { cast: false }); ig1.rotation.x = -Math.PI / 2; ig1.position.z = -0.3; pusula.add(ig1);
       const ig2 = FZ.mesh(new THREE.ConeGeometry(0.1, 0.6, 8), 0xf8fafc, { cast: false }); ig2.rotation.x = Math.PI / 2; ig2.position.z = 0.3; pusula.add(ig2);
-      kart('e7I', '', '#22c55e'); kart('e7a', '', '#F5C400'); kart('e7b', '', '#F5C400');
+      kart('e7I', '', '#dc2626'); kart('e7a', '', '#F5C400'); kart('e7b', '', '#F5C400');
       return { amp, el, pusula };
     },
     tick(S, dt, o) {
       const Rt = S.R1 + (S.seri ? S.R2 : 0), I = S.ac ? S.V / Rt : 0;
       S.u += I * dt * 0.25; o.el.forEach((e, i) => { e.position.copy(yolNokta(-(S.u + i / 4))); e.visible = !!S.ac; });   // elektronlar (−'den +'ya) akım yönüne ters
       o.amp[1].visible = !!S.seri;
-      const P1 = I * I * S.R1; o.amp.forEach((a, i) => { const P = i ? I * I * S.R2 : P1; a.material.color.setRGB(1, 0.95, 0.55 + 0.45 * Math.min(1, P / 36)); a.material.opacity = 0.35 + 0.6 * Math.min(1, P / 36); });
+      const P1 = I * I * S.R1; o.amp.forEach((a, i) => { const P = i ? I * I * S.R2 : P1; a.parla(Math.min(1, P / 36)); });
       const hedef = S.pus && I > 0 ? -Math.PI / 2 * Math.min(1, I / 3) : 0; o.pusula.rotation.y += (hedef - o.pusula.rotation.y) * Math.min(1, dt * 4);
       FZ.setTag('e7I', `I = ${fs(I)} A`); FZ.show('e7I', V3(3.6, 1.8, 0), S.ac ? 1 : 0);
       FZ.setTag('e7a', `R<sub>1</sub> = ${S.R1} Ω`); FZ.show('e7a', V3(S.seri ? -1 : -1, 4.1, 0), 1);

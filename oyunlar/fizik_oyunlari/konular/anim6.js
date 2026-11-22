@@ -112,23 +112,17 @@
   // =====================================================================
   // ELEKTRİK DEVRELERİ LABORATUVARI
   // =====================================================================
-  const lamba = (g, x, z) => { const a = new THREE.Group(); a.position.set(x, 0, z); g.add(a);
-    silindir(a, 0.13, 0.15, 0.22, 0x64748b, 0, 0.11, 0, { edge: false });
-    const cam = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 16), new THREE.MeshLambertMaterial({ color: 0xd1d5db, transparent: true, opacity: 0.85, emissive: new THREE.Color(0xfacc15), emissiveIntensity: 0 })); cam.position.y = 0.42; a.add(cam);
-    const hale = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 14), new THREE.MeshBasicMaterial({ color: 0xfde047, transparent: true, opacity: 0, depthWrite: false })); hale.position.y = 0.42; a.add(hale);
-    a.cam = cam; a.hale = hale; a.parla = p => { cam.material.emissiveIntensity = 1.4 * p; hale.material.opacity = 0.45 * p; hale.scale.setScalar(0.6 + 0.8 * p); }; return a; };
+  const lamba = (g, x, z) => { const a = FZ.ampul(g, 1); a.position.set(x, 0, z); return a; };
   const sDv = sahne({ icon: '💡', cam: [[0.7, 9.6, 9.6], [0.7, 0, -0.3]], plate: [10, 5, 0, 0], data: [['Üreteç', 'ideal (iç direnç yok)']],
     S0: () => ({ mod: 'seri', sok: [0, 0, 0], faz: 0 }),
     kur(g) {
       kutu(g, 5.8, 0.06, 3.4, 0xe7d3a8, -0.1, 0.03, 0, { edge: false });
-      const pil = new THREE.Group(); pil.position.set(-2.6, 0.25, 0); g.add(pil);
-      const pg = silindir(pil, 0.2, 0.2, 0.9, 0x111827, 0, 0, 0, { edge: false }); pg.rotation.x = Math.PI / 2; const pu = silindir(pil, 0.2, 0.2, 0.3, 0xb45309, 0, 0, -0.55, { edge: false }); pu.rotation.x = Math.PI / 2;
-      const ucu = silindir(pil, 0.07, 0.07, 0.1, 0x9ca3af, 0, 0, -0.75, { edge: false }); ucu.rotation.x = Math.PI / 2;
+      const pil = FZ.pil(g, 1.1); pil.position.set(-2.6, 0.26, 0); pil.rotation.x = -Math.PI / 2;   // yatık: (+) ucu arkada (−z), (−) ucu önde
       const tel = FZ.cizgi(g, 0x1f2937); tel.material.dashSize = 100; tel.material.gapSize = 0; const tel2 = []; for (let i = 0; i < 3; i++) { const t = FZ.cizgi(g, 0x1f2937); t.material.dashSize = 100; t.material.gapSize = 0; tel2.push(t); }
       const L = [lamba(g, 0, 0), lamba(g, 0, 0), lamba(g, 0, 0)];
-      const el = []; for (let i = 0; i < 22; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), new THREE.MeshBasicMaterial({ color: 0x2563eb })); g.add(m); el.push(m); }
+      const el = []; for (let i = 0; i < 22; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), new THREE.MeshBasicMaterial({ color: 0xef4444 })); g.add(m); el.push(m); }
       const akim = ok(0xdc2626, 'dvI');
-      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#2563eb'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#2563eb'); kart('dvT', '', '#F5C400');
+      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#dc2626'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#2563eb'); kart('dvT', '', '#F5C400');
       return { tel, tel2, L, el, akim };
     },
     tick(S, dt, o) {
@@ -149,7 +143,7 @@
       if (seri) { const acik = S.sok.slice(0, n).some(x => x); const Rt = R.slice(0, n).reduce((a, b) => a + b, 0), I = acik ? 0 : V / Rt; P = R.slice(0, n).map(r => I * I * r); S.I = I; }
       else { P = R.slice(0, n).map((r, i) => S.sok[i] ? 0 : V * V / r); S.I = P.reduce((a, b) => a + b, 0) / V; }
       const Pmax = iki ? 100 : 1;
-      o.L.forEach((l, i) => { l.visible = i < n; if (i >= n) return; const z = seri ? -1.2 : 0; l.position.set(xs[i], 0.06, z); l.cam.visible = !S.sok[i]; l.hale.visible = !S.sok[i];
+      o.L.forEach((l, i) => { l.visible = i < n; if (i >= n) return; const z = seri ? -1.2 : 0; l.position.set(xs[i], 0.06, z); l.visible = !S.sok[i] || true; l.cam.visible = !S.sok[i]; l.hale.visible = !S.sok[i];
         l.parla(Math.min(1, Math.sqrt(P[i] / Pmax))); FZ.setTag('dvL' + i, S.sok[i] ? 'söküldü' : iki ? `${i ? 100 : 60} W` : `L${i + 1}`); FZ.show('dvL' + i, V3(xs[i], 0.4, z + (iki ? (seri ? 1.0 : 0.65) : 0.6)), 1); });
       // elektronlar (−'den çıkıp +'ya) — seri devrede tek yol
       S.faz += dt * S.I * (iki ? 2.2 : 0.35) * (seri ? 1 : 0.4);

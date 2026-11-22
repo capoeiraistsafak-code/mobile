@@ -80,10 +80,10 @@
     kur(g) {
       const p = kutu(g, 3, 1.6, 1.2, 0xfca5a5, -1.5, 1.2, 0, { op: 0.6 }), n = kutu(g, 3, 1.6, 1.2, 0x93c5fd, 1.5, 1.2, 0, { op: 0.6 });
       const tuk = kutu(g, 1, 1.62, 1.22, 0xe5e7eb, 0, 1.2, 0, { op: 0.8 });
-      const hol = [], el = []; for (let i = 0; i < 14; i++) { hol.push(top(g, 0.1, 0xffffff, 0, 0, 0)); el.push(top(g, 0.1, 0x1d4ed8, 0, 0, 0)); }
+      const hol = [], el = []; for (let i = 0; i < 14; i++) { hol.push(top(g, 0.1, 0xffffff, 0, 0, 0)); el.push(top(g, 0.1, 0xef4444, 0, 0, 0)); }
       const rnd = Array.from({ length: 14 }, () => [Math.random(), Math.random(), Math.random()]);
       const egri = duz(g, 0x111827), eks = duz(g, 0x94a3b8), nok = top(g, 0.1, 0xdc2626, 0, 0, 0);
-      kart('pnp', 'p-tipi (hol)', '#dc2626'); kart('pnn', 'n-tipi (elektron)', '#2563eb'); kart('pnt', '', '#F5C400'); etiket('pnd', 'tükenim', '#475569');
+      kart('pnp', 'p-tipi (hol)', '#2563eb'); kart('pnn', 'n-tipi (elektron)', '#dc2626'); kart('pnt', '', '#F5C400'); etiket('pnd', 'tükenim', '#475569');
       return { p, n, tuk, hol, el, rnd, egri, eks, nok };
     },
     tick(S, dt, o) {

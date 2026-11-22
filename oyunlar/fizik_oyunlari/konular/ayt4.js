@@ -128,7 +128,7 @@
     kur(g) {
       const c = 0x6b7280; kutu(g, 0.6, 3.6, 0.6, c, -1.5, 2.2, 0); kutu(g, 0.6, 3.6, 0.6, c, 1.5, 2.2, 0); kutu(g, 3.6, 0.6, 0.6, c, 0, 4.0, 0); kutu(g, 3.6, 0.6, 0.6, c, 0, 0.4, 0);
       const b1 = new THREE.Group(), b2 = new THREE.Group(); b1.position.set(-1.5, 2.2, 0); b2.position.set(1.5, 2.2, 0); g.add(b1, b2);
-      const lamba = top(g, 0.35, 0xfef3c7, 3.6, 2.6, 0), sok = silindir(g, 0.15, 0.15, 0.3, 0x475569, 3.6, 2.1, 0);
+      const lamba = FZ.ampul(g, 1.1); lamba.position.set(3.6, 1.95, 0);
       const isik = new THREE.PointLight(0xfde68a, 0, 6); isik.position.set(3.6, 2.6, 0.6); g.add(isik);
       const dalga = FZ.cizgi(g, 0x2563eb); dalga.material.dashSize = 100; dalga.material.gapSize = 0;
       const nokta = top(g, 0.08, 0x2563eb, -4, 2, 0);
@@ -139,7 +139,7 @@
       const sar = (gr, n, renk) => { while (gr.children.length) gr.remove(gr.children[0]); const k = Math.max(2, Math.min(14, Math.round(n / 80))); for (let i = 0; i < k; i++) { const t = FZ.mesh(new THREE.TorusGeometry(0.42, 0.05, 6, 20), renk, { edge: false }); t.rotation.x = Math.PI / 2; t.position.y = -1.2 + 2.4 * (i + 0.5) / k; gr.add(t); } };
       if (o.n1 !== S.N1) { sar(o.b1, S.N1, 0xef4444); o.n1 = S.N1; } if (o.n2 !== S.N2) { sar(o.b2, S.N2, 0x3b82f6); o.n2 = S.N2; }
       const V2 = S.ac ? S.V1 * S.N2 / S.N1 : 0, ph = S.t * S.f * Math.PI * 2;
-      const par = Math.min(1, V2 / 1100); o.lamba.material.emissive && o.lamba.material.emissive.setHex(0xfbbf24); if (o.lamba.material.emissiveIntensity !== undefined) o.lamba.material.emissiveIntensity = par * (0.6 + 0.4 * Math.abs(Math.sin(ph)));
+      const par = Math.min(1, V2 / 1100); o.lamba.parla(par * (0.6 + 0.4 * Math.abs(Math.sin(ph))));
       o.isik.intensity = par * 3;
       const pts = []; for (let i = 0; i <= 60; i++) { const x = -5 + i / 60 * 2.6; pts.push(V3(x, 2.2 + (S.ac ? 0.9 * Math.sin(ph - i / 60 * Math.PI * 2) : 0.9), 0)); } FZ.setLine(o.dalga, pts);
       o.nokta.position.copy(pts[60]);

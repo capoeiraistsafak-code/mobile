@@ -30,6 +30,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 /* veri tahtası */
 #board{position:absolute;left:24px;top:142px;width:max-content;min-width:360px;max-width:500px;background:rgba(36,41,52,.94);border:3px solid #4b5566;border-radius:20px;padding:16px 20px 18px;z-index:4}
 #board h3{font:800 24px Inter;color:#94a3b8;letter-spacing:1px;margin:4px 0 8px}
+#bForm{max-height:300px;overflow-y:auto}#bForm .fm{display:inline-block;font:700 30px/1.15 Caveat;margin:3px 0;padding:2px 10px}
 .row{font:600 27px/1.35 Inter;color:#e5e7eb;white-space:nowrap}
 .row b{color:#F5C400;font-weight:800}
 .row.f b{color:#4ade80}
@@ -178,8 +179,11 @@ button{font-family:inherit;cursor:pointer;border:none}
   background:linear-gradient(to top left,transparent calc(50% - .05em),currentColor calc(50% - .05em),currentColor calc(50% + .05em),transparent calc(50% + .05em)) right top/.4em 100% no-repeat,
              linear-gradient(to top right,transparent calc(50% - .045em),currentColor calc(50% - .045em),currentColor calc(50% + .045em),transparent calc(50% + .045em)) left bottom/.24em 46% no-repeat}
 .sq>span{display:inline-block;border-top:.085em solid currentColor;padding:.06em .1em 0 .06em;margin-left:-.02em}
-sup{font-size:.6em;vertical-align:.7em;line-height:0}
-sub{font-size:.6em;vertical-align:-.2em;line-height:0}
+sup{font-size:.6em;vertical-align:.7em;line-height:0;margin-left:.1em;margin-right:.04em}
+sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-right:.03em}
+/* el yazısı (Caveat) harfleri sağa yatık: üs ve indis harfin içine girmesin */
+.chip sup,.kol sup,#sol sup,.fm sup,.nt-m sup{margin-left:.24em}
+.chip sub,.kol sub,#sol sub,.fm sub,.nt-m sub{margin-left:.2em}
 
 /* 3B etiketleri */
 #tags{position:absolute;inset:0;pointer-events:none;z-index:3}
@@ -1392,7 +1396,7 @@ function startMission(M) {
   showOnly(M); M.reset();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
-  $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>`;
+  $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>${M.ders ? '<h3 id="bFormH" class="hide" style="margin-top:14px">FORMÜLLER</h3><div id="bForm"></div>' : ''}`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
   const nq = M.steps.filter(s => s.q).length, nk = M.steps.filter(s => s.k || s.p || s.x).length;
   overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px${M.ders ? ';background:#2563eb' : ''}">${M.ders ? 'KONU ANLATIMI · DERS' : 'GÖREV'} ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
@@ -1403,7 +1407,7 @@ function overlay(html) { $('ov').innerHTML = `<div class="ov-k">${html}</div>`; 
 function closeOverlay() { $('ov').classList.add('hide'); }
 
 function next() {
-  const M = GAME.M; GAME.i++; const st = M.steps[GAME.i]; setTimeout(gezYaz);
+  const M = GAME.M; GAME.i++; const st = M.steps[GAME.i]; setTimeout(gezYaz); setTimeout(formulYaz);
   $('go').classList.add('hide');
   if (!st) return finish();
   if (st.sub !== undefined) sub(st.sub);
@@ -1469,7 +1473,7 @@ function kartBasla(etiket, renk, baslik) {
   $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
 }
 function anlat(k) {
-  GAME.qn++; GAME.q = { q: k, answered: true, ders: true }; SON_Q = k;
+  setTimeout(formulYaz); GAME.qn++; GAME.q = { q: k, answered: true, ders: true }; SON_Q = k;
   if (!$('notlar').classList.contains('hide')) notAc(true);
   const [et, renk] = TURLER[k.tur || 'kavram'] || TURLER.kavram;
   kartBasla(et, renk, k.b);
@@ -1679,9 +1683,24 @@ const NOTLAR = {
   ],
 };
 let SON_Q = null;
+const _tmp = document.createElement('div');
+const kartFormul = k => { _tmp.innerHTML = (k.m || []).join(' '); return [..._tmp.querySelectorAll('.fm')].map(e => e.outerHTML); };
+function dersKartlari(M) { const L = []; for (let i = 0; i <= Math.min(GAME.i, M.steps.length - 1); i++) { const st = M.steps[i]; if (st && st.k) L.push(st.k); } return L; }
+function dersFormulleri(M) { const g = new Set(), L = []; dersKartlari(M).forEach(k => kartFormul(k).forEach(h => { _tmp.innerHTML = h; const t = _tmp.textContent.replace(/\s+/g, ''); if (!g.has(t)) { g.add(t); L.push(h); } })); return L; }
+function formulYaz() { const M = GAME.M, el = $('bForm'); if (!M || !M.ders || !el) return; const L = dersFormulleri(M);
+  el.innerHTML = L.map(h => `<div>${h}</div>`).join(''); $('bFormH').classList.toggle('hide', !L.length); el.scrollTop = el.scrollHeight; }
 function notIcerik() {
   const M = GAME.M; if (!M) return '';
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
+  if (M.ders) {
+    const nt = m => `<div class="nt-m"><div>${m}</div></div>`, K = dersKartlari(M), son = K[K.length - 1];
+    if (son) { h += `<div class="nt-k">BU KART · NEDEN BÖYLE?</div>` + nt(`<b>${son.b}</b>`) + (son.n || son.m).map(nt).join(''); }
+    const F_ = dersFormulleri(M); if (F_.length) h += `<div class="nt-k" style="margin-top:14px">FORMÜLLER</div>` + F_.map(nt).join('');
+    const once = K.slice(0, -1).filter(k => k.tur !== 'merak').reverse();
+    if (once.length) h += `<div class="nt-k" style="margin-top:14px">ÖNCEKİ KARTLARDA NE ÖĞRENDİK?</div>` + once.map(k => nt(`<b>${k.b}</b><br>${k.m.join('<br>')}`)).join('');
+    if (M.notlar && M.notlar.length) h += `<div class="nt-k" style="margin-top:14px">BU KONUDA GENEL</div>` + M.notlar.map(nt).join('');
+    if (!h) h = `<div class="nt-k">NOTLAR</div>` + nt('Notlar, ders ilerledikçe kart kart burada birikir.');
+    return h; }
   if (Q && Q.n) { const no = M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1;
     h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`).join(''); }
   h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
@@ -1892,6 +1911,20 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 // ---- Konu modülleri (konular/*.js) için API ----
+// Yazıda ₁ ² ³ gibi hazır üst/alt simge karakterleri el yazısı yazı tipinde harfin içine giriyor:
+// ekrana gelen her metinde bunları aralıklı <sup>/<sub> öğelerine çevir (R², I₁, m/s², 10⁻¹⁹ …)
+(function () {
+  const UST = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '−', 'ⁿ': 'n' };
+  const ALT = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9', '₊': '+', '₋': '−', 'ₙ': 'n', 'ₘ': 'm', 'ₖ': 'k', 'ₛ': 's', 'ₜ': 't', 'ₑ': 'e', 'ₓ': 'x' };
+  const RE = new RegExp('[' + Object.keys(UST).join('') + ']+|[' + Object.keys(ALT).join('') + ']+', 'g'), VAR = new RegExp(RE.source);
+  const cevir = n => { const t = n.nodeValue; if (!VAR.test(t)) return; const p = n.parentNode; if (!p || /^(SCRIPT|STYLE|TEXTAREA|INPUT|SUP|SUB)$/.test(p.nodeName)) return;
+    const f = document.createDocumentFragment(); let son = 0; t.replace(RE, (m, i) => { if (i > son) f.appendChild(document.createTextNode(t.slice(son, i)));
+      const ust = m[0] in UST, e = document.createElement(ust ? 'sup' : 'sub'); e.textContent = [...m].map(c => (ust ? UST : ALT)[c]).join(''); f.appendChild(e); son = i + m.length; return m; });
+    if (son < t.length) f.appendChild(document.createTextNode(t.slice(son))); p.replaceChild(f, n); };
+  const tara = kok => { if (kok.nodeType === 3) return cevir(kok); const w = document.createTreeWalker(kok, NodeFilter.SHOW_TEXT), L = []; while (w.nextNode()) if (VAR.test(w.currentNode.nodeValue)) L.push(w.currentNode); L.forEach(cevir); };
+  new MutationObserver(ms => ms.forEach(m => { if (m.type === 'characterData') cevir(m.target); else m.addedNodes.forEach(tara); })).observe(document.body, { subtree: true, childList: true, characterData: true });
+  tara(document.body);
+})();
 window.FZ = { THREE, V3, UP, TAU, clamp, ease, mod, F, SQ, FM, YSVG, mesh, arrow, setArrow, dashLine, setLine, textSprite, tag, setTag, show, setPlate, camGoal, scene,
   SFX, loopSnd, board, sub, HAZIR, KONULAR, GRUPLAR, anaKur, GAME,
   konuEkle(sinav, ad, kayit) { HAZIR[sinav + '|' + ad] = kayit; [...kayit.dersler || [], ...kayit.gorevler || []].forEach(m => GRUPLAR.add(m.group)); if (!$('ana').classList.contains('hide')) anaKur(); } };

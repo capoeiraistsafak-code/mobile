@@ -5,10 +5,7 @@
   const fs = x => (+(+x).toFixed(2)).toString().replace('.', ',');
   const KN = 0.025;   // kuvvet ölçeği: 1 N = 0,025 birim (gerçek oranlı oklar)
   const KV = 0.5;     // hız ölçeği: 1 m/s = 0,5 birim
-  const insan = (g, renk, boy) => { const a = new THREE.Group(); g.add(a);
-    silindir(a, 0.09 * boy, 0.09 * boy, 0.75 * boy, 0x1f2937, -0.12 * boy, 0.38 * boy, 0, { edge: false }); silindir(a, 0.09 * boy, 0.09 * boy, 0.75 * boy, 0x1f2937, 0.12 * boy, 0.38 * boy, 0, { edge: false });
-    silindir(a, 0.26 * boy, 0.22 * boy, 0.8 * boy, renk, 0, 1.15 * boy, 0, { edge: false }); top(a, 0.18 * boy, 0xf1c27d, 0, 1.75 * boy, 0, { edge: false });
-    kutu(a, 0.5 * boy, 0.05, 0.14, 0x94a3b8, 0, 0.03, 0, { edge: false }); return a; };
+  const insan = (g, renk, boy) => FZ.insan(g, renk, boy);
 
   // =====================================================================
   // NEWTON LABORATUVARI: kutu (bileşke, F = ma, sürtünme) · patenciler (etki–tepki) · disk (eylemsizlik) · iki araba (F = ma)
@@ -55,7 +52,8 @@
         if (S.kos) { S.tp += dt; const it = S.tp < 0.5;
           if (it) { S.v1 -= S.Fp / S.m1 * dt; S.v2 += S.Fp / S.m2 * dt; }
           S.x1 += S.v1 * dt; S.x2 += S.v2 * dt; if (S.x1 < -3.8 || S.x2 > 3.8) S.kos = 0; }
-        o.p1.position.x = S.x1 - 0.2; o.p2.position.x = S.x2 + 0.2; o.p1.scale.x = -1;
+        const itiyorMu = S.kos && S.tp < 0.5 || S.tp === 0;
+        o.p1.position.x = S.x1 - 0.2; o.p2.position.x = S.x2 + 0.2; o.p1.rotation.y = 0; o.p2.rotation.y = Math.PI; o.p1.kollar.forEach(k => k.rotation.z = itiyorMu ? 1.4 : 0); o.p2.kollar.forEach(k => k.rotation.z = itiyorMu ? 1.4 : 0);
         const itiyor = S.kos && S.tp < 0.5;
         if (itiyor || S.goster) { A(o.O.p1, V3(S.x1 - 0.1, 1.1, 0.4), V3(-1, 0, 0), S.Fp * KN * 0.6, 'nwP1'); A(o.O.p2, V3(S.x2 + 0.1, 1.1, 0.4), V3(1, 0, 0), S.Fp * KN * 0.6, 'nwP2'); }
         A(o.O.pv1, V3(S.x1 - 0.3, 2.2, 0), V3(-1, 0, 0), Math.abs(S.v1) * KV * 2, 'nwV1'); A(o.O.pv2, V3(S.x2 + 0.3, 2.4, 0), V3(1, 0, 0), Math.abs(S.v2) * KV * 2, 'nwV2');
@@ -138,7 +136,7 @@
       const a1 = FZ.araba(G.yol, 0xef4444); a1.scale.setScalar(0.6);
       const iz = FZ.cizgi(G.yol, 0x111827); FZ.setLine(iz, YOLP);
       const yd = ok(0x7c3aed, 'hrD');
-      kutu(G.kars, 10, 0.02, 1.4, 0x374151, 0, 0.01, 0, { edge: false });
+      FZ.yol(G.kars, 10, 1.6);
       const k1 = FZ.araba(G.kars, 0xef4444), k2 = FZ.araba(G.kars, 0x2563eb); k1.scale.setScalar(0.5); k2.scale.setScalar(0.5);
       const v1 = ok(0xdc2626, 'hrV1'), v2 = ok(0x2563eb, 'hrV2');
       etiket('hrD', 'yer değiştirme', '#7c3aed'); etiket('hrV1', '', '#dc2626'); etiket('hrV2', '', '#2563eb'); kart('hrT', '', '#F5C400'); etiket('hrA', 'A', '#111827'); etiket('hrB', 'B', '#111827'); etiket('hrC', 'C', '#111827');
