@@ -268,6 +268,14 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
 .sf-msj.hata{color:#f87171}.sf-msj.iyi{color:#4ade80}
 /* Telif yazısı (yalnızca Ayarlar'ın en altında): sade, sarı zemin, çerçeveli, yuvarlak köşe, siyah yazı */
 .telif{margin:22px auto 0;max-width:820px;padding:12px 20px;background:#fff6c7;border:2px solid #e6c84f;border-radius:14px;color:#111;font:500 19px/1.45 Inter;text-align:center}
+.fxSatir{display:flex;flex-direction:column;gap:8px;margin-top:14px;background:#1f232c;border:2px solid #4b5566;border-radius:18px;padding:12px 18px;text-align:left}
+.fxSatir label{font:700 24px Inter;color:#e5e7eb;display:flex;align-items:center;gap:12px;cursor:pointer}.fxSatir input{width:30px;height:30px;accent-color:#22c55e}
+#konf{position:fixed;inset:0;pointer-events:none;z-index:60}
+#flas{position:fixed;inset:0;pointer-events:none;z-index:59;background:radial-gradient(circle,rgba(239,68,68,0) 35%,rgba(239,68,68,.55) 100%);opacity:0;transition:opacity .25s}
+#flas.on{opacity:1}
+@keyframes sars{0%,100%{translate:0 0}15%{translate:-18px 0}30%{translate:16px 0}45%{translate:-12px 0}60%{translate:9px 0}75%{translate:-5px 0}}
+.sars{animation:sars .55s ease}
+.lbl,.chip{font-variant-numeric:tabular-nums}
 .sesSatir{display:flex;align-items:center;gap:14px;margin-top:14px;background:#1f232c;border:2px solid #4b5566;border-radius:18px;padding:10px 16px}
 .sesEt{font:800 28px Inter;color:#fff;white-space:nowrap}.sesYuzde{font:900 28px Inter;color:#F5C400;min-width:96px;text-align:center}
 .sesKay{flex:1;min-width:200px;height:44px;accent-color:#F5A300;cursor:pointer}
@@ -373,8 +381,10 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
     <div class="m-logo"><i></i>Şafak Hoca · Fizik</div>
     <button class="m-ayar" id="bAyar">⚙ Ayarlar</button>
     <button class="m-fs" id="bFs2">⛶ Tam ekran</button>
+    <canvas id="konf"></canvas><div id="flas"></div>
     <div id="ayar" class="hide"><div class="ov-k" style="padding:30px 56px"><div class="ov-ic" style="font-size:64px">⚙️</div><div class="ov-b" style="font-size:46px;margin-top:4px">Ayarlar</div>
       <div class="sesSatir"><span class="sesEt">🔊 Ses</span><input type="range" class="sesKay" min="0" max="100" step="5" value="80" aria-label="Ses seviyesi"><b class="sesYuzde">%80</b><button class="btn sesSus" type="button">🔇 Sustur</button><button class="btn sesDene" type="button">▶ Dene</button></div>
+      <div class="fxSatir"><label><input type="checkbox" id="fxDogru"> 🎉 Doğru cevapta konfeti ve konfeti sesi</label><label><input type="checkbox" id="fxYanlis"> 💥 Yanlış cevapta efekt (kırmızı parlama, sarsılma, ses)</label></div>
       <div class="sf-et" style="margin-top:14px;color:#F5C400;font-size:28px">Şifre değiştir</div>
       <div class="sf-et">Mevcut şifre</div><input class="sf-in" id="sfEski" type="password" autocomplete="off">
       <div class="sf-et">Yeni şifre (en az 4 karakter)</div><input class="sf-in" id="sfYeni" type="password" autocomplete="off">
@@ -467,6 +477,8 @@ const OYUN_SFX = ['snap', 'whoosh', 'ding', 'splash', 'boing', 'bell', 'pour', '
 function oyunSesleri() { OYUN_SFX.forEach(k => { const f = SFX[k]; SFX[k] = () => { if (typeof CTL !== 'undefined' && CTL.dur) return; ac(); AU.hedef = AU.oyun; try { f(); } finally { AU.hedef = null; } }; }); }
 const SFX = {
   click: () => tone(900, .05, { type: 'square', vol: .06 }),
+  konfeti: () => { noise(.09, { type: 'highpass', f: 1500, vol: .7 }); noise(.25, { type: 'bandpass', f: 4000, f2: 2000, q: 1, vol: .35, at: .03 }); [1568, 1760, 2093, 2637].forEach((f, i) => tone(f, .16, { type: 'triangle', vol: .09, at: .12 + i * .07 })); for (let i = 0; i < 6; i++) noise(.04, { type: 'highpass', f: 5000, vol: .18, at: .25 + Math.random() * .6 }); },
+  yanlis: () => { tone(150, .5, { type: 'sawtooth', vol: .16, to: 90 }); tone(156, .5, { type: 'square', vol: .07, to: 95 }); noise(.2, { type: 'lowpass', f: 400, vol: .35 }); },
   ok: () => { tone(660, .18, { vol: .22 }); tone(880, .18, { vol: .22, at: .12 }); tone(1320, .4, { vol: .2, at: .24 }); },
   bad: () => { tone(220, .4, { type: 'sawtooth', vol: .12, to: 140 }); tone(170, .45, { type: 'square', vol: .05, at: .05, to: 110 }); },
   snap: () => { noise(.12, { type: 'highpass', f: 2500, vol: .5 }); tone(1400, .08, { type: 'triangle', vol: .15, to: 400 }); },
@@ -625,12 +637,18 @@ function tag(id, html, bg, fg = '#fff', chip = false) {
 }
 const FOCUS = () => (GAME.q && GAME.q.q.f) ? GAME.q.q.f : null;
 function show(id, p3, op = 1, dx = 0, dy = 0) {
-  const d = TAG[id]; if (!d || op <= 0) return; const p = p3.clone().project(cam); if (p.z > 1) return;
+  const d = TAG[id]; if (!d || op <= 0) return; if (GAME.q && !GAME.q.answered && GAME.q.q.gizle && GAME.q.q.gizle.includes(id)) return; const p = p3.clone().project(cam); if (p.z > 1) return;
   const f = FOCUS(); if (f) { if (f.includes(id) || id === 'qlab') { d.classList.add('odak'); } else { d.classList.remove('odak'); op *= 0.22; } } else d.classList.remove('odak');
   d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = ((1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;
 }
 setTimeout(() => { const q = tag('qlab', '', '#F5C400', '#1f232c'); q.style.fontSize = '46px'; q.style.border = '4px solid #1f232c'; });
-function setTag(id, html) { if (TAG[id] && TAG[id]._h !== html) { TAG[id].innerHTML = html; TAG[id]._h = html; } }
+function setTag(id, html) { const d = TAG[id]; if (!d) return; const now = performance.now();
+  if (d._h === html) { d._bek = null; return; }
+  const sayili = /\d/.test(html) && /\d/.test(d._h || '');            // yalnız sayı değişen kutular yavaşlatılır
+  if (sayili && d._h != null && now - (d._t || 0) < 2000) { if (d._bek !== html) { d._bek = html; d._bt = now; } else if (now - d._bt > 350) uygula(); return; }
+  uygula();
+  function uygula() { d.innerHTML = html; d._h = html; d._t = now; d._bek = null; const w = d.offsetWidth; if (w > (d._mw || 0)) { d._mw = w; d.style.minWidth = w + 'px'; } } }
+function tagSifirla() { Object.values(TAG).forEach(d => { d._mw = 0; d.style.minWidth = ''; d._t = 0; d._bek = null; }); }
 
 // ===================================================================================
 // GÖREV 1 — ROKET (ipe bağlı oyuncak roket, ip kopunca teğet gider)
@@ -1395,7 +1413,7 @@ function showOnly(M) { GRUPLAR.forEach(g => g.visible = g === M.group); }
 
 function startMission(M) {
   PANEL.qc = PANEL.board = false; sesYenile(); GAME.M = M; GAME.cev = new Map(); GAME.i = -1; GAME.wait = null; GAME.timer = 0; GAME.first = 0; GAME.total = 0; GAME.qn = 0; GAME.mode = 'game'; setTimeout(() => yildizGoster(false));
-  showOnly(M); M.reset();
+  showOnly(M); M.reset(); tagSifirla();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
   $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>${M.ders ? '<h3 id="bFormH" class="hide" style="margin-top:14px">FORMÜLLER</h3><div id="bForm"></div>' : ''}`;
@@ -1441,7 +1459,7 @@ function adimaGit(hedef) {
       if (st.go) continue;
       if (st.until) { for (let n = 0; n < 9000 && !st.until(M.S); n++) M.tick(dt); }
       else if (st.wait) { for (let t = 0; t < st.wait; t += dt) M.tick(dt); }
-      else if (st.q) { GAME.qn++; GAME.total++; if (st.q.after) st.q.after(M.S, M); }
+      else if (st.q) { GAME.qn++; GAME.total++; if (st.q.goster) st.q.goster(M.S, M); if (st.q.after) st.q.after(M.S, M); }
       else if (st.k || st.p) GAME.qn++;
       else if (st.x) { GAME.qn++; st.x.kay.forEach(k => { if (M.S['_' + k.ad] == null) M.S['_' + k.ad] = k.deger; k.set(M.S, M.S['_' + k.ad]); }); }
     }
@@ -1517,11 +1535,31 @@ function tahminSec(k) {
   $('qnext').textContent = Q.q.dugme || 'Görelim ▶︎'; $('qnext').classList.remove('hide');
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+// ---- Doğru / yanlış cevap efektleri (Ayarlar'dan ayrı ayrı açılıp kapanır) ----
+const FX = { dogru: true, yanlis: true };
+try { FX.dogru = localStorage.getItem('ch_fxDogru') !== '0'; FX.yanlis = localStorage.getItem('ch_fxYanlis') !== '0'; } catch (e) {}
+const KONF = { p: [], cal: false };
+function konfeti() { const cv = $('konf'); cv.width = innerWidth; cv.height = innerHeight; const R = ['#ef4444', '#f59e0b', '#facc15', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7', '#ec4899'];
+  for (let k = 0; k < 2; k++) for (let i = 0; i < 90; i++) { const x0 = k ? cv.width * 0.82 : cv.width * 0.18, a = -Math.PI / 2 + (k ? -0.5 : 0.5) + (Math.random() - 0.5) * 1.2, v = 9 + Math.random() * 11;
+    KONF.p.push({ x: x0, y: cv.height * 0.85, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: Math.random() * 6, dr: (Math.random() - 0.5) * 0.3, w: 8 + Math.random() * 8, h: 5 + Math.random() * 6, c: R[(Math.random() * R.length) | 0], t: 0 }); }
+  if (!KONF.cal) { KONF.cal = true; requestAnimationFrame(konfAdim); } }
+function konfAdim() { const cv = $('konf'), x = cv.getContext('2d'); x.clearRect(0, 0, cv.width, cv.height);
+  KONF.p.forEach(p => { p.vy += 0.32; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.dr; p.t++; x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.globalAlpha = Math.max(0, 1 - p.t / 160); x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.t * 0.15))); x.restore(); });
+  KONF.p = KONF.p.filter(p => p.t < 160 && p.y < cv.height + 40); if (KONF.p.length) requestAnimationFrame(konfAdim); else { KONF.cal = false; x.clearRect(0, 0, cv.width, cv.height); } }
+function fxDogru() { if (!FX.dogru) return; konfeti(); setTimeout(() => { try { SFX.konfeti(); } catch (e) {} }, 120); }
+function fxYanlis() { if (!FX.yanlis) return; const f = $('flas'); f.classList.add('on'); setTimeout(() => f.classList.remove('on'), 450);
+  const q = $('qc'); q.classList.remove('sars'); void q.offsetWidth; q.classList.add('sars'); try { SFX.yanlis(); } catch (e) {} }
+function fxAyarKur() { [['fxDogru', 'dogru', 'ch_fxDogru'], ['fxYanlis', 'yanlis', 'ch_fxYanlis']].forEach(([id, k, ls]) => { const c = $(id); if (!c) return; c.checked = FX[k];
+  c.onchange = () => { FX[k] = c.checked; try { localStorage.setItem(ls, c.checked ? '1' : '0'); } catch (e) {} if (c.checked) (k === 'dogru' ? fxDogru : fxYanlis)(); }; }); }
+setTimeout(fxAyarKur);
 function answer(k) {
   const Q = GAME.q; if (!Q || Q.answered) return; Q.answered = true;
   const ok = k === Q.correctPos, btns = [...$('opts').children];
   btns.forEach((b, j) => { b.disabled = true; if (j === Q.correctPos) b.classList.add('ok'); else if (j === k) b.classList.add('no'); else b.classList.add('dim'); });
   const tekrar = GAME.cev && GAME.cev.has(GAME.i); if (GAME.cev && !tekrar) GAME.cev.set(GAME.i, ok);   // geri dönülüp yeniden cevaplanan soru yıldızı değiştirmez
+  if (Q.q.goster) try { Q.q.goster(GAME.M.S, GAME.M); } catch (e) { console.error(e); }
+  if (ok) fxDogru(); else fxYanlis();
+  setTimeout(() => { if (!$('notlar').classList.contains('hide')) notAc(true); }, 50);
   if (ok && !tekrar) { GAME.first++; yildizGoster(true); SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru!'; }
   else if (ok) { SFX.ok(); $('fb').className = 'ok'; $('fb').textContent = '✓ Doğru! (tekrar · yıldız değişmez)'; }
   else { SFX.bad(); $('fb').className = 'no'; $('fb').textContent = '✗ Yanlış! Önce çözümü inceleyelim.'; }
@@ -1691,6 +1729,34 @@ function dersKartlari(M) { const L = []; for (let i = 0; i <= Math.min(GAME.i, M
 function dersFormulleri(M) { const g = new Set(), L = []; dersKartlari(M).forEach(k => kartFormul(k).forEach(h => { _tmp.innerHTML = h; const t = _tmp.textContent.replace(/[\s·×*]+/g, ''); if (!g.has(t)) { g.add(t); L.push(h); } })); return L; }
 function formulYaz() { const M = GAME.M, el = $('bForm'); if (!M || !M.ders || !el) return; const L = dersFormulleri(M);
   el.innerHTML = L.map(h => `<div>${h}</div>`).join(''); $('bFormH').classList.toggle('hide', !L.length); el.scrollTop = el.scrollHeight; }
+// Soruya gereken formüller: konunun derslerindeki sarı çerçeveli formüllerden, sorunun metni ve çözümüyle en çok sembol paylaşanlar
+function konuOf(M) { for (const h of Object.values(HAZIR)) if ((h.gorevler || []).includes(M) || (h.dersler || []).includes(M)) return h; return null; }
+const SEMB = t => new Set((t.match(/[A-Za-zΔρλμθωεγτσα-ωΑ-Ω]+[₀-₉0-9]*/g) || []).filter(w => w.length <= 4 && !/^(ve|ile|bir|kaç|için|olan|ise|de|da|ya|mi|veya|N|kg|cm|m|s|J|W|V|A|Pa|cal|Hz)$/.test(w)));
+const KOK = w => w.toLocaleLowerCase('tr').replace(/[^a-zçğıöşüâ0-9]/g, '').slice(0, 5);
+const DURAK = new Set(['hangi', 'aşağı', 'göre', 'olur', 'olan', 'kadar', 'nasıl', 'doğru', 'yargı', 'arası', 'sonra', 'kaçtı', 'kaç', 'için', 'ilişk', 'büyük', 'küçük', 'değiş', 'aynı', 'sıras', 'buna', 'şekil', 'üzeri', 'birin']);
+const KOKLER = t => { _tmp.innerHTML = t; return new Set(_tmp.textContent.split(/\s+/).filter(w => w.length >= 4).map(KOK).filter(k => k.length >= 4 && !DURAK.has(k))); };
+// Çözüm satırlarındaki formüllerin yalnız SEMBOLİK kısmı (sayısız): "ΔL = L₀ λ ΔT = 2 · …" → "ΔL = L₀ λ ΔT"
+function soruFormul(Q) { if (Q.fm) return Q.fm.map(f => `<span class="fm">${f}</span>`);
+  const say = h => /\d/.test(h.replace(/<su[bp]>[^<]*<\/su[bp]>/g, '').replace(/<[^>]+>/g, '').replace(/&[a-z]+;/g, ''));
+  const L = [], gor = new Set();
+  (Q.s || []).forEach(l => { if (l[0] === '§') return; l.split(/[.;]\s|·\s(?=[A-ZΔ])|,\s/).forEach(par => { const p = par.split(/\s=\s/); if (p.length < 2) return;
+    p[0] = p[0].split(/[:→]/).pop().trim(); const kel = x => /[a-zçğıöşü]{5,}/.test(x.replace(/<su[bp]>[^<]*<\/su[bp]>/g, '').replace(/<[^>]+>/g, ''));
+    const al = []; for (let k = 0; k < p.length; k++) { let x = p[k]; const ok_ = x.includes('→'); x = x.split('→')[0];
+      if (say(x) || /✓|[<>]=?\s|&[lg]t;/.test(x) || kel(x) || x.replace(/<[^>]+>/g, '').trim().length > 30 || !x.trim()) break; al.push(x.trim()); if (ok_) break; }
+    if (al.length >= 2 && al[0].replace(/<[^>]+>/g, '').trim() === al[1].replace(/<[^>]+>/g, '').trim()) return;
+    if (al.join('').replace(/<[^>]+>|\s/g, '').length < 5) return;
+    if (al.length >= 2) { const f = al.join(' = '), k = f.replace(/<[^>]+>|\s/g, ''); if (!gor.has(k) && /[A-Za-zΔρλμθω]/.test(k)) { gor.add(k); L.push(`<span class="fm">${f.replace(/<\/?em>/g, '')}</span>`); } } }); });
+  return L.slice(0, 4); }
+function soruBilgi(M, Q) {   // konunun anlatım kartlarından soruyla en çok kelime paylaşan 2 kart (kavram, dikkat, özet, günlük)
+  const h = konuOf(M); if (!h) return [];
+  const kartlar = []; (h.dersler || []).forEach(d => d.steps.forEach(st => { if (st.k && /kavram|dikkat|ozet|gunluk|ornek/.test(st.k.tur || 'kavram')) kartlar.push(st.k); }));
+  if (!kartlar.length) return [];
+  const df = new Map(); const kk = kartlar.map(k => { const s_ = KOKLER(k.b + ' ' + (k.m || []).join(' ')); s_.forEach(w => df.set(w, (df.get(w) || 0) + 1)); return s_; });
+  const hedef = KOKLER(Q.t); const N = kartlar.length;
+  const puan = kk.map((s_, i) => { let p = 0; hedef.forEach(w => { if (s_.has(w)) p += Math.log(1 + N / df.get(w)); }); return [p, i]; }).filter(x => x[0] > 0.8).sort((a, b) => b[0] - a[0]);
+  const sec = []; const gor = new Set(); for (const [p, i] of puan) { const k = kartlar[i]; if (gor.has(k.b)) continue; gor.add(k.b); sec.push(k); if (sec.length === 2) break; }
+  return sec;
+}
 function notIcerik() {
   const M = GAME.M; if (!M) return '';
   const Q = GAME.q ? GAME.q.q : SON_Q; let h = '';
@@ -1703,9 +1769,20 @@ function notIcerik() {
     if (M.notlar && M.notlar.length) h += `<div class="nt-k" style="margin-top:14px">BU KONUDA GENEL</div>` + M.notlar.map(nt).join('');
     if (!h) h = `<div class="nt-k">NOTLAR</div>` + nt('Notlar, ders ilerledikçe kart kart burada birikir.');
     return h; }
-  if (Q && Q.n) { const no = M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1;
-    h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`).join(''); }
-  h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + (M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []).map(m => `<div class="nt-m"><div>${m}</div></div>`).join('');
+  const nt = m => m.startsWith('<div class="nt-svg"') ? m : `<div class="nt-m"><div>${m}</div></div>`;
+  const cevapli = !GAME.q || GAME.q.answered, no = Q && Q.t ? M.steps.filter(s => s.q).findIndex(s => s.q === Q) + 1 : 0;
+  if (Q && Q.t && !cevapli) {                                   // SORU ÇÖZÜLMEDEN ÖNCE: yalnız bu soruyu çözmek için gereken bilgi
+    const FM_ = soruFormul(Q), BL = (Q.b || []).concat((Q.n || []).filter(m => !m.startsWith('<div class="nt-svg"') && !/TUZAK|yanlış|sanmak|✓|<em>|hata/i.test(m)));
+    const K_ = (!FM_.length && !BL.length) ? soruBilgi(M, Q).slice(0, 1) : [];
+    h += `<div class="nt-k">SORU ${no} · BU SORUYU ÇÖZMEK İÇİN</div>`;
+    if (FM_.length) h += `<div class="nt-k" style="color:#fde047;margin-top:6px">GEREKLİ FORMÜLLER</div>` + FM_.map(nt).join('');
+    if (BL.length) h += `<div class="nt-k" style="color:#fde047;margin-top:10px">BİLMEN GEREKEN</div>` + BL.map(nt).join('');
+    K_.forEach(k => { h += `<div class="nt-k" style="color:#fde047;margin-top:10px">${k.b}</div>` + k.m.map(nt).join(''); });
+    if (!FM_.length && !BL.length && !K_.length) h += nt('Soruyu dikkatle oku; verilenleri sol kutudan kontrol et.');
+    h += `<div class="nt-m" style="color:#94a3b8"><div>Cevapladıktan sonra burada "neden böyle?" açıklaması açılır.</div></div>`;
+    return h; }
+  if (Q && Q.n) h += `<div class="nt-k">SORU ${no} · NEDEN BÖYLE?</div>` + Q.n.map(nt).join('');
+  const gen = M.notlar || (M.yk ? [] : NOT_GOREV[M.no]) || []; if (gen.length) h += `<div class="nt-k" style="margin-top:14px">BU GÖREVDE GENEL</div>` + gen.map(nt).join('');
   return h;
 }
 function notAc(ac_) {
@@ -1931,7 +2008,7 @@ window.FZ = { THREE, V3, UP, TAU, clamp, ease, mod, F, SQ, FM, YSVG, mesh, arrow
   SFX, loopSnd, board, sub, HAZIR, KONULAR, GRUPLAR, anaKur, GAME,
   konuEkle(sinav, ad, kayit) { HAZIR[sinav + '|' + ad] = kayit; [...kayit.dersler || [], ...kayit.gorevler || []].forEach(m => GRUPLAR.add(m.group)); if (!$('ana').classList.contains('hide')) anaKur(); } };
 fit(); setSes(AU.on); buildMenu(); anaKur(); menuScene(); camGoal([-3, 7, 15], [-3, 2.2, 0], true); requestAnimationFrame(frame);
-window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
+window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFormul }; window.__ROLL = ROLL; window.__czSay = () => CZ.cizgiler.length; window.CZ_RENK = () => CZ.renk; window.__AU = AU;
 </script>
 <!-- konu modülleri: her dosya bir grup konunun 3D sahnesini, konu anlatımını ve sorularını ekler -->
 <script src="konular/kit.js"></script>
@@ -1961,5 +2038,6 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next }; windo
 <script src="konular/kitap3.js"></script>
 <script src="konular/kitap4.js"></script>
 <script src="konular/kitap5.js"></script>
+<script src="konular/bilgi.js"></script>
 <script src="konular/son.js"></script>
 </body></html>
