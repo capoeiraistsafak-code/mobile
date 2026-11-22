@@ -328,6 +328,7 @@ sub{font-size:.6em;vertical-align:-.2em;line-height:0;margin-left:.06em;margin-r
     <button class="renk cark" id="pCark" title="Renk çemberi: istediğin rengi seç"></button>
     <span class="ayr"></span>
     <button id="pDok" title="Açıkken parmak/el dokunuşu çizmez; yalnız kalem ve fare çizer" style="min-width:96px"></button>
+    <button id="pSekil" title="Çizip kalemi bir an bekletince düzgün şekle dönüşür (daire, elips, kare, dikdörtgen, üçgen, yıldız, çizgi)" style="min-width:96px"></button>
     <button id="pKucuk" data-p="palet" title="Paleti küçült (yukarı kaydır); çizim açık kalır"><i>▲</i>Küçült</button>
     <button id="pKap" title="Çizimi kapat (Esc)"><i>✕</i>Kapat</button>
   </div>
@@ -1884,6 +1885,7 @@ function cizAracGuncelle() {
   if (ozel) $('pCark').style.setProperty('--sec', CZ.renk);
   $('pDok').classList.toggle('on', CZ.yalnizKalem); $('pDok').innerHTML = '<i>✋</i>Yalnız kalem<br>' + (CZ.yalnizKalem ? 'AÇIK' : 'kapalı');
   $('ciz').classList.toggle('lazer', CZ.arac === 'lazer');
+  $('pSekil').classList.toggle('on', CZ.sekil); $('pSekil').innerHTML = '<i>✨</i>Şekil tanıma<br>' + (CZ.sekil ? 'AÇIK' : 'kapalı');
 }
 function cizTemizle() { CZ.cizgiler = []; CZ.aktif.clear(); CZ.kirli = true; }
 const cizNokta = e => { const r = $('stage').getBoundingClientRect(); return { x: (e.clientX - r.left) / SCALE, y: (e.clientY - r.top) / SCALE }; };
@@ -1902,6 +1904,7 @@ $('ciz').addEventListener('pointermove', e => {
       for (let i = 1; i <= n; i++) sil({ x: son.x + (q.x - son.x) * i / n, y: son.y + (q.y - son.y) * i / n }); son = q; }
     CZ.silen.set(e.pointerId, son); return; }
   const c = CZ.aktif.get(e.pointerId); if (!c) return;
+  if (c.donmus) return;
   const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; (ev.length ? ev : [e]).forEach(x => c.n.push(cizNokta(x))); c.t = performance.now() / 1000; CZ.kirli = true; });
 // silgi: 'parca' → değdiği kısmı keser (çizgi parçalara ayrılır); 'tum' → değdiği çizginin tamamını siler
 const SIL_R = 22;
@@ -1973,6 +1976,43 @@ $('pTum').onclick = () => { SFX.click(); CZ.silMod = 'tum'; CZ.arac = 'silgi'; c
 }
 document.querySelectorAll('#palet .renk[data-r]').forEach(b => b.onclick = () => { SFX.click(); CZ.renk = b.dataset.r; CZ.arac = 'kalem'; cizAracGuncelle(); });
 $('pTem').onclick = () => { SFX.click(); cizTemizle(); };
+// ---- Şekil tanıma: çizip kalemi/fareyi ~0,6 s bekletince düzgün şekle dönüştür ----
+CZ.sekil = true; try { CZ.sekil = localStorage.getItem('ch_sekil') !== '0'; } catch (e) {}
+$('pSekil').onclick = () => { SFX.click(); CZ.sekil = !CZ.sekil; try { localStorage.setItem('ch_sekil', CZ.sekil ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+function rdp(P, eps) { if (P.length < 3) return P.slice(); const a = P[0], b = P[P.length - 1]; let mx = -1, mi = 0; const L = dist(a, b) || 1;
+  for (let i = 1; i < P.length - 1; i++) { const d = Math.abs((b.x - a.x) * (a.y - P[i].y) - (a.x - P[i].x) * (b.y - a.y)) / L; if (d > mx) { mx = d; mi = i; } }
+  if (mx <= eps) return [a, b]; const l = rdp(P.slice(0, mi + 1), eps), r = rdp(P.slice(mi), eps); return l.slice(0, -1).concat(r); }
+function sekilTani(P) {
+  if (P.length < 8) return null; let L = 0; for (let i = 1; i < P.length; i++) L += dist(P[i], P[i - 1]); if (L < 60) return null;
+  const xs = P.map(p => p.x), ys = P.map(p => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), w = x1 - x0, h = y1 - y0;
+  const kapali = dist(P[0], P[P.length - 1]) < Math.max(30, 0.18 * L);
+  if (!kapali) { return dist(P[0], P[P.length - 1]) / L > 0.88 ? [P[0], P[P.length - 1]] : null; }
+  const c = { x: P.reduce((s, p) => s + p.x, 0) / P.length, y: P.reduce((s, p) => s + p.y, 0) / P.length };
+  // kapalı eğriyi merkezden en uzak noktadan başlat, RDP ile köşeleri bul
+  let fi = 0; P.forEach((p, i) => { if (dist(p, c) > dist(P[fi], c)) fi = i; });
+  const Q = P.slice(fi).concat(P.slice(0, fi)).concat([P[fi]]);
+  let ui = 0; Q.forEach((q, i) => { if (dist(q, Q[0]) > dist(Q[ui], Q[0])) ui = i; });
+  const eps = Math.max(8, 0.045 * L); let V = rdp(Q.slice(0, ui + 1), eps).slice(0, -1).concat(rdp(Q.slice(ui), eps).slice(0, -1));
+  for (let tur = 0; tur < 3; tur++) { const Y = []; V.forEach(v => { if (!Y.length || dist(v, Y[Y.length - 1]) > 0.07 * L) Y.push(v); }); if (Y.length > 2 && dist(Y[0], Y[Y.length - 1]) < 0.07 * L) Y.pop();
+    V = Y.filter((v, i) => { const a = Y[(i - 1 + Y.length) % Y.length], b = Y[(i + 1) % Y.length], u = { x: a.x - v.x, y: a.y - v.y }, w2 = { x: b.x - v.x, y: b.y - v.y };
+      const cs = (u.x * w2.x + u.y * w2.y) / ((Math.hypot(u.x, u.y) * Math.hypot(w2.x, w2.y)) || 1); return cs > -0.94; }); }
+  const kapat = A => A.concat([A[0]]);
+  const R = P.map(p => dist(p, c)), ort = R.reduce((a, b) => a + b, 0) / R.length, sap = Math.sqrt(R.reduce((a, r) => a + (r - ort) ** 2, 0) / R.length) / ort;
+  if (V.length >= 9 && V.length <= 12) {                         // yıldız: uç noktaları merkezden belirgin uzak
+    const rs = V.map(v => dist(v, c)).sort((a, b) => a - b), ic = rs.slice(0, 5).reduce((a, b) => a + b, 0) / 5, dis = rs.slice(-5).reduce((a, b) => a + b, 0) / 5;
+    if (dis > 1.5 * ic) { const tepe = V.reduce((m, v) => dist(v, c) > dist(m, c) ? v : m), a0 = Math.atan2(tepe.y - c.y, tepe.x - c.x), S = [];
+      for (let k = 0; k < 10; k++) { const r = k % 2 ? dis * 0.42 : dis, a = a0 + k * Math.PI / 5; S.push({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) }); } return kapat(S); } }
+  if (V.length === 3) return kapat(V);
+  if (V.length === 4 && sap > 0.06) { const kare = Math.abs(w - h) < 0.15 * Math.max(w, h), s2 = Math.max(w, h) / 2, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    return kare ? kapat([{ x: cx - s2, y: cy - s2 }, { x: cx + s2, y: cy - s2 }, { x: cx + s2, y: cy + s2 }, { x: cx - s2, y: cy + s2 }]) : kapat([{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }]); }
+  if (V.length >= 4 || sap < 0.2) { const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, daire = Math.abs(w - h) < 0.14 * Math.max(w, h), rx = daire ? (w + h) / 4 : w / 2, ry = daire ? rx : h / 2, S = [];
+    for (let k = 0; k <= 72; k++) { const a = k / 72 * Math.PI * 2; S.push({ x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) }); } return S; }
+  return null; }
+setInterval(() => { if (!CZ.sekil || !CZ.acik) return; const now = performance.now();
+  CZ.aktif.forEach((c, id) => { if (c.arac !== 'kalem' || c.donmus) return; const son = c.n[c.n.length - 1];
+    if (!c.durN || dist(son, c.durN) > 6) { c.durN = son; c.durT = now; return; }
+    if (now - c.durT > 600) { const S = sekilTani(c.n); if (S) { const Y = [S[0]]; for (let i = 1; i < S.length; i++) { const a = S[i - 1], b = S[i], k = Math.max(1, Math.ceil(dist(a, b) / 3)); for (let j = 1; j <= k; j++) Y.push({ x: a.x + (b.x - a.x) * j / k, y: a.y + (b.y - a.y) * j / k }); } c.n = Y; c.sik = true; c.donmus = true; CZ.kirli = true; try { SFX.click(); } catch (e) {} } else c.durT = now + 1e9; } }); }, 100);
 $('pDok').onclick = () => { SFX.click(); CZ.yalnizKalem = !CZ.yalnizKalem; try { localStorage.setItem('ch_yalnizkalem2', CZ.yalnizKalem ? '1' : '0'); } catch (e) {} cizAracGuncelle(); };
 cizAracGuncelle();
 
