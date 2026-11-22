@@ -86,7 +86,7 @@ const KURE = (id, x, y, r, fill = '#e2e8f0') => `<circle id="${id}" cx="${x}" cy
 const OK = (id, col) => ARR(id, col);
 
 window.KONU = {
-  meta: {satir: 690, sinif: 'TYT', ust1: '5 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Elektrostatik', unite: 'Elektrostatik', kazanim: 'TYT',
+  meta: {satir: 690, sinif: 'TYT', ust1: '3 DAKİKADA TYT', ust2: 'TYT FİZİK', baslik: 'Elektrostatik', unite: 'Elektrostatik', kazanim: 'TYT',
     kalemMin: 0.4, sayfa: 5, sutun: 3, tur: 'TUZAK SORULAR', adim: 'TUZAK', bitti: '10 TUZAK ÇÖZÜLDÜ', kagitAlt: 'TYT TUZAK SORULARI',
     kapakAlt: '10 tuzak soru · animasyonlu çözüm', sonraki: 'Elektrik ve Manyetizma', kanca: 'TYT\'de bu TUZAKLARA düşme!',
     hookBaslik: 'ELEKTROSTATİK', introSure: 8.2},

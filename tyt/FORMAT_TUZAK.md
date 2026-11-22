@@ -32,7 +32,7 @@ Bu format üç formatın birleşimidir:
 ## 3. Akış
 
 1. **Giriş (~6 sn):** kırmızı "TYT FİZİK", renk geçişli büyük konu başlığı, "TYT'de bu TUZAKLARA düşme!" kelime kelime; 10 kırmızı "⚠️ TUZAK n" kartı dönüp "SORU n"e dönüşür; altta "n. BÖLÜM · TUZAK a–b" (bölümün kartları öne çıkar).
-2. **Kapak:** "Ben Şafak Hoca" denince. "5 DAKİKADA TYT", "TYT FİZİK", kanca, logo, eğik sarı "TUZAK SORULAR", kırmızı **"n. BÖLÜM"** rozeti, konu, "Tuzak a–b", Takip Et kartı.
+2. **Kapak:** "Ben Şafak Hoca" denince. "3 DAKİKADA TYT", "TYT FİZİK", kanca, logo, eğik sarı "TUZAK SORULAR", kırmızı **"n. BÖLÜM"** rozeti, konu, "Tuzak a–b", Takip Et kartı.
 3. **Test kağıdı:** önce sayfanın tamamı → 1. soruya yakınlaşma. Her soruda:
    1. Kök ve öncüller konuşmayla aynı hızda **fosforlanır**.
    2. **Animasyon** oynar; kalem **şekil üzerinde çizer** (alt çizgi, grafik, ışın, uç işareti).
