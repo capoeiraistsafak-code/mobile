@@ -310,4 +310,20 @@
       s: ['Askıda kalma: d<sub>c</sub> = d<sub>s</sub> (I) ve F<sub>k</sub> = G (II).', 'Tamamen batmış cisimde batan hacim değişmez → F<sub>k</sub> derinlikle değişmez (III yanlış). <em>I ve II</em> ✓'], n: ['Basınç derinlikle artar ama alt ve üst yüzey arasındaki basınç farkı değişmez.'] } },
   ] });
   FZ.konuEk('TYT', 'Basınç ve Kaldırma Kuvveti', { dersler: [h1, h2, h3], gorevler: [s1, s2, s3] });
+  const t1 = gorev(sBs, { yk: 'TYT8-g5', no: 5, tuzak: true, icon: '🪤', name: 'Tuzak sorular · basınç ve kaldırma', task: 'Basınç ve kaldırma kuvvetinde en sık yapılan yanlışlar.', steps: [
+    { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0 }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },
+    { q: { t: 'Taban alanları eşit, ağzı geniş ve ağzı dar iki kapta aynı yükseklikte su var. Ağzı geniş kapta daha çok su olduğuna göre tabandaki basınçlar için hangisi doğrudur?', o: ['Eşittir', 'Ağzı geniş kapta büyüktür', 'Ağzı dar kapta büyüktür', 'Su miktarıyla orantılıdır'], f: ['bsA', 'bsB'],
+      s: ['P = h d g → yalnız derinlik ve özkütle → <em>eşit</em> ✓'], n: ['TUZAK: "Çok su, çok basınç" sanmak.'] } },
+    { q: { t: 'Ağzı dar bir kaptaki suyun tabana uyguladığı kuvvet için hangisi doğrudur?', o: ['Suyun ağırlığından büyüktür', 'Suyun ağırlığına eşittir', 'Suyun ağırlığından küçüktür', 'Sıfırdır'], f: ['bsK'],
+      s: ['F = P · S; kabın yan duvarları suyu aşağı iter → <em>F > G</em> ✓'], n: ['TUZAK: her kapta F = G sanmak; yalnız düz kapta eşit.'] } },
+    { do: S => md(S, 'kald', { cis: 'demir', ind: 1 }), q: { t: 'Tamamen suya batmış bir taş daha derine indirilirse kaldırma kuvveti nasıl değişir?', o: ['Değişmez', 'Artar', 'Azalır', 'Önce artar sonra azalır'], f: ['bsF'],
+      s: ['F<sub>k</sub> = V<sub>batan</sub> d g; batan hacim değişmez → <em>değişmez</em> ✓'], n: ['TUZAK: basınç arttığı için kaldırma kuvveti de artar sanmak. Basınç artar ama alt–üst farkı aynı kalır.'] } },
+    { q: { t: 'Aynı hacimli demir ve tahta bloklar tamamen suya batırılıp tutuluyor. Kaldırma kuvvetleri için hangisi doğrudur?', o: ['Eşittir', 'Demirde büyüktür', 'Tahtada büyüktür', 'Ağırlıklarına eşittir'],
+      s: ['İkisinin de batan hacmi aynı → <em>eşit</em> ✓'], n: ['TUZAK: kaldırma kuvvetinin cismin ağırlığına ya da maddesine bağlı olduğunu sanmak.'] } },
+    { do: S => md(S, 'akis', { hiz: 1 }), q: { t: 'Kesiti daralan bir borudan akan suyun dar kısımdaki basıncı için hangisi doğrudur?', o: ['Küçüktür', 'Büyüktür', 'Aynıdır', 'Sıfırdır'], f: ['bsv1'],
+      s: ['Dar kısımda hız büyük → basınç <em>küçük</em> ✓'], n: ['TUZAK: sıkışan yerde basınç artar sanmak (Bernoulli tersini söyler).'] } },
+    { do: S => md(S, 'kati', { o: 0, ust: 0 }), q: { t: 'Masadaki dik kenarlı düzgün bir tuğla düşey olarak tam ortadan kesilip bir yarısı alınırsa masaya yapılan basınç ne olur?', o: ['Değişmez', 'Yarıya iner', 'İki katına çıkar', 'Dörtte birine iner'], f: ['bsK'],
+      s: ['G ve S birlikte yarıya iner → P = G/S <em>değişmez</em> ✓'], n: ['TUZAK: ağırlık azaldı diye basınç azalır sanmak.'] } },
+  ] });
+  FZ.konuEk('TYT', 'Basınç ve Kaldırma Kuvveti', { gorevler: [t1] });
 })();
