@@ -463,22 +463,29 @@ function motorKur() {
   const n = c.createBuffer(1, c.sampleRate * 2, c.sampleRate), d = n.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; AU.nb = n;
   c.onstatechange = () => { try { sesRozet(); } catch (e) {} };
+  // uyanık tutma: duyulmayan sürekli sinyal, tarayıcının boşta motoru uyutmasını (ve sonraki gecikmeyi) önler
+  try { const o = c.createOscillator(), g = c.createGain(); g.gain.value = 0.00001; o.frequency.value = 30; o.connect(g); g.connect(c.destination); o.start(); AU.uyanik = o; } catch (e) {}
 }
+// Ses motoru hazırsa hemen çal; uyuyorsa uyandır ve 400 ms içinde uyanırsa çal (geç kalan ses hiç çalınmaz → üst üste binme/gecikme yok)
+function sesCal(fn) { const c = ac(); if (!c) return; if (c.state === 'running') return fn(c);
+  const t0 = performance.now(); c.resume().then(() => { if (c.state === 'running' && performance.now() - t0 < 400) fn(c); }).catch(() => {}); }
 function ac() {
   if (!AU.ctx || AU.ctx.state === 'closed') { if (!sesIzni()) return null; try { motorKur(); } catch (e) { AU.ctx = null; return null; } }
   if (AU.ctx.state !== 'running') AU.ctx.resume().catch(() => {});
   return AU.ctx;
 }
 window.__sesOlc = () => { if (!AU.an) return 0; const a = new Float32Array(AU.an.fftSize); AU.an.getFloatTimeDomainData(a); let t = 0; for (const x of a) t += x * x; return Math.sqrt(t / a.length); };
-function tone(f, dur, { type = 'sine', vol = .25, at = 0, to = null } = {}) {
-  const c = ac(); if (!c) return; const t = c.currentTime + at;
+function tone(f, dur, o_ = {}) { sesCal(c => tone0(c, f, dur, o_)); }
+function tone0(c, f, dur, { type = 'sine', vol = .25, at = 0, to = null } = {}) {
+  const t = c.currentTime + at;
   const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
   if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g); g.connect(AU.hedef || AU.m); o.start(t); o.stop(t + dur + 0.05);
 }
-function noise(dur, { type = 'lowpass', f = 1000, f2 = null, q = 1, vol = .3, at = 0 } = {}) {
-  const c = ac(); if (!c) return; const t = c.currentTime + at;
+function noise(dur, o_ = {}) { sesCal(c => noise0(c, dur, o_)); }
+function noise0(c, dur, { type = 'lowpass', f = 1000, f2 = null, q = 1, vol = .3, at = 0 } = {}) {
+  const t = c.currentTime + at;
   const s = c.createBufferSource(); s.buffer = AU.nb; const fl = c.createBiquadFilter(); fl.type = type; fl.Q.value = q;
   fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
   const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
