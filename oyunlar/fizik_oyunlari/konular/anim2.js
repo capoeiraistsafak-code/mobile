@@ -182,6 +182,7 @@
     tick(S, dt, o) {
       const R = S.r * 0.9, w = 2 * Math.PI / S.T, vb = w * S.r;   // görüntü: 1 m = 0,9 birim
       const pts = []; for (let i = 0; i <= 64; i++) { const a = i / 64 * Math.PI * 2; pts.push(V3(R * Math.cos(a), 1.2, R * Math.sin(a))); } FZ.setLine(o.cember, pts);
+      if (S.kop && !S.kp) { S.kp = V3(R * Math.cos(S.ac), 1.2, -R * Math.sin(S.ac)); S.kv = V3(-Math.sin(S.ac), 0, -Math.cos(S.ac)); }
       if (!S.kop) { if (S.kos) S.ac += w * dt * 0.5;   // yavaş çekim (½×)
         const p = V3(R * Math.cos(S.ac), 1.2, -R * Math.sin(S.ac)), tg = V3(-Math.sin(S.ac), 0, -Math.cos(S.ac));
         o.cis.position.copy(p); FZ.setLine(o.ip, [V3(0, 1.2, 0), p]); S.kp = p.clone(); S.kv = tg.clone();

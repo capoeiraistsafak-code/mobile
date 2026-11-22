@@ -130,7 +130,7 @@
     S0: () => ({ Ef: 1.8, siddet: 1, ac: 0, el: [], fo: [], zam: 0 }),
     kur(g) {
       const lev = kutu(g, 0.2, 2.4, 1.6, 0x9ca3af, 0, 1.6, 0);
-      const lamba = silindir(g, 0.3, 0.45, 0.8, 0x334155, -3.4, 3.4, 0); lamba.rotation.z = Math.PI / 2 + 0.5;
+      const lamba = FZ.fener(g); lamba.position.set(-3.4, 3.4, 0); lamba.rotation.z = -0.5; lamba.scale.setScalar(1.3);   // ışık kaynağı (fener)
       const fot = [], ele = []; for (let i = 0; i < 30; i++) { fot.push(top(g, 0.07, 0xffffff, 0, -5, 0, { edge: false })); ele.push(top(g, 0.1, 0xef4444, 0, -5, 0, { edge: false })); }
       kart('p22t', '', '#F5C400'); kart('p22m', 'Metal', '#475569'); etiket('p22e', 'e⁻', '#dc2626');
       return { fot, ele };

@@ -74,8 +74,7 @@
     data: [['Suyun öz ısısı', 'c = 1 cal/g·°C'], ['Buzun erime ısısı', 'L = 80 cal/g']],
     S0: () => ({ T: 20, Th: 20, m: 200, Q: 0, isit: 0, guc: 2000, buz: 0 }),
     kur(g) {
-      kutu(g, 2.4, 0.4, 2.4, 0x334155, 0, 0.2, 0);
-      const alev = FZ.mesh(new THREE.ConeGeometry(0.4, 0.8, 16), 0xf97316, { edge: false, cast: false }); alev.position.set(0, 0.8, 0); g.add(alev);
+      const ocak = FZ.ocak(g, 1.75); const alev = ocak.alev;   // gerçek ocak: düğmeli, ızgaralı; alev mavi gaz halkası
       silindir(g, 1, 0.9, 2, 0xbfdbfe, 0, 1.6, 0, { op: 0.3, edge: false });
       const su = silindir(g, 0.95, 0.88, 1, 0x38bdf8, 0, 1.2, 0, { op: 0.8, edge: false });
       silindir(g, 0.12, 0.12, 3, 0xf8fafc, 1.7, 1.9, 0, { op: 0.6 });
@@ -133,8 +132,8 @@
     data: [['Küreler', 'özdeş, iletken'], ['Coulomb', 'F = k·q₁·q₂ / d²']],
     S0: () => ({ qa: 6, qb: -2, d: 4, dok: 0, faz: 0, ra: 0.6, rb: 0.6 }),
     kur(g) {
-      const ka = top(g, 0.6, 0x94a3b8, -2, 2, 0), kb = top(g, 0.6, 0x94a3b8, 2, 2, 0);
-      const sa = silindir(g, 0.06, 0.06, 1.4, 0x475569, -2, 0.7, 0), sb = silindir(g, 0.06, 0.06, 1.4, 0x475569, 2, 0.7, 0);
+      const ka = FZ.metalTop(g, 0.6, -2, 2, 0), kb = FZ.metalTop(g, 0.6, 2, 2, 0);   // iletken metal küreler
+      const sa = FZ.yalitkanAyak(g, -2, 1.45), sb = FZ.yalitkanAyak(g, 2, 1.45);     // yalıtkan (pleksi) ayaklar
       kart('e6a', '', '#3b82f6'); kart('e6b', '', '#3b82f6'); etiket('e6F', 'F', '#ec4899'); etiket('e6F2', 'F', '#ec4899');
       return { ka, kb, sa, sb, fa: ok(0xec4899, 'e6F'), fb: ok(0xec4899, 'e6F2') };
     },
@@ -143,7 +142,7 @@
       const ayrik = S.dok ? (S.faz < 1 ? 1 - S.faz : S.faz - 1) : 1, x = (S.ra + S.rb) / 2 + 0.01 + ayrik * (S.d / 2 - (S.ra + S.rb) / 2);
       o.ka.scale.setScalar(S.ra / 0.6); o.kb.scale.setScalar(S.rb / 0.6);
       o.ka.position.set(-x - (S.ra - S.rb) / 2, 2, 0); o.kb.position.set(x - (S.ra - S.rb) / 2, 2, 0); o.sa.position.x = o.ka.position.x; o.sb.position.x = o.kb.position.x;
-      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x3b82f6 : 0x94a3b8; o.ka.material.color.set(renk(S.qa)); o.kb.material.color.set(renk(S.qb));
+      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x3b82f6 : 0x000000; [[o.ka, S.qa], [o.kb, S.qb]].forEach(([k, q]) => { k.material.emissive.set(renk(q)); k.material.emissiveIntensity = Math.min(0.55, 0.12 + Math.abs(q) * 0.06); });
       const yz = q => (q > 0 ? '+' : '') + fs(q) + 'q';
       FZ.setTag('e6a', yz(S.qa)); FZ.setTag('e6b', yz(S.qb)); FZ.show('e6a', o.ka.position.clone().add(V3(0, S.ra + 0.6, 0)), 1); FZ.show('e6b', o.kb.position.clone().add(V3(0, S.rb + 0.6, 0)), 1);
       if (ayrik > 0.5 && S.qa && S.qb) { const it = S.qa * S.qb > 0, L = Math.min(2.2, 0.35 * Math.abs(S.qa * S.qb) / (x * x));

@@ -17,7 +17,7 @@
     kur(g) {
       const G = {}; ['egri', 'bimetal', 'gol'].forEach(k => { G[k] = new THREE.Group(); g.add(G[k]); });
       // ısınma: ocak, kap, buz, su, buhar
-      kutu(G.egri, 1.2, 0.3, 1.2, 0x1f2937, 2.2, 0.15, 0); const alev = FZ.mesh(new THREE.ConeGeometry(0.22, 0.4, 14), 0x3b82f6, { edge: false, cast: false }); alev.position.set(2.2, 0.5, 0); G.egri.add(alev);
+      const oc = FZ.ocak(G.egri, 1.6); oc.position.set(2.2, 0.1, 0); const alev = oc.alev;
       silindir(G.egri, 0.65, 0.6, 1.3, 0xe0f2fe, 2.2, 1.35, 0, { op: 0.25, edge: false });
       const buz = [0, 1, 2].map(i => kutu(G.egri, 0.38, 0.38, 0.38, 0xdbeafe, 2.0 + (i % 2) * 0.4, 0.9 + Math.floor(i / 2) * 0.4, (i - 1) * 0.15, { op: 0.85 }));
       const su = silindir(G.egri, 0.58, 0.58, 1, 0x3b82f6, 2.2, 0.75, 0, { op: 0.55, edge: false });

@@ -17,6 +17,9 @@
       kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4, 0); kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4 + H, 0); const f1 = top(per, 0.12, 0xfacc15, 0, 0.5, 0, { edge: false });
       const tren = new THREE.Group(); g.add(tren);
       const govde = kutu(tren, 2.6, 2.6, 1.4, 0x3b82f6, 0, 1.6, -0.9, { op: 0.35 });
+      kutu(tren, 2.8, 0.14, 1.5, 0x1f2937, 0, 0.27, -0.9); kutu(tren, 2.7, 0.12, 1.5, 0x1e3a8a, 0, 2.96, -0.9);   // şasi ve tavan
+      [-0.9, 0.9].forEach(x => [-1.6, -0.2].forEach(z => { const t = silindir(tren, 0.18, 0.18, 0.08, 0x374151, x, 0.18, z, { edge: false }); t.rotation.x = Math.PI / 2; }));   // tekerlekler
+      FZ.ray(g, 16, 0, -0.9);
       kutu(tren, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4, 0); kutu(tren, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4 + H, 0);
       const f2 = top(g, 0.12, 0xfacc15, 0, 0.5, 0, { edge: false }), iz = duz(g, 0xf59e0b);
       kart('og1', '', '#475569'); kart('og2', '', '#2563eb'); kart('ogt', '', '#F5C400'); etiket('ogv', 'v', '#16a34a');

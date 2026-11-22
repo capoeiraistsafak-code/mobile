@@ -118,10 +118,10 @@
     data: [['Yansıma', 'gelme açısı = yansıma açısı']],
     S0: () => ({ d: 2, isin: 0, gor: 0 }),
     kur(g) {
-      kutu(g, 0.12, 2.2, 7, 0xbfdbfe, 0, 1.1, 0, { op: 0.6 });
-      const cisim = new THREE.Group(); g.add(cisim); silindir(cisim, 0.18, 0.18, 1.2, 0xef4444, 0, 0.6, 0); top(cisim, 0.18, 0xfbbf24, 0, 1.35, 0);
-      const goruntu = new THREE.Group(); g.add(goruntu); silindir(goruntu, 0.18, 0.18, 1.2, 0xef4444, 0, 0.6, 0, { op: 0.35 }); top(goruntu, 0.18, 0xfbbf24, 0, 1.35, 0, { op: 0.35 });
-      const goz = top(g, 0.25, 0xf8fafc, -3.5, 0.6, 2.6);
+      kutu(g, 0.12, 2.2, 7, 0xbfdbfe, 0, 1.1, 0, { op: 0.6 }); kutu(g, 0.2, 2.35, 0.12, 0x78350f, 0, 1.17, 3.55); kutu(g, 0.2, 2.35, 0.12, 0x78350f, 0, 1.17, -3.55);   // aynanın iki yan çerçevesi
+      const cisim = FZ.mum(g, 1.15);   // cisim: yanan mum
+      const goruntu = FZ.mum(g, 1.15, 0.35);   // görüntü: soluk mum (aynanın arkasında)
+      const goz = FZ.goz(g, 0.28); goz.position.set(-3.5, 0.6, 2.6);
       const gelen = FZ.cizgi(g, 0xfacc15), yansi = FZ.cizgi(g, 0xfacc15), uzanti = FZ.cizgi(g, 0x94a3b8), normal = FZ.cizgi(g, 0xffffff);
       kart('e10c', 'cisim', '#ef4444'); kart('e10g', 'görüntü', '#94a3b8'); kart('e10a', '', '#F5C400'); kart('e10b', '', '#F5C400');
       return { cisim, goruntu, goz, gelen, yansi, uzanti, normal };

@@ -14,10 +14,10 @@
   // Elektroskop modeli: cam fanus, metal çubuk, topuz, iki yaprak (yaprak açısı dışarıdan verilir)
   const elektroskop = (g, x) => { const e = new THREE.Group(); e.position.set(x, 0, 0); g.add(e);
     kutu(e, 1.5, 0.12, 1.1, 0x334155, 0, 0.06, 0);
-    silindir(e, 0.62, 0.62, 1.5, 0xe0f2fe, 0, 0.87, 0, { op: 0.18, edge: false });
-    silindir(e, 0.2, 0.2, 0.14, 0x7c3aed, 0, 1.66, 0, { edge: false });
-    silindir(e, 0.035, 0.035, 1.35, 0xcbd5e1, 0, 1.45, 0, { edge: false });
-    const topuz = top(e, 0.2, 0xcbd5e1, 0, 2.2, 0, { edge: false });
+    const fan = new THREE.Mesh(new THREE.LatheGeometry([[0.6, 0], [0.62, 0.9], [0.55, 1.3], [0.32, 1.5], [0.2, 1.58]].map(([a, b]) => new THREE.Vector2(a, b)), 28), new THREE.MeshPhongMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.22, shininess: 100, specular: 0xffffff, side: THREE.DoubleSide, depthWrite: false })); fan.position.y = 0.12; e.add(fan);   // cam fanus
+    silindir(e, 0.2, 0.17, 0.16, 0x92400e, 0, 1.7, 0, { edge: false });            // mantar tıpa (yalıtkan)
+    const cb = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.35, 10), FZ.metal()); cb.position.set(0, 1.45, 0); e.add(cb);
+    const topuz = FZ.metalTop(e, 0.2, 0, 2.2, 0);
     const pv = [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(0, 0.85, 0.02); e.add(p);
       const y = kutu(p, 0.1, 0.62, 0.012, 0xfbbf24, 0, -0.31, 0, { edge: false }); y.material.emissive = new THREE.Color(0x92400e); y.material.emissiveIntensity = 0.3; p.s = s; return p; });
     e.aci = 0; e.topuz = topuz;
@@ -46,8 +46,8 @@
       const bez = kutu(G.surt, 0.55, 0.42, 0.42, 0xe7d3a8, -1.2, 1.8, 0, { edge: false });
       const kag = KAG.map(k => kutu(G.surt, 0.22, 0.012, 0.16, 0xffffff, k.x, 0.01, k.z, { edge: false }));
       // --- etki + topraklama ---
-      const kure = top(G.etki, 0.75, 0xcbd5e1, -0.3, 1.5, 0, { edge: false }); kure.material.transparent = true; kure.material.opacity = 0.55;
-      silindir(G.etki, 0.07, 0.07, 0.75, 0x7c3aed, -0.3, 0.38, 0, { edge: false }); kutu(G.etki, 0.7, 0.08, 0.7, 0x334155, -0.3, 0.04, 0);
+      const kure = new THREE.Mesh(new THREE.SphereGeometry(0.75, 32, 20), FZ.metal(0xc0c7d1, 0.6)); kure.position.set(-0.3, 1.5, 0); G.etki.add(kure);   // metal küre (yükler görünsün diye yarı saydam)
+      FZ.yalitkanAyak(G.etki, -0.3, 0.78);
       const ecubuk = yatay(G.etki, 2, 0.1, 0x1f2937, -4, 1.5, 0, { edge: false });
       const tel = FZ.cizgi(G.etki, 0x16a34a); tel.material.dashSize = 100; tel.material.gapSize = 0;
       const toprak = new THREE.Group(); toprak.position.set(1.5, 0.05, 0); G.etki.add(toprak); [0.5, 0.34, 0.18].forEach((w, i) => kutu(toprak, w, 0.04, 0.04, 0x16a34a, 0, -i * 0.1 + 0.2, 0, { edge: false }));
@@ -56,12 +56,14 @@
       const scubuk = yatay(G.elskop, 2, 0.1, 0x1f2937, -4, 2.2, 0, { edge: false });
       // --- Faraday kabı ---
       const FK = V3(-0.45, 1.7, 0), R = 1;
-      const kap = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 24, 0, Math.PI * 2, 0.42, Math.PI - 0.42), new THREE.MeshLambertMaterial({ color: 0xcbd5e1, transparent: true, opacity: 0.38, side: THREE.DoubleSide }));
+      const kap = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 24, 0, Math.PI * 2, 0.42, Math.PI - 0.42), new THREE.MeshPhongMaterial({ color: 0xb8c0cc, specular: 0xffffff, shininess: 90, transparent: true, opacity: 0.42, side: THREE.DoubleSide, depthWrite: false }));
       kap.position.copy(FK); G.faraday.add(kap);
-      silindir(G.faraday, 0.07, 0.07, 0.7, 0x7c3aed, FK.x, 0.35, 0, { edge: false }); kutu(G.faraday, 0.8, 0.08, 0.8, 0x334155, FK.x, 0.04, 0);
+      const ickap = new THREE.Mesh(new THREE.SphereGeometry(R * 0.94, 32, 20, 0, Math.PI * 2, 0.45, Math.PI - 0.45), new THREE.MeshPhongMaterial({ color: 0x8a94a3, transparent: true, opacity: 0.25, side: THREE.BackSide, depthWrite: false })); ickap.position.copy(FK); G.faraday.add(ickap);   // kabuğun iç yüzeyi (kalınlık)
+      const agiz = new THREE.Mesh(new THREE.TorusGeometry(R * Math.sin(0.43), 0.035, 8, 32), FZ.metal()); agiz.rotation.x = Math.PI / 2; agiz.position.set(FK.x, FK.y + R * Math.cos(0.43), 0); G.faraday.add(agiz);   // ağız kenarı
+      FZ.yalitkanAyak(G.faraday, FK.x, FK.y - R + 0.02);
       const fesk = elektroskop(G.faraday, 1.9);
-      const ftel = FZ.cizgi(G.faraday, 0x94a3b8, [V3(FK.x + R, FK.y, 0), V3(0.9, FK.y, 0), V3(1.9, 2.25, 0)]); ftel.material.dashSize = 100; ftel.material.gapSize = 0; FZ.setLine(ftel, [V3(FK.x + R * 0.98, FK.y + 0.1, 0), V3(1.1, 2.6, 0), V3(1.9, 2.4, 0)]);
-      const prob = new THREE.Group(); G.faraday.add(prob); top(prob, 0.16, 0xe5e7eb, 0, 0, 0, { edge: false }); silindir(prob, 0.025, 0.025, 1.8, 0x7c3aed, 0, 1.0, 0, { edge: false });
+      const ftel = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([V3(FK.x + R * 0.98, FK.y + 0.1, 0), V3(0.6, 2.75, 0), V3(1.9, 2.42, 0)]), 30, 0.025, 6), new THREE.MeshPhongMaterial({ color: 0xb45309, shininess: 60 })); G.faraday.add(ftel);   // bakır bağlantı teli
+      const prob = new THREE.Group(); G.faraday.add(prob); FZ.metalTop(prob, 0.16, 0, 0, 0); const sap = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.8, 8), new THREE.MeshPhongMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.7, shininess: 80 })); sap.position.y = 1.0; prob.add(sap);   // deneme küresi: metal küre, yalıtkan sap
       const yuk = havuz(g, 40);
       kart('esT', '', '#F5C400'); etiket('esA', '', '#1f2937'); etiket('esB', '', '#1f2937'); etiket('esC', '', '#1f2937');
       kart('esL', '<span style="color:#ef4444">●</span> (+) yük &nbsp; <span style="color:#2563eb">●</span> (−) yük', '#475569');

@@ -189,4 +189,73 @@
     ekle(a, M(new THREE.CylinderGeometry(0.17, 0.17, 0.05, 14), 0x9ca3af), 0, 0.14, 0);
     const b = ekle(a, M(new THREE.CylinderGeometry(0.13, 0.14, 0.12, 14), renk), 0, 0.22, 0);
     a.bas = p => { b.position.y = 0.22 - 0.06 * p; }; return a; };
+
+  // ---------- Gerçekçilik: metal, mum, göz, ocak, terazi, ağırlık, fener, gökada, dambıl ----------
+  // Parlak metal malzeme (ışık yansıması görünür)
+  FZ.metal = (renk = 0xc0c7d1, op) => new THREE.MeshPhongMaterial({ color: renk, specular: 0xffffff, shininess: 90, transparent: !!op, opacity: op || 1, depthWrite: !op });
+  FZ.metalTop = (g, r, x, y, z, renk) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 28, 18), FZ.metal(renk)); m.castShadow = true; m.position.set(x, y, z); g.add(m); return m; };
+  // Yalıtkan ayak: şeffaf pleksi çubuk + siyah taban (yüksekliği h, üst ucu y = h)
+  FZ.yalitkanAyak = (g, x, h, z = 0) => { const a = new THREE.Group(); a.position.set(x, 0, z); g.add(a);
+    ekle(a, M(new THREE.CylinderGeometry(0.3, 0.34, 0.08, 18), 0x1f2937), 0, 0.04, 0);
+    const c = ekle(a, new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, h, 10), new THREE.MeshPhongMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.6, shininess: 80 })), 0, h / 2, 0); a.cubuk = c; return a; };
+  // Mum: tabanı y = 0, boy h; a.alev
+  FZ.mum = (g, h = 1.2, op) => { const a = new THREE.Group(); g.add(a); const o = op ? { op } : {};
+    ekle(a, M(new THREE.CylinderGeometry(0.25, 0.27, 0.06, 16), 0xb45309, o), 0, 0.03, 0);                  // tabak
+    ekle(a, M(new THREE.CylinderGeometry(0.15, 0.16, h, 14), 0xfef3c7, o), 0, h / 2 + 0.05, 0);              // mum
+    ekle(a, M(new THREE.CylinderGeometry(0.012, 0.012, 0.1, 5), 0x111827, o), 0, h + 0.1, 0);                // fitil
+    const al = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: !!op, opacity: op || 1 })); al.scale.set(1, 2.2, 1); ekle(a, al, 0, h + 0.24, 0);
+    const ic = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: !!op, opacity: op || 1 })); ic.scale.set(1, 1.8, 1); ekle(a, ic, 0, h + 0.2, 0);
+    a.alev = al; return a; };
+  // Göz: +x yönüne bakar
+  FZ.goz = (g, r = 0.25) => { const a = new THREE.Group(); g.add(a);
+    ekle(a, M(new THREE.SphereGeometry(r, 18, 14), 0xf8fafc), 0, 0, 0);
+    const ir = M(new THREE.CircleGeometry(r * 0.48, 18), 0x2563eb); ir.rotation.y = Math.PI / 2; ekle(a, ir, r * 0.97, 0, 0);
+    const bb = M(new THREE.CircleGeometry(r * 0.22, 14), 0x0b0f19); bb.rotation.y = Math.PI / 2; ekle(a, bb, r * 0.99, 0, 0);
+    const kp = M(new THREE.SphereGeometry(r * 1.06, 18, 10, 0, Math.PI * 2, 0, Math.PI * 0.32), 0xf1c27d); ekle(a, kp, 0, 0, 0);   // göz kapağı
+    return a; };
+  // Ocak (tek gözlü ocak): üst yüzeyi y = 0,3; a.alev (mavi gaz alevi halkası)
+  FZ.ocak = (g, s = 1) => { const a = new THREE.Group(); a.scale.setScalar(s); g.add(a);
+    ekle(a, M(new THREE.BoxGeometry(1.3, 0.28, 1.3), 0xe5e7eb, { edge: true }), 0, 0.14, 0);
+    ekle(a, M(new THREE.BoxGeometry(1.2, 0.02, 1.2), 0x111827), 0, 0.29, 0);
+    ekle(a, M(new THREE.CylinderGeometry(0.24, 0.26, 0.06, 16), 0x374151), 0, 0.32, 0);                       // bek
+    for (let i = 0; i < 4; i++) { const k = M(new THREE.BoxGeometry(1.0, 0.04, 0.05), 0x1f2937); k.rotation.y = i * Math.PI / 4; ekle(a, k, 0, 0.36, 0); }   // ızgara
+    [-0.35, 0.35].forEach(x => { const d = M(new THREE.CylinderGeometry(0.07, 0.07, 0.06, 12), 0x111827); d.rotation.x = Math.PI / 2; ekle(a, d, x, 0.14, 0.66); });   // düğmeler
+    const al = ekle(a, new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 6, 20), new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.85 })), 0, 0.37, 0); al.rotation.x = Math.PI / 2;
+    a.alev = al; return a; };
+  // Dijital terazi: kefe üst yüzeyi y = 0,3; a.ekran yerel konumu (etiket için)
+  FZ.terazi = (g) => { const a = new THREE.Group(); g.add(a);
+    ekle(a, M(new THREE.BoxGeometry(1.5, 0.22, 1.2), 0x334155, { edge: true }), 0, 0.11, 0);
+    ekle(a, M(new THREE.CylinderGeometry(0.6, 0.6, 0.05, 24), 0xd1d5db), 0, 0.27, -0.05);                      // kefe
+    const ek = M(new THREE.BoxGeometry(0.6, 0.12, 0.02), 0x14532d); ekle(a, ek, 0, 0.12, 0.61); ek.material.emissive = new THREE.Color(0x22c55e); ek.material.emissiveIntensity = 0.4;
+    [-0.5, 0.5].forEach(x => ekle(a, M(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 10), 0x9ca3af), x, 0.12, 0.61));
+    return a; };
+  // Kancalı ağırlık (laboratuvar kütlesi): tabanı y = 0, boy ≈ h
+  FZ.agirlik = (g, renk = 0x9ca3af, h = 0.6, r = 0.25) => { const a = new THREE.Group(); g.add(a);
+    const gv = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h * 0.75, 20), FZ.metal(renk)); gv.castShadow = true; ekle(a, gv, 0, h * 0.375, 0);
+    for (let i = 1; i < 3; i++) ekle(a, M(new THREE.CylinderGeometry(r * 1.01, r * 1.01, 0.012, 20), 0x475569), 0, h * 0.25 * i, 0);   // dilim çizgileri
+    ekle(a, M(new THREE.CylinderGeometry(0.03, 0.03, h * 0.2, 6), 0x6b7280), 0, h * 0.85, 0);
+    const k = ekle(a, M(new THREE.TorusGeometry(0.07, 0.018, 6, 12), 0x6b7280), 0, h * 0.98, 0); return a; };
+  // El feneri / ışık kaynağı: +x yönüne ışık verir, ağız yerel x = 0,55
+  FZ.fener = (g, renk = 0x334155) => { const a = new THREE.Group(); g.add(a);
+    const gv = M(new THREE.CylinderGeometry(0.16, 0.16, 0.8, 14), renk); gv.rotation.z = Math.PI / 2; ekle(a, gv, -0.1, 0, 0);
+    const bas = M(new THREE.CylinderGeometry(0.3, 0.18, 0.3, 16), renk); bas.rotation.z = -Math.PI / 2; ekle(a, bas, 0.4, 0, 0);
+    const cm = new THREE.Mesh(new THREE.CircleGeometry(0.27, 18), new THREE.MeshBasicMaterial({ color: 0xfef9c3 })); cm.rotation.y = Math.PI / 2; ekle(a, cm, 0.56, 0, 0);
+    ekle(a, M(new THREE.BoxGeometry(0.1, 0.05, 0.08), 0xdc2626), -0.1, 0.17, 0);                                // düğme
+    a.cam = cm; return a; };
+  // Gökada (sarmal disk): düz, parlak çekirdek
+  FZ.gokada = (g, renk = 0x93c5fd, s = 1) => { const a = new THREE.Group(); a.scale.setScalar(s); g.add(a);
+    const d = new THREE.Mesh(new THREE.CircleGeometry(0.32, 20), new THREE.MeshBasicMaterial({ color: renk, transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthWrite: false })); d.rotation.x = -Math.PI / 2; a.add(d);
+    for (let k = 0; k < 2; k++) { const pts = []; for (let i = 0; i <= 24; i++) { const t = i / 24, r = 0.06 + 0.26 * t, an = k * Math.PI + t * 4; pts.push(V3(Math.cos(an) * r, 0.01, Math.sin(an) * r)); }
+      a.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xffffff }))); }
+    const c = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 8), new THREE.MeshBasicMaterial({ color: 0xfff7d6 })); c.scale.y = 0.6; a.add(c);
+    a.disk = d; a.cekirdek = c; return a; };
+  // Dambıl: ekseni x
+  FZ.dambil = (g, renk = 0xef4444) => { const a = new THREE.Group(); g.add(a);
+    const b = M(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 8), 0x9ca3af); b.rotation.x = Math.PI / 2; a.add(b);
+    [-0.15, 0.15].forEach(z => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 16), FZ.metal(renk)); t.rotation.x = Math.PI / 2; ekle(a, t, 0, 0, z); });
+    return a; };
+  // İnsan kolunu dünya koordinatındaki bir noktaya uzat (i: 0 sol, 1 sağ)
+  FZ.koluUzat = (ins, i, hedef) => { const k = ins.kollar[i]; ins.updateMatrixWorld(true); const omz = k.getWorldPosition(V3()); const yerel = ins.worldToLocal(hedef.clone()), oml = ins.worldToLocal(omz.clone()), d = yerel.sub(oml);
+    const L = d.length(); k.rotation.set(Math.atan2(-d.z, Math.hypot(d.x, -d.y)) * 0, 0, 0); const dir = d.clone().normalize();
+    k.quaternion.setFromUnitVectors(V3(0, -1, 0), dir); k.scale.set(1, Math.max(0.3, L / 0.65), 1); };
 })();

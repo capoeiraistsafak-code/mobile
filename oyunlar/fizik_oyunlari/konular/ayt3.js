@@ -66,17 +66,19 @@
       kutu(g, 7, 0.25, 1, 0x64748b, 0, 6.6, 0);
       const sab = silindir(g, 0.5, 0.5, 0.2, 0x94a3b8, 1, 6, 0); sab.rotation.x = Math.PI / 2;
       const har = silindir(g, 0.5, 0.5, 0.2, 0xcbd5e1, 0, 3, 0); har.rotation.x = Math.PI / 2;
-      const yuk = kutu(g, 0.9, 0.9, 0.9, 0xef4444, 0, 2, 0), el = top(g, 0.22, 0xf5c09a, 1.5, 3, 0);
+      const yuk = kutu(g, 0.9, 0.9, 0.9, 0xef4444, 0, 2, 0), el = top(g, 0.1, 0xf1c27d, 1.5, 3, 0, { edge: false });
+      kutu(g, 1.2, 1, 1.2, 0x78716c, 2.3, 0.5, 0);   // iskele
+      const isci = FZ.insan(g, 0x0ea5e9, 1.5); isci.position.set(2.3, 1, 0); isci.rotation.y = Math.PI;   // ipi çeken kişi
       const ip = [FZ.cizgi(g, 0x111827), FZ.cizgi(g, 0x111827), FZ.cizgi(g, 0x111827), FZ.cizgi(g, 0x111827)];
       ip.forEach(l => { l.material.dashSize = 100; l.material.gapSize = 0; });
       etiket('b10f', 'F', '#dc2626'); etiket('b10w', 'G', '#7c3aed'); kart('b10t', '', '#F5C400');
-      return { sab, har, yuk, el, ip, oF: ok(0xef4444, 'b10f'), oW: ok(0x8b5cf6, 'b10w') };
+      return { sab, har, yuk, el, isci, ip, oF: ok(0xef4444, 'b10f'), oW: ok(0x8b5cf6, 'b10w') };
     },
     tick(S, dt, o) {
       const h = S.mod === 'har'; if (S.kos) { S.cek = Math.min(2, S.cek + dt * 0.6); if (S.cek >= 2) S.kos = 0; }
       const yk = h ? S.cek / 2 : S.cek, Fk = h ? S.W / 2 : S.W;
       o.har.visible = h; const yy = 1.0 + yk; o.yuk.position.set(h ? 0 : 0.5, yy, 0);
-      const elY = 4.2 - S.cek; o.el.position.set(1.5, elY, 0);
+      const elY = 4.2 - S.cek; o.el.position.set(1.5, elY, 0); [0, 1].forEach(i => FZ.koluUzat(o.isci, i, V3(1.55, elY, i ? -0.06 : 0.06)));
       o.ip.forEach(l => l.visible = false);
       if (h) { const hy = yy + 1; o.har.position.set(0, hy, 0);
         FZ.setLine(o.ip[0], [V3(-0.5, 6.5, 0), V3(-0.5, hy, 0)]); FZ.setLine(o.ip[1], [V3(0.5, hy, 0), V3(0.5, 6, 0)]);

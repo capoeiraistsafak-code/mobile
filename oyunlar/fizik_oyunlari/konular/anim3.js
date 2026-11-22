@@ -15,8 +15,7 @@
     S0: () => ({ mi: 2, a: 2, p: 0, kos: 0, push: 0, iit: 0, graf: 0 }),
     kur(g) {
       // terazi
-      kutu(g, 1.6, 0.5, 1.1, 0x1f2937, TER_X, 0.25, 0); kutu(g, 1.4, 0.06, 0.9, 0x9ca3af, TER_X, 0.53, 0);
-      const ekran = kutu(g, 0.9, 0.22, 0.02, 0x0f2a24, TER_X, 0.25, 0.56, { edge: false });
+      const ekran = FZ.terazi(g); ekran.scale.setScalar(1.9); ekran.position.set(TER_X, 0, 0);   // dijital terazi (kefe y ≈ 0,56)
       // taşırma kabı (cam silindir), su, oluk
       silindir(g, 0.95, 0.95, 2.1, 0xbfdbfe, KAB_X, 1.05, 0, { op: 0.25, edge: false });
       const su = silindir(g, 0.92, 0.92, SU_Y - 0.05, 0x3b82f6, KAB_X, (SU_Y - 0.05) / 2 + 0.03, 0, { op: 0.45, edge: false });

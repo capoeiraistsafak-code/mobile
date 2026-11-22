@@ -186,7 +186,7 @@
       const destek = FZ.mesh(new THREE.ConeGeometry(0.5, 1.6, 4), 0x64748b); destek.position.set(0, 0.8, 0); g.add(destek);
       const kol = new THREE.Group(); kol.position.set(0, 1.65, 0); g.add(kol);
       kutu(kol, 9, 0.18, 0.5, 0xf59e0b, 0, 0, 0); for (let i = -4; i <= 4; i++) kutu(kol, 0.04, 0.2, 0.52, 0x111827, i, 0, 0, { edge: false });
-      const y1 = kutu(kol, 0.6, 0.6, 0.6, 0xef4444, -2, -0.6, 0), y2 = kutu(kol, 0.6, 0.6, 0.6, 0x3b82f6, 3, -0.6, 0);
+      const y1 = FZ.agirlik(kol, 0xef4444, 0.75, 0.28), y2 = FZ.agirlik(kol, 0x3b82f6, 0.6, 0.24); y1.position.set(-2, -0.95, 0); y2.position.set(3, -0.8, 0); [[y1, 0.75], [y2, 0.6]].forEach(([y, h]) => silindir(y, 0.012, 0.012, 0.24, 0x111827, 0, h + 0.1, 0, { edge: false }));   // asma ipi   // kancalı laboratuvar kütleleri
       kart('t8a', '', '#ef4444'); kart('t8b', '', '#3b82f6'); kart('t8t', '', '#F5C400');
       return { kol, y1, y2 };
     },

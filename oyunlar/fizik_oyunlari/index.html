@@ -819,6 +819,8 @@ const bucket = new THREE.Group(); bucket.position.y = -RR - 0.45; rotor.add(buck
 { const bWall = mesh(new THREE.CylinderGeometry(0.56, 0.44, 0.9, 32, 1, true), 0x3b82f6, { side: THREE.DoubleSide }); bucket.add(bWall);
   const bBot = mesh(new THREE.CircleGeometry(0.44, 32), 0x3b82f6, { side: THREE.DoubleSide }); bBot.rotation.x = Math.PI / 2; bBot.position.y = -0.45; bucket.add(bBot); }
 const water = mesh(new THREE.CylinderGeometry(0.47, 0.43, 0.42, 32), 0x38bdf8, { op: 0.92 }); water.position.y = -0.23; bucket.add(water);
+{ const rim = mesh(new THREE.TorusGeometry(0.56, 0.03, 6, 32), 0x1d4ed8, { edge: false }); rim.rotation.x = Math.PI / 2; rim.position.y = 0.45; bucket.add(rim);   // kova ağzı ve sapı
+  const sap = mesh(new THREE.TorusGeometry(0.56, 0.02, 6, 24, Math.PI), 0x9ca3af, { edge: false }); sap.position.y = 0.45; bucket.add(sap); }
 const blob = mesh(new THREE.SphereGeometry(0.42, 24, 16), 0x38bdf8, { op: 0.92 }); blob.visible = false; G3.add(blob);
 const puddle = mesh(new THREE.CylinderGeometry(1, 1, 0.04, 40), 0x38bdf8, { op: 0.85, cast: false }); puddle.visible = false; G3.add(puddle);
 const drops = []; for (let i = 0; i < 7; i++) { const d = mesh(new THREE.SphereGeometry(0.11, 12, 8), 0x7dd3fc, { edge: false }); d.visible = false; G3.add(d); drops.push(d); }
@@ -1899,7 +1901,7 @@ function frame(now) {
   for (const a of ARROWS) a.visible = false; guide1.visible = false;
   for (const k in TAG) TAG[k]._on = false;
   if (GAME.mode === 'game' && GAME.M) {
-    const M = GAME.M; M.tick(dt); qlabTick(); dimArrows(); if (GAME.q && GAME.q.kesif && (GAME.kz = (GAME.kz || 0) + rdt) > .25) { GAME.kz = 0; kesYaz(); }
+    const M = GAME.M; try { M.tick(dt); } catch (e) { if (!frame.hata) { frame.hata = 1; console.error(e); setTimeout(() => { throw e; }); } }   // bir sahnedeki hata programı dondurmasın qlabTick(); dimArrows(); if (GAME.q && GAME.q.kesif && (GAME.kz = (GAME.kz || 0) + rdt) > .25) { GAME.kz = 0; kesYaz(); }
     if (GAME.wait && $('ov').classList.contains('hide')) { if (GAME.wait(M.S)) { GAME.wait = null; next(); } }
     else if (GAME.timer > 0) { GAME.timer -= dt; if (GAME.timer <= 0) { GAME.timer = 0; next(); } }
   } else {                                                  // menü: tren sahnesi yavaşça döner

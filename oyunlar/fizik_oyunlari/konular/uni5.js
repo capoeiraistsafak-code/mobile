@@ -117,7 +117,7 @@
     data: [['H₀', '70 km/s/Mpc'], ['c', '3 · 10⁵ km/s']],
     S0: () => ({ a: 1, kos: 0, sec: 12 }),
     kur(g) {
-      const gal = []; for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) { const m = top(g, 0.16, (i === 0 && j === 0) ? 0xfacc15 : 0x93c5fd, 0, 0.3, 0, { edge: false }); m.userData.p = [i * 1.2 + (Math.random() - 0.5) * 0.3, j * 1.0 + (Math.random() - 0.5) * 0.3]; gal.push(m); }
+      const gal = []; for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) { const m = FZ.gokada(g, (i === 0 && j === 0) ? 0xfacc15 : 0x93c5fd, 1); m.rotation.y = Math.random() * 6; m.material = m.disk.material; m.userData.p = [i * 1.2 + (Math.random() - 0.5) * 0.3, j * 1.0 + (Math.random() - 0.5) * 0.3]; gal.push(m); }
       const oklar = gal.map(() => ok(0xef4444, 'akv'));
       etiket('akv', 'v', '#dc2626'); kart('akt', '', '#F5C400'); kart('akb', 'Biz', '#ca8a04');
       return { gal, oklar };

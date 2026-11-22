@@ -14,16 +14,16 @@
     kur(g) {
       silindir(g, 1.4, 1.5, 0.25, 0x94a3b8, 0, 0.13, 0);
       const don = new THREE.Group(); don.position.y = 0.25; g.add(don);
-      silindir(don, 0.25, 0.3, 1.6, 0x7c3aed, 0, 0.8, 0); top(don, 0.25, 0xf5c09a, 0, 1.85, 0);
-      const kol = kutu(don, 2, 0.08, 0.08, 0x334155, 0, 1.3, 0, { edge: false });
-      const t1 = top(don, 0.2, 0xef4444, 1, 1.3, 0), t2 = top(don, 0.2, 0xef4444, -1, 1.3, 0);
+      const ins = FZ.insan(don, 0x7c3aed, 0.95); ins.rotation.y = -Math.PI / 2;   // dönen platformdaki kişi (kolları yanlara açık)
+      const kol = new THREE.Group(); don.add(kol);
+      const t1 = FZ.dambil(don), t2 = FZ.dambil(don); t1.position.set(1, 1.3, 0); t2.position.set(-1, 1.3, 0);
       kart('d17t', '', '#F5C400'); etiket('d17v', 'v', '#16a34a');
-      return { don, kol, t1, t2, ov: ok(0x22c55e, 'd17v') };
+      return { don, kol, ins, t1, t2, ov: ok(0x22c55e, 'd17v') };
     },
     tick(S, dt, o) {
       S.r += (S.hedef - S.r) * Math.min(1, dt * 1.5);
       const I = I17(S.r), w = S.L / I; S.ac += w * dt; o.don.rotation.y = S.ac;
-      o.t1.position.x = S.r * 1.2; o.t2.position.x = -S.r * 1.2; o.kol.scale.x = S.r * 1.2;
+      o.t1.position.x = S.r * 1.2; o.t2.position.x = -S.r * 1.2; o.don.updateMatrixWorld(true); FZ.koluUzat(o.ins, 0, o.t1.getWorldPosition(V3())); FZ.koluUzat(o.ins, 1, o.t2.getWorldPosition(V3()));
       const p = o.t1.getWorldPosition(V3()), tg = V3(-Math.sin(S.ac), 0, -Math.cos(S.ac)); // teğet (dönme yönünde)
       FZ.setArrow(o.ov, p, tg, w * S.r * 0.45); FZ.show('d17v', p.clone().add(tg.clone().multiplyScalar(w * S.r * 0.45 + 0.3)), 1);
       FZ.setTag('d17t', `r = ${fs(S.r)} m · I = ${fs(I)} kg·m² · ω = ${fs(w)} rad/s<br>L = Iω = ${fs(S.L)} · E<sub>k</sub> = ${fs(0.5 * I * w * w)} J`); FZ.show('d17t', V3(0, 3.4, 0), 1);
