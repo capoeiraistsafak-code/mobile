@@ -1,0 +1,23 @@
+DOSYALARDAN EĞİTİM DENEMESİ
+===========================
+
+Bu klasördeki dosyalarla yapay zekâyı PDF ve resimlerden eğitmeyi deneyebilirsiniz.
+(Bilgisayarda üretilmiş örneklerdir; yazılar el yazısı tarzı yazı tipleriyle yazıldı.)
+
+  Harfler1_fotograf.jpg     Doldurulmuş "Harfler 1" eğitim sayfasının telefonla çekilmiş fotoğrafı.
+  Tarama_H2_Rakamlar.pdf    Taranmış iki sayfa: doldurulmuş "Harfler 2" ve "Rakamlar" eğitim sayfaları.
+  ergonomi.jpg, 180.jpg     Tek kelime / tek sayı yazılmış resimler. Ne yazdığı dosya adında.
+  IMG_0042.jpg              Adından ne yazdığı anlaşılmayan resim. Program size sorar:
+                            kutuya "telif" yazıp "Ekle"ye basın.
+
+NASIL DENENİR?
+  1. Programda 🧠 Yapay Zekâ sekmesini açın.
+  2. "Dosyalardan eğit" bölümünde "📄 Dosya seç" düğmesine basın. Dosya penceresinde bu klasöre
+     (Test_Fotograflari > Egitim_Dosyalari) gidin, dosyaların hepsini seçin.
+     Ya da "📁 Klasör seç" ile klasörü bir kerede seçin.
+  3. Program hangi dosyadan kaç harf/rakam örneği çıkardığını gösterir ve "eğitilsin mi?" diye sorar.
+  4. Eğitimden sonra "Eğitimi dışa aktar" ile eğitimi dosyaya kaydedebilirsiniz.
+
+KENDİ ÖĞRENCİLERİNİZLE
+  "🖨️ Eğitim sayfalarını yazdır" ile boş sayfaları yazdırın, öğrencilere doldurtun,
+  fotoğrafını çekin ya da taratıp PDF yapın ve aynı şekilde yükleyin.

@@ -24,6 +24,7 @@ DOSYALAR
                                        16'sı Türkçe harfli), farklı boyut/eğim/kalınlıkta çizilerek
                        (Elle değiştirmeyin; geliştirici test/yz-egit.mjs ve test/harf-egit.mjs ile üretir.)
   ../vendor/tf.min.js  TensorFlow.js kütüphanesi.
+  ../vendor/pdf.min.js PDF okuyucu (pdf.js), PDF sayfalarını resme çevirir.
 
 KENDİNİ NASIL EĞİTİR?
   - Ödev Kontrol'de bir sayfanın sonucunu açın. Program bir şıkkı yanlış okuduysa
@@ -36,6 +37,19 @@ KENDİNİ NASIL EĞİTİR?
     sekmesindeki "Şimdi eğit" ile siz de başlatabilirsiniz.
   - Koruma: Düzeltmelerin bir kısmı sınama için ayrılır. Yeni eğitim bu sınamada eskisinden
     kötü sonuç verirse ya da eski bilgisini unutursa kabul edilmez, eski ağ kalır.
+
+DOSYALARDAN EĞİTİM (PDF ve resim)
+  Yapay Zekâ sekmesi > "Dosyalardan eğit". "Dosya seç" ya da "Klasör seç" düğmesi bilgisayarın
+  dosya penceresini açar; dosyaların bulunduğu klasöre gidip seçersiniz (sürükleyip bırakmak da olur).
+  İki tür kaynak kullanılabilir:
+  1. Eğitim sayfası (önerilen): "Eğitim sayfalarını yazdır" ile 3 boş sayfa yazdırılır (Harfler 1,
+     Harfler 2, Rakamlar). Öğrenciler her kutuya satırın başındaki harfi/rakamı yazar. Sayfanın
+     fotoğrafı ya da taranmış PDF'i yüklenir. Program sayfayı tanır, her dolu kutu bir örnek olur.
+  2. Adı yazılı resim: tek kelime ya da sayı yazılmış resim; dosya adı resimde yazanla aynıdır
+     (ergonomi.jpg, 180.png, telif_2.jpg). Adından anlaşılmazsa program ne yazdığını size sorar.
+  PDF'lerin her sayfası ayrı ayrı okunur. Aynı dosya iki kez eklenmez. Çıkarılan örnekleri
+  "Örnekler" ile görüp yanlış olanı tıklayarak silebilirsiniz. Dosyaların kendisi saklanmaz;
+  çıkarılan örnekler saklanır ve "Eğitimi dışa aktar" ile yedeklenir.
 
 YEDEKLEME (eğitimler kaybolmasın)
   Yapay Zekâ sekmesi > "Eğitimi dışa aktar": ağların öğrendikleri ve bütün eğitim örnekleri

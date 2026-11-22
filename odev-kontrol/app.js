@@ -861,6 +861,25 @@ function murekkep(ink, r) {
   return n;
 }
 
+/** Fotoğrafı şablona oturtur; el yazısı = fotoğrafta olup boş sayfada olmayan koyu izler. */
+function elYazisiAyir(stud, tmpl, H, keep) {
+  const size = new cv.Size(tmpl.cols, tmpl.rows);
+  const warped = keep(new cv.Mat());
+  cv.warpPerspective(stud, warped, H, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar(255));
+  const valid = keep(new cv.Mat());
+  cv.warpPerspective(keep(new cv.Mat(stud.rows, stud.cols, cv.CV_8UC1, new cv.Scalar(255))), valid, H, size, cv.INTER_NEAREST, cv.BORDER_CONSTANT, new cv.Scalar(0));
+  cv.erode(valid, valid, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(9, 9))));
+  const tmin = keep(new cv.Mat());
+  cv.erode(tmpl, tmin, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(T.printTolerancePx, T.printTolerancePx))));
+  const diff = keep(new cv.Mat());
+  cv.subtract(tmin, warped, diff);
+  const ink = keep(new cv.Mat());
+  cv.threshold(diff, ink, T.inkDarkness, 255, cv.THRESH_BINARY);
+  cv.bitwise_and(ink, valid, ink);
+  cv.morphologyEx(ink, ink, cv.MORPH_OPEN, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2))));
+  return { warped, ink };
+}
+
 /** Öğrenci fotoğrafını ödevin boş sayfalarından birine oturtur, el yazısını ayırır, cevapları okur. */
 async function ogrenciSayfasiOku(foto, sayfalar) {
   await cvHazir;
@@ -878,21 +897,7 @@ async function ogrenciSayfasiOku(foto, sayfalar) {
     });
     if (!best || best.h.inliers < T.minPageMatch) return { eslesti: false };
     const { p, h, tmpl } = best;
-    const size = new cv.Size(tmpl.cols, tmpl.rows);
-    const warped = keep(new cv.Mat());
-    cv.warpPerspective(stud, warped, h.H, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar(255));
-    const valid = keep(new cv.Mat());
-    cv.warpPerspective(keep(new cv.Mat(stud.rows, stud.cols, cv.CV_8UC1, new cv.Scalar(255))), valid, h.H, size, cv.INTER_NEAREST, cv.BORDER_CONSTANT, new cv.Scalar(0));
-    cv.erode(valid, valid, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(9, 9))));
-    // El yazısı = öğrenci sayfasında olup boş sayfada olmayan koyu izler.
-    const tmin = keep(new cv.Mat());
-    cv.erode(tmpl, tmin, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(T.printTolerancePx, T.printTolerancePx))));
-    const diff = keep(new cv.Mat());
-    cv.subtract(tmin, warped, diff);
-    const ink = keep(new cv.Mat());
-    cv.threshold(diff, ink, T.inkDarkness, 255, cv.THRESH_BINARY);
-    cv.bitwise_and(ink, valid, ink);
-    cv.morphologyEx(ink, ink, cv.MORPH_OPEN, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2))));
+    const { warped, ink } = elYazisiAyir(stud, tmpl, h.H, keep);
     const sayfaMurekkep = cv.countNonZero(ink) / (ink.rows * ink.cols);
 
     // Yapay zekâ için: her şıkkın görüntüsü ve yazılı cevap alanlarındaki rakamlar.
@@ -1095,7 +1100,7 @@ async function yzEgit(neden = "elle") {
     for (const tur of ["isaret", "rakam", "harf"]) {
       const eski = YZ[tur];
       if (!eski) continue;
-      const ogretmen = list("yzOrnekler", (o) => o.tur === tur && o.kaynak === "ogretmen").sort(() => Math.random() - 0.5);
+      const ogretmen = list("yzOrnekler", (o) => o.tur === tur && (o.kaynak === "ogretmen" || o.kaynak === "dosya")).sort(() => Math.random() - 0.5);
       const otomatik = list("yzOrnekler", (o) => o.tur === tur && o.kaynak === "otomatik");
       if (!ogretmen.length && !otomatik.length) {
         yeniAglar[tur] = eski;
@@ -1133,7 +1138,7 @@ async function yzEgit(neden = "elle") {
     await yzKaydet(yeniAglar.isaret, yeniAglar.rakam, yeniAglar.harf, sonuc);
     for (const tur of ["isaret", "rakam", "harf"]) if (yeniAglar[tur] && yeniAglar[tur] !== YZ[tur]) { YZ[tur].dispose(); YZ[tur] = yeniAglar[tur]; }
     const ozet = Object.entries(sonuc.turler).map(([t, v]) => `${AG_ADI[t]} ağı: ${v.kabul ? "güncellendi" : "eskisi korundu (yeni eğitim daha iyi değildi)"}${v.sonra.sinama != null ? `, sınama %${Math.round(v.once.sinama * 100)} → %${Math.round(v.sonra.sinama * 100)}` : ""}`);
-    sonucKarti(true, Object.keys(sonuc.turler).length ? "Yapay zekâ eğitildi" : "Eğitilecek örnek yok", ozet.length ? ozet : ["Önce sonuç ekranında birkaç okumayı düzeltin."]);
+    sonucKarti(true, Object.keys(sonuc.turler).length ? "Yapay zekâ eğitildi" : "Eğitilecek örnek yok", ozet.length ? ozet : ["Önce sonuç ekranında birkaç okumayı düzeltin ya da dosyalardan örnek ekleyin."]);
   } catch (e) {
     console.error(e);
     sonucKarti(false, "Yapay zekâ eğitilemedi", [e.message]);
@@ -1152,7 +1157,7 @@ async function yzDisaAktar() {
     surum: 1,
     tarih: simdi(),
     model: kayit, // null: henüz eğitilmedi (başlangıç modeli kullanılıyor)
-    ornekler: list("yzOrnekler").map((o) => ({ tur: o.tur, x: YapayZeka.b64.yaz(o.x), y: o.y, kaynak: o.kaynak, tarih: o.tarih })),
+    ornekler: list("yzOrnekler").map((o) => ({ tur: o.tur, x: YapayZeka.b64.yaz(o.x), y: o.y, kaynak: o.kaynak, tarih: o.tarih, ...(o.kaynak === "dosya" ? { etiket: o.etiket, dosya: o.dosya, dosyaTipi: o.dosyaTipi, kaynakId: o.kaynakId, iz: o.iz } : {}) })),
   };
   indir(new Blob([JSON.stringify(veri)], { type: "application/json" }), `OdevKontrol_YapayZeka_${new Date().toISOString().slice(0, 10)}.json`);
 }
@@ -1170,6 +1175,401 @@ async function yzIceAktar(dosya) {
 async function yzBaslangicaDon() {
   await DB.req("kv", "readwrite", (st) => st.delete("yzModel"));
   await yzYukle();
+}
+
+// ---------------------------------------------------------------------------
+// DOSYALARDAN EĞİTİM: PDF ve resimlerdeki el yazısıyla yapay zekâyı eğitme
+// ---------------------------------------------------------------------------
+// İki tür kaynak var:
+//  1. Eğitim sayfası: programın hazırladığı kutulu sayfa. Hangi kutuda hangi harf/rakam olduğu bilinir.
+//  2. Etiketli resim: tek bir kelime ya da sayı yazılmış resim; ne yazdığı dosya adındadır (ergonomi.jpg, 180.png).
+const ES_HARFLER = "abcçdefgğhıijklmnoöprsştuüvyzqwx";
+const EGITIM_SAYFALARI = [
+  { kod: "H1", ad: "Harfler 1", tur: "harf", satirlar: [...ES_HARFLER.slice(0, 16)] },
+  { kod: "H2", ad: "Harfler 2", tur: "harf", satirlar: [...ES_HARFLER.slice(16)] },
+  { kod: "R", ad: "Rakamlar", tur: "rakam", satirlar: [..."0123456789"] },
+];
+const ES_H = Math.round(PAGE_WIDTH * 1.414); // A4 oranı
+const DOSYA = { isleniyor: false, ilerleme: "", bekleyen: [], acik: null };
+
+/** Eğitim sayfasındaki kutuların yerleri (PAGE_WIDTH genişliğindeki sayfada). */
+function egitimDuzeni(s) {
+  const harf = s.tur === "harf";
+  const ust = 300;
+  const satirH = (ES_H - 130 - ust) / s.satirlar.length;
+  const kutuH = Math.round(Math.min(120, satirH - 14));
+  const kutuW = harf ? 120 : 125;
+  const kutular = [];
+  const etiketler = [];
+  s.satirlar.forEach((ch, i) => {
+    const y0 = Math.round(ust + i * satirH + (satirH - kutuH) / 2);
+    const gruplar = harf ? [[ch, 70], [ch.toLocaleUpperCase("tr-TR"), 710]] : [[ch, 70]];
+    for (const [yazi, x] of gruplar) {
+      etiketler.push({ yazi, x: x + 45, y: y0 + kutuH / 2 });
+      for (let k = 0; k < (harf ? 4 : 9); k++) {
+        const bx = x + 100 + k * (kutuW + 10);
+        kutular.push({ x0: bx, y0, x1: bx + kutuW, y1: y0 + kutuH, ch: yazi });
+      }
+    }
+  });
+  return { kutular, etiketler };
+}
+
+function egitimSayfasiCiz(s) {
+  const c = document.createElement("canvas");
+  c.width = PAGE_WIDTH;
+  c.height = ES_H;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff";
+  g.fillRect(0, 0, c.width, c.height);
+  // Köşelerde her sayfaya özgü desenler: fotoğraf bu sayfaya bunlarla oturtulur.
+  let tohum = [...s.kod].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 2147483647, 7);
+  const rnd = () => (tohum = (tohum * 16807) % 2147483647) / 2147483647;
+  for (const [cx, cy] of [[30, 30], [PAGE_WIDTH - 120, 30], [30, ES_H - 120], [PAGE_WIDTH - 120, ES_H - 120]]) {
+    g.fillStyle = "#000";
+    g.fillRect(cx, cy, 90, 90);
+    g.fillStyle = "#fff";
+    g.fillRect(cx + 8, cy + 8, 74, 74);
+    g.fillStyle = "#000";
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) if (rnd() < 0.5) g.fillRect(cx + 12 + i * 11, cy + 12 + j * 11, 11, 11);
+  }
+  g.fillStyle = "#000";
+  g.textBaseline = "alphabetic";
+  g.font = "bold 40px sans-serif";
+  g.fillText(`El Yazısı Eğitim Sayfası · ${s.ad}`, 150, 75);
+  g.font = "24px sans-serif";
+  g.fillText(`Her kutuya satırın başındaki ${s.tur === "harf" ? "harfi" : "rakamı"} kendi el yazınızla bir kez yazın.`, 150, 120);
+  g.fillText("Kutunun çizgisine değmemeye çalışın. Boş bırakılan kutular atlanır.", 150, 155);
+  g.fillText("Ad Soyad: ...........................................................   Sınıf: ...............", 150, 215);
+  g.font = "bold 22px sans-serif";
+  if (s.tur === "harf") {
+    g.fillText("küçük harf", 170, 280);
+    g.fillText("BÜYÜK HARF", 810, 280);
+  }
+  g.font = "18px sans-serif";
+  g.fillText(`Ödev Kontrol · sayfa kodu ${s.kod}`, 150, ES_H - 60);
+  const { kutular, etiketler } = egitimDuzeni(s);
+  g.strokeStyle = "#888";
+  g.lineWidth = 2;
+  for (const k of kutular) g.strokeRect(k.x0, k.y0, k.x1 - k.x0, k.y1 - k.y0);
+  g.font = "bold 46px sans-serif";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  for (const e of etiketler) g.fillText(e.yazi, e.x, e.y);
+  return c;
+}
+const ES_SABLON = {};
+const egitimSablonu = async (s) => (ES_SABLON[s.kod] ||= await tuvalBlob(egitimSayfasiCiz(s), "image/png"));
+
+function egitimSayfalariniYazdir() {
+  const w = window.open("", "_blank");
+  if (!w) return sonucKarti(false, "Yazdırma penceresi açılamadı", ["Tarayıcının açılır pencere engelini kapatın ya da sayfaları tek tek indirip yazdırın."]);
+  const resimler = EGITIM_SAYFALARI.map((s) => `<img src="${egitimSayfasiCiz(s).toDataURL("image/png")}">`).join("");
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>El Yazısı Eğitim Sayfaları</title><style>@page{size:A4;margin:8mm}body{margin:0}img{width:100%;display:block;break-after:page}</style></head><body>${resimler}<script>window.onload=()=>setTimeout(()=>print(),300)<\/script></body></html>`);
+  w.document.close();
+}
+
+/** Doldurulmuş eğitim sayfası → her dolu kutudan bir örnek. Eğitim sayfası değilse null. */
+async function egitimSayfasiOku(blob) {
+  await cvHazir;
+  const ogr = await griMat(blob, { maxSide: STUDENT_MAX_SIDE });
+  const tm = [];
+  for (const s of EGITIM_SAYFALARI) tm.push(await griMat(await egitimSablonu(s), { width: PAGE_WIDTH }));
+  return scope((keep) => {
+    keep(ogr);
+    tm.forEach(keep);
+    const stud = keep(duzle(ogr, keep));
+    let best = null;
+    EGITIM_SAYFALARI.forEach((s, i) => {
+      const h = oturt(tm[i], stud, keep);
+      if (h?.H && (!best || h.inliers > best.h.inliers)) best = { s, h, tmpl: tm[i] };
+    });
+    if (!best || best.h.inliers < T.minPageMatch) return null;
+    const { ink } = elYazisiAyir(stud, best.tmpl, best.h.H, keep);
+    const bul = best.s.tur === "rakam" ? YapayZeka.rakamlariBul : YapayZeka.harfleriBul;
+    const ornekler = [];
+    let karisik = 0;
+    for (const k of egitimDuzeni(best.s).kutular) {
+      const ic = { x0: k.x0 + 7, y0: k.y0 + 7, x1: k.x1 - 7, y1: k.y1 - 7 };
+      const parcalar = bul(ink.data, ink.cols, ink.rows, ic);
+      if (!parcalar.length) continue; // boş kutu
+      if (parcalar.length > 1) {
+        karisik++; // kutuda birden çok şey var: emin olunamaz, atlanır
+        continue;
+      }
+      ornekler.push({ tur: best.s.tur, x: parcalar[0].x, y: best.s.tur === "rakam" ? +k.ch : YapayZeka.harfSinifi(k.ch), etiket: k.ch });
+    }
+    return { sayfa: best.s, ornekler, karisik };
+  });
+}
+
+/** Tek kelime/sayı yazılmış resim → her harf/rakam bir örnek (parça sayısı tutmazsa hata). */
+async function etiketliResimOku(blob, metin) {
+  await cvHazir;
+  const sayi = /^\d+$/.test(metin.trim());
+  const hedef = sayi ? metin.trim() : YapayZeka.sadeKelime(metin);
+  if (!hedef) return { hata: "Yazdığınız metinde harf ya da rakam yok." };
+  if (!sayi && /\d/.test(metin)) return { hata: "Harf ve rakam karışık olamaz: ya bir kelime ya da bir sayı yazın." };
+  const gray = await griMat(blob, { maxSide: 1600 });
+  let parcalar = scope((keep) => {
+    keep(gray);
+    const flat = keep(duzle(gray, keep));
+    const ink = keep(new cv.Mat());
+    cv.threshold(flat, ink, 150, 255, cv.THRESH_BINARY_INV);
+    cv.morphologyEx(ink, ink, cv.MORPH_OPEN, keep(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2))));
+    const W = ink.cols;
+    const H = ink.rows;
+    const m = Math.round(Math.min(W, H) * 0.03); // fotoğraf kenarındaki gölgeler sayılmasın
+    return (sayi ? YapayZeka.rakamlariBul : YapayZeka.harfleriBul)(ink.data, W, H, { x0: m, y0: m, x1: W - m, y1: H - m });
+  });
+  // Bitişik yazılmış harfler tek parça görünebilir: eksik varsa en geniş parçayı bölünmüş hâliyle değiştir.
+  while (parcalar.length < hedef.length) {
+    const i = parcalar.reduce((en, p, j) => (p.bolunmus && (en < 0 || p.kutu.x1 - p.kutu.x0 > parcalar[en].kutu.x1 - parcalar[en].kutu.x0) ? j : en), -1);
+    if (i < 0) break;
+    parcalar = [...parcalar.slice(0, i), ...parcalar[i].bolunmus, ...parcalar.slice(i + 1)];
+  }
+  if (parcalar.length !== hedef.length)
+    return { hata: `Resimde ${parcalar.length} ${sayi ? "rakam" : "harf"} bulundu ama "${metin}" ${hedef.length} ${sayi ? "rakam" : "harf"}. Harfleri ayrı ayrı yazılmış, düz beyaz kâğıtta tek kelime olmalı.` };
+  return { ornekler: parcalar.map((p, i) => ({ tur: sayi ? "rakam" : "harf", x: p.x, y: sayi ? +hedef[i] : YapayZeka.harfSinifi(hedef[i]), etiket: hedef[i] })) };
+}
+
+/** Dosya adından resimde ne yazdığını çıkarır ("telif_2.jpg" → "telif"); anlaşılmazsa null. */
+function adindanMetin(ad) {
+  let e = ad.replace(/\.[^.]+$/, "").trim().replace(/\s*\(\d+\)$/, "").replace(/^(.+?)[_\-\s]+\d+$/, "$1").trim();
+  if (!e || /^(img|dsc|dcim|pxl|mvimg|whatsapp|screenshot|ekran|scan|tarama|photo|foto|image|resim|dosya|sayfa|page|belge|document|cam|picture|adsız|untitled)/i.test(e)) return null;
+  if (/^\d+$/.test(e)) return e.length <= 12 ? e : null;
+  const k = e.toLocaleLowerCase("tr-TR");
+  return k.length <= 24 && YapayZeka.sadeKelime(k) === k ? e : null;
+}
+
+/** PDF'in sayfalarını resme çevirir (pdf.js, internetsiz). */
+async function pdfSayfalari(dosya) {
+  if (!window.pdfjsLib) throw new Error("PDF okuyucu bulunamadı (vendor/pdf.min.js).");
+  // Not: "data" ile verince sahte işçi (worker) boş dosya görüyor; blob adresiyle veriliyor.
+  const adres = URL.createObjectURL(dosya);
+  const pdf = await pdfjsLib.getDocument({ url: adres, isEvalSupported: false }).promise.finally(() => URL.revokeObjectURL(adres));
+  const out = [];
+  try {
+    for (let i = 1; i <= Math.min(pdf.numPages, 100); i++) {
+      const sayfa = await pdf.getPage(i);
+      const v0 = sayfa.getViewport({ scale: 1 });
+      const vp = sayfa.getViewport({ scale: 2000 / Math.max(v0.width, v0.height) });
+      const c = document.createElement("canvas");
+      c.width = Math.round(vp.width);
+      c.height = Math.round(vp.height);
+      const g = c.getContext("2d");
+      g.fillStyle = "#fff";
+      g.fillRect(0, 0, c.width, c.height);
+      await sayfa.render({ canvasContext: g, viewport: vp }).promise;
+      out.push(await tuvalBlob(c, "image/png"));
+      sayfa.cleanup();
+    }
+  } finally {
+    await pdf.destroy();
+  }
+  return out;
+}
+const pdfMi = (f) => f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+const resimMi = (f) => f.type.startsWith("image/") || /\.(jpe?g|png|webp|bmp|gif)$/i.test(f.name);
+
+async function dosyaOrnekleriKaydet(ornekler, ad, tip, iz) {
+  const kaynakId = `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  const tarih = simdi();
+  for (const o of ornekler) await DB.put("yzOrnekler", { tur: o.tur, x: o.x, y: o.y, etiket: o.etiket, kaynak: "dosya", dosya: ad, dosyaTipi: tip, kaynakId, iz, tarih });
+}
+
+/** Seçilen PDF ve resimlerden eğitim örnekleri çıkarır. mod: "oto" | "sayfa" | "etiketli" */
+async function dosyalardanOrnekler(dosyalar, mod = "oto") {
+  if (DOSYA.isleniyor || !YZ.hazir) return;
+  dosyalar = dosyalar.filter((f) => pdfMi(f) || resimMi(f));
+  if (!dosyalar.length) return sonucKarti(false, "Uygun dosya yok", ["PDF ya da resim (JPG, PNG) seçin."]);
+  DOSYA.isleniyor = true;
+  const ozet = { sayfa: 0, etiketli: 0, harf: 0, rakam: 0, ayni: 0, karisik: 0, bekleyen: 0, atlanan: [] };
+  try {
+    await cvHazir;
+    const izler = new Set(list("yzOrnekler", (o) => o.iz).map((o) => o.iz));
+    for (let n = 0; n < dosyalar.length; n++) {
+      const f = dosyalar[n];
+      DOSYA.ilerleme = `${n + 1}/${dosyalar.length}: ${f.name}`;
+      yenidenCiz();
+      let resimler;
+      try {
+        resimler = pdfMi(f) ? await pdfSayfalari(f) : [f];
+      } catch (e) {
+        ozet.atlanan.push(`${f.name}: açılamadı (${e.message})`);
+        continue;
+      }
+      for (let i = 0; i < resimler.length; i++) {
+        const ad = resimler.length > 1 ? `${f.name} · sayfa ${i + 1}` : f.name;
+        if (resimler.length > 1) {
+          DOSYA.ilerleme = `${n + 1}/${dosyalar.length}: ${ad}`;
+          yenidenCiz();
+        }
+        await new Promise((r) => setTimeout(r, 0));
+        const blob = resimler[i];
+        const iz = await parmakIzi(blob);
+        if (izler.has(iz)) {
+          ozet.ayni++;
+          continue;
+        }
+        let sonuc = null;
+        if (mod !== "etiketli") {
+          const s = await egitimSayfasiOku(blob);
+          if (s) {
+            ozet.karisik += s.karisik;
+            if (!s.ornekler.length) {
+              ozet.atlanan.push(`${ad}: ${s.sayfa.ad} sayfası tanındı ama kutularda yazı bulunamadı`);
+              continue;
+            }
+            sonuc = { tip: "sayfa", ornekler: s.ornekler };
+            ozet.sayfa++;
+          } else if (mod === "sayfa") {
+            ozet.atlanan.push(`${ad}: eğitim sayfası olarak tanınamadı`);
+            continue;
+          }
+        }
+        if (!sonuc) {
+          const metin = resimler.length === 1 ? adindanMetin(f.name) : null;
+          const r = metin ? await etiketliResimOku(blob, metin) : { hata: mod === "etiketli" ? "Dosya adından resimde ne yazdığı anlaşılamadı." : "Eğitim sayfası değil; dosya adından da resimde ne yazdığı anlaşılamadı." };
+          if (!r.ornekler) {
+            DOSYA.bekleyen.push({ ad, blob, iz, neden: r.hata, metin: metin || "", url: URL.createObjectURL(blob) });
+            ozet.bekleyen++;
+            continue;
+          }
+          sonuc = { tip: "etiketli", ornekler: r.ornekler };
+          ozet.etiketli++;
+        }
+        await dosyaOrnekleriKaydet(sonuc.ornekler, ad, sonuc.tip, iz);
+        izler.add(iz);
+        for (const o of sonuc.ornekler) ozet[o.tur]++;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    ozet.atlanan.push(`Hata: ${e.message}`);
+  } finally {
+    DOSYA.isleniyor = false;
+    DOSYA.ilerleme = "";
+  }
+  const toplam = ozet.harf + ozet.rakam;
+  const sadeceAyni = !toplam && ozet.ayni && !ozet.atlanan.length && !ozet.bekleyen;
+  sonucKarti(toplam > 0 || sadeceAyni, toplam ? `${toplam} eğitim örneği eklendi` : sadeceAyni ? "Bu dosyalar daha önce eklenmiş" : "Eğitim örneği eklenemedi", [
+    ...(ozet.sayfa ? [`${ozet.sayfa} eğitim sayfası`] : []),
+    ...(ozet.etiketli ? [`${ozet.etiketli} adı yazılı resim`] : []),
+    ...(toplam ? [`${ozet.harf} harf, ${ozet.rakam} rakam örneği`] : []),
+    ...(ozet.karisik ? [`${ozet.karisik} kutuda birden çok şey vardı, atlandı`] : []),
+    ...(ozet.ayni ? [`${ozet.ayni} dosya daha önce eklenmişti, atlandı`] : []),
+    ...(ozet.bekleyen ? [`${ozet.bekleyen} resimde ne yazdığı bilinmiyor: aşağıda yazabilirsiniz`] : []),
+    ...ozet.atlanan,
+  ]);
+  ciz();
+  if (toplam && !YZ.egitimde && confirm(`${toplam} yeni eğitim örneği eklendi. Yapay zekâ şimdi bu örneklerle eğitilsin mi? (Birkaç dakika sürebilir.)`)) yzEgit("dosya");
+}
+
+/** Ne yazdığı bilinmeyen resim için öğretmenin yazdığı metinle örnek çıkarır. */
+async function bekleyenEkle(i) {
+  const b = DOSYA.bekleyen[i];
+  if (!b || !b.metin.trim()) return;
+  const r = await etiketliResimOku(b.blob, b.metin);
+  if (!r.ornekler) {
+    b.neden = r.hata;
+    return ciz();
+  }
+  await dosyaOrnekleriKaydet(r.ornekler, b.ad, "etiketli", b.iz);
+  URL.revokeObjectURL(b.url);
+  DOSYA.bekleyen.splice(i, 1);
+  toast(`${r.ornekler.length} örnek eklendi`);
+  ciz();
+}
+
+/** 28x28 örnek görüntüsünü (beyaz mürekkep) kâğıt gibi gösterir. */
+function ornekResmi(x) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 28;
+  const g = c.getContext("2d");
+  const im = g.createImageData(28, 28);
+  for (let i = 0; i < 784; i++) {
+    const v = 255 - x[i];
+    im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = v;
+    im.data[i * 4 + 3] = 255;
+  }
+  g.putImageData(im, 0, 0);
+  return c.toDataURL();
+}
+
+function dosyaEgitimKarti() {
+  const kaynaklar = new Map();
+  for (const o of list("yzOrnekler", (o) => o.kaynak === "dosya")) {
+    const k = kaynaklar.get(o.kaynakId) || { id: o.kaynakId, ad: o.dosya, tip: o.dosyaTipi, tarih: o.tarih, harf: 0, rakam: 0, ornekler: [] };
+    k[o.tur] = (k[o.tur] || 0) + 1;
+    k.ornekler.push(o);
+    kaynaklar.set(o.kaynakId, k);
+  }
+  const liste = [...kaynaklar.values()].sort((a, b) => (a.tarih < b.tarih ? 1 : -1));
+  const etiket = (o) => o.etiket ?? (o.tur === "rakam" ? String(o.y) : ES_HARFLER[o.y]);
+  return `<div class="card birakilir" id="dosyaEgitim"><h2>📂 Dosyalardan eğit (PDF ve resim)</h2>
+    <p class="muted small" style="margin-top:0">El yazısı örneklerini bilgisayarınızdaki dosyalardan yükleyin. <b>Dosya seç</b> ya da <b>Klasör seç</b> düğmesine basınca bilgisayarınızın dosya penceresi açılır: dosyaların bulunduğu klasöre gidip seçin. Dosyaları bu kutunun üstüne sürükleyip bırakabilirsiniz de.</p>
+    <div class="yanyana">
+      <div><h3 style="margin:4px 0">1. Eğitim sayfası (önerilen)</h3>
+        <p class="small" style="margin-top:0">Boş eğitim sayfalarını yazdırın. Öğrenciler her kutuya satırın başındaki harfi ya da rakamı yazsın. Sonra sayfanın fotoğrafını çekin ya da tarayıcıda taratıp PDF yapın. Program hangi kutuda ne yazması gerektiğini bildiği için her dolu kutu bir eğitim örneği olur.</p>
+        <div class="toolbar"><button class="btn" id="esYazdir">🖨️ Eğitim sayfalarını yazdır</button>${EGITIM_SAYFALARI.map((s) => `<button class="btn small" data-es-indir="${s.kod}" title="PNG olarak indir">⬇️ ${s.ad}</button>`).join("")}</div></div>
+      <div><h3 style="margin:4px 0">2. Adı, içinde yazanı söyleyen resim</h3>
+        <p class="small" style="margin-top:0">Tek bir kelime ya da sayı yazılmış resmin dosya adı resimde yazanla aynı olsun: <b>ergonomi.jpg</b>, <b>180.png</b>, <b>telif_2.jpg</b>. Harfler ayrı ayrı, düz beyaz kâğıda yazılmış olmalı. Adından anlaşılmayan resimlerde ne yazdığını aşağıda siz yazarsınız.</p></div>
+    </div>
+    ${DOSYA.isleniyor
+      ? `<p><span class="spinner"></span> Dosyalar işleniyor… ${esc(DOSYA.ilerleme)}</p>`
+      : `<div class="toolbar"><label class="small">Seçilen dosyalar: <select id="dosyaMod"><option value="oto">Kendisi anlasın</option><option value="sayfa">Hepsi eğitim sayfası</option><option value="etiketli">Hepsi adı yazılı resim</option></select></label></div>
+         <div class="toolbar"><button class="btn primary" id="egitimDosya" ${!YZ.hazir ? "disabled" : ""}>📄 Dosya seç (PDF, resim)</button><button class="btn" id="egitimKlasor" ${!YZ.hazir ? "disabled" : ""}>📁 Klasör seç</button></div>`}
+    ${DOSYA.bekleyen.length ? `<h3>Ne yazdığı bilinmeyen resimler (${DOSYA.bekleyen.length})</h3>
+      ${DOSYA.bekleyen.map((b, i) => `<div class="bekleyen"><img src="${b.url}" alt=""><div><b>${esc(b.ad)}</b><div class="small muted">${esc(b.neden)}</div>
+        <div class="toolbar" style="margin:6px 0 0"><input data-bek="${i}" value="${esc(b.metin)}" placeholder="Resimde ne yazıyor?" style="width:180px"><button class="btn small primary" data-bek-ekle="${i}">Ekle</button><button class="btn small" data-bek-atla="${i}">Atla</button></div></div></div>`).join("")}` : ""}
+    ${liste.length ? `<h3>Eklenen kaynaklar (${liste.length})</h3><div class="tablewrap"><table><tr><th>Dosya</th><th>Tür</th><th class="sag">Harf</th><th class="sag">Rakam</th><th>Tarih</th><th></th></tr>
+      ${liste.map((k) => `<tr><td>${esc(k.ad)}</td><td class="small">${k.tip === "sayfa" ? "Eğitim sayfası" : "Adı yazılı resim"}</td><td class="sag">${k.harf}</td><td class="sag">${k.rakam}</td><td class="small">${tarihYaz(k.tarih)}</td>
+        <td class="nowrap"><button class="btn small" data-kay-goster="${k.id}">${DOSYA.acik === k.id ? "Gizle" : "👁️ Örnekler"}</button> <button class="btn small danger" data-kay-sil="${k.id}" title="Bu dosyadan gelen örnekleri sil">🗑️</button></td></tr>
+        ${DOSYA.acik === k.id ? `<tr><td colspan="6"><p class="small muted" style="margin:0 0 6px">Programın bu dosyadan çıkardığı örnekler. Altındaki harf yanlışsa ya da görüntü bozuksa üstüne tıklayıp silin.</p><div class="ornekler">${k.ornekler.slice(0, 400).map((o) => `<button class="ornek" data-orn-sil="${o.id}" title="Sil"><img src="${ornekResmi(o.x)}" alt=""><span>${esc(etiket(o))}</span></button>`).join("")}</div></td></tr>` : ""}`).join("")}</table></div>
+      <p class="small muted">Dosyaların kendisi programa kaydedilmez; yalnızca çıkarılan örnekler saklanır. "Eğitimi dışa aktar" bu örnekleri de yedekler.</p>` : ""}
+  </div>`;
+}
+
+function dosyaEgitimBagla(el) {
+  const kart = el.querySelector("#dosyaEgitim");
+  if (!kart) return;
+  const mod = () => el.querySelector("#dosyaMod")?.value || "oto";
+  birakmaAlani(kart, (f) => !DOSYA.isleniyor && dosyalardanOrnekler(f, mod()), (f) => pdfMi(f) || resimMi(f));
+  el.querySelector("#esYazdir").onclick = egitimSayfalariniYazdir;
+  el.querySelectorAll("[data-es-indir]").forEach((b) => (b.onclick = async () => {
+    const s = EGITIM_SAYFALARI.find((x) => x.kod === b.dataset.esIndir);
+    indir(await egitimSablonu(s), `Egitim_Sayfasi_${s.ad.replace(/\s+/g, "_")}.png`);
+  }));
+  const dosyaDugme = el.querySelector("#egitimDosya");
+  if (dosyaDugme) {
+    dosyaDugme.onclick = async () => dosyalardanOrnekler(await dosyaSec({ coklu: true, tur: "image/*,.pdf,application/pdf" }), mod());
+    el.querySelector("#egitimKlasor").onclick = async () => dosyalardanOrnekler(await dosyaSec({ coklu: true, klasor: true }), mod());
+  }
+  el.querySelectorAll("[data-bek]").forEach((inp) => {
+    inp.oninput = () => (DOSYA.bekleyen[+inp.dataset.bek].metin = inp.value);
+    inp.onkeydown = (e) => e.key === "Enter" && bekleyenEkle(+inp.dataset.bek);
+  });
+  el.querySelectorAll("[data-bek-ekle]").forEach((b) => (b.onclick = () => bekleyenEkle(+b.dataset.bekEkle)));
+  el.querySelectorAll("[data-bek-atla]").forEach((b) => (b.onclick = () => {
+    const [x] = DOSYA.bekleyen.splice(+b.dataset.bekAtla, 1);
+    URL.revokeObjectURL(x.url);
+    ciz();
+  }));
+  el.querySelectorAll("[data-kay-goster]").forEach((b) => (b.onclick = () => {
+    DOSYA.acik = DOSYA.acik === b.dataset.kayGoster ? null : b.dataset.kayGoster;
+    ciz();
+  }));
+  el.querySelectorAll("[data-kay-sil]").forEach((b) => (b.onclick = async () => {
+    const orn = list("yzOrnekler", (o) => o.kaynakId === b.dataset.kaySil);
+    if (!confirm(`Bu dosyadan gelen ${orn.length} eğitim örneği silinsin mi? (Ağın daha önce öğrendikleri kalır.)`)) return;
+    for (const o of orn) await DB.del("yzOrnekler", o.id);
+    ciz();
+  }));
+  el.querySelectorAll("[data-orn-sil]").forEach((b) => (b.onclick = async () => {
+    await DB.del("yzOrnekler", +b.dataset.ornSil);
+    ciz();
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -2263,6 +2663,7 @@ EKRAN.yz = (el) => {
   const b = window.YZ_BASLANGIC;
   const ornek = (tur, kaynak) => list("yzOrnekler", (o) => o.tur === tur && o.kaynak === kaynak).length;
   const ogretmen = ornek("isaret", "ogretmen") + ornek("rakam", "ogretmen") + ornek("harf", "ogretmen");
+  const dosyaOrnek = ornek("harf", "dosya") + ornek("rakam", "dosya");
   const yeni = list("yzOrnekler", (o) => o.kaynak === "ogretmen").length - (YZ.bilgi?.sonDuzeltmeSayisi || 0);
   const gecmis = [...(YZ.bilgi?.gecmis || [])].reverse();
   const yuzde = (v) => (v == null ? "–" : `%${Math.round(v * 100)}`);
@@ -2279,12 +2680,14 @@ EKRAN.yz = (el) => {
       <div class="stat"><b>${ornek("rakam", "ogretmen")}</b>Rakam düzeltmesi</div>
       <div class="stat"><b>${ornek("harf", "ogretmen")}</b>Harf düzeltmesi</div>
       <div class="stat"><b>${ornek("isaret", "otomatik")}</b>Kendi öğrendiği örnek</div>
+      <div class="stat"><b>${ornek("harf", "dosya") + ornek("rakam", "dosya")}</b>Dosyalardan örnek</div>
       <div class="stat"><b>${Math.max(0, yeni)}</b>Eğitimi bekleyen düzeltme</div>
     </div>
+    ${dosyaEgitimKarti()}
     <div class="yanyana">
       <div>
         <div class="card"><h2>Eğitim</h2>
-          ${YZ.egitimde ? `<p><span class="spinner"></span> ${esc(YZ.ilerleme)}</p>` : `<p class="muted small" style="margin-top:0">${ogretmen ? `${ogretmen} öğretmen düzeltmesi var.` : "Henüz düzeltme yok. Ödev Kontrol'de bir sayfanın sonucunu açıp yanlış okunanları düzeltin."}</p>`}
+          ${YZ.egitimde ? `<p><span class="spinner"></span> ${esc(YZ.ilerleme)}</p>` : `<p class="muted small" style="margin-top:0">${ogretmen || dosyaOrnek ? `${ogretmen} öğretmen düzeltmesi, ${dosyaOrnek} dosya örneği var.` : "Henüz örnek yok. Ödev Kontrol'de bir sayfanın sonucunu açıp yanlış okunanları düzeltin ya da yukarıdan dosya ekleyin."}</p>`}
           <div class="toolbar"><button class="btn primary" id="yzEgit" ${YZ.egitimde || !YZ.hazir ? "disabled" : ""}>🧠 Şimdi eğit</button></div>
           <div class="form-grid">
             <label>Şıkları yapay zekâ okusun<select id="yzKullan"><option value="1" ${A.yzKullan ? "selected" : ""}>Evet</option><option value="0" ${!A.yzKullan ? "selected" : ""}>Hayır (eşik kuralı)</option></select></label>
@@ -2294,14 +2697,14 @@ EKRAN.yz = (el) => {
           <p class="muted small">0 yazarsanız kendiliğinden eğitmez; "Şimdi eğit" ile siz başlatırsınız.</p>
           <button class="btn" id="yzAyar">💾 Kaydet</button></div>
         <div class="card"><h2>Yedek</h2>
-          <p class="muted small" style="margin-top:0">Yapay zekânın öğrendikleri (ağlar ve bütün eğitim örnekleri) tek bir dosyaya kaydedilir. Başka bir bilgisayara taşıyabilir ya da sonra geri yükleyebilirsiniz. (Ayarlar'daki genel yedek de yapay zekâyı içerir.)</p>
+          <p class="muted small" style="margin-top:0">Yapay zekânın öğrendikleri (ağlar ve bütün eğitim örnekleri, dosyalardan eklenenler dahil) tek bir dosyaya kaydedilir. Başka bir bilgisayara taşıyabilir ya da sonra geri yükleyebilirsiniz. (Ayarlar'daki genel yedek de yapay zekâyı içerir.)</p>
           <div class="toolbar"><button class="btn primary" id="yzDisa">📤 Eğitimi dışa aktar</button><label class="btn">📥 Eğitimi içe aktar<input type="file" id="yzIce" accept=".json" class="dosya-input"></label></div>
           <div class="toolbar"><button class="btn small danger" id="yzSifirla">↩️ Başlangıç modeline dön</button><button class="btn small danger" id="yzOrnekSil">🗑️ Eğitim örneklerini sil</button></div></div>
       </div>
       <div>
         <div class="card"><h2>Eğitim geçmişi</h2>
           ${gecmis.length ? `<div class="tablewrap"><table><tr><th>Tarih</th><th>Ağ</th><th class="sag">Örnek</th><th>Sınama doğruluğu</th><th>Sonuç</th></tr>
-            ${gecmis.flatMap((g) => Object.entries(g.turler || {}).map(([t, v]) => `<tr><td class="small">${tarihYaz(g.tarih)}${g.neden === "otomatik" ? " (oto)" : ""}</td><td>${AG_ADI[t]}</td><td class="sag">${v.ogretmen}+${v.otomatik}</td><td>${yuzde(v.once.sinama)} → ${yuzde(v.sonra.sinama)}</td><td>${v.kabul ? `<span class="chip green">Güncellendi</span>` : `<span class="chip orange">Eskisi korundu</span>`}</td></tr>`)).join("")}</table></div>`
+            ${gecmis.flatMap((g) => Object.entries(g.turler || {}).map(([t, v]) => `<tr><td class="small">${tarihYaz(g.tarih)}${g.neden === "otomatik" ? " (oto)" : g.neden === "dosya" ? " (dosya)" : ""}</td><td>${AG_ADI[t]}</td><td class="sag">${v.ogretmen}+${v.otomatik}</td><td>${yuzde(v.once.sinama)} → ${yuzde(v.sonra.sinama)}</td><td>${v.kabul ? `<span class="chip green">Güncellendi</span>` : `<span class="chip orange">Eskisi korundu</span>`}</td></tr>`)).join("")}</table></div>`
             : `<p class="muted">Henüz eğitim yapılmadı; başlangıç modeli kullanılıyor.</p>`}</div>
         <div class="card"><h2>Başlangıç modeli</h2><p class="small muted" style="margin-top:0">${esc(b.aciklama)}</p>
           <table><tr><td>İşaret ağı (denenmemiş sayfalarda)</td><td class="sag"><b>${yuzde(b.olcum.isaretDeneme)}</b></td></tr>
@@ -2314,6 +2717,7 @@ EKRAN.yz = (el) => {
       </div>
     </div>`;
   el.querySelector("#yzEgit").onclick = () => yzEgit("elle");
+  dosyaEgitimBagla(el);
   el.querySelector("#yzAyar").onclick = async () => {
     A.yzKullan = el.querySelector("#yzKullan").value === "1";
     A.yzKendiOgren = el.querySelector("#yzKendi").value === "1";

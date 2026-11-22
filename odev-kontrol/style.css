@@ -208,3 +208,14 @@ dialog::backdrop { background: var(--backdrop); }
 .deneme h2, .deneme p { margin: 0 0 4px; }
 .deneme > div { flex: 1 1 360px; }
 .ornek-uyari { background: var(--warn-bg); color: var(--warn-ink); border: 2px dashed var(--warn-line); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* Dosyalardan eğitim */
+.birakilir.over { outline: 3px dashed var(--primary); outline-offset: -6px; background: var(--primary-soft); }
+.bekleyen { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--chip-line); }
+.bekleyen img { width: 140px; max-height: 90px; object-fit: contain; border-radius: 10px; background: #fff; border: 1px solid var(--chip-line); }
+.ornekler { display: flex; flex-wrap: wrap; gap: 6px; }
+.ornek { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px; border: 1px solid var(--chip-line); border-radius: 10px; background: #fff; cursor: pointer; font: inherit; color: #222; }
+.ornek img { width: 42px; height: 42px; image-rendering: pixelated; }
+.ornek span { font-weight: 700; font-size: 13px; }
+.ornek:hover { border-color: #d33; background: #fee; }
+.nowrap { white-space: nowrap; }

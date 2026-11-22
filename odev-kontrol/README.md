@@ -59,6 +59,13 @@ Program bu bilgisayarda, internetsiz çalışan üç küçük sinir ağı (Tenso
 3. Yeterli düzeltme birikince (varsayılan 10) ağ kendiliğinden eğitilir. **Yapay Zekâ** sekmesindeki **Şimdi eğit** düğmesiyle siz de başlatabilirsiniz.
 4. Yeni eğitim, ayrılan sınama örneklerinde eskisinden kötü sonuç verirse kabul edilmez.
 
+**Dosyalardan eğitme (PDF ve resim):** Yapay Zekâ sekmesindeki **Dosyalardan eğit** bölümünde **📄 Dosya seç** ya da **📁 Klasör seç** düğmesine basın. Bilgisayarın dosya penceresi açılır; dosyaların bulunduğu klasöre gidip seçin. Dosyaları bölümün üstüne sürükleyip bırakabilirsiniz de. İki tür dosya kullanılabilir:
+
+1. **Eğitim sayfası (önerilen):** **🖨️ Eğitim sayfalarını yazdır** ile 3 boş sayfa yazdırın: Harfler 1, Harfler 2, Rakamlar. Öğrenciler her kutuya satırın başındaki harfi ya da rakamı yazar. Sayfanın fotoğrafını ya da taranmış PDF'ini yükleyin. Program sayfayı tanır ve her dolu kutu bir eğitim örneği olur.
+2. **Adı yazılı resim:** Tek bir kelime ya da sayı yazılmış resimdir. Dosya adı, resimde yazanla aynı olmalı: `ergonomi.jpg`, `180.png`, `telif_2.jpg`. Adından anlaşılmayan resimlerde program ne yazdığını size sorar.
+
+Eklenen dosyalar listede görünür. **Örnekler** düğmesiyle çıkarılan harfleri görebilir, yanlış olanı tıklayıp silebilirsiniz. Aynı dosya iki kez eklenmez. Dosyaların kendisi saklanmaz, yalnızca çıkarılan örnekler saklanır. Bu örnekler de **Eğitimi dışa aktar** ile yedeklenir.
+
 **Yedek:** Yapay Zekâ sekmesindeki **Eğitimi dışa aktar** düğmesi, ağların öğrendiklerini ve bütün eğitim örneklerini tek dosyaya kaydeder. **Eğitimi içe aktar** ile geri yüklenir. Ayarlar'daki genel yedek de yapay zekâyı içerir.
 
 Ayrıntılar ve başlangıç ölçümleri: `YapayZeka/BENI_OKU.txt`
@@ -67,6 +74,7 @@ Deneme dosyaları:
 
 - `Test_Fotograflari/Yazili_Cevapli/`: sayı cevapları
 - `Test_Fotograflari/Kelime_Cevapli/`: Türkçe kelime cevapları
+- `Test_Fotograflari/Egitim_Dosyalari/`: dosyalardan eğitme denemesi (eğitim sayfası fotoğrafı, taranmış PDF, adı yazılı resimler)
 
 Her birinin içinde `OKU_BENI.txt` var.
 
