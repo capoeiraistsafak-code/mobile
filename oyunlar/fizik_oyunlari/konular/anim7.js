@@ -19,7 +19,7 @@
       // ısınma: ocak, kap, buz, su, buhar
       const oc = FZ.ocak(G.egri, 1.6); oc.position.set(2.2, 0.1, 0); const alev = oc.alev;
       silindir(G.egri, 0.65, 0.6, 1.3, 0xe0f2fe, 2.2, 1.35, 0, { op: 0.25, edge: false });
-      const buz = [0, 1, 2].map(i => kutu(G.egri, 0.38, 0.38, 0.38, 0xdbeafe, 2.0 + (i % 2) * 0.4, 0.9 + Math.floor(i / 2) * 0.4, (i - 1) * 0.15, { op: 0.85 }));
+      const buz = [[1.98, -0.12], [2.42, -0.12], [2.2, 0.26]].map(([x, z]) => { const b_ = kutu(G.egri, 0.36, 0.36, 0.36, 0xbae6fd, x, 0.9, z); b_.material.emissive = new THREE.Color(0x0ea5e9); b_.material.emissiveIntensity = 0.25; return b_; });   // opak açık mavi buz küpleri (kabın tabanında)
       const su = silindir(G.egri, 0.58, 0.58, 1, 0x3b82f6, 2.2, 0.75, 0, { op: 0.55, edge: false });
       const buhar = []; for (let i = 0; i < 10; i++) buhar.push(top(G.egri, 0.07, 0xf1f5f9, 2.2, 2, 0, { op: 0.7, edge: false }));
       const pano = kutu(G.egri, 4, 3.3, 0.05, 0x111827, -1.8, 2.45, GZ - 0.05, { edge: false });
