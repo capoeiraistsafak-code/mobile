@@ -168,5 +168,6 @@
     { do: S => Object.assign(S, { mod: 'mikn', it: 0, ayr: 0.6 }), q: { t: 'Pusula iğnesinin N ucu Dünya\'nın coğrafi kuzeyini gösterir. Buna göre Dünya\'nın coğrafi kuzeyinde hangi manyetik kutup vardır?', o: ['Manyetik güney (S) kutbu', 'Manyetik kuzey (N) kutbu', 'Kutup yoktur', 'Hem N hem S'],
       s: ['N ucu kendisini çeken zıt kutba yönelir → coğrafi kuzeyde manyetik <em>S</em> kutbu vardır ✓'], n: ['TUZAK: coğrafi ve manyetik kutupları aynı sanmak.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).elektrik = sEl; FZ.SAHNE.statik = sEs;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Elektrik ve Manyetizma', { dersler: [hd], gorevler: [gd, td] });
 })();

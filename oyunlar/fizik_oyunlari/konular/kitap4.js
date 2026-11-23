@@ -182,6 +182,7 @@
     { q: { t: 'Güç birimi olan watt hangisine eşittir?', o: ['J/s', 'J · s', 'N · m', 'kWh'],
       s: ['P = W / t → <em>J/s</em> ✓', 'kWh ve N·m (J) enerji birimidir.'], n: ['TUZAK: kWh\'yi güç birimi sanmak.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).hareket = sHk;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Hareket ve Kuvvet', { dersler: [h1, h2], gorevler: [g1, g2, t1] });
   FZ.konuEk('TYT', 'Enerji', { dersler: [h3], gorevler: [g3, t2] });
 })();

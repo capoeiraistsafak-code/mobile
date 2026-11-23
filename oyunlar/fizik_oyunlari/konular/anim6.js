@@ -107,6 +107,7 @@
     { do: S => gucK(S, 40, 3, 6), q: { t: '40 kg\'lık yükü 3 m yüksekliğe 6 s\'de sabit hızla çıkaran motorun verimi %80\'dir. Motorun harcadığı güç kaç W\'tır?', o: ['250', '200', '160', '300'], f: ['enT'],
       s: [`Yararlı güç: P = ${F('40 · 10 · 3', '6')} = 200 W`, `Harcanan: ${F('200', '0,8')} = <em>250 W</em> ✓`], n: ['Harcanan güç her zaman yararlı güçten büyüktür; fark ısı ve sesle kaybolur.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).enerji = sEn;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Enerji', { dersler: [dEn], gorevler: [gEn] });
 
   // =====================================================================

@@ -159,5 +159,6 @@
     { q: { t: 'Su 0 °C\'den 8 °C\'ye kadar ısıtılıyor. Hacminin sıcaklıkla değişimi nasıldır?', o: ['Önce azalır, 4 °C\'den sonra artar', 'Sürekli artar', 'Sürekli azalır', 'Önce artar sonra azalır'],
       s: ['0–4 °C arasında su ısınınca büzülür, 4 °C\'den sonra genleşir.', '<em>Önce azalır, sonra artar</em> ✓ (özkütle 4 °C\'de en büyük)'], n: ['Göllerin dibi kışın 4 °C\'de kalır, canlılar yaşar.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).isi = sIs;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Isı ve Sıcaklık', { dersler: [h1, h2], gorevler: [g1, g2] });
 })();

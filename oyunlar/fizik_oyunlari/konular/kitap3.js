@@ -131,6 +131,7 @@
     { q: { t: 'I. Su damlasının küre biçimini alması<br>II. Suyun cam boruda yükselmesi<br>III. Cıvanın cam boruda alçalması<br>olayları sırasıyla hangi kavramlarla açıklanır?', o: ['Kohezyon (yüzey gerilimi) – adezyon > kohezyon – kohezyon > adezyon', 'Adezyon – kohezyon – adezyon', 'Kohezyon – kohezyon – adezyon', 'Adezyon – adezyon – kohezyon'],
       s: ['Damla: kohezyon kaynaklı yüzey gerilimi.', 'Su–cam: adezyon büyük → yükselir · cıva–cam: kohezyon büyük → alçalır ✓'], n: ['Hidrofil kumaş suyu emer (adezyon), su itici kumaş emmez.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).madde = sMd;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Fizik Bilimine Giriş', { dersler: [h1], gorevler: [g1] });
   FZ.konuEk('TYT', 'Madde ve Özellikleri', { dersler: [h2], gorevler: [g2] });
   const t1 = gorev(sMd, { yk: 'TYT1-g4', no: 4, tuzak: true, icon: '🪤', name: 'Tuzak sorular · fizik bilimine giriş', task: 'Büyüklük, birim ve bilimsel yöntemde sık yapılan yanlışlar.', steps: [

@@ -310,6 +310,7 @@
     { do: S => md(S, 'kald', { cis: 'askida', ind: 0, V: 1, indH: 1 }), q: { goster: S => { S.kos = 1; }, t: 'Su içinde bırakıldığı yerde kalan bir cisim için;<br>I. Özkütlesi suyun özkütlesine eşittir.<br>II. Kaldırma kuvveti ağırlığına eşittir.<br>III. Daha derine indirilirse kaldırma kuvveti artar.<br>yargılarından hangileri doğrudur?', o: ['I ve II', 'Yalnız I', 'I ve III', 'I, II ve III'], f: ['bsF', 'bsG'],
       s: ['Askıda kalma: d<sub>c</sub> = d<sub>s</sub> (I) ve F<sub>k</sub> = G (II).', 'Tamamen batmış cisimde batan hacim değişmez → F<sub>k</sub> derinlikle değişmez (III yanlış). <em>I ve II</em> ✓'], n: ['Basınç derinlikle artar ama alt ve üst yüzey arasındaki basınç farkı değişmez.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).basinc = sBs;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Basınç ve Kaldırma Kuvveti', { dersler: [h1, h2, h3], gorevler: [s1, s2, s3] });
   const t1 = gorev(sBs, { yk: 'TYT8-g5', no: 5, tuzak: true, icon: '🪤', name: 'Tuzak sorular · basınç ve kaldırma', task: 'Basınç ve kaldırma kuvvetinde en sık yapılan yanlışlar.', steps: [
     { do: S => md(S, 'sivi', { h: 1.5, dolum: 0, iki: 0 }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başlat' },

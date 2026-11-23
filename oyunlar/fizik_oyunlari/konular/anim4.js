@@ -250,6 +250,7 @@
     { do: S => farBasla(S, 'A'), q: { t: 'Yıldırım düşen bir arabanın içindeki yolcunun zarar görmemesinin sebebi aşağıdakilerden hangisidir?', o: ['Yük metal gövdenin dış yüzeyinde kalır; iç bölgede elektrik alan sıfırdır', 'Lastikler yükü tamamen durdurur', 'Arabanın içinde hava yoktur', 'Yıldırım metali delemez'], f: ['esT'],
       s: ['Metal gövde <em>Faraday kafesi</em> gibi davranır: yük dış yüzeyden akar, içeride alan sıfırdır ✓'], n: ['Lastikler yalıtkan olsa da milyonlarca voltluk yıldırımı durduramaz; koruyan metal gövdedir.'] } },
   ] });
+  (FZ.SAHNE = FZ.SAHNE || {}).elLab = sLab;   // kitap soru bankaları (kitap10.js) bu düzeneği kullanır
   FZ.konuEk('TYT', 'Elektrostatik', { dersler: [d3, d4, d5, d6], gorevler: [g3] });
 
   // =====================================================================
