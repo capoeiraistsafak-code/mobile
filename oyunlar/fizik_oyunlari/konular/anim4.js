@@ -119,11 +119,13 @@
         S.ey += (S.yak - S.ey) * Math.min(1, dt * 1.5);
         o.scubuk.position.set(0.3, 4.55 - S.ey * 1.2, 0); o.scubuk.material.color.setHex(S.cub === 0 ? 0x94a3b8 : S.cub > 0 ? 0x93c5fd : 0x1f2937);
         // yük korunumu: topuz + yapraklar = elektroskobun yükü (eq); yaklaşan çubuk elektronları iter/çeker (etki)
-        const c = S.cub * 5, yap = Math.round(S.cub === 0 ? S.eq * 0.6 * (1 - 0.35 * S.ey) : S.eq * 0.6 + c * 0.8 * S.ey), tp = S.eq - yap;
+        // dokundurma: çubuk topuza değince (ey ≈ 1,12) yük paylaşılır; elektroskoba S.payE kadar yük kalır, çubuk geri çekilir
+        if (S.dok && !S.dokuldu && S.ey > 1.08) { const top = S.eq + (S.cq != null ? S.cq : S.cub * 5); S.eq = S.payE; S.cq = top - S.payE; S.dokuldu = 1; S.yak = 0; }
+        const c = S.cq != null ? S.cq : S.cub * 5, yap = Math.round(S.cub === 0 ? S.eq * 0.6 * (1 - 0.35 * S.ey) : S.eq * 0.6 + c * 0.8 * S.ey), tp = S.eq - yap;
         o.esk.ayarla(yap, dt); eskYuk(o.esk, 0.3, tp, yap).forEach(y => L.push(y));
         if (S.cub) for (let i = 0; i < 5; i++) L.push({ p: V3(0.3 + 0.12, o.scubuk.position.y - 0.7 + i * 0.3, 0.06), s: S.cub });
         FZ.setTag('esA', `Elektroskop: ${S.eq ? isaret(S.eq) : 'nötr'}`); FZ.show('esA', V3(-1.2, 0.5, 0.4), 1);
-        FZ.setTag('esB', S.cub === 0 ? 'Nötr iletken' : S.cub > 0 ? 'Cam çubuk: +5q' : 'Ebonit çubuk: −5q'); FZ.show('esB', V3(1.25, o.scubuk.position.y + 0.3, 0), 1);
+        FZ.setTag('esB', S.cq != null ? `Yüklü iletken: ${S.cq > 0 ? '+' : S.cq < 0 ? '−' : ''}${Math.abs(S.cq)}q` : S.cub === 0 ? 'Nötr iletken' : S.cub > 0 ? 'Cam çubuk: +5q' : 'Ebonit çubuk: −5q'); FZ.show('esB', V3(1.25, o.scubuk.position.y + 0.3, 0), 1);
         FZ.setTag('esT', `topuz ${isaret(tp)}<br>${Math.abs(yap) < 1 ? 'yapraklar kapalı' : 'yapraklar açık'}`); FZ.show('esT', V3(1.75, 2.45, 0.3), 1);
         FZ.setTag('esC', `yapraklar ${isaret(yap)}`); FZ.show('esC', V3(1.6, 0.55, 0.3), 1);
       } else {
@@ -152,7 +154,7 @@
 
   const surtBasla = (S, ci) => { Object.assign(S, { mod: 'surt', ci, n: 0, surt: 0, yak: 0, kag: 0 }); };
   const etkiBasla = S => { Object.assign(S, { mod: 'etki', ea: 0, ak: 0, ey: 0 }); };
-  const eskBasla = (S, eq, cub) => { Object.assign(S, { mod: 'elskop', eq, cub, yak: 0, ey: 0 }); };
+  const eskBasla = (S, eq, cub) => { Object.assign(S, { mod: 'elskop', eq, cub, yak: 0, ey: 0, cq: null, dok: 0, dokuldu: 0 }); };
   const farBasla = (S, sen) => { Object.assign(S, { mod: 'faraday', sen, fz: 0, fkos: 0 }); };
 
   const d3 = ders(sLab, { yk: 'TYT6-d3', no: 3, icon: '🪮', name: 'Sürtünme ile elektriklenme ve kâğıt kaldırma', task: 'Triboelektrik sıra, sürtünmede eşit ve zıt yük, kutuplanma: yüklü çubuk nötr kâğıdı neden çeker?', steps: [
