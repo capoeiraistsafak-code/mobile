@@ -5,7 +5,7 @@
   const { gorev } = FZ, SH = FZ.SAHNE || {};
   const D = o => S => Object.assign(S, o);
   const bank = (sinav, ad, sahne, yk, icon, name, task, steps, tuzak) => { if (!sahne) return; const L = [];
-    [steps, tuzak || []].forEach(A => A.forEach(st => { if (st.q && !st.sub) st.sub = steps[0].sub; if (st.q) st.q.kartGizle = true; }));
+    [steps, tuzak || []].forEach(A => A.forEach(st => { if (st.goster && st.q && !st.q.goster) st.q.goster = st.goster; if (st.q && !st.sub) st.sub = steps[0].sub; if (st.q) st.q.kartGizle = true; }));
     L.push(gorev(sahne, { yk: yk + '-k', no: 9, icon, name: 'Kitap soruları: ' + name, task, steps }));
     if (tuzak) L.push(gorev(sahne, { yk: yk + '-t', no: 10, icon: '🪤', name: 'Tuzak sorular 2: ' + name, tuzak: true, task: 'Kitaptaki çeldiricilerden sık yapılan hatalar.', steps: tuzak }));
     FZ.konuEk(sinav, ad, { gorevler: L }); };
