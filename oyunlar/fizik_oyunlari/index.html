@@ -664,7 +664,7 @@ function tag(id, html, bg, fg = '#fff', chip = false) {
 }
 const FOCUS = () => (GAME.q && GAME.q.q.f) ? GAME.q.q.f : null;
 function show(id, p3, op = 1, dx = 0, dy = 0) {
-  const d = TAG[id]; if (!d || op <= 0) return; if (GAME.q && !GAME.q.answered && GAME.q.q.gizle && GAME.q.q.gizle.includes(id)) return; const p = p3.clone().project(cam); if (p.z > 1) return;
+  const d = TAG[id]; if (!d || op <= 0) return; if (GAME.q && !GAME.q.answered && GAME.q.q.gizle && GAME.q.q.gizle.includes(id)) return; if (GAME.q && !GAME.q.answered && GAME.q.q.kartGizle && d.classList.contains('chip') && !(GAME.q.q.f || []).includes(id)) return;   /* kitap sorularında sahnenin hesap kartları cevaba kadar gizli */ const p = p3.clone().project(cam); if (p.z > 1) return;
   const f = FOCUS(); if (f) { if (f.includes(id) || id === 'qlab') { d.classList.add('odak'); } else { d.classList.remove('odak'); op *= 0.22; } } else d.classList.remove('odak');
   d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = ((1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;
 }
@@ -1465,7 +1465,7 @@ function startMission(M) {
   showOnly(M); M.reset(); tagSifirla();
   $('menu').classList.add('hide'); $('ana').classList.add('hide'); $('top').classList.remove('hide'); $('board').classList.remove('hide'); $('ctl').classList.remove('hide'); cizAc(false); cizTemizle(); setDur(false); ortala(true); SON_Q = null; notAc(false);
   $('tNo').textContent = (M.ders ? 'DERS ' : 'GÖREV ') + M.no; $('tYil').classList.toggle('hide', !!M.ders); $('tTitle').textContent = M.name; $('tTask').textContent = '';
-  $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div><h3>VERİLENLER</h3>${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>${M.ders ? '<h3 id="bFormH" class="hide" style="margin-top:14px">FORMÜLLER</h3><div id="bForm"></div>' : ''}`;
+  $('board').innerHTML = `<button class="kucult" id="bdK" data-p="board" title="Değerleri gizle (sola kaydır) · V">⟨</button><div class="gorev">🎯 ${M.kisa || M.task}</div>${M.data.length ? '<h3>VERİLENLER</h3>' : ''}${M.data.map(([k, v]) => `<div class="row">${k}: <b>${v}</b></div>`).join('')}<h3 id="bFoundH" class="hide" style="margin-top:14px">BULUNANLAR</h3><div id="bFound"></div>${M.ders ? '<h3 id="bFormH" class="hide" style="margin-top:14px">FORMÜLLER</h3><div id="bForm"></div>' : ''}`;
   $('qc').classList.add('hide'); $('go').classList.add('hide'); $('sub').classList.remove('q'); sub(''); CAM.gvo = -200; CAM.vo = -200;
   const nq = M.steps.filter(s => s.q).length, nk = M.steps.filter(s => s.k || s.p || s.x).length;
   overlay(`<div class="ov-ic">${M.icon}</div><div class="pill" style="margin-top:18px${M.ders ? ';background:#2563eb' : ''}">${M.ders ? 'KONU ANLATIMI · DERS' : 'GÖREV'} ${M.no}</div><div class="ov-b">${M.name}</div><div class="ov-t">${M.task}</div>
@@ -2194,6 +2194,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
 <script src="konular/kitap6.js"></script>
 <script src="konular/kitap7.js"></script>
 <script src="konular/kitap8.js"></script>
+<script src="konular/kitap9.js"></script>
 <script src="konular/tanimlar.js"></script>
 <script src="konular/bilgi.js"></script>
 <script src="konular/son.js"></script>

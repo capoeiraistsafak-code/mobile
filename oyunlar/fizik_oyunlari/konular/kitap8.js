@@ -5,9 +5,9 @@
   const { gorev } = FZ;
   const T = (ad) => FZ.taban('AYT', ad);
   const bank = (ad, yk, icon, name, task, steps, tuzak) => { const b = T(ad); if (!b) return; const L = [];
-    [steps, tuzak || []].forEach(A => A.forEach(st => { if (st.q && !st.sub) st.sub = steps[0].sub; }));   // her soruda düzeneği anlatan alt yazı
-    L.push(gorev(b, { yk: yk + '-k', no: 9, icon, name: 'Kitap soruları: ' + name, task, steps }));
-    if (tuzak) L.push(gorev(b, { yk: yk + '-t', no: 10, icon: '🪤', name: 'Tuzak sorular: ' + name, tuzak: true, task: 'Sık yapılan hatalar.', steps: tuzak }));
+    [steps, tuzak || []].forEach(A => A.forEach(st => { if (st.q && !st.sub) st.sub = steps[0].sub; if (st.q) st.q.kartGizle = true; }));   // sahnenin hesap kartları cevabı ele vermesin   // her soruda düzeneği anlatan alt yazı
+    L.push(gorev(b, { yk: yk + '-k', no: 9, icon, name: 'Kitap soruları: ' + name, task, steps, data: [] }));
+    if (tuzak) L.push(gorev(b, { yk: yk + '-t', no: 10, icon: '🪤', name: 'Tuzak sorular: ' + name, tuzak: true, task: 'Sık yapılan hatalar.', steps: tuzak, data: [] }));
     FZ.konuEk('AYT', ad, { gorevler: L }); };
 
   // ---------------- VEKTÖRLER (A, B, th, uc, bil) ----------------
