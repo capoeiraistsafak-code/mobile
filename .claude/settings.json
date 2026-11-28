@@ -3,5 +3,19 @@
     "ask": [
       "mcp__ElevenLabs"
     ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/ajanlar/ajan_anahtar.py\"",
+            "timeout": 10,
+            "statusMessage": "Ajan durumu kontrol ediliyor"
+          }
+        ]
+      }
+    ]
   }
 }

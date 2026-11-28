@@ -37,3 +37,13 @@ Kullanıcının ElevenLabs kredisi sınırlıdır (aylık 30.000). Daha önce bi
 12. **Gerçekçi cisimler (bütün oyun/video/animasyonlarda):** Sahnedeki her cisim temsil ettiği şeye benzer: pil pile, ampul ampule, araba arabaya, tren trene, uçak uçağa, yol yola, insan insana (kurşun asker gibi), kamera, lazer, tuş, terazi, ocak, mum, göz, metal küre, içi boş küre (Faraday kabı), elektroskop vb. Üzerine yazı yazılmış düz kutu/top kullanılmaz. Modeller hafif olur (az parça, düşük çözünürlük, dosya boyutunu şişirmez) ama gerçeğini andırır. Fizik oyunlarında hazır modeller `konular/kit.js` içindedir (`FZ.pil`, `FZ.ampul`, `FZ.insan`, `FZ.tren`, `FZ.ray`, `FZ.ucak`, `FZ.yol`, `FZ.araba`, `FZ.kamera`, `FZ.tus`, `FZ.lazerCihazi`, `FZ.metalTop`, `FZ.yalitkanAyak`, `FZ.mum`, `FZ.goz`, `FZ.ocak`, `FZ.terazi`, `FZ.agirlik`, `FZ.fener`, `FZ.gokada`, `FZ.dambil`); yeni cisim gerekiyorsa aynı tarzda kit'e eklenir.
 13. **Renk ve yazım:** Elektronlar ve elektrik akımı kırmızı gösterilir. Üs ve indisler (R², I₁) harfin içine girmez; yazılar iç içe geçmez.
 14. **Konu anlatımında Verilenler ve Notlar boş kalmaz:** Verilenler kutusunda o ana kadarki formüller, Notlar'da kartın açıklaması (ne, neden öyle) ve formüller yer alır.
+
+
+# 🤖 AJAN SİSTEMİ (aç / kapa)
+
+Bu projede 4 yardımcı ajan vardır (tanımlar ve çalışma kuralları: `.claude/ajanlar/AJANLAR.md`):
+1. Sahne–soru–konu uyumu · 2. Grafik ve görsel gerçekçilik · 3. ÖSYM uyumu · 4. Fizik yasaları ve vektörler.
+
+- Kullanıcı **"ajanlar açık"** yazınca açılır, **"ajanlar kapalı"** yazınca kapanır. Durum `.claude/ajanlar/durum.txt` dosyasındadır; her mesajda UserPromptSubmit hook'u durumu bildirir. **Varsayılan: KAPALI.**
+- **KAPALI iken** hiçbir ajan başlatılmaz, devam ettirilmez, iş verilmez; çalışan ajan varsa durdurulur. İşi ana oturum yapar (kullanıcının kullanım hakkı boşa harcanmaz).
+- **AÇIK iken** ana oturum işleri ilgili ajanlara dağıtır; ajanlar ayrı worktree'de çalışır, push etmez, tablet/ZIP üretmez; ana oturum birleştirir, test eder, yayınlar.
