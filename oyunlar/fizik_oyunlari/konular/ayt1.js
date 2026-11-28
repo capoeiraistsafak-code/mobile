@@ -177,8 +177,12 @@
       const araba = FZ.araba(g, 0x16a34a);
       const pano = kutu(g, 7, 4, 0.1, 0x111827, 9, 3, -2.5, { cast: false });
       const grafik = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x22c55e })); g.add(grafik);
-      levha(g, 'v', 0.4, 0.4, '#111827', '#fff', 5.8, 4.8, -2.4); levha(g, 't', 0.4, 0.4, '#111827', '#fff', 12.3, 1.2, -2.4);
+      levha(g, 'v (m/s)', 1.1, 0.36, '#111827', '#fff', 6.3, 4.8, -2.4); levha(g, 't (s)', 0.8, 0.36, '#111827', '#fff', 12.1, 0.85, -2.4);
       kutu(g, 0.04, 3.5, 0.02, 0xffffff, 6, 2.9, -2.4, { edge: false }); kutu(g, 6.2, 0.04, 0.02, 0xffffff, 9.1, 1.2, -2.4, { edge: false });
+      // ölçek: v 0–30 m/s (1 m/s → 0,11 birim), t 0–10 s (1 s → 0,6 birim) · ızgara çizgileri ve sayılar
+      [10, 20, 30].forEach(v => { kutu(g, 6.0, 0.012, 0.01, 0x334155, 9.0, 1.2 + v * 0.11, -2.42, { edge: false, cast: false }); levha(g, String(v), 0.42, 0.3, '#111827', '#cbd5e1', 5.65, 1.2 + v * 0.11, -2.4); });
+      [2, 4, 6, 8].forEach(t => { kutu(g, 0.012, 3.4, 0.01, 0x334155, 6 + t * 0.6, 2.9, -2.42, { edge: false, cast: false }); levha(g, String(t), 0.3, 0.3, '#111827', '#cbd5e1', 6 + t * 0.6, 0.95, -2.4); });
+      levha(g, '0', 0.3, 0.3, '#111827', '#cbd5e1', 5.75, 0.95, -2.4);
       etiket('a4v', 'v', '#16a34a'); kart('a4t', '', '#F5C400');
       return { araba, grafik, ov: ok(0x22c55e, 'a4v') };
     },
@@ -187,7 +191,7 @@
       const X = -9 + S.x / 5; FZ.tekerDondur(o.araba, X - o.araba.position.x); o.araba.position.x = X;
       for (let i = 0; i <= 12; i++) FZ.show('a4m' + i, V3(-9 + i * 2, 0.05, 1.8), 1, 0, 20);
       if (S.v > 0.1) { FZ.setArrow(o.ov, V3(X, 1.3, 0.5), V3(1, 0, 0), S.v / 8); FZ.show('a4v', V3(X + S.v / 8 + 0.3, 1.3, 0.5), 1); }
-      o.grafik.geometry.setFromPoints(S.iz.length ? S.iz.map(([t, v]) => V3(6 + t * 0.6, 1.2 + v * 0.12, -2.38)) : [V3(6, 1.2, -2.38), V3(6, 1.2, -2.38)]);
+      o.grafik.geometry.setFromPoints(S.iz.length ? S.iz.map(([t, v]) => V3(6 + t * 0.6, 1.2 + v * 0.11, -2.38)) : [V3(6, 1.2, -2.38), V3(6, 1.2, -2.38)]);
       o.araba.visible = true;
       FZ.setTag('a4t', `t = ${fs(S.tt)} s · v = ${fs(S.v)} m/s · x = ${fs(S.x)} m`); FZ.show('a4t', V3(X, 2.4, 0), 1);
       S.ses = S.kos ? [0.05 + S.v / 400, S.v / 30] : [0, 0];

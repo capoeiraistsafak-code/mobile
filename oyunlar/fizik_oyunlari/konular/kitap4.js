@@ -25,7 +25,7 @@
       const bar = ['#16a34a', '#2563eb', '#dc2626'].map((c, i) => kutu(G.ray, 0.3, 1, 0.2, parseInt(c.slice(1), 16), 1.6 + i * 0.45, 2.5, -1.2, { edge: false }));
       const O = { F: ok(0xec4899, 'k4F'), f: ok(0xdc2626, 'k4f'), mg: ok(0x475569, 'k4g'), N: ok(0x0ea5e9, 'k4N'), v: ok(0x16a34a, 'k4v'), v1: ok(0xef4444, 'k4v1'), v2: ok(0x2563eb, 'k4v2') };
       [['k4F', 'F', '#db2777'], ['k4f', 'f<sub>s</sub>', '#dc2626'], ['k4g', 'mg', '#475569'], ['k4N', 'N', '#0284c7'], ['k4v', 'v', '#16a34a'], ['k4v1', '', '#dc2626'], ['k4v2', '', '#2563eb']].forEach(([i, h, c]) => etiket(i, h, c));
-      ['Ek', 'Ep', 'Q'].forEach((n, i) => etiket('k4b' + i, n, ['#16a34a', '#2563eb', '#dc2626'][i])); kart('k4K', '', '#F5C400'); kart('k4P', 'konum – zaman', '#475569');
+      ['Ek', 'Ep', 'Q'].forEach((n, i) => etiket('k4b' + i, n, ['#16a34a', '#2563eb', '#dc2626'][i])); kart('k4K', '', '#F5C400'); kart('k4P', 'konum – zaman', '#475569'); for (let i = 0; i < 8; i++) etiket('k4g' + i, '', '#111827');   // x–t panosu ölçek sayıları
       return { G, a1, a2, pano, eks, c1, c2, kl, ece, vg, bar, O };
     },
     tick(S, dt, o) {
@@ -40,6 +40,8 @@
         for (let i = 0; i <= 10; i++) FZ.show('k4m' + i, V3(-4.5 + i * 0.9, 0.05, 2.1), 1);
         const X = tt => -0.2 + tt / (S.tson || 6) * 4, Y = x => 2.0 + x / 100 * 2.3, Z = -1.55; FZ.setLine(o.eks, [V3(X(0), Y(100), Z), V3(X(0), Y(0), Z), V3(X(S.tson || 6) + 0.1, Y(0), Z)]);
         [[o.c1, S.iz[0]], [o.c2, S.iz[1]]].forEach(([c, L]) => { if (L.length > 1) FZ.setLine(c, L.map(([tt, x]) => V3(X(tt), Y(Math.max(0, Math.min(100, x))), Z))); else c.visible = false; });
+        { let n = 0; const gt = (txt, p) => { FZ.setTag('k4g' + n, txt); FZ.show('k4g' + n, p, 0.9); n++; }; const T = S.tson || 6, ad = T > 6 ? 2 : 1;
+          [0, 50, 100].forEach(x => gt(`${x} m`, V3(X(0) - 0.4, Y(x), Z))); for (let tt = ad * 2; tt <= T && n < 8; tt += ad * 2) gt(`${tt} s`, V3(X(tt), Y(0) - 0.25, Z)); }   // ölçek sayıları
         FZ.show('k4P', V3(1.8, 4.7, -1.55), 1); FZ.setTag('k4K', `t = ${fs(t)} s`); FZ.show('k4K', V3(-3.2, 3.6, 0), 1);
       } else if (S.mod === 'kutu') {
         const mg = S.m * 10, xm = -2 + S.xk, inKz = xm > 0.5 && xm < 3.5, mus = inKz ? S.mus : S.sp, muk = inKz ? S.muk : S.sp; let f = 0, a = 0;

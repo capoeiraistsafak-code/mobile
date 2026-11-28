@@ -32,13 +32,16 @@
       let iz = 0; T.izgara.forEach(l => l.visible = false);
       for (let t = S.tA; t <= S.tmax + 1e-6; t += S.tA) { if (iz < T.izgara.length) FZ.setLine(T.izgara[iz++], [V3(X(t), Y0, Z - 0.01), V3(X(t), Y0 + GH, Z - 0.01)]); etk(fs(t), V3(X(t), Y(Math.max(S.ymin, 0)) - 0.25, Z), 0, 6); }
       for (let v = Math.ceil(S.ymin / S.yA) * S.yA; v <= S.ymax + 1e-6; v += S.yA) { if (Math.abs(v) < 1e-9) continue; if (iz < T.izgara.length) FZ.setLine(T.izgara[iz++], [V3(X0, Y(v), Z - 0.01), V3(X0 + GW, Y(v), Z - 0.01)]); etk(fs(v), V3(X0 - 0.3, Y(v), Z), -10, 0); }
+      etk('0', V3(X0 - 0.22, Y(Math.max(S.ymin, 0)) - 0.22, Z), 0, 0);   // başlangıç noktası
       FZ.setTag('grX', S.xEt); FZ.show('grX', V3(X0 + GW + 0.55, Y(Math.max(S.ymin, 0)), Z), 1); FZ.setTag('grY', S.yEt); FZ.show('grY', V3(X0, Y0 + GH + 0.5, Z), 1);
       (S.etk || []).forEach(([t, v, txt]) => etk(txt, V3(X(t), Y(v), Z), 0, -16));
       if (S.kos) { S.tt = Math.min(S.tmax, S.tt + dt * S.tmax / 6); if (S.tt >= S.tmax) S.kos = 0; }
       const deg = (P, t) => { for (let i = 1; i < P.length; i++) if (t <= P[i][0] || i === P.length - 1) { const [t0, y0] = P[i - 1], [t1, y1] = P[i]; return y0 + (y1 - y0) * Math.max(0, Math.min(1, (t - t0) / ((t1 - t0) || 1))); } return 0; };
       T.egri.forEach((m, k) => { const P = S.eg[k]; m.visible = !!P; T.nokta[k].visible = false; if (!P) return;
-        const pts = []; P.forEach(([t, v], i) => { if (i) { const [ta, va] = P[i - 1]; for (let j = 1; j <= 8; j++) { const u = j / 8; pts.push(V3(X(ta + (t - ta) * u), Y(va + (v - va) * u), Z + 0.02)); } } else pts.push(V3(X(t), Y(v), Z + 0.02)); });
-        m.geometry.dispose(); m.geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0), pts.length * 2, 0.035, 6);
+        // grafik verilen noktalardan BİREBİR geçen kırık çizgi (köşelerde taşma/yuvarlanma yok); eğriler (ör. P–V) yoğun noktayla verilir
+        const yol = new THREE.CurvePath(); let seg = 0; for (let i = 1; i < P.length; i++) { const a = V3(X(P[i - 1][0]), Y(P[i - 1][1]), Z + 0.02), b = V3(X(P[i][0]), Y(P[i][1]), Z + 0.02); if (a.distanceTo(b) > 1e-4) { yol.add(new THREE.LineCurve3(a, b)); seg++; } }
+        if (!seg) { m.visible = false; return; }
+        m.geometry.dispose(); m.geometry = new THREE.TubeGeometry(yol, Math.max(64, seg * 24), 0.035, 6);
         if (S.tt > 0) { T.nokta[k].visible = true; T.nokta[k].position.set(X(S.tt), Y(deg(P, S.tt)), Z + 0.05); }
         if (S.adlar && S.adlar[k]) { const [tl, yl] = S.adlar[k]; FZ.setTag(['grA', 'grB', 'grC'][k], S.adlar[k][2]); FZ.show(['grA', 'grB', 'grC'][k], V3(X(tl), Y(yl), Z), 1, 0, -14); } });
       // hareket grafiklerinde arabalar: x–t'de doğrudan, v–t'de integral, a–t'de iki kez integral
@@ -113,7 +116,7 @@
     BASLA({ tur: 'Ph', araba: 0, eg: [[[0, 0], [5, 50]], [[0, 0], [5, 40]]], tmax: 5, ymax: 50, yA: 10, xEt: 'h (m)', yEt: 'P (kPa)', adlar: [[4.6, 46, 'X'], [4.6, 37, 'Y']] }),
     { do: G({ tur: 'Ph', araba: 0, eg: [[[0, 0], [5, 50]], [[0, 0], [5, 40]]], tmax: 5, ymax: 50, yA: 10, xEt: 'h (m)', yEt: 'P (kPa)', adlar: [[4.6, 46, 'X'], [4.6, 37, 'Y']] }), q: { t: 'X ve Y sıvılarında derinliğe bağlı sıvı basıncı grafikleri veriliyor. Y sıvısının özkütlesi kaç kg/m³\'tür? (g = 10 m/s²)', o: ['800', '1000', '400', '8000'],
       b: [FM('P = h · d · g') + ' → P–h grafiğinin eğimi d · g\'dir.'], s: [`Y: eğim = ${F('40 000 Pa', '5 m')} = 8000 = d · 10`, 'd = <em>800 kg/m³</em> ✓ (X: 1000 kg/m³, su)'] } },
-    { do: G({ tur: 'PV', araba: 0, eg: [[[1, 12], [2, 6], [3, 4], [4, 3], [6, 2]]], tmax: 6, ymax: 12, yA: 2, xEt: 'V (L)', yEt: 'P (atm)' }), q: { t: 'Sabit sıcaklıkta kapalı kaptaki gazın basınç–hacim grafiği veriliyor. Hacim 2 L iken basınç 6 atm ise 4 L iken basınç kaç atm olur?', o: ['3', '12', '6', '1,5'],
+    { do: G({ tur: 'PV', araba: 0, eg: [Array.from({ length: 51 }, (_, i) => { const V = 1 + i * 0.1; return [V, 12 / V]; })], etk: [[2, 6, '(2 L, 6 atm)'], [4, 3, '(4 L, ?)']], tmax: 6, ymax: 12, yA: 2, xEt: 'V (L)', yEt: 'P (atm)' }), q: { t: 'Sabit sıcaklıkta kapalı kaptaki gazın basınç–hacim grafiği veriliyor. Hacim 2 L iken basınç 6 atm ise 4 L iken basınç kaç atm olur?', o: ['3', '12', '6', '1,5'],
       b: ['Boyle–Mariotte yasası (sabit sıcaklık): ' + FM('P<sub>1</sub> V<sub>1</sub> = P<sub>2</sub> V<sub>2</sub>')], s: ['6 · 2 = P · 4 → P = <em>3 atm</em> ✓'] } },
   ]);
 

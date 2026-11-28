@@ -18,7 +18,8 @@
       kutu(G.rampa, XY - XR1 + 0.6, 0.06, 1, 0x94a3b8, (XR1 + XY + 0.6) / 2, -0.03, 0, { edge: false });
       kutu(G.rampa, Z1 - Z0, 0.065, 1.02, 0x92400e, (Z0 + Z1) / 2, -0.02, 0, { edge: false });
       kutu(G.rampa, 0.15, 0.9, 1, 0x334155, XY + 0.95, 0.45, 0);
-      const yay = new THREE.Group(); G.rampa.add(yay); const yaySar = []; for (let i = 0; i < 8; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.025, 6, 20), new THREE.MeshLambertMaterial({ color: 0x9ca3af })); r.rotation.y = Math.PI / 2; yay.add(r); yaySar.push(r); }
+      const yay = FZ.yay(G.rampa, 0.18, 9, 0x9ca3af, 0.025); yay.position.set(XY, 0.25, 0); const yaySar = [];   // kıvrımlı helezon yay
+      const tabla = kutu(G.rampa, 0.06, 0.36, 0.36, 0x475569, XY, 0.25, 0, { edge: false });   // yayın ucundaki çarpma tablası
       const blok = kutu(G.rampa, 0.4, 0.4, 0.4, 0xdc2626, 0, 0.2, 0);
       const bar = ['#16a34a', '#2563eb', '#7c3aed', '#dc2626'].map((c, i) => kutu(G.rampa, 0.32, 1, 0.2, parseInt(c.slice(1), 16), 0.4 + i * 0.5, 2, -0.8, { edge: false }));
       // iş
@@ -32,7 +33,7 @@
       [['enF', 'F', '#16a34a'], ['enFx', 'F·cosθ', '#15803d'], ['enFy', 'F·sinθ', '#15803d'], ['enX', 'x = 4 m', '#111827']].forEach(([id, h, c]) => etiket(id, h, c));
       ['Ek', 'Ep', 'Ee', 'Q'].forEach((n, i) => etiket('enB' + i, n, ['#16a34a', '#2563eb', '#7c3aed', '#dc2626'][i]));
       kart('enT', '', '#F5C400'); etiket('enA', '', '#334155');
-      return { G, rampa, yay, yaySar, blok, bar, ik, oF, oFx, oFy, oX, yuk, ip };
+      return { G, rampa, yay, yaySar, tabla, blok, bar, ik, oF, oFx, oFy, oX, yuk, ip };
     },
     tick(S, dt, o) {
       Object.entries(o.G).forEach(([k, gr]) => gr.visible = S.mod === k);
@@ -50,7 +51,7 @@
         const y = S.X < XR1 ? S.h * (XR1 - S.X) / L : 0, c = Math.max(0, S.X - XY);
         o.blok.position.set(S.X - 0.2, (S.X - 0.2 < XR1 ? S.h * (XR1 - S.X + 0.2) / L : 0) + 0.2 + (S.X - 0.2 < XR1 ? 0.04 : 0), 0); o.blok.rotation.z = S.X < XR1 ? -th : 0;
         const sol = Math.min(XY, S.X > XY ? S.X : XY), boy = XY + 0.88 - sol;
-        o.yaySar.forEach((r, i) => r.position.set(sol + 0.1 + i * (boy - 0.2) / 7, 0.25, 0));
+        o.yay.position.set(sol, 0.25, 0); o.yay.scale.x = Math.max(0.05, boy - 0.03); o.tabla.position.x = sol;
         const Ek = 0.5 * S.m * S.v * S.v, Ep = S.m * g * y, Ee = 0.5 * S.k * c * c, top0 = S.m * g * S.h, E = [Ek, Ep, Ee, S.Q];
         o.bar.forEach((b, i) => { const hh = Math.max(0.01, E[i] / top0 * 1.6); b.scale.y = hh; b.position.y = 1.7 + hh / 2; FZ.show('enB' + i, V3(0.4 + i * 0.5, 1.45, -0.8), 1); });
         FZ.setTag('enT', `E<sub>k</sub> ${fs(Ek)} · E<sub>p</sub> ${fs(Ep)} · E<sub>yay</sub> ${fs(Ee)} · Q ${fs(S.Q)} (J)`); FZ.show('enT', V3(0.3, 3.95, 0), 1);

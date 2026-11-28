@@ -608,7 +608,9 @@ function dashLine(color, ds = .2, gs = .14) { const l = new THREE.Line(new THREE
 function setLine(l, pts) { l.geometry.setFromPoints(pts); l.computeLineDistances(); l.visible = true; }
 function textSprite(txt, w, h, bg, fg) {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = Math.round(512 * h / w); const x = cv.getContext('2d');
-  x.fillStyle = bg; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = fg; x.font = `900 ${Math.round(cv.height * .62)}px Inter, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillStyle = bg; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = fg; let fpx = Math.round(cv.height * .62); x.font = `900 ${fpx}px Inter, sans-serif`;
+  while (fpx > 10 && x.measureText(txt).width > cv.width * 0.92) { fpx -= 2; x.font = `900 ${fpx}px Inter, sans-serif`; }   // yazı levhadan taşmasın: sığana kadar küçült
+  x.textAlign = 'center'; x.textBaseline = 'middle';
   x.fillText(txt, cv.width / 2, cv.height / 2 + 4); const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tx })); return m;
 }

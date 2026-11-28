@@ -8,7 +8,7 @@
   // =====================================================================
   const RL = 8, RH = 4;                                                   // rampa: 8 birim uzun, 4 birim yüksek (1 birim = 1,25 m → h = 5 m)
   const ry = x => x < RL ? RH * (1 + Math.cos(Math.PI * x / RL)) / 2 : 0;
-  const s4 = sahne({ icon: '⚡', cam: [[1.5, 5, 15], [1.5, 2, 0]], plate: [20, 6, 2, 0],
+  const s4 = sahne({ icon: '⚡', cam: [[0.8, 5.5, 17.5], [0.8, 2, 0]], plate: [20, 6, 2, 0],
     data: [['Topun kütlesi', 'm = 4 kg'], ['Rampa yüksekliği', 'h = 5 m'], ['g', '10 m/s²']],
     S0: () => ({ x: 0, kos: 0, kayip: 0, m: 4, h: 5, vYer: 0 }),
     kur(g) {

@@ -9,16 +9,20 @@
   // ÖZEL GÖRELİLİK — ışık saati: perondaki saat ve trendeki saat (görselde c = 2 birim/s)
   // =====================================================================
   const C = 2, H = 2; // ayna aralığı
-  const sOG = sahne({ icon: '🚀', cam: [[1.6, 4.5, 13], [1.6, 2, 0]], plate: [16, 5, 0, 0],
+  const sOG = sahne({ icon: '🚀', cam: [[0.6, 4.6, 16], [0.6, 2.1, 0]], plate: [16, 5, 0, 0],
     data: [['Işık saati', 'aynalar arası gidiş-dönüş = 1 tık'], ['c', '3 · 10⁸ m/s']],
     S0: () => ({ b: 0.6, kos: 0, tt: 0, x: -6 }),
     kur(g) {
       const per = new THREE.Group(); per.position.set(-6.5, 0, 0); g.add(per);
       kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4, 0); kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4 + H, 0); const f1 = top(per, 0.12, 0xfacc15, 0, 0.5, 0, { edge: false });
       const tren = new THREE.Group(); g.add(tren);
-      const govde = kutu(tren, 2.6, 2.6, 1.4, 0x3b82f6, 0, 1.6, -0.9, { op: 0.35 });
-      kutu(tren, 2.8, 0.14, 1.5, 0x1f2937, 0, 0.27, -0.9); kutu(tren, 2.7, 0.12, 1.5, 0x1e3a8a, 0, 2.96, -0.9);   // şasi ve tavan
-      [-0.9, 0.9].forEach(x => [-1.6, -0.2].forEach(z => { const t = silindir(tren, 0.18, 0.18, 0.08, 0x374151, x, 0.18, z, { edge: false }); t.rotation.x = Math.PI / 2; }));   // tekerlekler
+      const govde = kutu(tren, 2.6, 2.0, 1.4, 0x93c5fd, 0, 1.9, -0.9, { op: 0.28, edge: false });   // camlı üst gövde (ışık saati görünsün)
+      kutu(tren, 2.7, 0.55, 1.45, 0x1d4ed8, 0, 0.62, -0.9);                                          // alt gövde (boyalı sac)
+      kutu(tren, 2.72, 0.08, 1.47, 0xfacc15, 0, 0.92, -0.9, { edge: false });                         // sarı şerit
+      [-1.3, 1.3].forEach(x => kutu(tren, 0.1, 2.0, 1.45, 0x1e3a8a, x, 1.9, -0.9, { edge: false }));  // ön ve arka çerçeve
+      kutu(tren, 2.8, 0.14, 1.5, 0x1f2937, 0, 0.3, -0.9);                                             // şasi
+      const tav = silindir(tren, 0.78, 0.78, 2.7, 0x1e3a8a, 0, 2.62, -0.9, { edge: false }); tav.rotation.z = Math.PI / 2; tav.scale.set(1, 1, 0.3);   // kubbeli tavan
+      [-0.9, 0.9].forEach(x => [-1.3, -0.5].forEach(z => { const t = silindir(tren, 0.2, 0.2, 0.08, 0x374151, x, 0.2, z, { edge: false }); t.rotation.x = Math.PI / 2; }));   // tekerlekler raylar üzerinde
       FZ.ray(g, 16, 0, -0.9);
       kutu(tren, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4, 0); kutu(tren, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4 + H, 0);
       const f2 = top(g, 0.12, 0xfacc15, 0, 0.5, 0, { edge: false }), iz = duz(g, 0xf59e0b);
