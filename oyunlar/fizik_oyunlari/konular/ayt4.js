@@ -75,8 +75,8 @@
       const cub = kutu(g, 0.15, 0.15, 2.7, 0xb45309, 0, 0.2, 0);
       const Bo = []; for (let i = -4; i <= 4; i += 2) for (let j = -1; j <= 1; j += 2) Bo.push([i + 0.5, j * 2]);
       const Bok = Bo.map(() => ok(0x94a3b8, 'm14B'));
-      etiket('m14B', 'B', '#64748b'); etiket('m14v', 'v', '#16a34a'); etiket('m14I', 'I', '#ea580c'); etiket('m14F', 'F<sub>m</sub>', '#dc2626'); kart('m14t', '', '#F5C400'); kart('m14R', 'R', '#b45309');
-      return { R, cub, Bo, Bok, ov: ok(0x22c55e, 'm14v'), oI: ok(0xf97316, 'm14I'), oF: ok(0xef4444, 'm14F') };
+      etiket('m14B', 'B', '#64748b'); etiket('m14v', 'v', '#16a34a'); etiket('m14I', 'I', '#dc2626'); etiket('m14F', 'F<sub>m</sub>', '#7c3aed'); etiket('m14D', 'F<sub>dış</sub>', '#0f766e'); kart('m14t', '', '#F5C400'); kart('m14R', 'R', '#b45309');
+      return { R, cub, Bo, Bok, ov: ok(0x22c55e, 'm14v'), oI: ok(0xdc2626, 'm14I'), oF: ok(0x8b5cf6, 'm14F'), oD: ok(0x14b8a6, 'm14D') };   // akım kırmızı (kural 13)
     },
     tick(S, dt, o) {
       if (S.kos) { S.x += S.v * dt * 0.15; if (S.x > 4.5) S.x = -2; }
@@ -86,7 +86,9 @@
       if (S.v > 0) {
         FZ.setArrow(o.ov, V3(S.x + 0.2, 0.5, -0.6), V3(1, 0, 0), S.v / 8); FZ.show('m14v', V3(S.x + S.v / 8 + 0.5, 0.5, -0.6), 1);
         FZ.setArrow(o.oI, V3(S.x, 0.55, -0.9), V3(0, 0, 1), 1.8); FZ.show('m14I', V3(S.x + 0.35, 0.6, 0.9), 1);
-        FZ.setArrow(o.oF, V3(S.x - 0.2, 0.5, 0.6), V3(-1, 0, 0), Fm * 10); FZ.show('m14F', V3(S.x - Fm * 10 - 0.6, 0.5, 0.6), 1); }
+        FZ.setArrow(o.oF, V3(S.x - 0.2, 0.5, 0.6), V3(-1, 0, 0), Fm * 10); FZ.show('m14F', V3(S.x - Fm * 10 - 0.6, 0.5, 0.6), 1);
+        // sabit hız için net kuvvet sıfır: çubuğu dışarıdan F_m kadar çeken kuvvet (aynı ölçek)
+        FZ.setArrow(o.oD, V3(S.x + 0.2, 0.5, 0.9), V3(1, 0, 0), Fm * 10); FZ.show('m14D', V3(S.x + Fm * 10 + 0.7, 0.5, 0.9), 1); }
       FZ.show('m14R', V3(-5, 0.8, 0), 1);
       FZ.setTag('m14t', `ε = BLv = ${fs(e)} V · I = ${fs(I)} A · F<sub>m</sub> = ${fs(Fm)} N`); FZ.show('m14t', V3(0, 2.3, -1.5), 1);
     },

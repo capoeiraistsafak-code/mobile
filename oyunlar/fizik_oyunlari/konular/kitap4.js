@@ -44,7 +44,7 @@
       } else if (S.mod === 'kutu') {
         const mg = S.m * 10, xm = -2 + S.xk, inKz = xm > 0.5 && xm < 3.5, mus = inKz ? S.mus : S.sp, muk = inKz ? S.muk : S.sp; let f = 0, a = 0;
         if (S.vk === 0 && Math.abs(S.F) <= mus * mg) f = -S.F; else { f = -(Math.sign(S.vk) || Math.sign(S.F)) * muk * mg; a = (S.F + f) / S.m; }
-        if (S.kos) { S.vk += a * dt; if (S.vk < 0 && S.F === 0) S.vk = 0; S.xk += S.vk * dt * 0.5; if (xm > 4) S.kos = 0; }
+        if (S.kos) { const v0 = S.vk; S.vk += a * dt; if (v0 !== 0 && Math.sign(S.vk) !== Math.sign(v0)) S.vk = 0;   /* kinetik sürtünme cismi durdurur ama geri itmez */ S.xk += S.vk * dt * 0.5; if (xm > 4) S.kos = 0; }
         o.kl.position.set(xm, 0.1, 0); o.kl.scale.setScalar(0.6 + S.m * 0.04); const h = 0.6 + S.m * 0.04, c = V3(xm, 0.1 + h / 2, h / 2 + 0.05);
         o.ece.position.set(xm - h / 2 - 0.45, 0.1, 0); o.ece.visible = S.F > 0; if (S.F > 0) [0, 1].forEach(i => FZ.koluUzat(o.ece, i, V3(xm - h / 2, 0.1 + h * 0.6, i ? -0.1 : 0.1)));
         A(o.O.F, V3(xm - h / 2 - 0.02, 0.1 + h * 0.6, h / 2 + 0.05), V3(1, 0, 0), S.F * 0.03, 'k4F');

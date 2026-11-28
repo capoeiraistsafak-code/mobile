@@ -149,7 +149,7 @@
   ]);
 
   // ---------------- BASİT HARMONİK HAREKET (m, k, A, kos) ----------------
-  const bh = (m, k, A) => S => Object.assign(S, { m, k, A, kos: 0, ph: 0 }), bhg = S => { S.kos = 1; };
+  const bh = (m, k, A) => S => Object.assign(S, { m, k, A, kos: 0, ph: 0, K: 5, vs: 0.6, as: 0.06 }), bhg = S => { S.kos = 1; };   // bütün sorularda aynı ölçek: 1 m → 5 birim, v oku 0,6/(m/s), a oku 0,06/(m/s²)
   bank('Basit Harmonik Hareket', 'AYT19', '🕰️', 'basit harmonik hareket', 'Yay–kütle ve sarkaç periyodu, en büyük hız ve ivme, periyodu etkileyenler.', [
     { do: bh(1, 100, 0.2), sub: 'Yaya bağlı blok sürtünmesiz yüzeyde.', go: '▶︎ Başla' },
     { do: bh(1, 100, 0.2), goster: bhg, q: { t: 'm = 1 kg, k = 100 N/m olan yay–kütle sisteminin periyodu kaç s\'dir? (π = 3)', o: ['0,6', '6', '0,3', '1,2'],

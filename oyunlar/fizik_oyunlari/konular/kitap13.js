@@ -58,7 +58,9 @@
       } else {                                    // eğik düzlem: N yüzeye dik, mg düşey aşağı
         const t = S.th * Math.PI / 180; T.rampa.visible = T.kutu.visible = true; T.rampa.position.set(0, 1.2, -0.0); T.rampa.rotation.set(0, 0, t);
         const n = V3(-Math.sin(t), Math.cos(t), 0), c = V3(0.3 * Math.cos(t), 1.2 + 0.3 * Math.sin(t), 0).add(n.clone().multiplyScalar(0.45)); T.kutu.position.copy(c); T.kutu.rotation.set(0, 0, t);
-        ok('G', c.clone().add(V3(0, 0, 0.45)), V3(0, -1, 0), mg, 'kvG', 22, 0); if (S.cevap) ok('N', c.clone().add(V3(0, 0, 0.45)), n, mg * Math.cos(t), 'kvN', -22, 0); lbl(`N = mg cos ${S.th}° = ${Math.round(mg * Math.cos(t))} N`);
+        ok('G', c.clone().add(V3(0, 0, 0.45)), V3(0, -1, 0), mg, 'kvG', 22, 0); if (S.cevap) { ok('N', c.clone().add(V3(0, 0, 0.45)), n, mg * Math.cos(t), 'kvN', -22, 0);
+          ok('f', c.clone().add(n.clone().multiplyScalar(-0.35)).add(V3(0, 0, 0.45)), V3(Math.cos(t), Math.sin(t), 0), mg * Math.sin(t), 'kvf', 0, -16); }   // durması için statik sürtünme eğim boyunca yukarı: f = mg sin θ
+        lbl(`N = mg cos ${S.th}° = ${Math.round(mg * Math.cos(t))} N · f<sub>s</sub> = mg sin ${S.th}° = ${Math.round(mg * Math.sin(t))} N`);
         T.kutu.position.copy(c);
       }
       if (S.mod !== 'egik') T.kutu.rotation.set(0, 0, 0);

@@ -121,11 +121,12 @@
       const mak = silindir(g, 0.3, 0.3, 0.2, 0x64748b, 2.6, 3.3, 0); mak.rotation.x = Math.PI / 2;
       const A = kutu(g, 1, 0.8, 0.8, 0x3b82f6, 0, 3.4, 0), B = kutu(g, 0.6, 0.6, 0.6, 0xef4444, 2.9, 1.8, 0);
       const ip1 = silindir(g, 0.02, 0.02, 1, 0x111827, 0, 3.4, 0, { edge: false }), ip2 = silindir(g, 0.02, 0.02, 1, 0x111827, 2.9, 2.5, 0, { edge: false }); ip1.rotation.z = Math.PI / 2;
-      etiket('n3a', 'a', '#9333ea'); etiket('n3T', 'T', '#7c3aed'); etiket('n3G', 'm<sub>B</sub>g', '#dc2626'); etiket('n3f', 'f<sub>s</sub>', '#ea580c'); kart('n3t', '', '#F5C400');
-      return { A, B, ip1, ip2, oa: ok(0xa855f7, 'n3a'), oT: ok(0x8b5cf6, 'n3T'), oG: ok(0xef4444, 'n3G'), of: ok(0xf97316, 'n3f') };
+      etiket('n3a', 'a', '#9333ea'); etiket('n3T', 'T', '#7c3aed'); etiket('n3G', 'm<sub>B</sub>g', '#dc2626'); etiket('n3f', 'f<sub>s</sub>', '#ea580c'); etiket('n3T2', 'T', '#7c3aed'); kart('n3t', '', '#F5C400');
+      return { A, B, ip1, ip2, oa: ok(0xa855f7, 'n3a'), oT: ok(0x8b5cf6, 'n3T'), oG: ok(0xef4444, 'n3G'), of: ok(0xf97316, 'n3f'), oT2: ok(0x8b5cf6, 'n3T2') };
     },
     tick(S, dt, o) {
-      const fs_ = S.k * S.mA * 10, a = Math.max(0, (S.mB * 10 - fs_) / (S.mA + S.mB)), T = S.mA * a + fs_;
+      // sürtünme: kayma yoksa statik sürtünme çeken kuvvete eşittir (en çok μ·m_A·g); kayıyorsa kinetik μ·m_A·g
+      const fmax = S.k * S.mA * 10, kayar = S.mB * 10 > fmax, fs_ = kayar ? fmax : S.mB * 10 * (S.k > 0 ? 1 : 0), a = kayar ? (S.mB * 10 - fmax) / (S.mA + S.mB) : 0, T = S.mA * a + fs_;
       if (S.kos) { S.v += a * dt; S.x += S.v * dt * 0.6; if (S.x > 1.6) { S.x = 1.6; S.kos = 0; } }
       o.A.position.x = -1.5 + S.x; o.B.position.y = 2.2 - S.x;
       o.ip1.scale.y = 2.6 - (o.A.position.x + 0.5); o.ip1.position.x = (o.A.position.x + 0.5 + 2.6) / 2;
@@ -133,7 +134,8 @@
       const pa = o.A.position.clone().add(V3(0, 0.7, 0.5)); FZ.setArrow(o.oa, pa, V3(1, 0, 0), a * 0.25 + 0.01); FZ.show('n3a', pa.clone().add(V3(a * 0.25 + 0.3, 0, 0)), a > 0 ? 1 : 0);
       const pT = o.A.position.clone().add(V3(0.5, 0, 0.5)); FZ.setArrow(o.oT, pT, V3(1, 0, 0), T / 20); FZ.show('n3T', pT.clone().add(V3(T / 20 + 0.3, 0.2, 0)), 1);
       const pB = o.B.position.clone().add(V3(0, -0.3, 0.5)); FZ.setArrow(o.oG, pB, V3(0, -1, 0), S.mB / 2); FZ.show('n3G', pB.clone().add(V3(0.4, -S.mB / 2, 0)), 1);
-      if (fs_ > 0) { const pf = o.A.position.clone().add(V3(-0.5, -0.3, 0.5)); FZ.setArrow(o.of, pf, V3(-1, 0, 0), fs_ / 20); FZ.show('n3f', pf.clone().add(V3(-fs_ / 20 - 0.3, 0, 0)), 1); }
+      const pT2 = o.B.position.clone().add(V3(-0.2, 0.3, 0.5)); FZ.setArrow(o.oT2, pT2, V3(0, 1, 0), T / 20); FZ.show('n3T2', pT2.clone().add(V3(-0.35, T / 20, 0)), 1);   // ip B'yi yukarı çeker (aynı ölçek)
+      if (fs_ > 0) { const pf = o.A.position.clone().add(V3(-0.5, -0.3, 0.5)); FZ.setTag('n3f', S.v > 0.01 ? 'f<sub>k</sub>' : 'f<sub>s</sub>'); FZ.setArrow(o.of, pf, V3(-1, 0, 0), fs_ / 20); FZ.show('n3f', pf.clone().add(V3(-fs_ / 20 - 0.3, 0, 0)), 1); }
       FZ.setTag('n3t', `a = ${fs(a)} m/s² · T = ${fs(T)} N`); FZ.show('n3t', V3(-1, 4.8, 0), S.goster ? 1 : 0);
     },
     qp: (at, S, o) => o.A.position.clone().add(V3(0, 1.5, 0)) });
