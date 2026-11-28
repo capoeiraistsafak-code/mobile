@@ -31,7 +31,7 @@
     if (!q || !q.t || !q.o) return [];
     if (q !== kum) { kum = q; const tum = [q.t].concat(q.o || [], q.s || [], q.n || [], q.b || []).join(' ');
       q._ilgili = sayilar(tum); const soru = sayilar(q.t); q._cevap = [...sayilar(q.o[0])].filter(x => !soru.has(x) && !ONEMSIZ.has(x)); }
-    const gizle = [];
+    const gizle = (q.hepGizle || []).map(id => TAG[id]).filter(Boolean);    // bu soruda sahnenin çelişen kartı hiç gösterilmez
     Object.values(TAG).forEach(d => { if (+d.style.opacity <= 0.02 || d === TAG.qlab) return;
       const chip = d.classList.contains('chip'), tx = d.textContent; if (!chip && !/[=:]/.test(tx)) return;   // düz etiketlerde yalnız "x = …" türü değer etiketleri
       const ns = (tx.match(NUM) || []).map(NRM); if (!ns.length) return;
@@ -221,6 +221,23 @@
       b: ['Hareketli makarada yükü iki ip parçası taşır.'], s: ['2F = G → F = 120 / 2 = <em>60 N</em> ✓'], n: ['Kuvvetten kazanç: 2 kat; yoldan kayıp: ip, yükün iki katı kadar çekilir.'] } });
   YAZ('AYT10-k', 'Hareketli makarada ip 4 m', { q: { t: 'Hareketli makarada ip 2 m çekilirse yük kaç m yükselir?', o: ['1', '2', '4', '0,5'],
       s: ['İki ip parçası birlikte kısalır: yük 2 / 2 = <em>1 m</em> yükselir ✓'] } });
+  // AYT Momentum: "cisim iki parçaya ayrılıyor" → rayda iki vagon arasında sıkıştırılmış yay (sahnedeki düzenek)
+  YAZ('AYT7-k', 'Duran 3 kg\'lık bir cisim iki parçaya', { do: S => Object.assign(S, { m1: 1, v1: 0, m2: 3, v2: 0, yapis: 0, x1: -5, x2: 1, kos: 0, carpti: 0 }),
+    q: { t: 'Rayda duran 1 kg ve 3 kg\'lık vagonlar, aralarına sıkıştırılmış hafif bir yayla birbirine itiliyor. Yay serbest kalınca 1 kg\'lık vagon 6 m/s ile sola gidiyor. 3 kg\'lık vagonun hızı nedir? (sürtünme yok)', o: ['2 m/s, sağa', '6 m/s, sağa', '2 m/s, sola', '18 m/s, sağa'],
+      b: ['Dış kuvvet yoksa toplam momentum korunur; başlangıçta vagonlar durgun olduğu için toplam momentum sıfırdır.'], s: ['0 = 1 · (−6) + 3 · v', 'v = <em>2 m/s, sağa</em> ✓'], n: ['Vagonlara etki eden yay kuvvetleri eşit ve zıttır (etki–tepki); kütlesi büyük olan daha yavaş gider.'] } });
+  // TYT Enerji (rampa – sürtünmeli bölge – yay): "zıplayan top" → aynı düzenekte enerji kaybı
+  YAZ('TYT4-k', 'Yerden 5 m yükseklikten serbest bırakılan top', { do: S => Object.assign(S, { mod: 'rampa', h: 2, mu: 0.375, m: 2, k: 200, X: -3.4, v: 0, Q: 0, kos: 0 }),
+    q: { goster: S => { S.X = -3.4; S.v = 0; S.Q = 0; S.kos = 1; }, t: '2 kg\'lık blok 2 m yükseklikten sürtünmesiz rampadan bırakılıyor; yataydaki sürtünmeli bölgeden geçip yaya çarpıyor, geri dönerken aynı bölgeden yine geçiyor ve rampada en çok 0,5 m yükseliyor. Başlangıçtaki mekanik enerjinin yüzde kaçı ısıya dönüşmüştür? (g = 10 m/s²)', o: ['%75', '%25', '%50', '%80'],
+      b: [FM('E<sub>p</sub> = m g h') + ' · kaybolan mekanik enerji = ısıya dönüşen enerji (enerji korunumu)'], s: ['Başta: 2 · 10 · 2 = 40 J · sonda: 2 · 10 · 0,5 = 10 J', 'Isı: 30 J → 30 / 40 = <em>%75</em> ✓'], n: ['Yayda depolanan enerji geri verilir; kayıp yalnız sürtünmeli bölgede olur.'] } });
+  // Sahnenin hesap kartı başka bir durumu anlatıyor → bu soruda gizle (hep) ya da cevaba kadar gizle
+  const KART = (yk, bas, hep, once) => { const st = SORU(yk, bas, false); if (!st) { console.warn('uyum: kart', yk, bas); return; }
+    if (hep) st.q.hepGizle = (st.q.hepGizle || []).concat(hep); if (once) st.q.gizle = (st.q.gizle || []).concat(once); };
+  KART('TYT7-g3', '12 V\'luk üretece 4 Ω ve 4 Ω\'luk ampuller seri', null, ['k5a', 'k5b']);   // ampermetre ve voltmetre değerleri cevaptır
+  KART('AYT10-k', 'Hareketli makarayla 100 N', ['b10t']);          // kart ideal makarayı (F = 50 N) gösteriyor, soru sürtünmeli (60 N)
+  KART('AYT7-g1', 'Top duvara 0,02 s', ['m7t']);                   // kart vagonların momentumunu gösteriyor
+  KART('AYT16-g5', 'Yatay virajda (r = 50 m)', ['c5t']);           // kart ipe bağlı cismi (r = 2 m) gösteriyor
+  KART('AYT20-g1', 'Aynı deney kırılma indisi 4/3', ['w20t']);     // kart su dalgası yol farkını gösteriyor
+  KART('AYT21-g1', 'Yarı ömrü 5 gün olan 800', ['a21t']);          // kart hızlandırılmış 64 çekirdek / 2 günü gösteriyor
   // AYT Tork (destek üzerinde çubuk ve asılı yükler): eğik kuvvet sorusu → asılı yüklerle net tork
   YAZ('AYT8-k', 'Destekten 2 m uzaktaki noktaya çubukla 30°', { do: S => Object.assign(S, { W1: 50, d1: 2, W2: 50, d2: 3, ac: 0, goster2: 0 }),
     q: { goster: S => { S.goster2 = 1; }, t: 'Kütlesiz çubukta destekten 2 m solda 50 N, 3 m sağda 50 N asılı. Desteğe göre net tork kaç N·m\'dir ve çubuk ne yapar?', o: ['50 N·m; sağa döner', '0; dengede kalır', '250 N·m; sağa döner', '50 N·m; sola döner'],
