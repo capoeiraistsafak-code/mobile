@@ -178,9 +178,9 @@
       const n0 = top(g, 0.12, 0x94a3b8, 0, 0, 0, { edge: false }), nn = [0, 1, 2].map(() => top(g, 0.12, 0x94a3b8, 0, 0, 0, { edge: false }));
       kart('nkt', '', '#F5C400'); kart('nkg', 'Nükleon başına bağlanma enerjisi', '#475569'); kart('nkf', 'Fe-56', '#dc2626');
       { const gx = A => 0.8 + A / 240 * 5, gy = b => 0.6 + b / 9 * 3, L = FZ.levha;   // eksen ölçekleri: A (kütle numarası) ve E/A (MeV)
-        [60, 120, 180, 240].forEach(A => L(g, String(A), 0.42, 0.28, '#e5e7eb', '#111827', gx(A), gy(0) - 0.25, 0));
-        [2, 4, 6, 8].forEach(b => L(g, String(b), 0.28, 0.28, '#e5e7eb', '#111827', gx(0) - 0.25, gy(b), 0));
-        L(g, 'A', 0.3, 0.3, '#e5e7eb', '#111827', gx(240) + 0.35, gy(0), 0); L(g, 'E/A (MeV)', 1.1, 0.3, '#e5e7eb', '#111827', gx(0) + 0.2, gy(9.2) + 0.25, 0); }
+        [60, 120, 180, 240].forEach(A => L(g, String(A), 0.6, 0.38, '#e5e7eb', '#111827', gx(A), gy(0) - 0.32, 0));
+        [2, 4, 6, 8].forEach(b => L(g, String(b), 0.38, 0.38, '#e5e7eb', '#111827', gx(0) - 0.32, gy(b), 0));
+        L(g, 'A', 0.4, 0.4, '#e5e7eb', '#111827', gx(240) + 0.35, gy(0), 0); L(g, 'E/A (MeV)', 1.4, 0.38, '#e5e7eb', '#111827', gx(0) + 0.75, gy(9.2) + 0.3, 0); }
       return { egri, eks, nok, cek, nuk, n0, nn };
     },
     tick(S, dt, o) {
