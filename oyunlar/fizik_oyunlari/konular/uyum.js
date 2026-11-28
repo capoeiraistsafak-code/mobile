@@ -244,4 +244,7 @@
     q: { goster: S => { S.goster2 = 1; }, t: 'Kütlesiz çubukta destekten 2 m solda 50 N, 3 m sağda 50 N asılı. Desteğe göre net tork kaç N·m\'dir ve çubuk ne yapar?', o: ['50 N·m; sağa döner', '0; dengede kalır', '250 N·m; sağa döner', '50 N·m; sola döner'],
       b: [FM('τ = F · d'), 'Torklar zıt yönlüyse net tork = farkları; çubuk büyük tork yönünde döner.'],
       s: ['Sol: 50 · 2 = 100 N·m · sağ: 50 · 3 = 150 N·m', 'Net: <em>50 N·m</em>, sağdaki tork büyük → <em>sağa döner</em> ✓'] } });
+  // Bütün soruları başka düzeneğe taşınan (boş kalan) görevleri listeden çıkar
+  Object.values(FZ.HAZIR).forEach(h => { if (!h.gorevler) return; const L = h.gorevler.filter(M => M.steps.some(s => s.q || s.k || s.p));
+    h.gorevler.length = 0; L.forEach(M => h.gorevler.push(M)); });
 })();
