@@ -45,11 +45,11 @@
   ] });
   const g17 = gorev(s17, { yk: 'AYT17-g1', no: 1, icon: '🌀', name: 'Dönen platform', task: 'Eylemsizlik momenti, açısal momentum ve korunumunu kullanın.', steps: [
     { do: S => { S.hedef = 1; S.r = 1; S.L = 12; }, sub: 'Platform sabit eksen etrafında dönüyor.', go: '▶︎ Başlat' },
-    { q: { t: 'Kütlesiz çubuğun iki ucunda, eksenden 2 m uzakta 3\'er kg\'lık noktasal kütleler var. Sistemin eylemsizlik momenti kaç kg·m²\'dir?', o: ['24 kg·m²', '12 kg·m²', '6 kg·m²', '48 kg·m²'],
+    { q: { t: 'Kütlesiz çubuğun iki ucunda, eksenden 2 m uzakta 3\'er kg\'lık noktasal kütleler var. Sistemin eylemsizlik momenti kaç kg·m²\'dir?', o: ['24 kg·m²', '12 kg·m²', '6 kg·m²', '48 kg·m²', '72 kg·m²'],
       s: [`${FM('I = Σ m r<sup>2</sup>')} = 3 · 2² + 3 · 2² = <em>24 kg·m²</em> ✓`], n: ['Uzaklığın karesi girdiği için kütlenin eksene uzaklığı çok önemlidir.'] } },
-    { q: { t: '2 kg\'lık cisim 4 m yarıçaplı çembersel yörüngede 3 m/s hızla dönüyor. Açısal momentumu kaç kg·m²/s\'dir?', o: ['24', '6', '12', '96'],
+    { q: { t: '2 kg\'lık cisim 4 m yarıçaplı çembersel yörüngede 3 m/s hızla dönüyor. Açısal momentumu kaç kg·m²/s\'dir?', o: ['24', '6', '12', '96', '48'],
       s: ['§1. YOL · L = mvr', 'L = 2 · 3 · 4 = <em>24 kg·m²/s</em> ✓', '§2. YOL · L = Iω', `I = 2 · 16 = 32 · ω = ${F('3', '4')} → L = 32 · ${F('3', '4')} = <em>24</em> ✓`], n: ['Noktasal cisimde iki yol aynı sonucu verir.'] } },
-    { do: S => { S.hedef = 0.5; }, q: { t: 'Eylemsizlik momenti 8 kg·m² olan sistem 3 rad/s ile dönüyor. Dış tork olmadan I = 4 kg·m²\'ye düşerse açısal hız kaç rad/s olur?', o: ['6 rad/s', '1,5 rad/s', '3 rad/s', '12 rad/s'], f: ['d17t'],
+    { do: S => { S.hedef = 0.5; }, q: { t: 'Eylemsizlik momenti 8 kg·m² olan sistem 3 rad/s ile dönüyor. Dış tork olmadan I = 4 kg·m²\'ye düşerse açısal hız kaç rad/s olur?', o: ['6 rad/s', '1,5 rad/s', '3 rad/s', '12 rad/s', '18 rad/s'], f: ['d17t'],
       s: [`${FM('I<sub>1</sub> ω<sub>1</sub> = I<sub>2</sub> ω<sub>2</sub>')} → 8 · 3 = 4 · ω<sub>2</sub> → <em>ω<sub>2</sub> = 6 rad/s</em> ✓`], n: ['I yarıya inince ω iki katına çıkar.'] } },
     { q: { t: 'Aynı olayda dönme kinetik enerjisi nasıl değişir?', o: ['36 J\'den 72 J\'ye çıkar', 'Değişmez (36 J)', '36 J\'den 18 J\'ye iner', '36 J\'den 144 J\'ye çıkar'],
       s: [`E<sub>1</sub> = ${F('1', '2')} · 8 · 3² = 36 J`, `E<sub>2</sub> = ${F('1', '2')} · 4 · 6² = <em>72 J</em> ✓`], n: ['Açısal momentum korunur, kinetik enerji korunmaz; fark iç kuvvetlerin işinden gelir.'] } },
@@ -107,9 +107,9 @@
     { do: S => { S.alan = 1; }, sub: 'Gezegen Güneş çevresinde eliptik yörüngede.', go: '▶︎ Başlat' },
     { q: { t: 'İki cisim arasındaki uzaklık 2 katına çıkarılırsa aralarındaki kütle çekim kuvveti F, kaç olur?', o: [F('F', '4'), F('F', '2'), '2F', '4F'],
       s: [`F ∝ ${F('1', 'd<sup>2</sup>')} → ${F('1', '2<sup>2</sup>')} = ${F('1', '4')} → <em>${F('F', '4')}</em> ✓`], n: ['Uzaklık karesiyle ters orantılıdır; yarıya değil dörtte bire iner.'] } },
-    { q: { t: 'Yüzeyde g = 10 m/s² olan bir gezegende, yüzeyden gezegen yarıçapı (R) kadar yükseklikte g kaç m/s² olur?', o: ['2,5 m/s²', '5 m/s²', '10 m/s²', '1,25 m/s²'],
+    { q: { t: 'Yüzeyde g = 10 m/s² olan bir gezegende, yüzeyden gezegen yarıçapı (R) kadar yükseklikte g kaç m/s² olur?', o: ['2,5 m/s²', '5 m/s²', '10 m/s²', '1,25 m/s²', '7,5 m/s²'],
       s: [`g' = g ${F('R<sup>2</sup>', '(2R)<sup>2</sup>')} = 10 · ${F('1', '4')} = <em>2,5 m/s²</em> ✓`], n: ['Uzaklık merkezden ölçülür: yüzeyden R yukarıda, merkeze uzaklık 2R\'dir.'] } },
-    { do: S => { S.aAU = 4; }, q: { t: 'Güneş\'e ortalama uzaklığı 4 AB olan bir gezegenin periyodu kaç yıldır?', o: ['8 yıl', '4 yıl', '16 yıl', '64 yıl'], f: ['k18t'],
+    { do: S => { S.aAU = 4; }, q: { t: 'Güneş\'e ortalama uzaklığı 4 AB olan bir gezegenin periyodu kaç yıldır?', o: ['8 yıl', '4 yıl', '16 yıl', '64 yıl', '24 yıl'], f: ['k18t'],
       s: [`Dünya için T = 1 yıl, a = 1 AB → ${FM('T<sup>2</sup> = a<sup>3</sup>')}`, `T<sup>2</sup> = 4<sup>3</sup> = 64 → <em>T = 8 yıl</em> ✓`], n: ['Kepler\'in 3. yasası aynı merkezi cismin çevresindeki yörüngeler için geçerlidir.'] } },
     { q: { t: 'Gezegenin yörüngede çizgisel hızı en büyük olduğu yer neresidir?', o: ['Güneş\'e en yakın nokta (günberi)', 'Güneş\'e en uzak nokta (günöte)', 'Her yerde aynı', 'Yörüngenin tam ortası'], f: ['k18v'],
       s: ['Kepler 2: eşit sürede eşit alan.', 'Yakında yarıçap küçük → aynı alanı taramak için daha uzun yay almalı → <em>günberide en hızlı</em> ✓'], n: ['Açısal momentum korunumu: m v r sabit → r küçükse v büyük.'] } },
@@ -160,13 +160,13 @@
   ] });
   const g19 = gorev(s19, { yk: 'AYT19-g1', no: 1, icon: '🪀', name: 'Salınımı çöz', task: 'Periyot, en büyük hız ve ivmeyi bulun.', data: [['Kütle', 'm = 2 kg'], ['Yay sabiti', 'k = 200 N/m'], ['Genlik', 'A = 0,1 m'], ['π', '3 alınız']], steps: [
     { do: S => { S.m = 2; S.k = 200; S.A = 0.1; S.K = 10; S.vs = 1.2; S.as = 0.12; }, sub: 'Yaya bağlı blok sürtünmesiz yüzeyde salınacak.', go: '▶︎ Bırak' },
-    { do: S => { S.kos = 1; }, q: { t: 'm = 2 kg, k = 200 N/m olan yay-kütle sisteminin periyodu kaç s\'dir? (π = 3)', o: ['0,6 s', '6 s', '0,3 s', '1,2 s'],
+    { do: S => { S.kos = 1; }, q: { t: 'm = 2 kg, k = 200 N/m olan yay-kütle sisteminin periyodu kaç s\'dir? (π = 3)', o: ['0,6 s', '6 s', '0,3 s', '1,2 s', '1,8 s'],
       s: [`${FM(`T = 2π ${SQ(F('m', 'k'))}`)} = 2 · 3 · ${SQ(F('2', '200'))} = 6 · 0,1 = <em>0,6 s</em> ✓`], n: ['Ağır kütle yavaş, sert yay hızlı salınır.'] } },
-    { q: { t: 'Genlik 0,1 m ise bloğun en büyük hızı kaç m/s\'dir?', o: ['1 m/s', '10 m/s', '0,1 m/s', '20 m/s'], f: ['h19v'],
+    { q: { t: 'Genlik 0,1 m ise bloğun en büyük hızı kaç m/s\'dir?', o: ['1 m/s', '10 m/s', '0,1 m/s', '20 m/s', '2 m/s'], f: ['h19v'],
       s: ['§1. YOL · ω ile', `ω = ${SQ(F('k', 'm'))} = ${SQ('100')} = 10 rad/s → v<sub>max</sub> = A ω = 0,1 · 10 = <em>1 m/s</em> ✓`, '§2. YOL · enerji', `${F('1', '2')} k A² = ${F('1', '2')} m v² → 200 · 0,01 = 2 v² → <em>v = 1 m/s</em> ✓`], n: ['En büyük hız denge konumundadır.'] } },
     { q: { t: 'Bloğun en büyük ivmesi kaç m/s²\'dir?', o: ['10 m/s²', '1 m/s²', '100 m/s²', '0'], f: ['h19a'],
       s: ['§1. YOL', 'a<sub>max</sub> = A ω² = 0,1 · 100 = <em>10 m/s²</em> ✓', '§2. YOL', `a<sub>max</sub> = ${F('k A', 'm')} = ${F('200 · 0,1', '2')} = <em>10 m/s²</em> ✓`], n: ['En büyük ivme uç noktalarda, hızın sıfır olduğu yerdedir.'] } },
-    { q: { t: 'Uzunluğu 2,5 m olan basit sarkacın periyodu kaç s\'dir? (g = 10 m/s², π = 3)', o: ['3 s', '1,5 s', '6 s', '0,5 s'],
+    { q: { t: 'Uzunluğu 2,5 m olan basit sarkacın periyodu kaç s\'dir? (g = 10 m/s², π = 3)', o: ['3 s', '1,5 s', '6 s', '0,5 s', '9 s'],
       s: [`${FM(`T = 2π ${SQ(F('L', 'g'))}`)} = 2 · 3 · ${SQ(F('2,5', '10'))} = 6 · 0,5 = <em>3 s</em> ✓`], n: ['Sarkacın periyodu kütleye bağlı değildir.'] } },
   ] });
   konuEkle('AYT', 'Basit Harmonik Hareket', { dersler: [d19], gorevler: [g19] });

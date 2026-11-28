@@ -45,11 +45,11 @@
   ] });
   const g9 = gorev(s9, { yk: 'AYT9-g1', no: 1, icon: '⚖️', name: 'Askı noktasını bul', task: 'Kütle merkezinin yerini hesaplayın.', data: [['Çubuk', '8 m'], ['x', 'sol uçtan ölçülür']], steps: [
     { do: S => { S.m1 = 2; S.x1 = 0; S.m2 = 6; S.x2 = 8; }, sub: 'Kütlesiz çubuğa kütleler asılıyor.', go: '▶︎ Başlat' },
-    { q: { t: 'Sol uçta 2 kg, sağ uçta (x = 8 m) 6 kg var. Kütle merkezi sol uçtan kaç m uzaktadır?', o: ['6 m', '4 m', '2 m', '5,3 m'], f: ['k9a', 'k9b'],
+    { q: { t: 'Sol uçta 2 kg, sağ uçta (x = 8 m) 6 kg var. Kütle merkezi sol uçtan kaç m uzaktadır?', o: ['6 m', '4 m', '2 m', '5,3 m', '12 m'], f: ['k9a', 'k9b'],
       s: [`x<sub>KM</sub> = ${F('2 · 0 + 6 · 8', '2 + 6')} = ${F('48', '8')} = <em>6 m</em> ✓`], n: ['Kütle merkezi her zaman ağır olan kütleye daha yakındır.'] } },
-    { do: S => { S.m1 = 1; S.x1 = 0; S.m2 = 2; S.x2 = 3; S.m3 = 3; S.x3 = 6; }, q: { t: 'x = 0\'da 1 kg, x = 3 m\'de 2 kg, x = 6 m\'de 3 kg var. Kütle merkezi kaç m\'dedir?', o: ['4 m', '3 m', '2 m', '5 m'], f: ['k9a', 'k9b', 'k9c'],
+    { do: S => { S.m1 = 1; S.x1 = 0; S.m2 = 2; S.x2 = 3; S.m3 = 3; S.x3 = 6; }, q: { t: 'x = 0\'da 1 kg, x = 3 m\'de 2 kg, x = 6 m\'de 3 kg var. Kütle merkezi kaç m\'dedir?', o: ['4 m', '3 m', '2 m', '5 m', '8 m'], f: ['k9a', 'k9b', 'k9c'],
       s: [`x<sub>KM</sub> = ${F('1 · 0 + 2 · 3 + 3 · 6', '1 + 2 + 3')} = ${F('24', '6')} = <em>4 m</em> ✓`], n: ['Pay: her kütle kendi konumuyla çarpılıp toplanır. Payda: toplam kütle.'] } },
-    { do: S => { S.m1 = 0; S.m3 = 0; S.m2 = 2; S.x2 = 4; S.cubuk = 2; S.x1 = 0; }, q: { t: '4 m uzunluğunda 2 kg\'lık türdeş çubuğun sağ ucuna 2 kg\'lık cisim asılıyor. Sistemin kütle merkezi sol uçtan kaç m uzaktadır?', o: ['3 m', '2 m', '4 m', '2,5 m'],
+    { do: S => { S.m1 = 0; S.m3 = 0; S.m2 = 2; S.x2 = 4; S.cubuk = 2; S.x1 = 0; }, q: { t: '4 m uzunluğunda 2 kg\'lık türdeş çubuğun sağ ucuna 2 kg\'lık cisim asılıyor. Sistemin kütle merkezi sol uçtan kaç m uzaktadır?', o: ['3 m', '2 m', '4 m', '2,5 m', '6 m'],
       s: ['Türdeş çubuğun KM\'si ortasında: x = 2 m', `x<sub>KM</sub> = ${F('2 · 2 + 2 · 4', '2 + 2')} = ${F('12', '4')} = <em>3 m</em> ✓`], n: ['Türdeş çubuğu orta noktasında duran tek bir kütle gibi düşünebiliriz.'] } },
     { q: { t: 'Yatay zemindeki bir dolap ne zaman devrilmeye başlar?', o: ['Ağırlık merkezinden geçen düşey doğru taban alanının dışına çıkınca', 'Ağırlık merkezi tabandan yükselince', 'Kütlesi artınca', 'Taban alanı büyüyünce'],
       s: ['Ağırlık merkezinden geçen düşey doğru tabanın içindeyse ağırlığın torku dolabı geri döndürür.', 'Doğru tabanın dışına çıkınca tork devirme yönünde olur → <em>devrilir</em> ✓'], n: ['Geniş taban ve alçak ağırlık merkezi cismi daha kararlı yapar (yarış arabaları alçaktır).'] } },
@@ -108,13 +108,13 @@
   ] });
   const g10 = gorev(s10, { yk: 'AYT10-g1', no: 1, icon: '🏗️', name: 'Yükü kaldır', task: 'Makara ve kaldıraçta gereken kuvveti ve ipin yolunu bulun.', data: [['Yük', 'G = 120 N'], ['Makaralar', 'ağırlıksız, sürtünmesiz']], steps: [
     { do: S => { S.W = 120; S.mod = 'sabit'; }, sub: '120 N\'luk yük sabit makaraya bağlı.', go: '▶︎ Başlat' },
-    { q: { t: 'Sabit makarada 120 N\'luk yükü sabit hızla çekmek için kaç N kuvvet gerekir?', o: ['120 N', '60 N', '240 N', '30 N'], f: ['b10f', 'b10w'],
+    { q: { t: 'Sabit makarada 120 N\'luk yükü sabit hızla çekmek için kaç N kuvvet gerekir?', o: ['120 N', '60 N', '240 N', '30 N', '360 N'], f: ['b10f', 'b10w'],
       s: ['Sabit makarada yükü tek ip taşır: <em>F = G = 120 N</em> ✓'], n: ['Sabit hız → net kuvvet sıfır.', 'Sabit makara kuvvet kazancı sağlamaz, yalnız yön değiştirir.'] } },
-    { do: S => { S.mod = 'har'; S.cek = 0; }, q: { t: 'Aynı yük hareketli makaraya asılırsa kaç N kuvvet gerekir?', o: ['60 N', '120 N', '240 N', '40 N'], f: ['b10f', 'b10w'],
+    { do: S => { S.mod = 'har'; S.cek = 0; }, q: { t: 'Aynı yük hareketli makaraya asılırsa kaç N kuvvet gerekir?', o: ['60 N', '120 N', '240 N', '40 N', '30 N'], f: ['b10f', 'b10w'],
       s: ['İki ip parçası yükü taşır: 2F = 120', '<em>F = 60 N</em> ✓'], n: ['Hareketli makarada ipin her iki kolu da yukarı çeker.'] } },
-    { do: S => { S.kos = 1; }, q: { t: 'Hareketli makarayla yükün 1,5 m yükselmesi için ip kaç m çekilmelidir?', o: ['3 m', '1,5 m', '0,75 m', '6 m'], f: ['b10t'],
+    { do: S => { S.kos = 1; }, q: { t: 'Hareketli makarayla yükün 1,5 m yükselmesi için ip kaç m çekilmelidir?', o: ['3 m', '1,5 m', '0,75 m', '6 m', '9 m'], f: ['b10t'],
       s: ['İş prensibi: F · s = G · h → 60 · s = 120 · 1,5', '<em>s = 3 m</em> ✓'], n: ['Kuvvet yarıya inince yol iki katına çıkar; iş değişmez.'] } },
-    { q: { t: '2 m uzunluğunda kütlesiz levyede destek, ucundaki 400 N\'luk yükten 0,4 m uzakta. Diğer uca kaç N kuvvet uygulanmalıdır?', o: ['100 N', '400 N', '80 N', '1600 N'],
+    { q: { t: '2 m uzunluğunda kütlesiz levyede destek, ucundaki 400 N\'luk yükten 0,4 m uzakta. Diğer uca kaç N kuvvet uygulanmalıdır?', o: ['100 N', '400 N', '80 N', '1600 N', '200 N'],
       s: ['Kuvvet kolu: 2 − 0,4 = 1,6 m', `F · 1,6 = 400 · 0,4 → F = ${F('160', '1,6')} = <em>100 N</em> ✓`], n: ['Destek yüke ne kadar yakınsa gereken kuvvet o kadar küçüktür.'] } },
   ] });
   konuEkle('AYT', 'Basit Makineler', { dersler: [d10], gorevler: [g10] });
@@ -171,7 +171,7 @@
       s: [`${FM('F = q E')} = 2 · 10<sup>−6</sup> · 9000 = <em>0,018 N</em> ✓ (alan yönünde)`], n: ['Yük negatif olsaydı kuvvetin büyüklüğü aynı, yönü alana zıt olurdu.'] } },
     { do: S => { S.ikinci = 1; S.q1 = 4; S.q2 = 4; S.x1 = -3; S.x2 = 3; S.xp = 0; }, q: { t: '+4 μC\'luk iki yük 6 m aralıklı. Tam orta noktada bileşke elektrik alan kaç N/C\'dir?', o: ['0', '8000 N/C', '4000 N/C', '16 000 N/C'], f: ['e11e1', 'e11e2', 'e11t'],
       s: ['E₁ = E₂ = 9 · 10<sup>9</sup> · 4 · 10<sup>−6</sup> / 9 = 4000 N/C', 'Zıt yönlü ve eşit → <em>E<sub>net</sub> = 0</em> ✓'], n: ['Pozitif yüklerin alanları dışarı doğru: ortada biri sağa, diğeri sola.'] } },
-    { do: S => { S.q1 = 1; S.q2 = 4; S.x1 = -1.5; S.x2 = 1.5; S.xp = -0.5; }, q: { t: '+1 μC ve +4 μC\'luk yükler 3 m aralıklı. Aralarında alanın sıfır olduğu nokta +1 μC\'luk yükten kaç m uzaktadır?', o: ['1 m', '2 m', '1,5 m', '0,6 m'], f: ['e11t'],
+    { do: S => { S.q1 = 1; S.q2 = 4; S.x1 = -1.5; S.x2 = 1.5; S.xp = -0.5; }, q: { t: '+1 μC ve +4 μC\'luk yükler 3 m aralıklı. Aralarında alanın sıfır olduğu nokta +1 μC\'luk yükten kaç m uzaktadır?', o: ['1 m', '2 m', '1,5 m', '0,6 m', '0,5 m'], f: ['e11t'],
       s: [`k ${F('1', 'x<sup>2</sup>')} = k ${F('4', '(3 − x)<sup>2</sup>')} → ${F('3 − x', 'x')} = 2`, '<em>x = 1 m</em> ✓ (küçük yüke yakın)'], n: ['Aynı işaretli yüklerde sıfır noktası aradadır ve küçük yüke yakındır.'] } },
   ] });
   konuEkle('AYT', 'Elektriksel Kuvvet ve Alan', { dersler: [d11], gorevler: [g11] });
@@ -220,7 +220,7 @@
       s: ['V = k(+4)/d + k(−4)/d', '<em>V = 0</em> ✓ (ama elektrik alan sıfır değildir)'], n: ['Potansiyel skalerdir: işaretleriyle toplanır.', 'Sık yanlış: V = 0 olan yerde E de sıfır sanmak.'] } },
     { do: S => { S.hedef = 1.5; }, q: { t: '2 μC\'luk yük potansiyeli 1000 V olan noktadan 4000 V olan noktaya taşınıyor. Yapılması gereken iş kaç J\'dür?', o: ['0,006 J', '0,008 J', '0,002 J', '6000 J'],
       s: [`${FM('W = q ΔV')} = 2 · 10<sup>−6</sup> · (4000 − 1000)`, '= <em>6 · 10<sup>−3</sup> J = 0,006 J</em> ✓'], n: ['Pozitif yükü yüksek potansiyele taşımak dışarıdan iş ister.'] } },
-    { q: { t: '2 μC ve 3 μC\'luk iki yük 0,3 m aralıklıdır. Sistemin elektriksel potansiyel enerjisi kaç J\'dür?', o: ['0,18 J', '0,6 J', '0,054 J', '1,8 J'],
+    { q: { t: '2 μC ve 3 μC\'luk iki yük 0,3 m aralıklıdır. Sistemin elektriksel potansiyel enerjisi kaç J\'dür?', o: ['0,18 J', '0,6 J', '0,054 J', '1,8 J', '0,36 J'],
       s: [`${FM(`U = k ${F('q<sub>1</sub> q<sub>2</sub>', 'd')}`)} = 9 · 10<sup>9</sup> · ${F('6 · 10<sup>−12</sup>', '0,3')}`, '= <em>0,18 J</em> ✓'], n: ['U skalerdir; yükler aynı işaretliyse pozitif, zıt işaretliyse negatiftir.'] } },
   ] });
   konuEkle('AYT', 'Elektriksel Potansiyel', { dersler: [d12], gorevler: [g12] });

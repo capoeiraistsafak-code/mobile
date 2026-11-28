@@ -80,9 +80,9 @@
   // ======================= GÖREV A · Yay ve ip dalgaları =======================
   const gA = gorev(sDl, { yk: 'TYT9-g2', no: 2, icon: '🪀', name: 'Kitap soruları: yay dalgaları ve atmalar', task: 'λ, f, T, v = λf; atma hızı; sabit ve serbest uçta yansıma; ince–kalın yay geçişi; girişim.', steps: [
     { do: S => M(S, 'ip', { uc: 'sabit' }), sub: 'Dalga laboratuvarı: yay, dalga leğeni ve hoparlör.', go: '▶︎ Başla' },
-    st({ mod: 'ip', dizi: 3, v1: 3, etiket: '4 tepe arası 90 cm' }, { t: 'Bir yay dalgasında art arda 4 tepe arasındaki uzaklık 90 cm\'dir. Dalga boyu kaç cm\'dir?', o: ['30', '22,5', '45', '90'], b: ['Dalga boyu (λ): art arda iki tepe arasındaki uzaklık.'],
+    st({ mod: 'ip', dizi: 3, v1: 3, etiket: '4 tepe arası 90 cm' }, { t: 'Bir yay dalgasında art arda 4 tepe arasındaki uzaklık 90 cm\'dir. Dalga boyu kaç cm\'dir?', o: ['30', '22,5', '45', '90', '60'], b: ['Dalga boyu (λ): art arda iki tepe arasındaki uzaklık.'],
       s: ['4 tepe arasında 3 dalga boyu vardır.', 'λ = 90 / 3 = <em>30 cm</em> ✓'], n: ['Sık yanlış: tepe sayısına bölmek. n tepe arasında (n − 1) dalga boyu vardır.'] }),
-    st({ mod: 'ip', dizi: 2, v1: 3 }, { t: 'Kaynak 4 saniyede 20 titreşim yapıyor ve dalga boyu 0,5 m. Dalganın yayılma hızı kaç m/s\'dir?', o: ['2,5', '10', '5', '0,1'],
+    st({ mod: 'ip', dizi: 2, v1: 3 }, { t: 'Kaynak 4 saniyede 20 titreşim yapıyor ve dalga boyu 0,5 m. Dalganın yayılma hızı kaç m/s\'dir?', o: ['2,5', '10', '5', '0,1', '1,25'],
       s: [`f = ${F('20', '4')} = 5 Hz`, `${FM('v = λ · f')} = 0,5 · 5 = <em>2,5 m/s</em> ✓`], n: ['Frekans: 1 saniyedeki titreşim sayısı. Periyot: bir titreşimin süresi, T = 1/f = 0,2 s.'] }),
     st({ mod: 'ip', uc: 'sabit' }, { t: 'Gergin bir yayda atmanın hızını artırmak için aşağıdakilerden hangisi yapılmalıdır?', o: ['Yayı daha çok germek', 'Elin titreşim frekansını artırmak', 'Atmanın genliğini büyütmek', 'Aynı yayı daha hızlı sallamak'],
       b: [`Yaydaki atma hızı: ${FM(`v = √${F('F', 'μ')}`)} (F: gerilme kuvveti, μ: birim uzunluğun kütlesi)`],
@@ -94,19 +94,19 @@
     st({ mod: 'ip', iki: 1, v1: 2, v2: 1 }, { t: 'İnce yaydan kalın yaya geçen tümsek atmanın iletilen ve yansıyan kısımları nasıldır?', o: ['İletilen düz, yansıyan ters', 'İletilen ters, yansıyan düz', 'İkisi de düz', 'İkisi de ters'],
       b: ['Kalın yay, ince yaya göre "duvar gibi" davranır (atma kalın yayda daha yavaştır).'],
       s: ['İletilen atma her zaman <em>düz</em> geçer.', 'Kalın yay sabit uca benzer → yansıyan <em>ters</em> ✓'], n: ['Kalından inceye geçişte ise yansıyan atma düz döner (serbest uca benzer).', 'Geçişte frekans değişmez; hız ve dalga boyu değişir.'] }),
-    st({ mod: 'ip', iki: 1, v1: 1, v2: 2 }, { t: 'Kalın yaydan ince yaya geçen atmanın iletilen kısmının hızı için ne söylenir?', o: ['Artar', 'Azalır', 'Değişmez', 'Sıfır olur'],
+    st({ mod: 'ip', iki: 1, v1: 1, v2: 2 }, { t: 'Kalın yaydan ince yaya geçen atmanın iletilen kısmının hızı için ne söylenir?', o: ['Artar', 'Azalır', 'Değişmez', 'Sıfır olur', 'Önce artar, sonra azalır'],
       b: [`Atma hızı: ${FM(`v = √${F('F', 'μ')}`)} · iki yayın gerilme kuvveti aynıdır.`],
       s: ['İnce yayda μ küçük → v büyük: iletilen atma <em>hızlanır</em> ✓', 'Yansıyan atma düz döner.'], n: ['Gerilme kuvveti birleşik yayın her yerinde aynıdır; farkı μ yaratır.'] }),
-    st({ mod: 'ip', karsi: [0.9, 0.6], v1: 1.5, etiket: 'genlikler 3 cm ve 2 cm' }, { t: 'Genlikleri 3 cm ve 2 cm olan iki tümsek atma bir yayda karşılaşıyor. Tam üst üste geldikleri anda genlik kaç cm olur?', o: ['5', '1', '6', '2,5'],
+    st({ mod: 'ip', karsi: [0.9, 0.6], v1: 1.5, etiket: 'genlikler 3 cm ve 2 cm' }, { t: 'Genlikleri 3 cm ve 2 cm olan iki tümsek atma bir yayda karşılaşıyor. Tam üst üste geldikleri anda genlik kaç cm olur?', o: ['5', '1', '6', '2,5', '10'],
       s: ['Aynı yönlü atmalar üst üste gelince genlikler toplanır (yapıcı girişim).', '3 + 2 = <em>5 cm</em> ✓'], n: ['Biri tümsek biri çukur olsaydı 3 − 2 = 1 cm olurdu (yıkıcı girişim).', 'Karşılaştıktan sonra atmalar birbirini etkilemeden yollarına devam eder.'] }),
-    st({ mod: 'ip', dizi: 2.5, v1: 3 }, { t: 'Dalga boyu 40 cm, periyodu 0,2 s olan dalganın hızı kaç cm/s\'dir?', o: ['200', '8', '80', '20'],
+    st({ mod: 'ip', dizi: 2.5, v1: 3 }, { t: 'Dalga boyu 40 cm, periyodu 0,2 s olan dalganın hızı kaç cm/s\'dir?', o: ['200', '8', '80', '20', '400'],
       s: [`${FM(`v = ${F('λ', 'T')}`)} = ${F('40', '0,2')} = <em>200 cm/s</em> ✓`], n: ['1. YOL: v = λ/T · 2. YOL: f = 1/T = 5 Hz → v = λ · f = 40 · 5 = 200 cm/s'] }),
   ] });
 
   // ======================= GÖREV B · Su dalgaları, ses, deprem =======================
   const gB = gorev(sDl, { yk: 'TYT9-g3', no: 3, icon: '🌊', name: 'Kitap soruları: su dalgaları ve ses', task: 'Derin–sığ geçiş, tsunami, yansıma, stroboskop; ses hızı, yükseklik, şiddet, tını, yankı; deprem.', steps: [
     { do: S => M(S, 'legen', { lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }), sub: 'Dalga leğeni: sol taraf derin, sağ taraf sığ.', go: '▶︎ Başla' },
-    st({ mod: 'legen', lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }, { t: 'Doğrusal su dalgaları derin bölgeden sığ bölgeye geçiyor. Derin bölgede dalga boyu 1,6 cm, hız 16 cm/s; sığ bölgede hız 8 cm/s. Sığ bölgede dalga boyu kaç cm olur?', o: ['0,8', '1,6', '3,2', '0,4'], f: ['dlA', 'dlB'], gizle: ['dlB'],
+    st({ mod: 'legen', lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }, { t: 'Doğrusal su dalgaları derin bölgeden sığ bölgeye geçiyor. Derin bölgede dalga boyu 1,6 cm, hız 16 cm/s; sığ bölgede hız 8 cm/s. Sığ bölgede dalga boyu kaç cm olur?', o: ['0,8', '1,6', '3,2', '0,4', '2,4'], f: ['dlA', 'dlB'], gizle: ['dlB'],
       s: ['Ortam değişince frekans değişmez: f = v / λ = 16 / 1,6 = 10 Hz', `λ₂ = ${F('v₂', 'f')} = ${F('8', '10')} = <em>0,8 cm</em> ✓`], n: ['Su dalgalarında sığ bölgede hız azalır; frekans sabit olduğu için dalga boyu da azalır.'] }),
     st({ mod: 'legen', lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }, { t: 'Açık denizde oluşan tsunami dalgası kıyıya yaklaşırken aşağıdakilerden hangisi artar?', o: ['Genliği', 'Hızı', 'Dalga boyu', 'Frekansı'],
       b: ['Su dalgalarının hızı derinliğe bağlıdır: derinlik azaldıkça hız azalır.'],
@@ -114,7 +114,7 @@
     st({ mod: 'legen', dairesel: 1, lam1: 0.7, f: 0.6 }, { t: 'Dalga leğeninde noktasal kaynağın frekansı artırılırsa (derinlik aynı) ne değişir?', o: ['Dalga boyu azalır', 'Dalga hızı artar', 'Dalga boyu artar', 'Hiçbir şey değişmez'],
       b: [`${FM('v = λ · f')} · su dalgasının hızı yalnız derinliğe bağlıdır.`],
       s: ['Derinlik aynı → hız aynı.', `λ = ${F('v', 'f')} → f artınca <em>λ azalır</em> ✓ (tepeler sıklaşır)`] }),
-    st({ mod: 'legen', lam1: 0.8, f: 0.6, etiket: 'stroboskop: 6 yarık' }, { t: 'Frekansı 24 Hz olan dalgalar, 6 yarıklı stroboskopla duruyormuş gibi görülüyor. Stroboskop saniyede en fazla kaç tur atıyordur?', o: ['4', '6', '24', '144'],
+    st({ mod: 'legen', lam1: 0.8, f: 0.6, etiket: 'stroboskop: 6 yarık' }, { t: 'Frekansı 24 Hz olan dalgalar, 6 yarıklı stroboskopla duruyormuş gibi görülüyor. Stroboskop saniyede en fazla kaç tur atıyordur?', o: ['4', '6', '24', '144', '8'],
       b: [`Durgun görme şartı: ${FM('f<sub>dalga</sub> = n · N · f<sub>s</sub>')} (N: yarık sayısı, f<sub>s</sub>: dönme frekansı, n = 1, 2, 3…)`],
       s: ['En büyük f<sub>s</sub> için n = 1: 24 = 1 · 6 · f<sub>s</sub>', 'f<sub>s</sub> = <em>4 tur/s</em> ✓'], n: ['Daha yavaş dönüşlerde (2, 4/3 tur/s…) de durgun görülür; soruda en fazla isteniyor.'] }),
     st({ mod: 'ses', sesler: [[1, 1.5], [1, 3]], etiket: 'K ve L sesleri aynı genlikte' }, { t: 'Ekranda K ve L seslerinin dalgaları görülüyor. L\'nin frekansı K\'nin 2 katı, genlikleri eşit. Hangisi doğrudur?', o: ['L daha tiz (ince) duyulur', 'L daha şiddetli (yüksek) duyulur', 'L havada daha hızlı yayılır', 'İkisi de aynı duyulur'], f: ['dlA', 'dlB'],
@@ -122,9 +122,9 @@
     st({ mod: 'ses', sesler: [[1, 2]] }, { t: 'Ses dalgası aşağıdaki ortamların hangisinde yayılamaz?', o: ['Boşluk', 'Su', 'Çelik', 'Hava'],
       b: ['Ses mekanik bir dalgadır: taneciklerin titreşimiyle iletilir.'],
       s: ['Boşlukta titreşecek tanecik yoktur → ses <em>yayılamaz</em> ✓', 'Ses hızı: katılarda > sıvılarda > gazlarda.'], n: ['Işık elektromanyetik dalgadır ve boşlukta yayılır; ses yayılamaz.'] }),
-    st({ mod: 'ses', sesler: [[1, 2]], etiket: 'ses hızı 340 m/s' }, { t: 'Bir çocuk karşısındaki kayalığa bağırıyor ve sesinin yankısını 3 s sonra duyuyor. Kayalık kaç m uzaktadır? (v<sub>ses</sub> = 340 m/s)', o: ['510', '1020', '340', '170'],
+    st({ mod: 'ses', sesler: [[1, 2]], etiket: 'ses hızı 340 m/s' }, { t: 'Bir çocuk karşısındaki kayalığa bağırıyor ve sesinin yankısını 3 s sonra duyuyor. Kayalık kaç m uzaktadır? (v<sub>ses</sub> = 340 m/s)', o: ['510', '1020', '340', '170', '255'],
       s: ['Ses kayalığa gidip geri döner: toplam yol = 2d.', `2d = v · t = 340 · 3 = 1020 m → d = <em>510 m</em> ✓`], n: ['Sık yanlış: 1020 m demek. Yankı süresi gidiş + dönüş süresidir.', 'Yarasaların ve sonarın (ekolokasyon) çalışma ilkesi budur.'] }),
-    st({ mod: 'ses', sesler: [[1, 2]] }, { t: 'Gitar telinin titreşen boyu parmakla yarıya indirilirse (gerilme aynı) telden çıkan sesin frekansı ne olur?', o: ['2 katına çıkar', 'Yarıya iner', 'Değişmez', '4 katına çıkar'],
+    st({ mod: 'ses', sesler: [[1, 2]] }, { t: 'Gitar telinin titreşen boyu parmakla yarıya indirilirse (gerilme aynı) telden çıkan sesin frekansı ne olur?', o: ['2 katına çıkar', 'Yarıya iner', 'Değişmez', '4 katına çıkar', '4\'te birine iner'],
       b: [`Tel üzerinde temel titreşimde λ = 2L · ${FM('v = λ · f')} · teldeki dalga hızı gerilmeye ve tele bağlıdır.`],
       s: ['Tel aynı, gerilme aynı → dalga hızı aynı.', `${FM(`f = ${F('v', '2L')}`)} → L yarıya inince <em>f 2 katına çıkar</em> ✓ (ses incelir)`], n: ['Teli daha çok germek de frekansı artırır; kalın tel daha pes (kalın) ses verir.'] }),
     st({ mod: 'ses', sesler: [[1, 2]], etiket: 'deprem dalgaları' }, { t: 'Depremde önce gelen P dalgaları ile sonra gelen S dalgaları için hangisi doğrudur?', o: ['P boyuna, S enine dalgadır', 'P enine, S boyuna dalgadır', 'İkisi de enine dalgadır', 'İkisi de elektromanyetik dalgadır'],
@@ -135,16 +135,16 @@
   // ======================= TUZAK SORULAR =======================
   const gT = gorev(sDl, { yk: 'TYT9-g4', no: 4, icon: '🪤', name: 'Tuzak sorular: dalgalar', tuzak: true, task: 'Sık yapılan hatalar: frekans–hız, genlik–hız, yankı, ses şiddeti.', steps: [
     { do: S => M(S, 'ip', { uc: 'sabit' }), sub: 'Dikkat: her sorunun bir tuzağı var.', go: '▶︎ Başla' },
-    st({ mod: 'ip', dizi: 2.5, v1: 3 }, { t: 'Aynı yayda elin titreşim frekansı 2 katına çıkarılırsa dalganın hızı ne olur?', o: ['Değişmez', '2 katına çıkar', 'Yarıya iner', '4 katına çıkar'],
+    st({ mod: 'ip', dizi: 2.5, v1: 3 }, { t: 'Aynı yayda elin titreşim frekansı 2 katına çıkarılırsa dalganın hızı ne olur?', o: ['Değişmez', '2 katına çıkar', 'Yarıya iner', '4 katına çıkar', '4\'te birine iner'],
       b: ['Dalganın hızını ortam belirler; frekansını kaynak belirler.'],
       s: ['Ortam (yay ve gerginliği) aynı → <em>hız değişmez</em> ✓; dalga boyu yarıya iner.'], n: ['TUZAK: v = λf\'ye bakıp "f 2 kat → v 2 kat" demek. f artınca λ azalır, çarpım sabit kalır.'] }),
-    st({ mod: 'legen', lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }, { t: 'Su dalgası derin bölgeden sığ bölgeye geçerken frekansı ne olur?', o: ['Değişmez', 'Azalır', 'Artar', 'Sıfır olur'], gizle: ['dlB'],
+    st({ mod: 'legen', lam1: 0.8, lam2: 0.4, sig: 1, f: 0.6 }, { t: 'Su dalgası derin bölgeden sığ bölgeye geçerken frekansı ne olur?', o: ['Değişmez', 'Azalır', 'Artar', 'Sıfır olur', 'Önce artar, sonra azalır'], gizle: ['dlB'],
       b: ['Dalganın frekansı kaynağa bağlıdır.'],
       s: ['Kaynak aynı → <em>frekans değişmez</em> ✓; hız ve dalga boyu azalır.'], n: ['TUZAK: "her şey azalır" sanmak.'] }),
     st({ mod: 'ses', sesler: [[1.6, 2], [0.7, 2]] }, { t: 'Radyonun sesi açıldığında (frekans aynı) sesin hangi özelliği artar?', o: ['Şiddeti (genliği)', 'Yüksekliği (frekansı)', 'Hızı', 'Dalga boyu'], f: ['dlA', 'dlB'],
       b: ['Sesin şiddeti genliğe, yüksekliği (inceliği) frekansa bağlıdır.'],
       s: ['Ses açılınca hoparlör zarı daha büyük genlikle titreşir → <em>şiddet artar</em> ✓'], n: ['TUZAK: günlük dilde "sesi yükselt" denir ama fizikte "ses yüksekliği" frekanstır.'] }),
-    st({ mod: 'ses', sesler: [[1, 2]] }, { b: ['Işık sesten yaklaşık bir milyon kat hızlıdır.', `Sabit hızla alınan yol: ${FM('x = v · t')}`], t: 'Gök gürültüsü şimşekten 4 s sonra duyuluyor. Şimşek yaklaşık kaç m uzakta çakmıştır? (v<sub>ses</sub> = 340 m/s, ışığın gecikmesi önemsiz)', o: ['1360', '680', '2720', '85'],
+    st({ mod: 'ses', sesler: [[1, 2]] }, { b: ['Işık sesten yaklaşık bir milyon kat hızlıdır.', `Sabit hızla alınan yol: ${FM('x = v · t')}`], t: 'Gök gürültüsü şimşekten 4 s sonra duyuluyor. Şimşek yaklaşık kaç m uzakta çakmıştır? (v<sub>ses</sub> = 340 m/s, ışığın gecikmesi önemsiz)', o: ['1360', '680', '2720', '85', '4080'],
       s: ['Işık neredeyse anında gelir; gecikme sesin yolculuğudur.', 'd = 340 · 4 = <em>1360 m</em> ✓'], n: ['TUZAK: yankı sorusu gibi 2\'ye bölmek. Burada ses yalnız bir kez (gidiş) yol alır.'] }),
   ] });
 

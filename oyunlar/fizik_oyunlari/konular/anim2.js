@@ -66,11 +66,11 @@
     { do: S => sifir(S), sub: '10 kg\'lık dolap tahta zeminde duruyor.', go: '▶︎ Başlat' },
     { do: S => it(S, 20), q: { t: 'Durgun dolaba 20 N yatay kuvvet uygulanıyor, dolap kımıldamıyor. Sürtünme kuvveti kaç N\'dur?', o: ['20 N', '50 N', '30 N', '0'], f: ['srf', 'srF'],
       s: ['Dolap durgun → ΣF = 0', 'f<sub>s</sub> = F = <em>20 N</em> ✓'], n: ['50 N, statik sürtünmenin alabileceği <em>en büyük</em> değerdir; şu an o kadar değildir.'] } },
-    { q: { t: 'Dolap en az kaç N\'luk kuvvetle kaymaya başlar? (k<sub>s</sub> = 0,5)', o: ['50 N', '30 N', '100 N', '20 N'],
+    { q: { t: 'Dolap en az kaç N\'luk kuvvetle kaymaya başlar? (k<sub>s</sub> = 0,5)', o: ['50 N', '30 N', '100 N', '20 N', '25 N'],
       s: ['N = mg = 100 N', `f<sub>s,max</sub> = k<sub>s</sub> · N = 0,5 · 100 = <em>50 N</em> ✓`], n: ['Bu değeri aşan kuvvet dolabı harekete geçirir.'] } },
     { do: S => it(S, 60), q: { t: 'Dolap 60 N\'luk kuvvetle kayarken ivmesi kaç m/s²\'dir? (k<sub>k</sub> = 0,3)', o: ['3 m/s²', '6 m/s²', '1 m/s²', '0'], f: ['srt'],
       s: ['f<sub>k</sub> = 0,3 · 100 = 30 N', `a = ${F('F − f<sub>k</sub>', 'm')} = ${F('60 − 30', '10')} = <em>3 m/s²</em> ✓`], n: ['Kayan cisme kinetik sürtünme etki eder; statik değer artık kullanılmaz.'] } },
-    { do: S => { sifir(S); S.m = 4; S.ks = 0.4; S.kk = 0.25; it(S, 30); }, q: { t: '4 kg\'lık kutuya 30 N yatay kuvvet uygulanıyor, kutuya 10 N sürtünme kuvveti etki ediyor. Kutunun ivmesi kaç m/s²\'dir? (g = 10 m/s²)', o: ['5 m/s²', '7,5 m/s²', '10 m/s²', '2,5 m/s²'], f: ['srF', 'srf'],
+    { do: S => { sifir(S); S.m = 4; S.ks = 0.4; S.kk = 0.25; it(S, 30); }, q: { t: '4 kg\'lık kutuya 30 N yatay kuvvet uygulanıyor, kutuya 10 N sürtünme kuvveti etki ediyor. Kutunun ivmesi kaç m/s²\'dir? (g = 10 m/s²)', o: ['5 m/s²', '7,5 m/s²', '10 m/s²', '2,5 m/s²', '15 m/s²'], f: ['srF', 'srf'],
       s: ['Düşeyde: mg = 40 N aşağı, N = 40 N yukarı → dengede.', `Yatayda net kuvvet 30 − 10 = 20 N → ${FM(`a = ${F('F<sub>net</sub>', 'm')}`)} = ${F('20', '4')} = <em>5 m/s²</em> ✓`], n: ['Önce serbest cisim diyagramı: ağırlık ve tepki düşeyde birbirini dengeler.'] } },
   ] });
   FZ.konuEk('AYT', "Newton'un Hareket Yasaları", { dersler: [dSur], gorevler: [gSur] });
@@ -96,7 +96,7 @@
       s: ['Eşit sürede eşit alan: uzaklık arttıkça hız <em>azalır</em> ✓'], n: ['Açısal momentum korunumu: m · v · r sabit.'] } },
     { q: { t: 'Eşit sürelerde taranan alanlar için hangisi doğrudur?', o: ['Yörüngenin her yerinde eşittir', 'Günberide daha büyüktür', 'Günötede daha büyüktür', 'Hızla doğru orantılıdır'], f: ['k18v'],
       s: ['Kepler\'in 2. kanunu: <em>eşit sürede eşit alan</em> ✓'], n: ['Alanlar eşit; hızlar farklıdır.'] } },
-    { do: S => { S.aAU = 4; }, q: { t: 'Güneş\'e ortalama uzaklığı 9 AB olan bir cismin periyodu kaç yıldır?', o: ['27 yıl', '9 yıl', '81 yıl', '3 yıl'], f: ['k18t'],
+    { do: S => { S.aAU = 4; }, q: { t: 'Güneş\'e ortalama uzaklığı 9 AB olan bir cismin periyodu kaç yıldır?', o: ['27 yıl', '9 yıl', '81 yıl', '3 yıl', '54 yıl'], f: ['k18t'],
       s: [`${FM('T<sup>2</sup> = a<sup>3</sup>')} (yıl, AB) → T<sup>2</sup> = 9<sup>3</sup> = 729`, '<em>T = 27 yıl</em> ✓'], n: ['Dünya için a = 1 AB, T = 1 yıl.'] } },
   ] });
   FZ.konuEk('AYT', 'Kütle Çekim ve Kepler Yasaları', { dersler: [dKep], gorevler: [gKep] });
@@ -127,21 +127,21 @@
       s: [`ortalama sürat = ${F('alınan yol', 'süre')} = ${F('400', '80')} = <em>5 m/s</em> ✓`], n: ['Ortalama hız ise yer değiştirme / süre = 0\'dır.'] } },
     { q: { t: 'Bir kutuya 20 N sağa, 50 N sola kuvvet uygulanıyor. Bileşke kuvvet nedir?', o: ['30 N, sola', '70 N, sola', '30 N, sağa', '70 N, sağa'],
       s: ['Zıt yönlü kuvvetler: büyükten küçük çıkarılır → 50 − 20 = 30 N', 'Yön büyük kuvvetin yönü: <em>30 N, sola</em> ✓'], n: ['Aynı yönde olsalardı toplanırdı: 70 N.'] } },
-    { q: { t: 'Bir diske birbirine dik 6 N ve 8 N\'luk iki kuvvet uygulanıyor. Bileşke kuvvet kaç N\'dur?', o: ['10 N', '14 N', '2 N', '48 N'],
+    { q: { t: 'Bir diske birbirine dik 6 N ve 8 N\'luk iki kuvvet uygulanıyor. Bileşke kuvvet kaç N\'dur?', o: ['10 N', '14 N', '2 N', '48 N', '20 N'],
       s: ['Dik kuvvetler → uç uca ekle, dik üçgen kur', `R = ${SQ('6² + 8²')} = ${SQ('100')} = <em>10 N</em> ✓`], n: ['6-8-10 dik üçgeni sık kullanılır.'] } },
   ] });
   // 10. sınıf
   const g10 = gorev(sHK, { yk: 'TYT3-g3', no: 3, icon: '📝', name: '10. sınıf yazılı soruları', task: 'Sabit hızlı hareket, konum–zaman ve hız–zaman grafikleri, karşılaşma, ivme. (1. dönem 1. yazılı)', steps: [
     { do: S => { S.x = 0; S.v = 20; S.F = 0; S.f = 0; S.sure = 0; S.xMax = 64; }, sub: 'Araç 20 m/s sabit hızla gidiyor.', go: '▶︎ Başlat' },
-    { do: S => { S.kos = 1; }, q: { t: '20 m/s sabit hızla giden araç 1,2 km uzunluğundaki tüneli kaç saniyede geçer? (aracın boyu önemsiz)', o: ['60 s', '24 s', '6 s', '600 s'], f: ['f3t'],
+    { do: S => { S.kos = 1; }, q: { t: '20 m/s sabit hızla giden araç 1,2 km uzunluğundaki tüneli kaç saniyede geçer? (aracın boyu önemsiz)', o: ['60 s', '24 s', '6 s', '600 s', '120 s'], f: ['f3t'],
       s: ['1,2 km = 1200 m', `t = ${F('x', 'v')} = ${F('1200', '20')} = <em>60 s</em> ✓`], n: ['Birim dönüşümünü unutmayın.'] } },
-    { q: { t: 'Bir aracın konumu 0–4 s arasında 0\'dan 40 m\'ye düzgün artıyor. Bu aralıkta hızı kaç m/s\'dir?', o: ['10 m/s', '40 m/s', '160 m/s', '4 m/s'],
+    { q: { t: 'Bir aracın konumu 0–4 s arasında 0\'dan 40 m\'ye düzgün artıyor. Bu aralıkta hızı kaç m/s\'dir?', o: ['10 m/s', '40 m/s', '160 m/s', '4 m/s', '20 m/s'],
       s: ['Konum–zaman grafiğinde <em>eğim</em> hızı verir', `v = ${F('Δx', 'Δt')} = ${F('40', '4')} = <em>10 m/s</em> ✓`], n: ['Konum değişmiyorsa (yatay çizgi) araç durmaktadır.'] } },
     { q: { t: 'Aralarında 300 m olan K ve L araçları birbirine doğru 10 m/s ve 20 m/s hızlarla gidiyor. Kaç saniye sonra karşılaşırlar ve karşılaşma noktası K\'den kaç m uzaktadır?', o: ['10 s · 100 m', '10 s · 200 m', '30 s · 100 m', '15 s · 150 m'],
       s: ['Birbirine yaklaşma hızı 10 + 20 = 30 m/s', `t = ${F('300', '30')} = 10 s · K\'nin yolu 10 · 10 = <em>100 m</em> ✓`], n: ['Zıt yönde giden araçlar için hızlar toplanır.'] } },
     { do: S => { S.x = 0; S.v = 0; S.F = 5000; S.f = 0; S.m = 1000; S.sure = 0; S.xMax = 40; S.kos = 1; }, q: { t: 'Duran araç 4 saniyede 20 m/s hıza ulaşıyor (sabit ivmeyle). İvmesi ve bu sürede aldığı yol nedir?', o: ['5 m/s² · 40 m', '5 m/s² · 80 m', '4 m/s² · 40 m', '20 m/s² · 80 m'], f: ['f3t'],
       s: [`a = ${F('Δv', 'Δt')} = ${F('20', '4')} = 5 m/s²`, `x = ${F('1', '2')} a t<sup>2</sup> = ${F('1', '2')} · 5 · 16 = <em>40 m</em> ✓`], n: ['Duruştan başlayan araçta x = ½ a t².'] } },
-    { q: { t: 'Hız–zaman grafiğinde: 0–2 s hız 0\'dan 10 m/s\'ye, 2–6 s 10 m/s sabit, 6–8 s 10\'dan 0\'a iniyor. Toplam yer değiştirme kaç m\'dir?', o: ['60 m', '80 m', '40 m', '50 m'],
+    { q: { t: 'Hız–zaman grafiğinde: 0–2 s hız 0\'dan 10 m/s\'ye, 2–6 s 10 m/s sabit, 6–8 s 10\'dan 0\'a iniyor. Toplam yer değiştirme kaç m\'dir?', o: ['60 m', '80 m', '40 m', '50 m', '120 m'],
       s: ['Hız–zaman grafiğinde <em>alan</em> yer değiştirmeyi verir', '½ · 2 · 10 + 4 · 10 + ½ · 2 · 10 = 10 + 40 + 10 = <em>60 m</em> ✓'], n: ['Eğim ivmeyi, alan yer değiştirmeyi verir.'] } },
   ] });
   FZ.konuEk('TYT', 'Hareket ve Kuvvet', { gorevler: [g9b, g10] });
@@ -153,15 +153,15 @@
   const yeni = S => { S.tt = 0; S.kos = 0; S.iz = []; };
   const g11 = gorev(sAt, { yk: 'AYT5-g2', no: 2, icon: '📝', name: '11. sınıf yazılı soruları', task: 'Serbest düşme, düşey atış ve yatay atış. (1. dönem 1. yazılı)', data: [['g', '10 m/s²'], ['Hava direnci', 'yok']], steps: [
     { do: S => { yeni(S); S.mod = 'yatay'; S.v0 = 0; S.h0 = 80; }, sub: 'Cisim 80 m yükseklikten serbest bırakılacak.', go: '▶︎ Bırak' },
-    { do: S => { S.kos = 1; }, q: { t: '80 m yükseklikten serbest bırakılan cisim kaç saniyede yere düşer?', o: ['4 s', '8 s', '16 s', '2 s'], f: ['a5t'],
+    { do: S => { S.kos = 1; }, q: { t: '80 m yükseklikten serbest bırakılan cisim kaç saniyede yere düşer?', o: ['4 s', '8 s', '16 s', '2 s', '12 s'], f: ['a5t'],
       s: [`${FM(`h = ${F('1', '2')} g t<sup>2</sup>`)} → 80 = 5 t<sup>2</sup> → t<sup>2</sup> = 16`, '<em>t = 4 s</em> ✓'], n: ['Serbest düşmede ilk hız sıfırdır.'] } },
-    { q: { t: 'Cisim yere kaç m/s hızla çarpar?', o: ['40 m/s', '80 m/s', '20 m/s', '400 m/s'], f: ['a5y'],
+    { q: { t: 'Cisim yere kaç m/s hızla çarpar?', o: ['40 m/s', '80 m/s', '20 m/s', '400 m/s', '120 m/s'], f: ['a5y'],
       s: [`v = g · t = 10 · 4 = <em>40 m/s</em> ✓`], n: ['Cisim her saniye bir öncekinden daha çok yol alır (1., 2., 3., 4. saniyelerde 5, 15, 25, 35 m).'] } },
     { do: S => { yeni(S); S.mod = 'egik'; S.h0 = 0; S.v0 = 30; S.th = 90; S.kos = 1; }, q: { t: 'Yerden 30 m/s hızla düşey yukarı atılan top en çok kaç m yükselir ve havada kaç saniye kalır?', o: ['45 m · 6 s', '45 m · 3 s', '90 m · 6 s', '30 m · 3 s'], f: ['a5y'],
       s: ['§1. YOL · süre', `t<sub>çıkış</sub> = ${F('v<sub>0</sub>', 'g')} = 3 s → uçuş 6 s · h = ${F('0 + 30', '2')} · 3 = 45 m`, '§2. YOL · formül', `${FM(`h<sub>max</sub> = ${F('v<sub>0</sub><sup>2</sup>', '2g')}`)} = ${F('900', '20')} = <em>45 m</em> ✓`], n: ['Tepe noktasında hız sıfırdır, ivme yine g (aşağı).'] } },
-    { do: S => { yeni(S); S.mod = 'yatay'; S.v0 = 40; S.h0 = 45; S.kos = 1; }, q: { t: '45 m yükseklikten 40 m/s hızla yatay atılan gülle kaç m uzağa düşer?', o: ['120 m', '180 m', '40 m', '90 m'], f: ['a5x', 'a5t'],
+    { do: S => { yeni(S); S.mod = 'yatay'; S.v0 = 40; S.h0 = 45; S.kos = 1; }, q: { t: '45 m yükseklikten 40 m/s hızla yatay atılan gülle kaç m uzağa düşer?', o: ['120 m', '180 m', '40 m', '90 m', '240 m'], f: ['a5x', 'a5t'],
       s: ['Düşey: 45 = 5 t<sup>2</sup> → t = 3 s', 'Yatay hız sabit: x = 40 · 3 = <em>120 m</em> ✓'], n: ['Yatay ve düşey hareket birbirinden bağımsızdır.'] } },
-    { q: { t: 'Gülle yere kaç m/s hızla çarpar?', o: ['50 m/s', '70 m/s', '40 m/s', '30 m/s'], f: ['a5x', 'a5y'],
+    { q: { t: 'Gülle yere kaç m/s hızla çarpar?', o: ['50 m/s', '70 m/s', '40 m/s', '30 m/s', '100 m/s'], f: ['a5x', 'a5y'],
       s: ['v<sub>x</sub> = 40 m/s · v<sub>y</sub> = g t = 30 m/s', `v = ${SQ('40² + 30²')} = <em>50 m/s</em> ✓`], n: ['Çarpma hızının bileşenleri birbirine diktir.'] } },
   ] });
   FZ.konuEk('AYT', 'İki Boyutta Hareket (Atışlar)', { gorevler: [g11] });
@@ -203,7 +203,7 @@
       s: [`${FM(`a<sub>m</sub> = ${F('v<sup>2</sup>', 'r')}`)} = ${F('36', '3')} = 12 m/s²`, `${FM('F<sub>m</sub> = m · a<sub>m</sub>')} = 2 · 12 = <em>24 N</em> (ipteki gerilme sağlar) ✓`], n: ['Merkezcil ivme her an merkeze doğrudur.'] } },
     { do: S => { S.kop = 1; }, q: { t: 'İp koparsa cisim nasıl hareket eder? (yatay düzlem, sürtünme yok)', o: ['Kopma anındaki hız yönünde (teğet) düzgün doğrusal', 'Merkezden dışarı doğru (yarıçap boyunca)', 'Çember üzerinde dönmeye devam eder', 'Merkeze doğru'], f: ['c5v'],
       s: ['İp koptu → merkezcil kuvvet ortadan kalktı.', 'Net kuvvet sıfır: cisim <em>teğet doğrultuda düzgün doğrusal</em> hareket yapar ✓'], n: ['Sık yanlış: "merkezkaç kuvvetiyle dışarı fırlar". Böyle bir gerçek kuvvet yoktur.'] } },
-    { do: S => { S.kop = 0; S.r = 2; S.T = 2; }, q: { t: 'Yatay virajda (r = 50 m) lastik ile yol arasındaki sürtünme katsayısı 0,8. Araç en fazla kaç m/s hızla savrulmadan dönebilir? (g = 10 m/s²)', o: ['20 m/s', '40 m/s', '10 m/s', '400 m/s'],
+    { do: S => { S.kop = 0; S.r = 2; S.T = 2; }, q: { t: 'Yatay virajda (r = 50 m) lastik ile yol arasındaki sürtünme katsayısı 0,8. Araç en fazla kaç m/s hızla savrulmadan dönebilir? (g = 10 m/s²)', o: ['20 m/s', '40 m/s', '10 m/s', '400 m/s', '60 m/s'],
       s: ['Merkezcil kuvveti sürtünme sağlar: m v² / r ≤ k m g', `v<sup>2</sup> = k g r = 0,8 · 10 · 50 = 400 → <em>v = 20 m/s</em> ✓`], n: ['Kütle sadeleşir: güvenli hız kütleye bağlı değildir.'] } },
   ] });
   FZ.konuEk('AYT', 'Çembersel Hareket', { gorevler: [g12] });
@@ -211,13 +211,13 @@
   const sDon = FZ.taban('AYT', 'Dönme ve Açısal Momentum');
   const gDon = gorev(sDon, { yk: 'AYT17-g2', no: 2, icon: '📝', name: '12. sınıf yazılı soruları', task: 'Kaymadan yuvarlanma ve açısal momentumun korunumu. (1. dönem 1. yazılı)', steps: [
     { do: S => { S.L = 12; S.r = S.hedef = Math.SQRT1_2; }, sub: 'Platform dönüyor (I = 4 kg·m², ω = 3 rad/s).', go: '▶︎ Başlat' },
-    { q: { t: 'Yarıçapı 0,5 m olan tekerlek kaymadan 4 rad/s açısal hızla yuvarlanıyor. Tekerleğin merkezinin hızı kaç m/s\'dir?', o: ['2 m/s', '8 m/s', '4 m/s', '0,125 m/s'],
+    { q: { t: 'Yarıçapı 0,5 m olan tekerlek kaymadan 4 rad/s açısal hızla yuvarlanıyor. Tekerleğin merkezinin hızı kaç m/s\'dir?', o: ['2 m/s', '8 m/s', '4 m/s', '0,125 m/s', '1 m/s'],
       s: [`${FM('v<sub>merkez</sub> = ω · r')} = 4 · 0,5 = <em>2 m/s</em> ✓`], n: ['Kaymadan yuvarlanmada merkezin hızı ωr\'dir.'] } },
     { q: { t: 'Aynı tekerleğin en üst noktasının yere göre hızı kaç m/s\'dir?', o: ['4 m/s', '2 m/s', '0', '6 m/s'],
       s: ['En üstte öteleme (2 m/s) ve dönme (ωr = 2 m/s) hızları aynı yönde', 'v = 2 + 2 = <em>4 m/s</em> ✓'], n: ['Yere değen noktada ise hızlar zıt yönlüdür: 2 − 2 = 0.'] } },
     { q: { t: 'Tekerleğin yere değen noktasının o andaki hızı kaç m/s\'dir?', o: ['0', '2 m/s', '4 m/s', '1 m/s'],
       s: ['Öteleme hızı ileri, dönme hızı geri ve eşit büyüklükte → <em>0</em> ✓'], n: ['Bu yüzden "kaymadan" yuvarlanır: temas noktası yere göre kaymaz.'] } },
-    { do: S => { S.hedef = 0; }, q: { t: 'Eylemsizlik momenti 4 kg·m² olan patenci 3 rad/s ile dönüyor. Kollarını kapatınca eylemsizlik momenti 2 kg·m²\'ye iniyor. Yeni açısal hızı kaç rad/s\'dir?', o: ['6 rad/s', '1,5 rad/s', '3 rad/s', '12 rad/s'], f: ['d17t'],
+    { do: S => { S.hedef = 0; }, q: { t: 'Eylemsizlik momenti 4 kg·m² olan patenci 3 rad/s ile dönüyor. Kollarını kapatınca eylemsizlik momenti 2 kg·m²\'ye iniyor. Yeni açısal hızı kaç rad/s\'dir?', o: ['6 rad/s', '1,5 rad/s', '3 rad/s', '12 rad/s', '18 rad/s'], f: ['d17t'],
       s: ['Dış tork yok → açısal momentum korunur', `${FM('I<sub>1</sub> ω<sub>1</sub> = I<sub>2</sub> ω<sub>2</sub>')} → 4 · 3 = 2 · ω → <em>ω = 6 rad/s</em> ✓`], n: ['Kollarını kapatan patenci daha hızlı döner.'] } },
   ] });
   FZ.konuEk('AYT', 'Dönme ve Açısal Momentum', { gorevler: [gDon] });

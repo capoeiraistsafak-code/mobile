@@ -59,15 +59,15 @@
   // ---------------- HAREKET VE KUVVET · grafikler ----------------
   banka('TYT', 'Hareket ve Kuvvet', 'TYT3-gr', '📈', 'hareket', 'Konum–zaman, hız–zaman ve ivme–zaman grafiklerinden hız, yer değiştirme, ivme; karşılaşma; yön değiştirme; sürtünme grafiği.', [
     BASLA({ tur: 'x', eg: [[[0, 0], [8, 40]]], tmax: 8, ymax: 40, yA: 10, xEt: 't (s)', yEt: 'x (m)' }),
-    { do: G({ tur: 'x', eg: [[[0, 0], [8, 40]]], tmax: 8, ymax: 40, yA: 10, xEt: 't (s)', yEt: 'x (m)' }), q: { t: 'Konum–zaman grafiği verilen arabanın hızı kaç m/s\'dir?', o: ['5', '40', '8', '320'],
+    { do: G({ tur: 'x', eg: [[[0, 0], [8, 40]]], tmax: 8, ymax: 40, yA: 10, xEt: 't (s)', yEt: 'x (m)' }), q: { t: 'Konum–zaman grafiği verilen arabanın hızı kaç m/s\'dir?', o: ['5', '40', '8', '320', '10'],
       b: ['Konum–zaman grafiğinin eğimi hızı verir: ' + FM(`v = ${F('Δx', 'Δt')}`)], s: [`v = ${F('40', '8')} = <em>5 m/s</em> ✓`] } },
-    { do: G({ tur: 'v', eg: [[[0, 0], [4, 20], [8, 20]]], tmax: 8, ymax: 20, yA: 5, xEt: 't (s)', yEt: 'v (m/s)', olc: 0.06 }), q: { t: 'Hız–zaman grafiği verilen araba 8 s\'de kaç m yer değiştirir?', o: ['120', '160', '80', '40'],
+    { do: G({ tur: 'v', eg: [[[0, 0], [4, 20], [8, 20]]], tmax: 8, ymax: 20, yA: 5, xEt: 't (s)', yEt: 'v (m/s)', olc: 0.06 }), q: { t: 'Hız–zaman grafiği verilen araba 8 s\'de kaç m yer değiştirir?', o: ['120', '160', '80', '40', '240'],
       b: ['Hız–zaman grafiğinin altındaki alan yer değiştirmeyi verir.'], s: [`0–4 s üçgen: ${F('1', '2')} · 4 · 20 = 40 m · 4–8 s dikdörtgen: 4 · 20 = 80 m`, 'Toplam = <em>120 m</em> ✓'] } },
-    { do: G({ tur: 'v', eg: [[[0, 0], [4, 20], [8, 20]]], tmax: 8, ymax: 20, yA: 5, xEt: 't (s)', yEt: 'v (m/s)', olc: 0.06 }), q: { t: 'Aynı arabanın 0–4 s aralığındaki ivmesi kaç m/s²\'dir?', o: ['5', '20', '0', '4'],
+    { do: G({ tur: 'v', eg: [[[0, 0], [4, 20], [8, 20]]], tmax: 8, ymax: 20, yA: 5, xEt: 't (s)', yEt: 'v (m/s)', olc: 0.06 }), q: { t: 'Aynı arabanın 0–4 s aralığındaki ivmesi kaç m/s²\'dir?', o: ['5', '20', '0', '4', '10'],
       b: ['Hız–zaman grafiğinin eğimi ivmeyi verir: ' + FM(`a = ${F('Δv', 'Δt')}`)], s: [`a = ${F('20 − 0', '4')} = <em>5 m/s²</em> ✓ (4–8 s arası a = 0)`] } },
-    { do: G({ tur: 'a', eg: [[[0, 3], [4, 3]]], tmax: 4, ymin: 0, ymax: 4, yA: 1, xEt: 't (s)', yEt: 'a (m/s²)', v0: 2, olc: 0.15 }), q: { t: 'İlk hızı 2 m/s olan arabanın ivme–zaman grafiği veriliyor. 4. saniyenin sonunda hızı kaç m/s olur?', o: ['14', '12', '3', '16'],
+    { do: G({ tur: 'a', eg: [[[0, 3], [4, 3]]], tmax: 4, ymin: 0, ymax: 4, yA: 1, xEt: 't (s)', yEt: 'a (m/s²)', v0: 2, olc: 0.15 }), q: { t: 'İlk hızı 2 m/s olan arabanın ivme–zaman grafiği veriliyor. 4. saniyenin sonunda hızı kaç m/s olur?', o: ['14', '12', '3', '16', '28'],
       b: ['İvme–zaman grafiğinin altındaki alan hız değişimini verir.'], s: ['Δv = 3 · 4 = 12 m/s', 'v = 2 + 12 = <em>14 m/s</em> ✓'] } },
-    { do: G({ tur: 'x', eg: [[[0, 0], [6, 60]], [[0, 60], [6, 30]]], tmax: 6, ymax: 60, yA: 10, xEt: 't (s)', yEt: 'x (m)', adlar: [[5.6, 56, 'K'], [5.6, 33, 'L']], olc: 0.15 }), q: { t: 'K ve L arabalarının konum–zaman grafikleri veriliyor. Arabalar kaçıncı saniyede yan yana gelir?', o: ['4', '3', '6', '2'],
+    { do: G({ tur: 'x', eg: [[[0, 0], [6, 60]], [[0, 60], [6, 30]]], tmax: 6, ymax: 60, yA: 10, xEt: 't (s)', yEt: 'x (m)', adlar: [[5.6, 56, 'K'], [5.6, 33, 'L']], olc: 0.15 }), q: { t: 'K ve L arabalarının konum–zaman grafikleri veriliyor. Arabalar kaçıncı saniyede yan yana gelir?', o: ['4', '3', '6', '2', '8'],
       b: ['Konum–zaman grafiklerinin kesiştiği an, iki aracın aynı konumda olduğu (karşılaştığı) andır.'], s: ['K: x = 10t · L: x = 60 − 5t', '10t = 60 − 5t → t = <em>4 s</em> ✓ (x = 40 m)'] } },
     { do: G({ tur: 'v', eg: [[[0, 10], [4, -10]]], tmax: 4, ymin: -10, ymax: 10, yA: 5, xEt: 't (s)', yEt: 'v (m/s)', olc: 0.25 }), q: { t: 'Hız–zaman grafiği verilen cisim kaçıncı saniyede yön değiştirir?', o: ['2', '4', '0', 'Yön değiştirmez'],
       b: ['Hızın İŞARETİ hareket yönünü gösterir: hız sıfırdan geçip işaret değiştirince cisim geri döner.'], s: ['v = 10 − 5t = 0 → t = <em>2 s</em> ✓'], n: ['0–2 s yavaşlar, 2–4 s ters yönde hızlanır; ivme hep −5 m/s².'] } },
@@ -84,18 +84,18 @@
     BASLA({ tur: 'mV', araba: 0, eg: [[[0, 0], [20, 40]], [[0, 0], [40, 40]], [[0, 0], [50, 25]]], tmax: 50, ymax: 40, tA: 10, yA: 10, xEt: 'V (cm³)', yEt: 'm (g)', adlar: [[18, 36, 'X'], [36, 36, 'Y'], [46, 23, 'Z']] }),
     { do: G({ tur: 'mV', araba: 0, eg: [[[0, 0], [20, 40]], [[0, 0], [40, 40]], [[0, 0], [50, 25]]], tmax: 50, ymax: 40, tA: 10, yA: 10, xEt: 'V (cm³)', yEt: 'm (g)', adlar: [[18, 36, 'X'], [36, 36, 'Y'], [46, 23, 'Z']] }), q: { t: 'Birbirine karışmayan X, Y, Z sıvılarının kütle–hacim grafikleri veriliyor. Sıvılar aynı kaba konursa en alttan yukarı sıralama nasıl olur?', o: ['X, Y, Z', 'Z, Y, X', 'Y, X, Z', 'X, Z, Y'],
       b: ['Kütle–hacim grafiğinin eğimi özkütleyi verir: ' + FM(`d = ${F('m', 'V')}`), 'Karışmayan sıvılarda özkütlesi büyük olan alta iner.'], s: ['d<sub>X</sub> = 2 · d<sub>Y</sub> = 1 · d<sub>Z</sub> = 0,5 g/cm³', 'Alttan yukarı: <em>X, Y, Z</em> ✓'] } },
-    { do: G({ tur: 'mV', araba: 0, eg: [[[0, 0], [20, 40]], [[0, 0], [40, 40]]], tmax: 40, ymax: 40, tA: 10, yA: 10, xEt: 'V (cm³)', yEt: 'm (g)', adlar: [[18, 36, 'X'], [36, 36, 'Y']] }), q: { t: 'Grafikteki X ve Y sıvılarından 20\'şer cm³ karıştırılırsa karışımın özkütlesi kaç g/cm³ olur?', o: ['1,5', '3', '1', '2'],
+    { do: G({ tur: 'mV', araba: 0, eg: [[[0, 0], [20, 40]], [[0, 0], [40, 40]]], tmax: 40, ymax: 40, tA: 10, yA: 10, xEt: 'V (cm³)', yEt: 'm (g)', adlar: [[18, 36, 'X'], [36, 36, 'Y']] }), q: { t: 'Grafikteki X ve Y sıvılarından 20\'şer cm³ karıştırılırsa karışımın özkütlesi kaç g/cm³ olur?', o: ['1,5', '3', '1', '2', '0,75'],
       b: [FM(`d<sub>k</sub> = ${F('m<sub>X</sub> + m<sub>Y</sub>', 'V<sub>X</sub> + V<sub>Y</sub>')}`)], s: ['Grafikten: 20 cm³ X = 40 g, 20 cm³ Y = 20 g', `d = ${F('60', '40')} = <em>1,5 g/cm³</em> ✓`] } },
   ]);
 
   // ---------------- ENERJİ · F–x ve E–konum grafikleri ----------------
   banka('TYT', 'Enerji', 'TYT4-gr', '📈', 'enerji', 'Kuvvet–yol grafiğinden iş, lastik uzaması, enerji–konum grafiği.', [
     BASLA({ tur: 'Fx', araba: 0, eg: [[[0, 10], [4, 10], [6, 0]]], tmax: 6, ymax: 12, yA: 2, xEt: 'x (m)', yEt: 'F (N)' }),
-    { do: G({ tur: 'Fx', araba: 0, eg: [[[0, 10], [4, 10], [6, 0]]], tmax: 6, ymax: 12, yA: 2, xEt: 'x (m)', yEt: 'F (N)' }), q: { t: 'Cisme hareket doğrultusunda uygulanan kuvvetin yola bağlı grafiği veriliyor. 0–6 m arasında kuvvetin yaptığı iş kaç J\'dür?', o: ['50', '60', '40', '10'],
+    { do: G({ tur: 'Fx', araba: 0, eg: [[[0, 10], [4, 10], [6, 0]]], tmax: 6, ymax: 12, yA: 2, xEt: 'x (m)', yEt: 'F (N)' }), q: { t: 'Cisme hareket doğrultusunda uygulanan kuvvetin yola bağlı grafiği veriliyor. 0–6 m arasında kuvvetin yaptığı iş kaç J\'dür?', o: ['50', '60', '40', '10', '100'],
       b: ['Kuvvet–yol grafiğinin altındaki alan işi verir.'], s: [`0–4 m: 10 · 4 = 40 J · 4–6 m: ${F('1', '2')} · 2 · 10 = 10 J`, 'Toplam = <em>50 J</em> ✓'] } },
-    { do: G({ tur: 'Fx', araba: 0, eg: [[[0, 0], [0.4, 20]]], tmax: 0.5, ymax: 25, tA: 0.1, yA: 5, xEt: 'x (m)', yEt: 'F (N)' }), q: { t: 'Bir lastiğin uzama–kuvvet grafiği doğrusal: 0,4 m uzaması için 20 N gerekiyor. Lastikte depolanan enerji kaç J\'dür?', o: ['4', '8', '20', '2'],
+    { do: G({ tur: 'Fx', araba: 0, eg: [[[0, 0], [0.4, 20]]], tmax: 0.5, ymax: 25, tA: 0.1, yA: 5, xEt: 'x (m)', yEt: 'F (N)' }), q: { t: 'Bir lastiğin uzama–kuvvet grafiği doğrusal: 0,4 m uzaması için 20 N gerekiyor. Lastikte depolanan enerji kaç J\'dür?', o: ['4', '8', '20', '2', '12'],
       b: ['Kuvvet–uzama grafiğinin altındaki alan depolanan esneklik potansiyel enerjisini verir.'], s: [`E = ${F('1', '2')} · 0,4 · 20 = <em>4 J</em> ✓`], n: ['Yay sabiti k = 20 / 0,4 = 50 N/m; E = ½ k x² = ½ · 50 · 0,16 = 4 J (2. YOL).'] } },
-    { do: G({ tur: 'E', araba: 0, eg: [[[0, 100], [5, 100]], [[0, 100], [5, 0]], [[0, 0], [5, 100]]], tmax: 5, ymax: 120, yA: 20, xEt: 'konum', yEt: 'E (J)', adlar: [[4.5, 108, 'Toplam'], [4.5, 18, 'E<sub>p</sub>'], [4.5, 82, 'E<sub>k</sub>']] }), q: { t: 'Sürtünmesiz rampadan kayan cismin enerji–konum grafikleri veriliyor. Cisim rampanın ortasındayken kinetik enerjisi kaç J\'dür?', o: ['50', '100', '0', '25'],
+    { do: G({ tur: 'E', araba: 0, eg: [[[0, 100], [5, 100]], [[0, 100], [5, 0]], [[0, 0], [5, 100]]], tmax: 5, ymax: 120, yA: 20, xEt: 'konum', yEt: 'E (J)', adlar: [[4.5, 108, 'Toplam'], [4.5, 18, 'E<sub>p</sub>'], [4.5, 82, 'E<sub>k</sub>']] }), q: { t: 'Sürtünmesiz rampadan kayan cismin enerji–konum grafikleri veriliyor. Cisim rampanın ortasındayken kinetik enerjisi kaç J\'dür?', o: ['50', '100', '0', '25', '150'],
       b: ['Sürtünme yoksa mekanik enerji korunur: E<sub>k</sub> + E<sub>p</sub> = sabit.'], s: ['Ortada E<sub>p</sub> = 50 J (grafikten)', 'E<sub>k</sub> = 100 − 50 = <em>50 J</em> ✓'] } },
   ]);
 
@@ -111,9 +111,9 @@
   // ---------------- BASINÇ · P–V ve P–h grafikleri ----------------
   banka('TYT', 'Basınç ve Kaldırma Kuvveti', 'TYT8-gr', '📈', 'basınç', 'Sıvı basıncı–derinlik, gaz basıncı–hacim grafikleri.', [
     BASLA({ tur: 'Ph', araba: 0, eg: [[[0, 0], [5, 50]], [[0, 0], [5, 40]]], tmax: 5, ymax: 50, yA: 10, xEt: 'h (m)', yEt: 'P (kPa)', adlar: [[4.6, 46, 'X'], [4.6, 37, 'Y']] }),
-    { do: G({ tur: 'Ph', araba: 0, eg: [[[0, 0], [5, 50]], [[0, 0], [5, 40]]], tmax: 5, ymax: 50, yA: 10, xEt: 'h (m)', yEt: 'P (kPa)', adlar: [[4.6, 46, 'X'], [4.6, 37, 'Y']] }), q: { t: 'X ve Y sıvılarında derinliğe bağlı sıvı basıncı grafikleri veriliyor. Y sıvısının özkütlesi kaç kg/m³\'tür? (g = 10 m/s²)', o: ['800', '1000', '400', '8000'],
+    { do: G({ tur: 'Ph', araba: 0, eg: [[[0, 0], [5, 50]], [[0, 0], [5, 40]]], tmax: 5, ymax: 50, yA: 10, xEt: 'h (m)', yEt: 'P (kPa)', adlar: [[4.6, 46, 'X'], [4.6, 37, 'Y']] }), q: { t: 'X ve Y sıvılarında derinliğe bağlı sıvı basıncı grafikleri veriliyor. Y sıvısının özkütlesi kaç kg/m³\'tür? (g = 10 m/s²)', o: ['800', '1000', '400', '8000', '1600'],
       b: [FM('P = h · d · g') + ' → P–h grafiğinin eğimi d · g\'dir.'], s: [`Y: eğim = ${F('40 000 Pa', '5 m')} = 8000 = d · 10`, 'd = <em>800 kg/m³</em> ✓ (X: 1000 kg/m³, su)'] } },
-    { do: G({ tur: 'PV', araba: 0, eg: [[[1, 12], [2, 6], [3, 4], [4, 3], [6, 2]]], tmax: 6, ymax: 12, yA: 2, xEt: 'V (L)', yEt: 'P (atm)' }), q: { t: 'Sabit sıcaklıkta kapalı kaptaki gazın basınç–hacim grafiği veriliyor. Hacim 2 L iken basınç 6 atm ise 4 L iken basınç kaç atm olur?', o: ['3', '12', '6', '1,5'],
+    { do: G({ tur: 'PV', araba: 0, eg: [[[1, 12], [2, 6], [3, 4], [4, 3], [6, 2]]], tmax: 6, ymax: 12, yA: 2, xEt: 'V (L)', yEt: 'P (atm)' }), q: { t: 'Sabit sıcaklıkta kapalı kaptaki gazın basınç–hacim grafiği veriliyor. Hacim 2 L iken basınç 6 atm ise 4 L iken basınç kaç atm olur?', o: ['3', '12', '6', '1,5', '9'],
       b: ['Boyle–Mariotte yasası (sabit sıcaklık): ' + FM('P<sub>1</sub> V<sub>1</sub> = P<sub>2</sub> V<sub>2</sub>')], s: ['6 · 2 = P · 4 → P = <em>3 atm</em> ✓'] } },
   ]);
 

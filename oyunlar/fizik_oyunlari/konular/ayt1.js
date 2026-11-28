@@ -38,13 +38,13 @@
   ] });
   const g1 = gorev(s1, { yk: 'AYT1-g1', no: 1, icon: '📐', name: 'Bileşkeyi bul', task: 'Vektörlerin bileşkesini, sınırlarını ve bileşenlerini hesaplayın.', steps: [
     { do: S => { S.A = 6; S.B = 8; S.th = 90; }, sub: 'Birbirine dik 6 N ve 8 N\'luk iki kuvvet.', go: '▶︎ Uç uca ekle' },
-    { do: S => { S.uc = 0.01; }, q: { t: 'Birbirine dik 6 N ve 8 N\'luk iki kuvvetin bileşkesi kaç N\'dur?', o: ['10 N', '14 N', '2 N', '48 N'], f: ['v1A', 'v1B'],
+    { do: S => { S.uc = 0.01; }, q: { t: 'Birbirine dik 6 N ve 8 N\'luk iki kuvvetin bileşkesi kaç N\'dur?', o: ['10 N', '14 N', '2 N', '48 N', '20 N'], f: ['v1A', 'v1B'],
       s: [`${FM(`R = ${SQ('A² + B²')}`)} = ${SQ('36 + 64')} = ${SQ('100')} = <em>10 N</em> ✓`], n: ['Dik vektörlerde bileşke dik üçgenin hipotenüsüdür (6-8-10 üçgeni).'] } },
     { do: S => { S.bil = 1; S.A = 10; S.B = 10; S.th = 120; }, q: { t: 'Aralarında 120° açı bulunan 10 N\'luk iki kuvvetin bileşkesi kaç N\'dur?', o: ['10 N', '20 N', '0', '17,3 N'], f: ['v1R', 'v1t'],
       s: [`R² = 100 + 100 + 2 · 10 · 10 · cos 120° = 200 − 100 = 100`, '<em>R = 10 N</em> ✓'], n: ['cos 120° = −0,5. Eşit iki vektör arasında 120° varsa bileşke onlarla aynı büyüklüktedir (eşkenar üçgen).'] } },
-    { do: S => { S.A = 5; S.B = 12; S.th = 60; }, q: { t: '5 N ve 12 N\'luk iki kuvvetin bileşkesi aşağıdakilerden hangisi <b>olamaz</b>?', o: ['20 N', '7 N', '13 N', '17 N'],
+    { do: S => { S.A = 5; S.B = 12; S.th = 60; }, q: { t: '5 N ve 12 N\'luk iki kuvvetin bileşkesi aşağıdakilerden hangisi <b>olamaz</b>?', o: ['20 N', '7 N', '13 N', '17 N', '40 N'],
       s: [`${FM('|A − B| ≤ R ≤ A + B')} → 7 N ≤ R ≤ 17 N`, '20 N bu aralıkta değildir ✓'], n: ['Bileşke en büyük aynı yönde (0°), en küçük zıt yönde (180°) olur.'] } },
-    { q: { t: 'Yatayla 37° açı yapan 20 N\'luk kuvvetin <b>yatay</b> bileşeni kaç N\'dur? (sin 37° = 0,6, cos 37° = 0,8)', o: ['16 N', '12 N', '20 N', '10 N'],
+    { q: { t: 'Yatayla 37° açı yapan 20 N\'luk kuvvetin <b>yatay</b> bileşeni kaç N\'dur? (sin 37° = 0,6, cos 37° = 0,8)', o: ['16 N', '12 N', '20 N', '10 N', '32 N'],
       s: [`${FM('F<sub>x</sub> = F · cos θ')} = 20 · 0,8 = <em>16 N</em> ✓`, '(düşey bileşen 12 N)'], n: ['Açının yanındaki bileşen cos, karşısındaki bileşen sin ile hesaplanır.'] } },
   ] });
   konuEkle('AYT', 'Vektörler', { dersler: [d1], gorevler: [g1] });
@@ -98,14 +98,14 @@
   ] });
   const g2 = gorev(s2, { yk: 'AYT2-g1', no: 1, icon: '🛶', name: 'Nehri geç', task: 'Kayığın karşıya geçme süresini, kaymasını ve yere göre hızını bulun.', data: [['Nehir genişliği', '48 m'], ['Kayığın suya göre hızı', '4 m/s (karşıya dik)'], ['Akıntı hızı', '3 m/s']], steps: [
     { do: S => { S.gen = 48; }, sub: 'Kayık karşıya dik doğrultuda kürek çekecek.', go: '▶︎ Başlat' },
-    { q: { t: 'Nehir 48 m genişliğinde; kayık suya göre 4 m/s ile karşıya dik gidiyor. Karşıya kaç saniyede geçer?', o: ['12 s', '16 s', '9,6 s', '48 s'], f: ['b2k'],
+    { q: { t: 'Nehir 48 m genişliğinde; kayık suya göre 4 m/s ile karşıya dik gidiyor. Karşıya kaç saniyede geçer?', o: ['12 s', '16 s', '9,6 s', '48 s', '24 s'], f: ['b2k'],
       s: [`${FM(`t = ${F('d', 'v<sub>kayık</sub>')}`)} = ${F('48', '4')} = <em>12 s</em> ✓`], n: ['Karşıya geçiş süresi yalnızca kıyıya dik hız bileşenine bağlıdır.'] } },
     { do: S => { S.kos = 1; }, sub: 'Kayık karşıya geçiyor…', until: S => !S.kos },
-    { q: { t: 'Akıntı 3 m/s ise kayık karşı kıyıda başlangıç noktasının kaç m aşağısına varır?', o: ['36 m', '48 m', '12 m', '60 m'], f: ['b2t', 'b2a'],
+    { q: { t: 'Akıntı 3 m/s ise kayık karşı kıyıda başlangıç noktasının kaç m aşağısına varır?', o: ['36 m', '48 m', '12 m', '60 m', '72 m'], f: ['b2t', 'b2a'],
       s: [`x = v<sub>akıntı</sub> · t = 3 · 12 = <em>36 m</em> ✓`], n: ['Akıntı kayığı süre boyunca kendi yönünde taşır.'] } },
-    { q: { t: 'Kayığın yere göre hızının büyüklüğü kaç m/s\'dir?', o: ['5 m/s', '7 m/s', '1 m/s', '12 m/s'], f: ['b2y'],
+    { q: { t: 'Kayığın yere göre hızının büyüklüğü kaç m/s\'dir?', o: ['5 m/s', '7 m/s', '1 m/s', '12 m/s', '10 m/s'], f: ['b2y'],
       s: ['§1. YOL · vektörel toplama', `v = ${SQ('4² + 3²')} = <em>5 m/s</em> ✓`, '§2. YOL · yol ÷ süre', `yer değiştirme = ${SQ('48² + 36²')} = 60 m → ${F('60', '12')} = <em>5 m/s</em> ✓`], n: ['Hızlar vektörlerdir: dik hızlar Pisagor ile toplanır.'] } },
-    { q: { t: 'Aynı yolda zıt yönlerde 20 m/s ve 15 m/s ile giden iki aracın birbirine göre hızlarının büyüklüğü kaç m/s\'dir?', o: ['35 m/s', '5 m/s', '20 m/s', '300 m/s'],
+    { q: { t: 'Aynı yolda zıt yönlerde 20 m/s ve 15 m/s ile giden iki aracın birbirine göre hızlarının büyüklüğü kaç m/s\'dir?', o: ['35 m/s', '5 m/s', '20 m/s', '300 m/s', '70 m/s'],
       s: ['Zıt yönde hızlar: +20 ve −15', `|v<sub>bağıl</sub>| = |20 − (−15)| = <em>35 m/s</em> ✓`], n: ['Aynı yönde gitselerdi bağıl hız 5 m/s olurdu.'] } },
   ] });
   konuEkle('AYT', 'Bağıl Hareket', { dersler: [d2], gorevler: [g2] });
@@ -153,14 +153,14 @@
   ] });
   const g3 = gorev(s3, { yk: 'AYT3-g1', no: 1, icon: '🪢', name: 'Bağlı blokları hareket ettir', task: 'Sistemin ivmesini, ip gerilmesini ve sürtünmenin etkisini bulun.', data: [['m<sub>A</sub>', '4 kg (masada)'], ['m<sub>B</sub>', '1 kg (sarkan)'], ['g', '10 m/s²']], steps: [
     { do: S => { S.mA = 4; S.mB = 1; }, sub: 'Sürtünmesiz masada 4 kg, sarkan 1 kg.', go: '▶︎ Başlat' },
-    { q: { t: 'Sürtünme yok. Sistemin ivmesi kaç m/s²\'dir?', o: ['2 m/s²', '2,5 m/s²', '10 m/s²', '0,5 m/s²'], lab: 'a = ?', f: ['n3G'],
+    { q: { t: 'Sürtünme yok. Sistemin ivmesi kaç m/s²\'dir?', o: ['2 m/s²', '2,5 m/s²', '10 m/s²', '0,5 m/s²', '4 m/s²'], lab: 'a = ?', f: ['n3G'],
       s: [`${FM(`a = ${F('m<sub>B</sub> · g', 'm<sub>A</sub> + m<sub>B</sub>')}`)} = ${F('10', '5')} = <em>2 m/s²</em> ✓`], n: ['Bağlı cisimleri tek bir sistem gibi düşünün: dış net kuvvet ÷ toplam kütle.'] } },
     { do: S => { S.kos = 1; S.goster = 1; }, sub: 'Bloklar hareket ediyor…', until: S => !S.kos },
-    { q: { t: 'İpteki gerilme kuvveti kaç N\'dur?', o: ['8 N', '10 N', '2 N', '40 N'], f: ['n3T', 'n3t'],
+    { q: { t: 'İpteki gerilme kuvveti kaç N\'dur?', o: ['8 N', '10 N', '2 N', '40 N', '16 N'], f: ['n3T', 'n3t'],
       s: ['§1. YOL · A bloğu için', `T = m<sub>A</sub> · a = 4 · 2 = <em>8 N</em> ✓`, '§2. YOL · B bloğu için', `m<sub>B</sub>g − T = m<sub>B</sub> a → T = 10 − 2 = <em>8 N</em> ✓`], n: ['İki yoldan aynı sonucun çıkması çözümün doğru olduğunu gösterir.'] } },
-    { do: S => { S.x = 0; S.v = 0; S.k = 0.1; }, q: { t: 'Masa ile A arasında sürtünme katsayısı 0,1 olursa ivme kaç m/s² olur?', o: ['1,2 m/s²', '2 m/s²', '0,8 m/s²', '1 m/s²'], f: ['n3f'],
+    { do: S => { S.x = 0; S.v = 0; S.k = 0.1; }, q: { t: 'Masa ile A arasında sürtünme katsayısı 0,1 olursa ivme kaç m/s² olur?', o: ['1,2 m/s²', '2 m/s²', '0,8 m/s²', '1 m/s²', '2,4 m/s²'], f: ['n3f'],
       s: ['f<sub>s</sub> = k · m<sub>A</sub> · g = 0,1 · 40 = 4 N', `a = ${F('10 − 4', '5')} = <em>1,2 m/s²</em> ✓`], n: ['Sürtünme yalnız masadaki bloğa etki eder; net kuvvetten çıkarılır.'] } },
-    { do: S => { S.kos = 1; }, q: { t: '60 kg\'lık öğrenci, yukarı doğru 2 m/s² ivmeyle hızlanan asansördeki baskülün üzerinde. Baskül kaç N gösterir?', o: ['720 N', '600 N', '480 N', '120 N'],
+    { do: S => { S.kos = 1; }, q: { t: '60 kg\'lık öğrenci, yukarı doğru 2 m/s² ivmeyle hızlanan asansördeki baskülün üzerinde. Baskül kaç N gösterir?', o: ['720 N', '600 N', '480 N', '120 N', '1440 N'],
       s: ['Yukarı net kuvvet: N − mg = m · a', `${FM('N = m (g + a)')} = 60 · 12 = <em>720 N</em> ✓`], n: ['Baskül ağırlığı değil, bize uyguladığı tepki kuvvetini (N) gösterir.'] } },
   ] });
   konuEkle('AYT', "Newton'un Hareket Yasaları", { dersler: [d3], gorevler: [g3] });
@@ -213,14 +213,14 @@
   const g4 = gorev(s4, { yk: 'AYT4-g1', no: 1, icon: '🏎️', name: 'Arabayı güvenle durdur', task: 'Sabit ivmeli harekette hız, yol ve durma mesafesini hesaplayın.', steps: [
     { do: S => { S.v = 0; S.a = 3; }, sub: 'Araba duruştan 3 m/s² ile hızlanacak.', go: '▶︎ Başlat' },
     { do: S => { S.kos = 1; }, sub: 'Araba hızlanıyor…', until: S => S.tt >= 4 },
-    { do: S => { S.kos = 0; }, q: { t: 'Durgun araba 3 m/s² ivmeyle 4 s hızlanıyor. Son hızı kaç m/s\'dir?', o: ['12 m/s', '7 m/s', '24 m/s', '0,75 m/s'], f: ['a4t'],
+    { do: S => { S.kos = 0; }, q: { t: 'Durgun araba 3 m/s² ivmeyle 4 s hızlanıyor. Son hızı kaç m/s\'dir?', o: ['12 m/s', '7 m/s', '24 m/s', '0,75 m/s', '6 m/s'], f: ['a4t'],
       s: [`${FM('v = v<sub>0</sub> + a t')} = 0 + 3 · 4 = <em>12 m/s</em> ✓`], n: ['İvme, hızın her saniye ne kadar değiştiğini söyler: her saniye 3 m/s artar.'] } },
-    { q: { t: 'Bu 4 saniyede araba kaç metre yol alır?', o: ['24 m', '48 m', '12 m', '36 m'], f: ['a4t'],
+    { q: { t: 'Bu 4 saniyede araba kaç metre yol alır?', o: ['24 m', '48 m', '12 m', '36 m', '72 m'], f: ['a4t'],
       s: ['§1. YOL · formül', `${FM(`x = ${F('1', '2')} a t<sup>2</sup>`)} = ${F('1', '2')} · 3 · 16 = <em>24 m</em> ✓`, '§2. YOL · grafik alanı', `üçgen alanı = ${F('4 · 12', '2')} = <em>24 m</em> ✓`], n: ['v–t grafiğinin altındaki alan yer değiştirmeyi verir.'] } },
-    { do: S => { S.x = 0; S.tt = 0; S.iz = []; S.v = 30; S.a = -6; }, q: { t: '30 m/s ile giden araba 6 m/s² ile fren yapıyor. Kaç metrede durur?', o: ['75 m', '150 m', '5 m', '180 m'],
+    { do: S => { S.x = 0; S.tt = 0; S.iz = []; S.v = 30; S.a = -6; }, q: { t: '30 m/s ile giden araba 6 m/s² ile fren yapıyor. Kaç metrede durur?', o: ['75 m', '150 m', '5 m', '180 m', '37,5 m'],
       s: ['§1. YOL · zamansız denklem', `0 = 30² − 2 · 6 · x → x = ${F('900', '12')} = <em>75 m</em> ✓`, '§2. YOL · süre ve ortalama hız', `t = ${F('30', '6')} = 5 s · x = ${F('30 + 0', '2')} · 5 = <em>75 m</em> ✓`], n: ['Fren yaparken ivme harekete zıttır (a negatif).'] } },
     { do: S => { S.kos = 1; }, sub: 'Araba fren yapıyor…', until: S => !S.kos },
-    { q: { t: 'Hava direncinin olmadığı ortamda serbest bırakılan cisim 4 s sonra yere çarpıyor. Kaç metre yükseklikten bırakılmıştır? (g = 10 m/s²)', o: ['80 m', '40 m', '160 m', '20 m'],
+    { q: { t: 'Hava direncinin olmadığı ortamda serbest bırakılan cisim 4 s sonra yere çarpıyor. Kaç metre yükseklikten bırakılmıştır? (g = 10 m/s²)', o: ['80 m', '40 m', '160 m', '20 m', '240 m'],
       s: [`${FM(`h = ${F('1', '2')} g t<sup>2</sup>`)} = ${F('1', '2')} · 10 · 16 = <em>80 m</em> ✓`], n: ['Serbest düşme, v<sub>0</sub> = 0 ve a = g olan sabit ivmeli harekettir; kütleye bağlı değildir.'] } },
   ] });
   konuEkle('AYT', 'Bir Boyutta Sabit İvmeli Hareket', { dersler: [d4], gorevler: [g4] });
