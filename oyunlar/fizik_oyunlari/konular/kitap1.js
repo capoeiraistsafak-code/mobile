@@ -143,8 +143,8 @@
         o.hsu1.scale.y = y1 - 0.4; o.hsu1.position.y = 0.4 + (y1 - 0.4) / 2; o.hsu2.scale.y = y2 - 0.4; o.hsu2.position.y = 0.4 + (y2 - 0.4) / 2;
         o.p1.position.set(-2.3, y1 + 0.06, 0); o.p2.position.set(1.2, y2 + 0.07, 0); o.kol.position.y = y1 + 0.7; o.car.position.set(1.2, y2 + 0.14, 0);
         o.ece.position.set(-3.1, 0, 0); o.ece.rotation.y = 0; FZ.koluUzat(o.ece, 0, V3(-2.3, y1 + 1.3, 0.05)); FZ.koluUzat(o.ece, 1, V3(-2.3, y1 + 1.3, -0.05));
-        A(o.oT, V3(-2.3, y1 + 2.4, 0.3), V3(0, -1, 0), 400 * 0.0025, 'bsT', 0.4); const F1 = S.mk * 10 * S.s1 / S.s2; FZ.setTag('bsT', `F<sub>1</sub> = ${Math.round(F1)} N`);
-        A(o.oG, V3(1.2, y2 + 1.1, 1.0), V3(0, -1, 0), 10000 * 0.0025 * 0.1, 'bsG', 0.6); FZ.setTag('bsG', `G = ${S.mk * 10} N (ölçek ⅒)`);
+        const F1 = S.mk * 10 * S.s1 / S.s2; A(o.oT, V3(-2.3, y1 + 1.4 + F1 * 0.0025, 0.3), V3(0, -1, 0), F1 * 0.0025, 'bsT', 0.4); /* ok boyu F1 ile orantılı, ucu kola değer */ FZ.setTag('bsT', `F<sub>1</sub> = ${Math.round(F1)} N`);
+        A(o.oG, V3(1.2, y2 + 1.1, 1.0), V3(0, -1, 0), S.mk * 10 * 0.0025 * 0.1, 'bsG', 0.6); FZ.setTag('bsG', `G = ${S.mk * 10} N (ölçek ⅒)`);
         FZ.setTag('bsA', `S<sub>1</sub> = ${String(S.s1).replace('.', ',')} m² · iniş ${Math.round(x1 * 60)} cm`); FZ.show('bsA', V3(-2.3, -0.35, 0.5), 1);
         FZ.setTag('bsB', `S<sub>2</sub> = ${String(S.s2).replace('.', ',')} m² · çıkış ${fs(x2 * 60)} cm`); FZ.show('bsB', V3(1.2, -0.35, 1.3), 1);
         FZ.setTag('bsK', `${F('F<sub>1</sub>', 'S<sub>1</sub>')} = ${F('F<sub>2</sub>', 'S<sub>2</sub>')} → ${F(String(Math.round(F1)), String(S.s1).replace('.', ','))} = ${F(String(S.mk * 10), String(S.s2).replace('.', ','))}`); FZ.show('bsK', V3(0.3, 3.7, 0), 1);

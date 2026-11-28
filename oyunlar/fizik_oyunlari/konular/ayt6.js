@@ -136,14 +136,14 @@
       return { fot, ele };
     },
     tick(S, dt, o) {
-      const lam = 1240 / S.Ef, c = renkNm(lam), Ek = S.Ef - 2.3;
+      const W0 = S.W0 || 2.3, lam = 1240 / S.Ef, c = renkNm(lam), Ek = S.Ef - W0;   // W0: metalin eşik enerjisi (soru verirse)
       if (S.ac) { S.zam += dt * 6 * S.siddet; while (S.zam > 1) { S.zam -= 1; S.fo.push({ s: 0, y: 1 + Math.random() * 1.2 }); } }
       S.fo.forEach(f => f.s += dt * 1.4); S.fo = S.fo.filter(f => { if (f.s >= 1) { if (Ek > 0) S.el.push({ s: 0, y: f.y, z: (Math.random() - 0.5) }); return false; } return true; });
       S.el.forEach(e => e.s += dt * Math.sqrt(Math.max(Ek, 0)) * 1.2); S.el = S.el.filter(e => e.s < 3).slice(-30); S.fo = S.fo.slice(-30);
       o.fot.forEach((m, i) => { const f = S.fo[i]; if (!f) { m.visible = false; return; } m.visible = true; m.material.color.copy(c); m.position.set(-3 + f.s * 2.85, 3.2 - f.s * (3.2 - f.y), 0); });
       o.ele.forEach((m, i) => { const e = S.el[i]; if (!e) { m.visible = false; return; } m.visible = true; m.position.set(0.2 + e.s * 1.6, e.y + e.s * 0.2, e.z + e.z * e.s); });
       if (S.el.length) FZ.show('p22e', o.ele[0].position.clone().add(V3(0, 0.35, 0)), 1);
-      FZ.show('p22m', V3(0, 3.1, 0), 1);
+      FZ.setTag('p22m', `Metal: W<sub>0</sub> = ${fs(W0)} eV`); FZ.show('p22m', V3(0, 3.1, 0), 1);
       FZ.setTag('p22t', `E<sub>foton</sub> = ${fs(S.Ef)} eV (λ ≈ ${Math.round(lam)} nm) · E<sub>k,max</sub> = ${Ek > 0 ? fs(Ek) + ' eV' : 'elektron yok'}`); FZ.show('p22t', V3(1.2, 4.4, 0), 1);
     },
     qp: () => V3(0, 4.9, 0) });

@@ -141,7 +141,7 @@
         o.tab.rotation.y = S.ang; const c = V3(-1.2, 0.63, 0);
         PARA.forEach((r, i) => { const wm = Math.sqrt(MU * 10 / r), p = o.para[i];
           if (!S.kac[i] && S.w > wm) { S.kac[i] = 1; const a = S.ang; S.kp[i] = { p: c.clone().add(V3(Math.cos(a) * r * RS, 0, -Math.sin(a) * r * RS)), v: V3(-Math.sin(a), 0, -Math.cos(a)).multiplyScalar(S.w * r * RS) }; }
-          if (S.kac[i]) { const k = S.kp[i]; if (k.p.distanceTo(c) < 4.5) k.p.add(k.v.clone().multiplyScalar(dt)); if (k.p.distanceTo(c) > 2.45) k.p.y = Math.max(0.03, k.p.y - dt * 3); p.position.copy(k.p); }
+          if (S.kac[i]) { const k = S.kp[i]; if (k.p.distanceTo(c) < 4.5) k.p.add(k.v.clone().multiplyScalar(dt)); if (k.p.distanceTo(c) > 2.45) { k.vy = (k.vy || 0) + 10 * dt * 0.5; k.p.y = Math.max(0.03, k.p.y - k.vy * dt); }   /* tabladan çıkan para sabit ivmeyle (g) düşer; yatay hızı korunur */ p.position.copy(k.p); }
           else { const a = S.ang; p.position.set(c.x + Math.cos(a) * r * RS, 0.63, c.z - Math.sin(a) * r * RS);
             const f = r * S.w * S.w / 10;   // f / mg
             if (S.w > 0.05) { const ic = c.clone().sub(p.position).setY(0).normalize(); FZ.setArrow(o.of[i], p.position.clone().add(V3(0, 0.08, 0)), ic, Math.max(0.05, f * 1.1 * 2)); FZ.show('cmf' + i, p.position.clone().add(ic.multiplyScalar(f * 2.2 + 0.3)).add(V3(0, 0.3, 0)), 1); } }
