@@ -2,7 +2,7 @@
 // etki ile elektriklenme + topraklama, elektroskop, içi boş iletken (Faraday kabı) · AYT: elektrik alan çizgileri, Coulomb q₃
 (function () {
   const { V3, sahne, gorev, ders, etiket, kart, kutu, top, silindir, THREE } = FZ;
-  const ARTI = 0xef4444, EKSI = 0x2563eb;
+  const ARTI = 0xef4444, EKSI = 0x1d4ed8;
   const isaret = n => n === 0 ? '0' : (n > 0 ? '+' : '−') + Math.abs(n) + 'q';
   const havuz = (g, n, r = 0.075) => { const a = []; for (let i = 0; i < n; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), new THREE.MeshBasicMaterial({ color: ARTI })); m.visible = false; g.add(m); a.push(m); } return a; };
   // yumuşak konum: hedefe doğru kay
@@ -177,7 +177,7 @@
 
   const d4 = ders(sLab, { yk: 'TYT6-d4', no: 4, icon: '🌍', name: 'Etki ile elektriklenme ve topraklama', task: 'Yaklaştır → toprakla → topraklamayı kes → uzaklaştır: iletken küre çubuğa zıt işaretle yüklenir.', steps: [
     { do: etkiBasla, k: { tur: 'merak', b: 'Dokunmadan yüklemek mümkün mü?', m: ['Yüklü çubuğu küreye hiç değdirmeden küreyi kalıcı olarak yükleyebilir miyiz?'], dugme: 'Başlayalım ▶︎' } },
-    { k: { tur: 'kavram', b: 'Nötr iletken', m: ['Kürede (+) ve (−) yük eşit sayıdadır. İletkende elektronlar serbestçe dolaşabilir.', 'Kırmızı noktalar sabit (+) yükü, mavi noktalar hareketli elektronları gösterir.'] } },
+    { k: { tur: 'kavram', b: 'Nötr iletken', m: ['Kürede (+) ve (−) yük eşit sayıdadır. İletkende elektronlar serbestçe dolaşabilir.', 'Kırmızı noktalar sabit (+) yükü, mavi noktalar hareketli elektronları (−) gösterir.'] } },
     { sub: '1. adım: (−) yüklü ebonit çubuğu yaklaştıralım.', go: '▶︎ Yaklaştır' },
     { do: S => { S.ea = 1; }, sub: 'Elektronlar itiliyor…', wait: 2 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Yükler ayrıştı', f: ['esT'], m: ['Elektronlar çubuktan uzak uca itildi: yakın uç (+), uzak uç (−). Toplam yük hâlâ <em>sıfır</em>.'] } },
@@ -283,7 +283,7 @@
         Q.forEach(c => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.25, 24, 16), new THREE.MeshLambertMaterial({ color: c.q > 0 ? ARTI : EKSI })); m.position.set(c.x, c.y, 0); gr.add(m); });
         if (k === 'levha') { kutu(gr, 0.12, 3.4, 1.2, ARTI, 1.75, 2.1, 0); kutu(gr, 0.12, 3.4, 1.2, EKSI, -1.75, 2.1, 0); } });
       const test = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 12), new THREE.MeshBasicMaterial({ color: 0x22c55e })); g.add(test); test.visible = false;
-      kart('eaT', '', '#F5C400'); etiket('eaQ', '', '#dc2626'); etiket('eaQ2', '', '#2563eb'); etiket('eaP', 'test yükü (+)', '#16a34a');
+      kart('eaT', '', '#F5C400'); etiket('eaQ', '', '#dc2626'); etiket('eaQ2', '', '#1d4ed8'); etiket('eaP', 'test yükü (+)', '#16a34a');
       return { G, test };
     },
     tick(S, dt, o) {

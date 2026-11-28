@@ -2948,7 +2948,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
   // =====================================================================
   // TYT 6 · ELEKTROSTATİK — iletken kürelerin dokunması
   // =====================================================================
-  const s6 = sahne({ icon: '🎈', cam: [[0, 4, 11], [0, 1.8, 0]], plate: [12, 6, 0, 0],
+  const s6 = sahne({ icon: '🎈', cam: [[0.7, 4.5, 14.5], [0.7, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['Küreler', 'özdeş, iletken'], ['Coulomb', 'F = k·q₁·q₂ / d²']],
     S0: () => ({ qa: 6, qb: -2, d: 4, dok: 0, faz: 0, ra: 0.6, rb: 0.6 }),
     kur(g) {
@@ -2962,7 +2962,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       const ayrik = S.dok ? (S.faz < 1 ? 1 - S.faz : S.faz - 1) : 1, x = (S.ra + S.rb) / 2 + 0.01 + ayrik * (S.d / 2 - (S.ra + S.rb) / 2);
       o.ka.scale.setScalar(S.ra / 0.6); o.kb.scale.setScalar(S.rb / 0.6);
       o.ka.position.set(-x - (S.ra - S.rb) / 2, 2, 0); o.kb.position.set(x - (S.ra - S.rb) / 2, 2, 0); o.sa.position.x = o.ka.position.x; o.sb.position.x = o.kb.position.x;
-      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x3b82f6 : 0x000000; [[o.ka, S.qa], [o.kb, S.qb]].forEach(([k, q]) => { k.material.emissive.set(renk(q)); k.material.emissiveIntensity = Math.min(0.55, 0.12 + Math.abs(q) * 0.06); });
+      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x1d4ed8 : 0x000000; [[o.ka, S.qa], [o.kb, S.qb]].forEach(([k, q]) => { k.material.color.setHex(q ? renk(q) : 0xcbd5e1); k.material.emissive.set(renk(q)); k.material.emissiveIntensity = q ? 0.3 : 0; });
       const yz = q => (q > 0 ? '+' : '') + fs(q) + 'q';
       FZ.setTag('e6a', yz(S.qa)); FZ.setTag('e6b', yz(S.qb)); FZ.show('e6a', o.ka.position.clone().add(V3(0, S.ra + 0.6, 0)), 1); FZ.show('e6b', o.kb.position.clone().add(V3(0, S.rb + 0.6, 0)), 1);
       if (ayrik > 0.5 && S.qa && S.qb) { const it = S.qa * S.qb > 0, L = Math.min(2.2, 0.35 * Math.abs(S.qa * S.qb) / (x * x));
@@ -3033,7 +3033,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
     qp: () => V3(0, 4.6, 0) });
   const d7 = ders(s7, { yk: 'TYT7-d1', no: 1, icon: '🔋', name: 'Akım neden ampulü yakar?', task: 'Akım, potansiyel farkı, direnç, Ohm yasası, seri bağlama, güç ve akımın manyetik etkisi.', steps: [
     { k: { tur: 'merak', b: 'İki ampul seri bağlanınca neden sönük yanar?', m: ['Evdeki lambaları düşünün: biri yanınca diğerleri sönmez. Neden?', 'Önce akımın ne olduğunu görelim.'], dugme: 'Başlayalım ▶︎' } },
-    { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['Akım (I): birim zamanda geçen yük, amper (A). Pil, uçları arasında <em>potansiyel farkı</em> (V, volt) oluşturur.', `Direnç (R, ohm Ω) akıma karşı koymadır. ${FM('V = I · R')} (Ohm yasası)`, 'Mavi noktalar elektronlardır; akım yönü elektron hareketinin <em>tersidir</em>.'] } },
+    { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['Akım (I): birim zamanda geçen yük, amper (A). Pil, uçları arasında <em>potansiyel farkı</em> (V, volt) oluşturur.', `Direnç (R, ohm Ω) akıma karşı koymadır. ${FM('V = I · R')} (Ohm yasası)`, 'Kırmızı noktalar elektronlardır; akım yönü elektron hareketinin <em>tersidir</em>.'] } },
     { sub: 'Anahtarı kapatalım.', go: '▶︎ Anahtarı kapat' },
     { do: S => { S.ac = 1; }, sub: '12 V\'luk pil, 4 Ω\'luk ampul.', wait: 2.5 },
     { k: { tur: 'gozlem', b: 'Ohm yasası', f: ['e7I'], m: [`I = ${F('V', 'R')} = ${F('12', '4')} = 3 A`, `Güç: ${FM('P = V · I = I<sup>2</sup> · R')} = 12 · 3 = 36 W`] } },
@@ -3835,7 +3835,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       return { A, B, P, o1: ok(0xf97316, 'e11e1'), o2: ok(0x06b6d4, 'e11e2'), on: ok(0x22c55e, 'e11n') };
     },
     tick(S, dt, o) {
-      const renk = q => q > 0 ? 0xef4444 : 0x3b82f6;
+      const renk = q => q > 0 ? 0xef4444 : 0x1d4ed8;
       o.A.position.x = S.x1; o.B.position.x = S.x2; o.B.visible = !!S.ikinci; o.P.position.x = S.xp;
       o.A.material.color.setHex(renk(S.q1)); o.B.material.color.setHex(renk(S.q2));
       const alan = (q, x) => { const d = S.xp - x; return k * q * 1e-6 / (d * d) * Math.sign(d); }; // +x yönü pozitif
@@ -3943,8 +3943,8 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       const A = kutu(g, 0.15, 3, 2, 0xef4444, -2, 2, 0), B = kutu(g, 0.15, 3, 2, 0x3b82f6, 2, 2, 0);
       const p = top(g, 0.16, 0xf97316, -1.8, 2, 0);
       const alan = []; for (let i = 0; i < 4; i++) alan.push(ok(0xfacc15, 'c13e'));
-      etiket('c13e', 'E', '#ca8a04'); etiket('c13F', 'F', '#dc2626'); kart('c13t', '', '#F5C400');
-      kart('c13p', '+', '#ef4444'); kart('c13n', '−', '#3b82f6'); etiket('c13d', 'd', '#334155');
+      etiket('c13e', 'E', '#1d4ed8'); etiket('c13F', 'F', '#dc2626'); kart('c13t', '', '#F5C400');
+      kart('c13p', '+', '#ef4444'); kart('c13n', '−', '#1d4ed8'); etiket('c13d', 'd', '#334155');
       const dl = FZ.cizgi(g, 0x334155);
       return { A, B, p, alan, oF: ok(0xef4444, 'c13F'), dl };
     },
@@ -4358,7 +4358,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       const dalga = FZ.cizgi(g, 0xef4444); dalga.material.dashSize = 100; dalga.material.gapSize = 0;
       const cek = new THREE.Group(); g.add(cek); const nuk = [];
       for (let i = 0; i < 64; i++) { const m = top(cek, 0.16, 0x22c55e, -2.1 + (i % 8) * 0.6, 0.3, -2.1 + Math.floor(i / 8) * 0.6); m.userData.t = -Math.log2(Math.random() || 0.5); nuk.push(m); }
-      ['a21n1', 'a21n2', 'a21n3', 'a21n4'].forEach(id => kart(id, '', '#475569')); etiket('a21e', 'e⁻', '#2563eb'); kart('a21t', '', '#F5C400');
+      ['a21n1', 'a21n2', 'a21n3', 'a21n4'].forEach(id => kart(id, '', '#475569')); etiket('a21e', 'e⁻', '#dc2626'); kart('a21t', '', '#F5C400');
       return { atom, e, dalga, cek, nuk };
     },
     tick(S, dt, o) {
@@ -6141,7 +6141,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
 // etki ile elektriklenme + topraklama, elektroskop, içi boş iletken (Faraday kabı) · AYT: elektrik alan çizgileri, Coulomb q₃
 (function () {
   const { V3, sahne, gorev, ders, etiket, kart, kutu, top, silindir, THREE } = FZ;
-  const ARTI = 0xef4444, EKSI = 0x2563eb;
+  const ARTI = 0xef4444, EKSI = 0x1d4ed8;
   const isaret = n => n === 0 ? '0' : (n > 0 ? '+' : '−') + Math.abs(n) + 'q';
   const havuz = (g, n, r = 0.075) => { const a = []; for (let i = 0; i < n; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), new THREE.MeshBasicMaterial({ color: ARTI })); m.visible = false; g.add(m); a.push(m); } return a; };
   // yumuşak konum: hedefe doğru kay
@@ -6316,7 +6316,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
 
   const d4 = ders(sLab, { yk: 'TYT6-d4', no: 4, icon: '🌍', name: 'Etki ile elektriklenme ve topraklama', task: 'Yaklaştır → toprakla → topraklamayı kes → uzaklaştır: iletken küre çubuğa zıt işaretle yüklenir.', steps: [
     { do: etkiBasla, k: { tur: 'merak', b: 'Dokunmadan yüklemek mümkün mü?', m: ['Yüklü çubuğu küreye hiç değdirmeden küreyi kalıcı olarak yükleyebilir miyiz?'], dugme: 'Başlayalım ▶︎' } },
-    { k: { tur: 'kavram', b: 'Nötr iletken', m: ['Kürede (+) ve (−) yük eşit sayıdadır. İletkende elektronlar serbestçe dolaşabilir.', 'Kırmızı noktalar sabit (+) yükü, mavi noktalar hareketli elektronları gösterir.'] } },
+    { k: { tur: 'kavram', b: 'Nötr iletken', m: ['Kürede (+) ve (−) yük eşit sayıdadır. İletkende elektronlar serbestçe dolaşabilir.', 'Kırmızı noktalar sabit (+) yükü, mavi noktalar hareketli elektronları (−) gösterir.'] } },
     { sub: '1. adım: (−) yüklü ebonit çubuğu yaklaştıralım.', go: '▶︎ Yaklaştır' },
     { do: S => { S.ea = 1; }, sub: 'Elektronlar itiliyor…', wait: 2 },
     { k: { tur: 'gozlem', sonuc: true, b: 'Yükler ayrıştı', f: ['esT'], m: ['Elektronlar çubuktan uzak uca itildi: yakın uç (+), uzak uç (−). Toplam yük hâlâ <em>sıfır</em>.'] } },
@@ -6422,7 +6422,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
         Q.forEach(c => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.25, 24, 16), new THREE.MeshLambertMaterial({ color: c.q > 0 ? ARTI : EKSI })); m.position.set(c.x, c.y, 0); gr.add(m); });
         if (k === 'levha') { kutu(gr, 0.12, 3.4, 1.2, ARTI, 1.75, 2.1, 0); kutu(gr, 0.12, 3.4, 1.2, EKSI, -1.75, 2.1, 0); } });
       const test = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 12), new THREE.MeshBasicMaterial({ color: 0x22c55e })); g.add(test); test.visible = false;
-      kart('eaT', '', '#F5C400'); etiket('eaQ', '', '#dc2626'); etiket('eaQ2', '', '#2563eb'); etiket('eaP', 'test yükü (+)', '#16a34a');
+      kart('eaT', '', '#F5C400'); etiket('eaQ', '', '#dc2626'); etiket('eaQ2', '', '#1d4ed8'); etiket('eaP', 'test yükü (+)', '#16a34a');
       return { G, test };
     },
     tick(S, dt, o) {
@@ -6805,7 +6805,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       const L = [lamba(g, 0, 0), lamba(g, 0, 0), lamba(g, 0, 0)];
       const el = []; for (let i = 0; i < 22; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), new THREE.MeshBasicMaterial({ color: 0xef4444 })); g.add(m); el.push(m); }
       const akim = ok(0xdc2626, 'dvI');
-      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#dc2626'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#2563eb'); kart('dvT', '', '#F5C400');
+      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#dc2626'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#1d4ed8'); kart('dvT', '', '#F5C400');
       return { tel, tel2, L, el, akim };
     },
     tick(S, dt, o) {
@@ -8003,7 +8003,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
   const olcer = (g, harf) => { const a = new THREE.Group(); g.add(a); const k = silindir(a, 0.28, 0.28, 0.15, 0x1f2937, 0, 0.075, 0); const y = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), new THREE.MeshBasicMaterial({ color: 0xfef9c3 })); y.rotation.x = -Math.PI / 2; y.position.y = 0.152; a.add(y);
     FZ.levha(a, harf, 0.22, 0.22, '#fef9c3', '#111827', 0, 0.16, 0).rotation.x = -Math.PI / 2; const ib = kutu(a, 0.01, 0.005, 0.18, 0xdc2626, 0, 0.16, -0.05, { edge: false }); a.ibre = ib; return a; };
   const anahtar = g => { const a = new THREE.Group(); g.add(a); kutu(a, 0.6, 0.06, 0.25, 0x374151, 0, 0.03, 0); const kol = new THREE.Group(); kol.position.set(-0.22, 0.1, 0); a.add(kol); kutu(kol, 0.44, 0.03, 0.04, 0x9ca3af, 0.22, 0, 0); a.kol = kol; return a; };
-  const miknatis = (g, L = 1.6) => { const a = new THREE.Group(); g.add(a); kutu(a, L / 2, 0.3, 0.3, 0xdc2626, L / 4, 0.15, 0); kutu(a, L / 2, 0.3, 0.3, 0x2563eb, -L / 4, 0.15, 0);
+  const miknatis = (g, L = 1.6) => { const a = new THREE.Group(); g.add(a); kutu(a, L / 2, 0.3, 0.3, 0xdc2626, L / 4, 0.15, 0); kutu(a, L / 2, 0.3, 0.3, 0x1d4ed8, -L / 4, 0.15, 0);
     FZ.levha(a, 'N', 0.2, 0.2, '#dc2626', '#fff', L / 2 - 0.15, 0.31, 0).rotation.x = -Math.PI / 2; FZ.levha(a, 'S', 0.2, 0.2, '#2563eb', '#fff', -L / 2 + 0.15, 0.31, 0).rotation.x = -Math.PI / 2; return a; };
   const pusula = g => { const a = new THREE.Group(); g.add(a); silindir(a, 0.22, 0.22, 0.06, 0xd1d5db, 0, 0.03, 0); const ig = new THREE.Group(); ig.position.y = 0.08; a.add(ig);
     const n = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); n.rotation.z = -Math.PI / 2; n.position.x = 0.09; ig.add(n);
@@ -10085,12 +10085,12 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
       for (let j = 0; j <= 4; j++) { const y = 0.6 + j * 0.95; kutu(T.par, 8.6, 0.03, 0.03, 0x64748b, 0, y, -0.4, { edge: false });
         const uc = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.3, 10), new THREE.MeshBasicMaterial({ color: 0x64748b })); uc.rotation.z = -Math.PI / 2; uc.position.set(4.45, y, -0.4); T.par.add(uc); }
       T.lev = new THREE.Group(); g.add(T.lev);   // hız seçici: üstte (+), altta (−) levha
-      kutu(T.lev, 9, 0.12, 1.2, 0xdc2626, 0, 3.9, 0); kutu(T.lev, 9, 0.12, 1.2, 0x2563eb, 0, 0.2, 0);
+      kutu(T.lev, 9, 0.12, 1.2, 0xdc2626, 0, 3.9, 0); kutu(T.lev, 9, 0.12, 1.2, 0x1d4ed8, 0, 0.2, 0);
       T.p = top(g, 0.18, 0xef4444, 0, 0, 0, { edge: false }); T.p.material.emissive = new THREE.Color(0xef4444); T.p.material.emissiveIntensity = 0.5;
       T.iz = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(), V3()]), new THREE.LineBasicMaterial({ color: 0xfacc15 })); g.add(T.iz);
       T.oV = FZ.ok(0x22c55e, 'ypv'); T.oF = FZ.ok(0xd946ef, 'ypf'); T.oE = FZ.ok(0x2563eb, 'ype');
       FZ.etiket('ypv', 'v', '#16a34a'); FZ.etiket('ypf', 'F<sub>m</sub>', '#a21caf'); FZ.etiket('ype', 'F<sub>e</sub> = qE', '#1d4ed8');
-      FZ.etiket('ypB', '', '#334155'); FZ.etiket('ypL1', '+ + + + +', '#dc2626'); FZ.etiket('ypL2', '− − − − −', '#2563eb'); FZ.kart('ypK', '', '#F5C400');
+      FZ.etiket('ypB', '', '#334155'); FZ.etiket('ypL1', '+ + + + +', '#dc2626'); FZ.etiket('ypL2', '− − − − −', '#1d4ed8'); FZ.kart('ypK', '', '#F5C400');
       return T;
     },
     tick(S, dt, T) {

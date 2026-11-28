@@ -74,7 +74,7 @@
       const dalga = FZ.cizgi(g, 0xef4444); dalga.material.dashSize = 100; dalga.material.gapSize = 0;
       const cek = new THREE.Group(); g.add(cek); const nuk = [];
       for (let i = 0; i < 64; i++) { const m = top(cek, 0.16, 0x22c55e, -2.1 + (i % 8) * 0.6, 0.3, -2.1 + Math.floor(i / 8) * 0.6); m.userData.t = -Math.log2(Math.random() || 0.5); nuk.push(m); }
-      ['a21n1', 'a21n2', 'a21n3', 'a21n4'].forEach(id => kart(id, '', '#475569')); etiket('a21e', 'e⁻', '#2563eb'); kart('a21t', '', '#F5C400');
+      ['a21n1', 'a21n2', 'a21n3', 'a21n4'].forEach(id => kart(id, '', '#475569')); etiket('a21e', 'e⁻', '#dc2626'); kart('a21t', '', '#F5C400');
       return { atom, e, dalga, cek, nuk };
     },
     tick(S, dt, o) {

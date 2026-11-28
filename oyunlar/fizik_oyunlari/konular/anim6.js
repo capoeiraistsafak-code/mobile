@@ -124,7 +124,7 @@
       const L = [lamba(g, 0, 0), lamba(g, 0, 0), lamba(g, 0, 0)];
       const el = []; for (let i = 0; i < 22; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), new THREE.MeshBasicMaterial({ color: 0xef4444 })); g.add(m); el.push(m); }
       const akim = ok(0xdc2626, 'dvI');
-      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#dc2626'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#2563eb'); kart('dvT', '', '#F5C400');
+      ['dvL0', 'dvL1', 'dvL2'].forEach(id => etiket(id, '', '#334155')); etiket('dvI', 'akım I', '#dc2626'); etiket('dvE', 'elektronlar', '#dc2626'); etiket('dvP', '+', '#dc2626'); etiket('dvM', '−', '#1d4ed8'); kart('dvT', '', '#F5C400');
       return { tel, tel2, L, el, akim };
     },
     tick(S, dt, o) {

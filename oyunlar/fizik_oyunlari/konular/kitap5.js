@@ -58,7 +58,7 @@
   const olcer = (g, harf) => { const a = new THREE.Group(); g.add(a); const k = silindir(a, 0.28, 0.28, 0.15, 0x1f2937, 0, 0.075, 0); const y = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), new THREE.MeshBasicMaterial({ color: 0xfef9c3 })); y.rotation.x = -Math.PI / 2; y.position.y = 0.152; a.add(y);
     FZ.levha(a, harf, 0.22, 0.22, '#fef9c3', '#111827', 0, 0.16, 0).rotation.x = -Math.PI / 2; const ib = kutu(a, 0.01, 0.005, 0.18, 0xdc2626, 0, 0.16, -0.05, { edge: false }); a.ibre = ib; return a; };
   const anahtar = g => { const a = new THREE.Group(); g.add(a); kutu(a, 0.6, 0.06, 0.25, 0x374151, 0, 0.03, 0); const kol = new THREE.Group(); kol.position.set(-0.22, 0.1, 0); a.add(kol); kutu(kol, 0.44, 0.03, 0.04, 0x9ca3af, 0.22, 0, 0); a.kol = kol; return a; };
-  const miknatis = (g, L = 1.6) => { const a = new THREE.Group(); g.add(a); kutu(a, L / 2, 0.3, 0.3, 0xdc2626, L / 4, 0.15, 0); kutu(a, L / 2, 0.3, 0.3, 0x2563eb, -L / 4, 0.15, 0);
+  const miknatis = (g, L = 1.6) => { const a = new THREE.Group(); g.add(a); kutu(a, L / 2, 0.3, 0.3, 0xdc2626, L / 4, 0.15, 0); kutu(a, L / 2, 0.3, 0.3, 0x1d4ed8, -L / 4, 0.15, 0);
     FZ.levha(a, 'N', 0.2, 0.2, '#dc2626', '#fff', L / 2 - 0.15, 0.31, 0).rotation.x = -Math.PI / 2; FZ.levha(a, 'S', 0.2, 0.2, '#2563eb', '#fff', -L / 2 + 0.15, 0.31, 0).rotation.x = -Math.PI / 2; return a; };
   const pusula = g => { const a = new THREE.Group(); g.add(a); silindir(a, 0.22, 0.22, 0.06, 0xd1d5db, 0, 0.03, 0); const ig = new THREE.Group(); ig.position.y = 0.08; a.add(ig);
     const n = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 8), new THREE.MeshLambertMaterial({ color: 0xdc2626 })); n.rotation.z = -Math.PI / 2; n.position.x = 0.09; ig.add(n);

@@ -129,7 +129,7 @@
   // =====================================================================
   // TYT 6 · ELEKTROSTATİK — iletken kürelerin dokunması
   // =====================================================================
-  const s6 = sahne({ icon: '🎈', cam: [[0, 4, 11], [0, 1.8, 0]], plate: [12, 6, 0, 0],
+  const s6 = sahne({ icon: '🎈', cam: [[0.7, 4.5, 14.5], [0.7, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['Küreler', 'özdeş, iletken'], ['Coulomb', 'F = k·q₁·q₂ / d²']],
     S0: () => ({ qa: 6, qb: -2, d: 4, dok: 0, faz: 0, ra: 0.6, rb: 0.6 }),
     kur(g) {
@@ -143,7 +143,7 @@
       const ayrik = S.dok ? (S.faz < 1 ? 1 - S.faz : S.faz - 1) : 1, x = (S.ra + S.rb) / 2 + 0.01 + ayrik * (S.d / 2 - (S.ra + S.rb) / 2);
       o.ka.scale.setScalar(S.ra / 0.6); o.kb.scale.setScalar(S.rb / 0.6);
       o.ka.position.set(-x - (S.ra - S.rb) / 2, 2, 0); o.kb.position.set(x - (S.ra - S.rb) / 2, 2, 0); o.sa.position.x = o.ka.position.x; o.sb.position.x = o.kb.position.x;
-      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x3b82f6 : 0x000000; [[o.ka, S.qa], [o.kb, S.qb]].forEach(([k, q]) => { k.material.emissive.set(renk(q)); k.material.emissiveIntensity = Math.min(0.55, 0.12 + Math.abs(q) * 0.06); });
+      const renk = q => q > 0 ? 0xef4444 : q < 0 ? 0x1d4ed8 : 0x000000; [[o.ka, S.qa], [o.kb, S.qb]].forEach(([k, q]) => { k.material.color.setHex(q ? renk(q) : 0xcbd5e1); k.material.emissive.set(renk(q)); k.material.emissiveIntensity = q ? 0.3 : 0; });
       const yz = q => (q > 0 ? '+' : '') + fs(q) + 'q';
       FZ.setTag('e6a', yz(S.qa)); FZ.setTag('e6b', yz(S.qb)); FZ.show('e6a', o.ka.position.clone().add(V3(0, S.ra + 0.6, 0)), 1); FZ.show('e6b', o.kb.position.clone().add(V3(0, S.rb + 0.6, 0)), 1);
       if (ayrik > 0.5 && S.qa && S.qb) { const it = S.qa * S.qb > 0, L = Math.min(2.2, 0.35 * Math.abs(S.qa * S.qb) / (x * x));
@@ -214,7 +214,7 @@
     qp: () => V3(0, 4.6, 0) });
   const d7 = ders(s7, { yk: 'TYT7-d1', no: 1, icon: '🔋', name: 'Akım neden ampulü yakar?', task: 'Akım, potansiyel farkı, direnç, Ohm yasası, seri bağlama, güç ve akımın manyetik etkisi.', steps: [
     { k: { tur: 'merak', b: 'İki ampul seri bağlanınca neden sönük yanar?', m: ['Evdeki lambaları düşünün: biri yanınca diğerleri sönmez. Neden?', 'Önce akımın ne olduğunu görelim.'], dugme: 'Başlayalım ▶︎' } },
-    { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['Akım (I): birim zamanda geçen yük, amper (A). Pil, uçları arasında <em>potansiyel farkı</em> (V, volt) oluşturur.', `Direnç (R, ohm Ω) akıma karşı koymadır. ${FM('V = I · R')} (Ohm yasası)`, 'Mavi noktalar elektronlardır; akım yönü elektron hareketinin <em>tersidir</em>.'] } },
+    { k: { tur: 'kavram', b: 'Akım, gerilim, direnç', m: ['Akım (I): birim zamanda geçen yük, amper (A). Pil, uçları arasında <em>potansiyel farkı</em> (V, volt) oluşturur.', `Direnç (R, ohm Ω) akıma karşı koymadır. ${FM('V = I · R')} (Ohm yasası)`, 'Kırmızı noktalar elektronlardır; akım yönü elektron hareketinin <em>tersidir</em>.'] } },
     { sub: 'Anahtarı kapatalım.', go: '▶︎ Anahtarı kapat' },
     { do: S => { S.ac = 1; }, sub: '12 V\'luk pil, 4 Ω\'luk ampul.', wait: 2.5 },
     { k: { tur: 'gozlem', b: 'Ohm yasası', f: ['e7I'], m: [`I = ${F('V', 'R')} = ${F('12', '4')} = 3 A`, `Güç: ${FM('P = V · I = I<sup>2</sup> · R')} = 12 · 3 = 36 W`] } },

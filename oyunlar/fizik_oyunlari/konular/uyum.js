@@ -61,12 +61,12 @@
       for (let j = 0; j <= 4; j++) { const y = 0.6 + j * 0.95; kutu(T.par, 8.6, 0.03, 0.03, 0x64748b, 0, y, -0.4, { edge: false });
         const uc = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.3, 10), new THREE.MeshBasicMaterial({ color: 0x64748b })); uc.rotation.z = -Math.PI / 2; uc.position.set(4.45, y, -0.4); T.par.add(uc); }
       T.lev = new THREE.Group(); g.add(T.lev);   // hız seçici: üstte (+), altta (−) levha
-      kutu(T.lev, 9, 0.12, 1.2, 0xdc2626, 0, 3.9, 0); kutu(T.lev, 9, 0.12, 1.2, 0x2563eb, 0, 0.2, 0);
+      kutu(T.lev, 9, 0.12, 1.2, 0xdc2626, 0, 3.9, 0); kutu(T.lev, 9, 0.12, 1.2, 0x1d4ed8, 0, 0.2, 0);
       T.p = top(g, 0.18, 0xef4444, 0, 0, 0, { edge: false }); T.p.material.emissive = new THREE.Color(0xef4444); T.p.material.emissiveIntensity = 0.5;
       T.iz = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(), V3()]), new THREE.LineBasicMaterial({ color: 0xfacc15 })); g.add(T.iz);
       T.oV = FZ.ok(0x22c55e, 'ypv'); T.oF = FZ.ok(0xd946ef, 'ypf'); T.oE = FZ.ok(0x2563eb, 'ype');
       FZ.etiket('ypv', 'v', '#16a34a'); FZ.etiket('ypf', 'F<sub>m</sub>', '#a21caf'); FZ.etiket('ype', 'F<sub>e</sub> = qE', '#1d4ed8');
-      FZ.etiket('ypB', '', '#334155'); FZ.etiket('ypL1', '+ + + + +', '#dc2626'); FZ.etiket('ypL2', '− − − − −', '#2563eb'); FZ.kart('ypK', '', '#F5C400');
+      FZ.etiket('ypB', '', '#334155'); FZ.etiket('ypL1', '+ + + + +', '#dc2626'); FZ.etiket('ypL2', '− − − − −', '#1d4ed8'); FZ.kart('ypK', '', '#F5C400');
       return T;
     },
     tick(S, dt, T) {

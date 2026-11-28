@@ -134,7 +134,7 @@
       return { A, B, P, o1: ok(0xf97316, 'e11e1'), o2: ok(0x06b6d4, 'e11e2'), on: ok(0x22c55e, 'e11n') };
     },
     tick(S, dt, o) {
-      const renk = q => q > 0 ? 0xef4444 : 0x3b82f6;
+      const renk = q => q > 0 ? 0xef4444 : 0x1d4ed8;
       o.A.position.x = S.x1; o.B.position.x = S.x2; o.B.visible = !!S.ikinci; o.P.position.x = S.xp;
       o.A.material.color.setHex(renk(S.q1)); o.B.material.color.setHex(renk(S.q2));
       const alan = (q, x) => { const d = S.xp - x; return k * q * 1e-6 / (d * d) * Math.sign(d); }; // +x yönü pozitif

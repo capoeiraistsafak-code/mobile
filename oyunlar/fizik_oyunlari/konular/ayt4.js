@@ -14,8 +14,8 @@
       const A = kutu(g, 0.15, 3, 2, 0xef4444, -2, 2, 0), B = kutu(g, 0.15, 3, 2, 0x3b82f6, 2, 2, 0);
       const p = top(g, 0.16, 0xf97316, -1.8, 2, 0);
       const alan = []; for (let i = 0; i < 4; i++) alan.push(ok(0xfacc15, 'c13e'));
-      etiket('c13e', 'E', '#ca8a04'); etiket('c13F', 'F', '#dc2626'); kart('c13t', '', '#F5C400');
-      kart('c13p', '+', '#ef4444'); kart('c13n', '−', '#3b82f6'); etiket('c13d', 'd', '#334155');
+      etiket('c13e', 'E', '#1d4ed8'); etiket('c13F', 'F', '#dc2626'); kart('c13t', '', '#F5C400');
+      kart('c13p', '+', '#ef4444'); kart('c13n', '−', '#1d4ed8'); etiket('c13d', 'd', '#334155');
       const dl = FZ.cizgi(g, 0x334155);
       return { A, B, p, alan, oF: ok(0xef4444, 'c13F'), dl };
     },
