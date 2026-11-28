@@ -183,14 +183,14 @@
   ]);
 
   // ======================= MODERN FİZİK: FOTOELEKTRİK, FOTOSEL, SİYAH CİSİM (Ef, siddet, ac) =======================
-  const mf = o => Object.assign({ Ef: 3.1, siddet: 1, ac: 1 }, o);
+  const mf = o => Object.assign({ Ef: 3.1, siddet: 1, ac: 1, W0: 2.3 }, o);
   ekle('Modern Fizik', T('AYT', 'Modern Fizik'), 'AYT22-k2', 13, '💡', 'Kitap soruları 2: fotosel, kesme gerilimi, siyah cisim', 'Eşik enerjisi bulma, kesme gerilimi, ileri gerilim, akım–gerilim grafiği, E_k–f grafiği, Wien yasası, foton momentumu.', [
     BAS(mf({}), 'Fotosel: katot, anot ve üreteç.'),
-    { do: D(mf({ Ef: 4 })), q: { t: 'Eşik enerjisi 2,5 eV olan katoda 4 eV\'luk fotonlar düşürülüyor. Fotoelektrik akımı durdurmak için uygulanması gereken en küçük ters gerilim (kesme gerilimi) kaç V\'tur?', o: ['1,5', '4', '2,5', '6,5'],
+    { do: D(mf({ Ef: 4, W0: 2.5 })), q: { t: 'Eşik enerjisi 2,5 eV olan katoda 4 eV\'luk fotonlar düşürülüyor. Fotoelektrik akımı durdurmak için uygulanması gereken en küçük ters gerilim (kesme gerilimi) kaç V\'tur?', o: ['1,5', '4', '2,5', '6,5'],
       b: [FM('E = E<sub>0</sub> + E<sub>k</sub>') + ' · kesme geriliminde: ' + FM('e V<sub>k</sub> = E<sub>k,max</sub>')], s: ['E<sub>k</sub> = 4 − 2,5 = 1,5 eV → <em>V<sub>k</sub> = 1,5 V</em> ✓'] } },
-    { do: D(mf({ Ef: 5 })), q: { t: 'Bir metale E enerjili fotonlar düşürülünce sökülen elektronların en büyük kinetik enerjisi 1 eV, 2E enerjili fotonlarla 6 eV oluyor. Metalin eşik enerjisi kaç eV\'tur?', o: ['4', '5', '3', '2'],
+    { do: D(mf({ Ef: 5, W0: 4 })), q: { t: 'Bir metale E enerjili fotonlar düşürülünce sökülen elektronların en büyük kinetik enerjisi 1 eV, 2E enerjili fotonlarla 6 eV oluyor. Metalin eşik enerjisi kaç eV\'tur?', o: ['4', '5', '3', '2'],
       b: [FM('E<sub>k</sub> = E − E<sub>0</sub>')], s: ['E − E<sub>0</sub> = 1 ve 2E − E<sub>0</sub> = 6 → E = 5 eV', '<em>E<sub>0</sub> = 4 eV</em> ✓'] } },
-    { do: D(mf({ Ef: 5 })), q: { t: 'Eşik enerjisi 3 eV olan katoda 2480 Å dalga boylu ışık düşüyor; anot (+), katot (−) olacak biçimde 2 V\'luk üreteç bağlı. Anoda ulaşan elektronların en büyük kinetik enerjisi kaç eV\'tur? (hc = 12 400 eV·Å)', o: ['4', '2', '5', '0'],
+    { do: D(mf({ Ef: 5, W0: 3 })), q: { t: 'Eşik enerjisi 3 eV olan katoda 2480 Å dalga boylu ışık düşüyor; anot (+), katot (−) olacak biçimde 2 V\'luk üreteç bağlı. Anoda ulaşan elektronların en büyük kinetik enerjisi kaç eV\'tur? (hc = 12 400 eV·Å)', o: ['4', '2', '5', '0'],
       b: [FM(`E = ${F('h c', 'λ')}`) + ' · ileri gerilimde: ' + FM('E + e V = E<sub>0</sub> + E<sub>k,anot</sub>')], s: [`E = ${F('12 400', '2480')} = 5 eV → katottan çıkışta E<sub>k</sub> = 2 eV`, 'Üreteç hızlandırır: 2 + 2 = <em>4 eV</em> ✓'] } },
     { do: D(mf({ Ef: 3.1, siddet: 2.5 })), q: { t: 'Fotosele düşen ışığın frekansı aynı kalıp şiddeti artırılırsa akım–gerilim grafiğinde ne değişir?', o: ['Doyma akımı artar, kesme gerilimi değişmez', 'Kesme gerilimi artar', 'İkisi de artar', 'Hiçbiri değişmez'],
       b: ['Işık şiddeti → birim zamandaki foton SAYISI → sökülen elektron sayısı (akım) · frekans → foton ENERJİSİ → E<sub>k,max</sub> → kesme gerilimi'], s: ['Daha çok elektron → <em>doyma akımı artar</em>; E<sub>k,max</sub> aynı → <em>kesme gerilimi değişmez</em> ✓'] } },

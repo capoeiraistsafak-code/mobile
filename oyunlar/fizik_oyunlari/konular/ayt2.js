@@ -191,7 +191,7 @@
       return { kol, y1, y2 };
     },
     tick(S, dt, o) {
-      const net = S.W2 * S.d2 * (S.goster2 ? 1 : 0) - S.W1 * S.d1, hedef = Math.max(-0.35, Math.min(0.35, -net / 120));
+      const net = S.W2 * S.d2 * (S.goster2 ? 1 : 0) - S.W1 * S.d1, hedef = Math.abs(net) < 0.01 ? 0 : -Math.sign(net) * 0.35;   // dengesizse çubuk büyük tork yönünde dayanak sınırına kadar döner (ara açıda denge yok)
       o.kol.rotation.z += (hedef - o.kol.rotation.z) * Math.min(1, dt * 3);
       o.y1.position.x = -S.d1; o.y2.position.x = S.d2; o.y2.visible = !!S.goster2;
       [o.y1, o.y2].forEach(y => y.rotation.z = -o.kol.rotation.z);

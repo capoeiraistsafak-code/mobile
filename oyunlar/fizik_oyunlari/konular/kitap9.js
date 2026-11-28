@@ -209,21 +209,21 @@
   // ---------------- MODERN FİZİK (Ef, siddet, ac) ----------------
   bank('Modern Fizik', 'AYT22', '💡', 'modern fizik', 'Foton enerjisi, fotoelektrik olay, durdurma gerilimi, eşik dalga boyu, de Broglie.', [
     BAS({ Ef: 2, siddet: 1, ac: 1 }, 'Metal yüzeye ışık gönderen fotoselli düzenek.'),
-    { do: D({ Ef: 2, siddet: 1, ac: 1 }), q: { t: 'Dalga boyu 620 nm olan fotonun enerjisi kaç eV\'tur? (hc = 1240 eV·nm)', o: ['2', '0,5', '6,2', '1,24'],
+    { do: D({ Ef: 2, siddet: 1, ac: 1, W0: 2.3 }), q: { t: 'Dalga boyu 620 nm olan fotonun enerjisi kaç eV\'tur? (hc = 1240 eV·nm)', o: ['2', '0,5', '6,2', '1,24'],
       b: [FM(`E = ${F('h c', 'λ')}`)], s: [`E = ${F('1240', '620')} = <em>2 eV</em> ✓`] } },
-    { do: D({ Ef: 3.1, siddet: 1, ac: 1 }), q: { t: 'Eşik enerjisi 2,3 eV olan metale 3,1 eV\'luk fotonlar düşüyor. Kopan elektronların en büyük kinetik enerjisi kaç eV\'tur?', o: ['0,8', '5,4', '3,1', '2,3'],
+    { do: D({ Ef: 3.1, siddet: 1, ac: 1, W0: 2.3 }), q: { t: 'Eşik enerjisi 2,3 eV olan metale 3,1 eV\'luk fotonlar düşüyor. Kopan elektronların en büyük kinetik enerjisi kaç eV\'tur?', o: ['0,8', '5,4', '3,1', '2,3'],
       b: [FM('E<sub>k,max</sub> = h f − W<sub>0</sub>')], s: ['E<sub>k</sub> = 3,1 − 2,3 = <em>0,8 eV</em> ✓'] } },
-    { do: D({ Ef: 3.1, siddet: 1, ac: 1 }), q: { t: 'Aynı deneyde (E<sub>k,max</sub> = 0,8 eV) elektronları durdurmak için gereken en küçük ters gerilim kaç V\'tur?', o: ['0,8', '3,1', '2,3', '1,6'],
+    { do: D({ Ef: 3.1, siddet: 1, ac: 1, W0: 2.3 }), q: { t: 'Aynı deneyde (E<sub>k,max</sub> = 0,8 eV) elektronları durdurmak için gereken en küçük ters gerilim kaç V\'tur?', o: ['0,8', '3,1', '2,3', '1,6'],
       b: [FM('e · V<sub>durdurma</sub> = E<sub>k,max</sub>')], s: ['V = <em>0,8 V</em> ✓'] } },
-    { do: D({ Ef: 2.48, siddet: 1, ac: 1 }), q: { t: 'Eşik enerjisi 2,48 eV olan metalden elektron koparabilecek ışığın en büyük dalga boyu kaç nm\'dir?', o: ['500', '248', '620', '400'],
+    { do: D({ Ef: 2.48, siddet: 1, ac: 1, W0: 2.48 }), q: { t: 'Eşik enerjisi 2,48 eV olan metalden elektron koparabilecek ışığın en büyük dalga boyu kaç nm\'dir?', o: ['500', '248', '620', '400'],
       b: [FM(`λ<sub>eşik</sub> = ${F('h c', 'W<sub>0</sub>')}`)], s: [`λ = ${F('1240', '2,48')} = <em>500 nm</em> ✓`], n: ['Daha uzun dalga boylu (daha düşük enerjili) ışık elektron koparamaz.'] } },
-    { do: D({ Ef: 3.1, siddet: 2.5, ac: 1 }), q: { t: 'Frekansı aynı kalan ışığın şiddeti artırılırsa ne olur?', o: ['Kopan elektron sayısı (akım) artar, E<sub>k,max</sub> değişmez', 'E<sub>k,max</sub> artar', 'İkisi de artar', 'Hiçbiri değişmez'],
+    { do: D({ Ef: 3.1, siddet: 2.5, ac: 1, W0: 2.3 }), q: { t: 'Frekansı aynı kalan ışığın şiddeti artırılırsa ne olur?', o: ['Kopan elektron sayısı (akım) artar, E<sub>k,max</sub> değişmez', 'E<sub>k,max</sub> artar', 'İkisi de artar', 'Hiçbiri değişmez'],
       b: ['Şiddet foton SAYISINI, frekans her fotonun ENERJİSİNİ belirler.'], s: ['Daha çok foton → daha çok elektron → <em>akım artar</em>; foton enerjisi aynı → E<sub>k,max</sub> aynı ✓'] } },
-    { do: D({ Ef: 3.1, siddet: 1, ac: 1 }), q: { t: 'Bir elektron daha büyük gerilimle hızlandırılırsa de Broglie dalga boyu ne olur?', o: ['Kısalır', 'Uzar', 'Değişmez', 'Sıfır olur'],
+    { do: D({ Ef: 3.1, siddet: 1, ac: 1, W0: 2.3 }), q: { t: 'Bir elektron daha büyük gerilimle hızlandırılırsa de Broglie dalga boyu ne olur?', o: ['Kısalır', 'Uzar', 'Değişmez', 'Sıfır olur'],
       b: [FM(`λ = ${F('h', 'p')}`) + ' · p = m v'], s: ['Hız artar → momentum artar → λ <em>kısalır</em> ✓'], n: ['Elektron mikroskobu kısa dalga boylu elektronlarla küçük ayrıntıları görür.'] } },
   ], [
     TZ({ Ef: 1.8, siddet: 1, ac: 1 }),
-    { do: D({ Ef: 1.8, siddet: 3, ac: 1 }), q: { t: 'Eşik enerjisi 2,3 eV olan metale çok şiddetli kırmızı ışık (1,8 eV) uzun süre gönderilirse elektron kopar mı?', o: ['Hayır, hiç kopmaz', 'Evet, yeterince beklenirse', 'Evet, şiddet yeterince artarsa', 'Yalnız metal ısınırsa'],
+    { do: D({ Ef: 1.8, siddet: 3, ac: 1, W0: 2.3 }), q: { t: 'Eşik enerjisi 2,3 eV olan metale çok şiddetli kırmızı ışık (1,8 eV) uzun süre gönderilirse elektron kopar mı?', o: ['Hayır, hiç kopmaz', 'Evet, yeterince beklenirse', 'Evet, şiddet yeterince artarsa', 'Yalnız metal ısınırsa'],
       b: ['Her foton enerjisini tek bir elektrona verir.'], s: ['1,8 eV < 2,3 eV → hiçbir foton tek başına koparamaz → <em>kopmaz</em> ✓'], n: ['TUZAK: dalga modeline göre düşünüp enerjinin birikeceğini sanmak. Fotoelektrik olay anlıktır.'] } },
   ]);
 
