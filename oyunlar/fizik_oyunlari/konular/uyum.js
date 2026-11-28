@@ -48,17 +48,17 @@
   setTimeout(() => requestAnimationFrame(koru), 0);
 
   // ================= YENİ DÜZENEK 1 · Yüklü parçacık manyetik alanda =================
-  const sYP = sahne({ icon: '🧲', cam: [[0, 2.2, 11], [0, 2.1, 0]], plate: [12, 6, 0, 0],
+  const sYP = sahne({ icon: '🧲', cam: [[0, 2.6, 13], [0, 2.4, 0]], plate: [12, 6, 0, 0],
     data: [['⊗', 'alan sayfa düzleminden içeri'], ['Kırmızı', '(+) yüklü parçacık']],
     S0: () => ({ mod: 'cember', r: 1.5, v: 1, kos: 0, th: 0, xx: -4.5, etk: '' }),
     kur(g) {
       const T = {};
       T.ic = new THREE.Group(); g.add(T.ic);   // ⊗ işaretleri: sayfa düzleminden içeri doğru manyetik alan
-      for (let i = -3; i <= 3; i++) for (let j = 0; j <= 4; j++) { const m = new THREE.Group(); m.position.set(i * 1.25, 0.1 + j * 1.0, -0.4); T.ic.add(m);
+      for (let i = -3; i <= 3; i++) for (let j = 0; j <= 4; j++) { const m = new THREE.Group(); m.position.set(i * 1.25, 0.6 + j * 0.95, -0.4); T.ic.add(m);
         const hal = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.025, 6, 20), new THREE.MeshBasicMaterial({ color: 0x64748b })); m.add(hal);
         [1, -1].forEach(s => { const c = kutu(m, 0.3, 0.035, 0.02, 0x64748b, 0, 0, 0, { edge: false }); c.rotation.z = s * Math.PI / 4; }); }
       T.par = new THREE.Group(); g.add(T.par);   // alana paralel çizgiler (alan +x yönünde)
-      for (let j = 0; j <= 4; j++) { const y = 0.1 + j * 1.0; kutu(T.par, 8.6, 0.03, 0.03, 0x64748b, 0, y, -0.4, { edge: false });
+      for (let j = 0; j <= 4; j++) { const y = 0.6 + j * 0.95; kutu(T.par, 8.6, 0.03, 0.03, 0x64748b, 0, y, -0.4, { edge: false });
         const uc = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.3, 10), new THREE.MeshBasicMaterial({ color: 0x64748b })); uc.rotation.z = -Math.PI / 2; uc.position.set(4.45, y, -0.4); T.par.add(uc); }
       T.lev = new THREE.Group(); g.add(T.lev);   // hız seçici: üstte (+), altta (−) levha
       kutu(T.lev, 9, 0.12, 1.2, 0xdc2626, 0, 3.9, 0); kutu(T.lev, 9, 0.12, 1.2, 0x2563eb, 0, 0.2, 0);
@@ -72,9 +72,9 @@
     tick(S, dt, T) {
       const m = S.mod; T.ic.visible = m !== 'paralel'; T.par.visible = m === 'paralel'; T.lev.visible = m === 'secici';
       [T.oV, T.oF, T.oE].forEach(a => a.visible = false);
-      FZ.setTag('ypB', m === 'paralel' ? 'B: alan çizgileri sağa doğru (→)' : 'B: sayfa düzleminden içeri (⊗)'); FZ.show('ypB', V3(-3.6, 4.7, 0), 1);
+      FZ.setTag('ypB', m === 'paralel' ? 'B: alan çizgileri sağa doğru (→)' : 'B: sayfa düzleminden içeri (⊗)'); FZ.show('ypB', V3(0.6, 5.2, 0), 1);
       if (m === 'cember') {                        // F = q v × B merkeze doğru: (+) yük için v (→) ve B (⊗) iken F yukarı
-        const C = V3(0, 2.1, 0), r = S.r; if (S.kos) S.th += dt * 1.6 / r;
+        const C = V3(0, 2.5, 0), r = S.r; if (S.kos) S.th += dt * 1.6 / r;
         const th = S.th, p = C.clone().add(V3(r * Math.sin(th), -r * Math.cos(th), 0)); T.p.position.copy(p);
         const pts = [V3(-4.6, C.y - r, 0), V3(0, C.y - r, 0)]; for (let i = 0; i <= 48; i++) { const a = Math.min(th, 2 * Math.PI) * i / 48; pts.push(C.clone().add(V3(r * Math.sin(a), -r * Math.cos(a), 0))); } T.iz.geometry.setFromPoints(pts);
         const vd = V3(Math.cos(th), Math.sin(th), 0), fd = C.clone().sub(p).normalize();
@@ -98,30 +98,31 @@
 
   // ================= YENİ DÜZENEK 2 · Doppler: sireni çalan ambulans ve gözlemciler =================
   const NR = 16;
-  const sDp = sahne({ icon: '🚑', cam: [[0, 8.5, 9.5], [0, 0.4, 0]], plate: [14, 7, 0, 0],
+  const sDp = sahne({ icon: '🚑', cam: [[0, 9.5, 13], [0, 0.2, 0]], plate: [14, 7, 0, 0],
     data: [['Sirenin frekansı', 'f₀ = 1000 Hz'], ['Halkalar', 'ses dalgası tepeleri (üstten)']],
-    S0: () => ({ t: 0, kos: 1, x: -3, dal: [], son: 0, etk: '' }),
+    S0: () => ({ t: 0, kos: 1, x: -2.2, dal: [], son: 0, etk: '' }),
     kur(g) {
       const T = {};
       kutu(g, 15, 0.04, 2.2, 0x374151, 0, 0.02, 0, { edge: false }); for (let i = -7; i <= 7; i++) kutu(g, 0.5, 0.01, 0.08, 0xf8fafc, i, 0.05, 0, { edge: false });
       T.amb = FZ.araba(g, 0xf8fafc); T.amb.scale.setScalar(0.8);
       const isik = kutu(T.amb, 0.25, 0.1, 0.5, 0xdc2626, -0.15, 1.02, 0, { edge: false }); isik.material.emissive = new THREE.Color(0xdc2626); isik.material.emissiveIntensity = 0.8; T.isik = isik;
       [-1, 1].forEach(s => { kutu(T.amb, 0.3, 0.08, 0.01, 0xdc2626, -0.3, 0.55, s * 0.47, { edge: false }); kutu(T.amb, 0.08, 0.3, 0.01, 0xdc2626, -0.3, 0.55, s * 0.47, { edge: false }); });   // kırmızı haç
-      T.ali = FZ.insan(g, 0x2563eb, 0.9); T.ali.position.set(6, 0, 1.6); T.ali.rotation.y = -Math.PI / 2;
-      T.ayse = FZ.kiz(g, 0xdb2777, 0.9); T.ayse.position.set(-6, 0, 1.6); T.ayse.rotation.y = Math.PI / 2;
-      T.hal = []; for (let i = 0; i < NR; i++) { const pts = []; for (let k = 0; k <= 48; k++) { const a = k / 48 * 2 * Math.PI; pts.push(V3(Math.cos(a), 0, Math.sin(a))); }
-        const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 })); l.visible = false; l.position.y = 0.9; g.add(l); T.hal.push(l); }
+      T.ali = FZ.insan(g, 0x2563eb, 0.9); T.ali.position.set(3.4, 0, 1.6); T.ali.rotation.y = -Math.PI / 2;
+      T.ayse = FZ.kiz(g, 0xdb2777, 0.9); T.ayse.position.set(-3.4, 0, 1.6); T.ayse.rotation.y = Math.PI / 2;
+      T.hal = []; for (let i = 0; i < NR; i++) {   // dalga tepesi: yatay ince halka (üstten görünür)
+        const l = new THREE.Mesh(new THREE.RingGeometry(0.97, 1, 64), new THREE.MeshBasicMaterial({ color: 0x1d4ed8, transparent: true, opacity: 1, side: THREE.DoubleSide, depthWrite: false }));
+        l.rotation.x = -Math.PI / 2; l.visible = false; l.position.y = 0.12; l.userData.golgesiz = true; g.add(l); T.hal.push(l); }
       FZ.etiket('dpA', 'Ali (önde)', '#1d4ed8'); FZ.etiket('dpB', 'Ayşe (arkada)', '#be185d'); FZ.etiket('dpC', 'Can (ambulansta)', '#334155'); FZ.kart('dpK', '', '#F5C400');
       return T;
     },
     tick(S, dt, T) {
       const vs = 2.2, vk = 0.8;                    // ses hızı ve ambulans hızı (ölçekli; ambulans sesten yavaş)
-      if (S.kos) { S.t += dt; const dx = vk * dt; S.x += dx; FZ.tekerDondur(T.amb, dx); if (S.x > 3) { S.x = -3; S.dal = []; }
+      if (S.kos) { S.t += dt; const dx = vk * dt; S.x += dx; FZ.tekerDondur(T.amb, dx); if (S.x > 2.2) { S.x = -2.2; S.dal = []; }
         if (S.t - S.son > 0.32) { S.son = S.t; S.dal.push({ x: S.x, t: S.t }); if (S.dal.length > NR) S.dal.shift(); } }
       T.amb.position.set(S.x, 0, 0); T.isik.material.emissiveIntensity = 0.4 + 0.5 * Math.abs(Math.sin(S.t * 8));
-      T.hal.forEach((l, i) => { const d = S.dal[i]; l.visible = !!d; if (!d) return; const r = vs * (S.t - d.t); l.position.x = d.x; l.scale.set(r, 1, r); l.material.opacity = Math.max(0.15, 0.9 - r / 9); });
-      FZ.show('dpA', V3(6, 2.1, 1.6), 1); FZ.show('dpB', V3(-6, 2.1, 1.6), 1); FZ.show('dpC', V3(S.x, 1.7, 0), 1);
-      FZ.setTag('dpK', S.etk || ''); FZ.show('dpK', V3(0, 2.6, -2.2), S.etk ? 1 : 0);
+      T.hal.forEach((l, i) => { const d = S.dal[i]; l.visible = !!d; if (!d) return; const r = vs * (S.t - d.t); l.position.x = d.x; l.scale.set(r, r, 1); l.material.opacity = Math.max(0.15, 0.9 - r / 9); });
+      FZ.show('dpA', V3(3.4, 2.1, 1.6), 1); FZ.show('dpB', V3(-3.4, 2.1, 1.6), 1); FZ.show('dpC', V3(S.x, 1.7, 0), 1);
+      FZ.setTag('dpK', S.etk || ''); FZ.show('dpK', V3(-1.4, 0.2, 2.8), S.etk ? 1 : 0);
     },
     qp: () => V3(0, 3.2, 0) });
 
@@ -138,7 +139,7 @@
   ]);
 
   // ================= B) AYT Dalga Mekaniği: Doppler soruları ambulans düzeneğine =================
-  const DP = etk => ({ t: 0, kos: 1, x: -3, dal: [], son: 0, etk }), DPG = S => { S.etk = 'Ali: tepeler sık → f > f₀ · Ayşe: seyrek → f < f₀ · Can: f₀'; };
+  const DP = etk => ({ t: 0, kos: 1, x: -2.2, dal: [], son: 0, etk }), DPG = S => { S.etk = 'Ali: tepeler sık → f > f₀ · Ayşe: seyrek → f < f₀ · Can: f₀'; };
   EKLE('AYT', 'Dalga Mekaniği', sDp, 'AYT20-dp', 13, '🚑', 'Doppler olayı: ambulans', 'Yaklaşan ve uzaklaşan kaynakta algılanan frekans; kaynağın kendi frekansı.',
     { do: S => Object.assign(S, DP('')), sub: 'Sireni çalan ambulans: dalga tepeleri üstten halka olarak görünüyor.', go: '▶︎ Başla' }, [
     TASI('AYT20-k', 'Sireni çalan ambulans', () => DP(''), DPG),
