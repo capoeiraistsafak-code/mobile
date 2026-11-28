@@ -57,9 +57,9 @@
     { q: { t: 'Havuzda 2 m derinlikte suyun basıncı kaç Pa\'dır? (açık hava basıncını hesaba katmayın)', o: ['20 000 Pa', '2 000 Pa', '200 Pa', '500 Pa'],
       s: [`${FM('P = h · d · g')} = 2 · 1000 · 10 = <em>20 000 Pa</em> ✓`], n: ['Sıvı basıncı yalnız derinliğe ve sıvının özkütlesine bağlıdır; kabın şekli ve genişliği önemli değildir.'] } },
     { do: S => { S.hedef = 0.8; }, sub: 'Blok tamamen batırılıyor…', until: S => Math.abs(S.bat - S.hedef) < 0.002 },
-    { q: { t: '400 cm³ hacimli blok tamamen battığında kaldırma kuvveti kaç N\'dur?', o: ['4 N', '12 N', '40 N', '0,4 N'], lab: 'F<sub>k</sub> = ?', f: ['e8k'],
+    { q: { t: '400 cm³ hacimli blok tamamen battığında kaldırma kuvveti kaç N\'dur?', o: ['4 N', '12 N', '40 N', '0,4 N', '8 N'], lab: 'F<sub>k</sub> = ?', f: ['e8k'],
       s: ['V = 400 cm³ = 4 · 10⁻⁴ m³', `${FM('F<sub>k</sub> = V · d · g')} = 4 · 10⁻⁴ · 1000 · 10 = <em>4 N</em> ✓`], n: ['Birimleri SI\'a çevirin: 1 cm³ = 10⁻⁶ m³.'] } },
-    { q: { t: 'Bu durumda dinamometre kaç N gösterir?', o: ['8 N', '12 N', '16 N', '4 N'], f: ['e8d', 'e8T', 'e8G', 'e8k'],
+    { q: { t: 'Bu durumda dinamometre kaç N gösterir?', o: ['8 N', '12 N', '16 N', '4 N', '24 N'], f: ['e8d', 'e8T', 'e8G', 'e8k'],
       s: ['Blok dengede: T + F<sub>k</sub> = G', `T = 12 − 4 = <em>8 N</em> ✓`], n: ['Dinamometre ipteki gerilmeyi (T) gösterir; suda "görünür ağırlık" azalır.'] } },
     { q: { t: 'Özkütlesi 0,6 g/cm³ olan tahta suda (1 g/cm³) yüzüyor. Hacminin yüzde kaçı su içindedir?', o: ['%60', '%40', '%100', '%6'],
       s: ['Yüzende F<sub>k</sub> = G: V<sub>batan</sub> · d<sub>su</sub> · g = V · d<sub>tahta</sub> · g', `${F('V<sub>batan</sub>', 'V')} = ${F('0,6', '1')} = <em>%60</em> ✓`], n: ['Cisim ne kadar hafifse (d küçük) o kadar az batar.'] } },
@@ -105,13 +105,13 @@
   ] });
   const g9 = gorev(s9, { yk: 'TYT9-g1', no: 1, icon: '🎸', name: 'İpte dalga oluştur', task: 'Dalga hızı, dalga boyu ve periyodu hesaplayın.', steps: [
     { do: S => { S.f = 1; S.lam = 2; }, sub: 'İp 1 Hz ile titreştirilecek.', go: '▶︎ Titreştir' },
-    { do: S => { S.kos = 1; }, q: { t: 'İpte dalga boyu 2 m, frekans 3 Hz olan bir dalganın hızı kaç m/s\'dir?', o: ['6 m/s', '1,5 m/s', '0,67 m/s', '5 m/s'],
+    { do: S => { S.kos = 1; }, q: { t: 'İpte dalga boyu 2 m, frekans 3 Hz olan bir dalganın hızı kaç m/s\'dir?', o: ['6 m/s', '1,5 m/s', '0,67 m/s', '5 m/s', '12 m/s'],
       s: [`${FM('v = λ · f')} = 2 · 3 = <em>6 m/s</em> ✓`], n: ['Birimler: m · (1/s) = m/s.'] } },
-    { q: { t: 'Aynı ipte frekans 2 katına çıkarılırsa dalga boyu ne olur?', o: ['Yarıya iner', '2 katına çıkar', 'Değişmez', '4 katına çıkar'], f: ['e9l', 'e9f'],
+    { q: { t: 'Aynı ipte frekans 2 katına çıkarılırsa dalga boyu ne olur?', o: ['Yarıya iner', '2 katına çıkar', 'Değişmez', '4 katına çıkar', '4\'te birine iner'], f: ['e9l', 'e9f'],
       s: ['Aynı ip → dalga hızı değişmez', `λ = ${F('v', 'f')} → f 2 katına çıkınca <em>λ yarıya iner</em> ✓`], n: ['Hızı ortam belirlediği için v sabit; f ile λ ters orantılıdır.'] } },
-    { do: S => { S.f = 0.5; S.lam = 4; }, q: { t: 'Kaynak 10 saniyede 25 titreşim yapıyor. Dalganın periyodu kaç s\'dir?', o: ['0,4 s', '2,5 s', '250 s', '4 s'],
+    { do: S => { S.f = 0.5; S.lam = 4; }, q: { t: 'Kaynak 10 saniyede 25 titreşim yapıyor. Dalganın periyodu kaç s\'dir?', o: ['0,4 s', '2,5 s', '250 s', '4 s', '0,8 s'],
       s: [`f = ${F('25', '10')} = 2,5 Hz`, `${FM(`T = ${F('1', 'f')}`)} = ${F('1', '2,5')} = <em>0,4 s</em> ✓`], n: ['Periyot bir tam titreşimin süresidir: T = toplam süre / titreşim sayısı = 10/25.'] } },
-    { q: { t: 'Kaynak daha büyük <b>genlikle</b> titreştirilirse (frekans aynı) dalganın hızı ne olur?', o: ['Değişmez', 'Artar', 'Azalır', 'Sıfır olur'],
+    { q: { t: 'Kaynak daha büyük <b>genlikle</b> titreştirilirse (frekans aynı) dalganın hızı ne olur?', o: ['Değişmez', 'Artar', 'Azalır', 'Sıfır olur', 'Önce artar, sonra azalır'],
       s: ['Dalga hızı ortama bağlıdır, genliğe bağlı değildir → <em>değişmez</em> ✓', 'Genlik artınca dalganın taşıdığı <em>enerji</em> artar.'], n: ['Sık yanlış: "Daha güçlü sallarsam dalga daha hızlı gider."'] } },
   ] });
   konuEkle('TYT', 'Dalgalar', { dersler: [d9], gorevler: [g9] });
@@ -159,9 +159,9 @@
   ] });
   const g10 = gorev(s10, { yk: 'TYT10-g1', no: 1, icon: '🔆', name: 'Işını yönlendir', task: 'Yansıma açısını, görüntü uzaklığını ve kırılmayı bulun.', steps: [
     { do: S => { S.d = 3; }, sub: 'Cisim aynadan 3 m uzakta.', go: '▶︎ Işını gönder' },
-    { do: S => { S.isin = 1; }, q: { t: 'Bir ışın düzlem aynaya, ayna yüzeyiyle <b>30°</b> açı yapacak şekilde geliyor. Yansıma açısı kaç derecedir?', o: ['60°', '30°', '90°', '120°'],
+    { do: S => { S.isin = 1; }, q: { t: 'Bir ışın düzlem aynaya, ayna yüzeyiyle <b>30°</b> açı yapacak şekilde geliyor. Yansıma açısı kaç derecedir?', o: ['60°', '30°', '90°', '120°', '180°'],
       s: ['Açılar normalle ölçülür: gelme açısı = 90° − 30° = 60°', `${FM('gelme açısı = yansıma açısı')} → <em>60°</em> ✓`], n: ['Sık yanlış: açıyı ayna yüzeyinden ölçmek. Gelme ve yansıma açıları her zaman normalle ölçülür.'] } },
-    { do: S => { S.gor = 1; }, q: { t: 'Cisim düzlem aynadan 3 m uzakta. Cisim ile görüntüsü arasındaki uzaklık kaç m\'dir?', o: ['6 m', '3 m', '1,5 m', '9 m'], f: ['e10c', 'e10g'],
+    { do: S => { S.gor = 1; }, q: { t: 'Cisim düzlem aynadan 3 m uzakta. Cisim ile görüntüsü arasındaki uzaklık kaç m\'dir?', o: ['6 m', '3 m', '1,5 m', '9 m', '12 m'], f: ['e10c', 'e10g'],
       s: ['Görüntü aynanın 3 m arkasındadır.', 'Cisim–görüntü = 3 + 3 = <em>6 m</em> ✓'], n: ['Düzlem aynada cismin ve görüntünün aynaya uzaklıkları eşittir.'] } },
     { q: { t: 'Cisim duruyor, ayna cisimden 1 m/s hızla uzaklaşıyor. Görüntü cisimden kaç m/s hızla uzaklaşır?', o: ['2 m/s', '1 m/s', '0', '0,5 m/s'],
       s: ['Ayna t saniyede 1·t uzaklaşırsa cisim–ayna uzaklığı 1·t artar.', 'Cisim–görüntü uzaklığı bunun iki katı artar → <em>2 m/s</em> ✓'], n: ['Cisim–görüntü uzaklığı = 2 · (cisim–ayna uzaklığı).'] } },

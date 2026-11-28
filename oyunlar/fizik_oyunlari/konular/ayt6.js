@@ -52,11 +52,11 @@
     { sub: 'İki kaynak aynı fazda dalga üretiyor.', go: '▶︎ Başlat' },
     { q: { t: 'P, K₁\'den 12 cm ve K₂\'den 18 cm uzaktadır; λ = 4 cm. P hangi çizgi üzerindedir?', o: ['2. düğüm çizgisi', '1. katar çizgisi', 'Merkez katar çizgisi', '3. düğüm çizgisi'], f: ['w20t', 'w20p'],
       s: ['Yol farkı = 18 − 12 = 6 cm', `${F('6', '4')} = 1,5 λ = (2 − ${F('1', '2')}) λ → <em>2. düğüm çizgisi</em> ✓`], n: ['Tam sayı × λ → katar, buçuklu × λ → düğüm.'] } },
-    { q: { t: 'Kaynakların frekansı 5 Hz ise dalgaların hızı kaç cm/s\'dir?', o: ['20 cm/s', '0,8 cm/s', '1,25 cm/s', '9 cm/s'],
+    { q: { t: 'Kaynakların frekansı 5 Hz ise dalgaların hızı kaç cm/s\'dir?', o: ['20 cm/s', '0,8 cm/s', '1,25 cm/s', '9 cm/s', '40 cm/s'],
       s: [`${FM('v = λ f')} = 4 · 5 = <em>20 cm/s</em> ✓`], n: ['Dalga hızını ortam belirler; frekansı kaynak belirler.'] } },
-    { q: { t: 'Çift yarık deneyinde λ = 500 nm, L = 1,5 m, d = 0,25 mm. Saçak aralığı kaç mm\'dir?', o: ['3 mm', '0,3 mm', '30 mm', '1,5 mm'],
+    { q: { t: 'Çift yarık deneyinde λ = 500 nm, L = 1,5 m, d = 0,25 mm. Saçak aralığı kaç mm\'dir?', o: ['3 mm', '0,3 mm', '30 mm', '1,5 mm', '6 mm'],
       s: [`${FM(`Δx = ${F('λ L', 'd')}`)} = ${F('5 · 10<sup>−7</sup> · 1,5', '2,5 · 10<sup>−4</sup>')} = 3 · 10<sup>−3</sup> m = <em>3 mm</em> ✓`], n: ['Birimleri metreye çevirmeyi unutmayın.'] } },
-    { q: { t: 'Aynı deney kırılma indisi 4/3 olan suda yapılırsa saçak aralığı kaç mm olur?', o: ['2,25 mm', '3 mm', '4 mm', '1,5 mm'],
+    { q: { t: 'Aynı deney kırılma indisi 4/3 olan suda yapılırsa saçak aralığı kaç mm olur?', o: ['2,25 mm', '3 mm', '4 mm', '1,5 mm', '4,5 mm'],
       s: [`Suda λ' = ${F('λ', 'n')} = λ · ${F('3', '4')}`, `Δx' = 3 · ${F('3', '4')} = <em>2,25 mm</em> ✓`], n: ['Işığın frekansı değişmez, hızı ve dalga boyu n kat azalır.'] } },
   ] });
   konuEkle('AYT', 'Dalga Mekaniği', { dersler: [d20], gorevler: [g20] });
@@ -111,9 +111,9 @@
   ] });
   const g21 = gorev(s21, { yk: 'AYT21-g1', no: 1, icon: '☢️', name: 'Atom laboratuvarı', task: 'Enerji seviyeleri, foton enerjisi, bozunma ve yarı ömür soruları.', steps: [
     { do: S => { S.mod = 'atom'; S.n = 4; S.hedef = 4; }, sub: 'Hidrojen atomunda elektron n = 4 seviyesinde.', go: '▶︎ Başlat' },
-    { q: { t: 'Hidrojen atomunda n = 2 seviyesinin enerjisi kaç eV\'tur?', o: ['−3,4 eV', '−6,8 eV', '−13,6 eV', '−1,51 eV'], f: ['a21n2'],
+    { q: { t: 'Hidrojen atomunda n = 2 seviyesinin enerjisi kaç eV\'tur?', o: ['−3,4 eV', '−6,8 eV', '−13,6 eV', '−1,51 eV', '-1,7 eV'], f: ['a21n2'],
       s: [`E<sub>2</sub> = − ${F('13,6', '2<sup>2</sup>')} = <em>−3,4 eV</em> ✓`], n: ['Enerjilerin negatif olması elektronun atoma bağlı olduğunu gösterir.'] } },
-    { do: S => { S.hedef = 2; }, q: { t: 'Elektron n = 4\'ten n = 2\'ye inerken yayılan fotonun enerjisi kaç eV\'tur?', o: ['2,55 eV', '0,85 eV', '3,4 eV', '4,25 eV'], f: ['a21n4', 'a21n2'],
+    { do: S => { S.hedef = 2; }, q: { t: 'Elektron n = 4\'ten n = 2\'ye inerken yayılan fotonun enerjisi kaç eV\'tur?', o: ['2,55 eV', '0,85 eV', '3,4 eV', '4,25 eV', '5,1 eV'], f: ['a21n4', 'a21n2'],
       s: ['E<sub>4</sub> = −13,6/16 = −0,85 eV · E<sub>2</sub> = −3,4 eV', 'E<sub>foton</sub> = −0,85 − (−3,4) = <em>2,55 eV</em> ✓'], n: ['Bu foton yaklaşık 486 nm\'lik mavi-yeşil ışıktır.'] } },
     { q: { t: '²³⁸₉₂U çekirdeği bir α parçacığı yayınlıyor. Oluşan çekirdeğin kütle ve atom numarası nedir?', o: ['A = 234, Z = 90', 'A = 238, Z = 90', 'A = 234, Z = 92', 'A = 238, Z = 93'],
       s: ['α = ⁴₂He', 'A: 238 − 4 = 234 · Z: 92 − 2 = 90 → <em>²³⁴₉₀Th</em> ✓'], n: ['Bozunmalarda hem kütle numarası hem yük korunur.'] } },
@@ -164,11 +164,11 @@
   ] });
   const g22 = gorev(s22, { yk: 'AYT22-g1', no: 1, icon: '🔦', name: 'Fotoselde ölçüm', task: 'Foton enerjisi, kopan elektronun kinetik enerjisi ve kesme gerilimini bulun.', data: [['Metal', 'W₀ = 2,3 eV'], ['hc', '1240 eV·nm']], steps: [
     { do: S => { S.Ef = 2; S.ac = 1; }, sub: 'Metal yüzeye ışık gönderiliyor.', go: '▶︎ Başlat' },
-    { q: { t: 'Dalga boyu 620 nm olan ışığın bir fotonunun enerjisi kaç eV\'tur?', o: ['2 eV', '0,5 eV', '3,1 eV', '6,2 eV'], f: ['p22t'],
+    { q: { t: 'Dalga boyu 620 nm olan ışığın bir fotonunun enerjisi kaç eV\'tur?', o: ['2 eV', '0,5 eV', '3,1 eV', '6,2 eV', '4 eV'], f: ['p22t'],
       s: [`${FM(`E = ${F('h c', 'λ')}`)} = ${F('1240', '620')} = <em>2 eV</em> ✓`], n: ['2 eV < 2,3 eV olduğu için bu ışık metalden elektron koparamaz.'] } },
-    { do: S => { S.Ef = 4; }, q: { t: 'Metale 4 eV\'luk fotonlar gönderiliyor. Kopan elektronların en büyük kinetik enerjisi kaç eV\'tur?', o: ['1,7 eV', '6,3 eV', '4 eV', '2,3 eV'], f: ['p22t', 'p22e'],
+    { do: S => { S.Ef = 4; }, q: { t: 'Metale 4 eV\'luk fotonlar gönderiliyor. Kopan elektronların en büyük kinetik enerjisi kaç eV\'tur?', o: ['1,7 eV', '6,3 eV', '4 eV', '2,3 eV', '3,4 eV'], f: ['p22t', 'p22e'],
       s: [`${FM('E<sub>k,max</sub> = h f − W<sub>0</sub>')} = 4 − 2,3 = <em>1,7 eV</em> ✓`], n: ['"En büyük" denmesinin sebebi: daha derindeki elektronlar daha az enerjiyle çıkar.'] } },
-    { q: { t: 'Bu elektronları durdurmak için gereken kesme gerilimi kaç V\'tur?', o: ['1,7 V', '4 V', '2,3 V', '6,3 V'],
+    { q: { t: 'Bu elektronları durdurmak için gereken kesme gerilimi kaç V\'tur?', o: ['1,7 V', '4 V', '2,3 V', '6,3 V', '3,4 V'],
       s: [`${FM('e V<sub>k</sub> = E<sub>k,max</sub>')} → 1,7 eV = e · V<sub>k</sub> → <em>V<sub>k</sub> = 1,7 V</em> ✓`], n: ['eV birimi: 1 elektronun 1 V\'luk gerilimde kazandığı enerjidir.'] } },
     { do: S => { S.siddet = 2.5; }, q: { t: 'Aynı renkteki ışığın şiddeti iki katına çıkarılırsa ne olur?', o: ['Kopan elektron sayısı artar, E<sub>k,max</sub> değişmez', 'E<sub>k,max</sub> iki katına çıkar', 'Hiçbir şey değişmez', 'Kesme gerilimi iki katına çıkar'],
       s: ['Şiddet = birim sürede gelen foton sayısı → kopan elektron sayısı (akım) artar.', 'Her fotonun enerjisi aynı → <em>E<sub>k,max</sub> ve kesme gerilimi değişmez</em> ✓'], n: ['Sık yanlış: şiddet ile enerjiyi karıştırmak.'] } },
@@ -216,11 +216,11 @@
   ] });
   const g23 = gorev(s23, { yk: 'AYT23-g1', no: 1, icon: '🔦', name: 'Teknoloji turu', task: 'LED rengi, lazerin özellikleri, röntgen ve MR soruları.', steps: [
     { do: S => { S.mod = 'led'; S.Eg = 2.48; }, sub: 'Bir LED yanıyor.', go: '▶︎ Başlat' },
-    { q: { t: 'Yasak bant enerjisi 2,48 eV olan LED\'in yaydığı ışığın dalga boyu kaç nm\'dir?', o: ['500 nm', '620 nm', '400 nm', '248 nm'], f: ['u23t'],
+    { q: { t: 'Yasak bant enerjisi 2,48 eV olan LED\'in yaydığı ışığın dalga boyu kaç nm\'dir?', o: ['500 nm', '620 nm', '400 nm', '248 nm', '1000 nm'], f: ['u23t'],
       s: [`${FM(`λ = ${F('h c', 'E<sub>g</sub>')}`)} = ${F('1240', '2,48')} = <em>500 nm</em> ✓ (yeşil)`], n: ['E<sub>g</sub> büyüdükçe dalga boyu küçülür.'] } },
     { do: S => { S.mod = 'lazer'; }, q: { t: 'Aşağıdakilerden hangisi lazer ışığının bir özelliği <b>değildir</b>?', o: ['Birçok farklı dalga boyu içermesi', 'Tek renkli olması', 'Eş fazlı olması', 'Az dağılması'],
       s: ['Lazer ışığı uyarılmış salma ile oluşur: tüm fotonlar aynı enerji ve fazdadır.', '<em>Birçok dalga boyu içermez</em> ✓'], n: ['Ampul ışığı ise birçok dalga boyunu rastgele fazlarla içerir.'] } },
-    { q: { t: 'Röntgen tüpünde elektronlar 31 kV ile hızlandırılıyor. Oluşan X ışınının en kısa dalga boyu kaç nm\'dir?', o: ['0,04 nm', '0,4 nm', '40 nm', '4 nm'],
+    { q: { t: 'Röntgen tüpünde elektronlar 31 kV ile hızlandırılıyor. Oluşan X ışınının en kısa dalga boyu kaç nm\'dir?', o: ['0,04 nm', '0,4 nm', '40 nm', '4 nm', '0,08 nm'],
       s: ['Bir elektronun enerjisi en çok 31 000 eV', `λ<sub>min</sub> = ${F('1240', '31 000')} = <em>0,04 nm</em> ✓`], n: ['Elektronun bütün kinetik enerjisi tek bir fotona dönüşürse en kısa dalga boyu oluşur.'] } },
     { q: { t: 'Aşağıdaki görüntüleme yöntemlerinden hangisi iyonlaştırıcı ışınım <b>kullanmaz</b>?', o: ['MR', 'Röntgen', 'Bilgisayarlı tomografi', 'PET'],
       s: ['MR manyetik alan ve radyo dalgası kullanır; radyo dalgası iyonlaştırıcı değildir.', '<em>MR</em> ✓'], n: ['Röntgen ve BT X ışını, PET gama ışını kullanır.'] } },

@@ -89,15 +89,15 @@
   ] });
   const gOz = gorev(sOz, { yk: 'TYT2-g2', no: 2, icon: '🧪', name: 'Özkütle dedektifi', task: 'Taşırma kabı, yüzen cisim, m–V grafiği ve karışım soruları.', data: [['Suyun özkütlesi', '1 g/cm³']], steps: [
     { do: S => sec(S, 2, 3), sub: 'Bilinmeyen bir küp teraziye konuyor.', go: '▶︎ Başlat' },
-    { do: birak, q: { t: '81 g\'lık bir cisim taşırma kabına bırakılıyor, batıyor ve 30 cm³ su taşıyor. Cismin özkütlesi kaç g/cm³\'tür?', o: ['2,7', '0,37', '81', '30'], f: ['ozV', 'ozT'],
+    { do: birak, q: { t: '81 g\'lık bir cisim taşırma kabına bırakılıyor, batıyor ve 30 cm³ su taşıyor. Cismin özkütlesi kaç g/cm³\'tür?', o: ['2,7', '0,37', '81', '30', '5,4'], f: ['ozV', 'ozT'],
       s: ['Batan cisimde taşan su = cismin hacmi = 30 cm³', `d = ${F('81', '30')} = <em>2,7 g/cm³</em> ✓ (alüminyum)`], n: ['Özkütle tablosuyla karşılaştırarak maddeyi tanıyabiliriz.'] } },
     { do: S => { sec(S, 5, 4); birak(S); }, q: { t: 'Kenarı 4 cm olan tahta küp (d = 0,5 g/cm³) taşırma kabına bırakılıyor ve yüzüyor. Kaç cm³ su taşar?', o: ['32 cm³', '64 cm³', '0', '128 cm³'], f: ['ozV'],
       s: ['m = 0,5 · 64 = 32 g', `Yüzen cisim kendi kütlesi kadar su taşırır: V<sub>su</sub> = ${F('32 g', '1 g/cm³')} = <em>32 cm³</em> ✓`], n: ['Yüzen cismin ağırlığı, taşırdığı suyun ağırlığına eşittir.'] } },
     { q: { t: 'm–V grafiğinde X maddesinin 10 cm³\'ü 30 g, Y maddesinin 20 cm³\'ü 20 g. d<sub>X</sub> / d<sub>Y</sub> oranı kaçtır?', o: ['3', '1', '1/3', '6'],
       s: [`d<sub>X</sub> = ${F('30', '10')} = 3 g/cm³ · d<sub>Y</sub> = ${F('20', '20')} = 1 g/cm³`, 'Oran = <em>3</em> ✓'], n: ['Grafikte eğimi büyük olan doğru, özkütlesi büyük olan maddedir.'] } },
-    { q: { t: 'Özkütleleri 1 g/cm³ ve 0,8 g/cm³ olan iki sıvıdan <b>eşit hacim</b> karıştırılıyor. Karışımın özkütlesi kaç g/cm³\'tür?', o: ['0,9', '0,8', '1,8', '0,89'],
+    { q: { t: 'Özkütleleri 1 g/cm³ ve 0,8 g/cm³ olan iki sıvıdan <b>eşit hacim</b> karıştırılıyor. Karışımın özkütlesi kaç g/cm³\'tür?', o: ['0,9', '0,8', '1,8', '0,89', '0,45'],
       s: [`Eşit hacim: d<sub>k</sub> = ${F('1 + 0,8', '2')} = <em>0,9 g/cm³</em> ✓`], n: ['Hacimlerin korunduğu kabul edilir.'] } },
-    { q: { t: 'Özkütleleri 2 g/cm³ ve 3 g/cm³ olan iki sıvıdan <b>eşit kütle</b> karıştırılıyor. Karışımın özkütlesi kaç g/cm³\'tür?', o: ['2,4', '2,5', '2,6', '5'],
+    { q: { t: 'Özkütleleri 2 g/cm³ ve 3 g/cm³ olan iki sıvıdan <b>eşit kütle</b> karıştırılıyor. Karışımın özkütlesi kaç g/cm³\'tür?', o: ['2,4', '2,5', '2,6', '5', '4,8'],
       s: [`Eşit kütle: d<sub>k</sub> = ${F('2 · 2 · 3', '2 + 3')} = ${F('12', '5')} = <em>2,4 g/cm³</em> ✓`], n: ['Eşit kütlede karışım, özkütlesi küçük olana daha yakındır (onun hacmi büyüktür).'] } },
   ] });
   FZ.konuEk('TYT', 'Madde ve Özellikleri', { dersler: [dOz], gorevler: [gOz] });

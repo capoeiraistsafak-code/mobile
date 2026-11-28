@@ -52,14 +52,14 @@
   ] });
   const g5 = gorev(s5, { yk: 'AYT5-g1', no: 1, icon: '🎯', name: 'Hedefi vur', task: 'Eğik atışta tepe süresi, en büyük yükseklik, menzil ve tepedeki hızı bulun.', data: [['İlk hız', 'v₀ = 50 m/s'], ['Atış açısı', '37° (sin 0,6 · cos 0,8)'], ['g', '10 m/s²']], steps: [
     { do: S => { S.mod = 'egik'; S.th = 37; S.v0 = 50; }, sub: 'Top 50 m/s hızla, yatayla 37° açıyla atılacak.', go: '▶︎ At' },
-    { q: { t: 'Top kaç saniyede tepe noktasına çıkar?', o: ['3 s', '4 s', '5 s', '6 s'], f: ['a5y'],
+    { q: { t: 'Top kaç saniyede tepe noktasına çıkar?', o: ['3 s', '4 s', '5 s', '6 s', '1,5 s'], f: ['a5y'],
       s: ['v<sub>0y</sub> = 50 · sin 37° = 50 · 0,6 = 30 m/s', `${FM(`t<sub>ç</sub> = ${F('v<sub>0y</sub>', 'g')}`)} = ${F('30', '10')} = <em>3 s</em> ✓`], n: ['Tepeye çıkış süresini yalnız düşey hız belirler.'] } },
     { do: S => { S.kos = 1; }, sub: 'Top tepeye çıkıyor…', until: S => S.tt >= 3 },
-    { do: S => { S.kos = 0; }, q: { t: 'Topun çıkabildiği en büyük yükseklik kaç m\'dir?', o: ['45 m', '90 m', '30 m', '125 m'], f: ['a5t'],
+    { do: S => { S.kos = 0; }, q: { t: 'Topun çıkabildiği en büyük yükseklik kaç m\'dir?', o: ['45 m', '90 m', '30 m', '125 m', '22,5 m'], f: ['a5t'],
       s: ['§1. YOL · formül', `${FM(`h<sub>max</sub> = ${F('v<sub>0y</sub><sup>2</sup>', '2g')}`)} = ${F('900', '20')} = <em>45 m</em> ✓`, '§2. YOL · ortalama hız', `h = ${F('30 + 0', '2')} · 3 = <em>45 m</em> ✓`], n: ['Düşey hareket, 30 m/s ile yukarı atılmış bir cismin hareketiyle aynıdır.'] } },
     { q: { t: 'Tepe noktasında topun hızı kaç m/s\'dir?', o: ['40 m/s', '0', '30 m/s', '50 m/s'], f: ['a5x'],
       s: ['Tepede v<sub>y</sub> = 0, yatay hız değişmez:', `v = v<sub>0</sub> cos 37° = 50 · 0,8 = <em>40 m/s</em> ✓`], n: ['Sık yanlış: tepede hızın sıfır olduğunu düşünmek.'] } },
-    { do: S => { S.kos = 1; }, q: { t: 'Top atıldığı seviyeye kaç m uzakta düşer (menzil)?', o: ['240 m', '120 m', '300 m', '150 m'],
+    { do: S => { S.kos = 1; }, q: { t: 'Top atıldığı seviyeye kaç m uzakta düşer (menzil)?', o: ['240 m', '120 m', '300 m', '150 m', '480 m'],
       s: ['Uçuş süresi = 2 · 3 = 6 s', `menzil = v<sub>0x</sub> · t = 40 · 6 = <em>240 m</em> ✓`], n: ['Sürtünmesiz ortamda iniş süresi çıkış süresine eşittir.'] } },
   ] });
   konuEkle('AYT', 'İki Boyutta Hareket (Atışlar)', { dersler: [d5], gorevler: [g5] });
@@ -109,13 +109,13 @@
   ] });
   const g6 = gorev(s6, { yk: 'AYT6-g1', no: 1, icon: '🧱', name: 'Yayı sıkıştır', task: 'Bloğun hızını, yaydaki sıkışmayı, sürtünme kaybını ve verimi hesaplayın.', data: [['Bloğun kütlesi', 'm = 2 kg'], ['Yükseklik', 'h = 5 m'], ['Yay sabiti', 'k = 800 N/m'], ['g', '10 m/s²']], steps: [
     { sub: '2 kg\'lık blok 5 m yükseklikteki sürtünmesiz eğik düzlemin tepesinde.', go: '▶︎ Bırak' },
-    { q: { t: 'Blok düzlemin altına kaç m/s hızla ulaşır?', o: ['10 m/s', '100 m/s', '5 m/s', '7,1 m/s'],
+    { q: { t: 'Blok düzlemin altına kaç m/s hızla ulaşır?', o: ['10 m/s', '100 m/s', '5 m/s', '7,1 m/s', '20 m/s'],
       s: [`mgh = ${F('1', '2')} m v² → v = ${SQ('2 · 10 · 5')} = <em>10 m/s</em> ✓`], n: ['Sürtünmesiz eğik düzlemde hız yalnız yüksekliğe bağlıdır; eğim açısı önemli değildir.'] } },
     { do: S => { S.kos = 1; }, sub: 'Blok kayıyor…', until: S => !S.kos },
-    { q: { t: 'Blok 800 N/m\'lik yaya çarpıyor. Yay en çok kaç m sıkışır?', o: ['0,5 m', '0,25 m', '1 m', '0,05 m'], f: ['a6t'],
+    { q: { t: 'Blok 800 N/m\'lik yaya çarpıyor. Yay en çok kaç m sıkışır?', o: ['0,5 m', '0,25 m', '1 m', '0,05 m', '1,5 m'], f: ['a6t'],
       s: ['§1. YOL · enerji', `${F('1', '2')} · 800 · x² = 100 J → x² = 0,25 → <em>x = 0,5 m</em> ✓`, '§2. YOL · formül', `x = v ${SQ(F('m', 'k'))} = 10 · ${SQ(F('2', '800'))} = 10 · 0,05 = <em>0,5 m</em> ✓`], n: ['Yatay yol sürtünmesizse bloğun bütün kinetik enerjisi yayda depolanır.'] } },
     { do: S => { S.s = 0; S.sik = 0; S.kayip = 36; S.kos = 1; }, sub: 'Bu kez düzlem sürtünmeli…', until: S => !S.kos },
-    { q: { t: 'Sürtünmeli düzlemde blok alta 8 m/s ile ulaşıyor. Sürtünme kuvvetinin yaptığı işin büyüklüğü kaç J\'dür?', o: ['36 J', '64 J', '100 J', '20 J'],
+    { q: { t: 'Sürtünmeli düzlemde blok alta 8 m/s ile ulaşıyor. Sürtünme kuvvetinin yaptığı işin büyüklüğü kaç J\'dür?', o: ['36 J', '64 J', '100 J', '20 J', '72 J'],
       s: [`E<sub>k</sub> = ${F('1', '2')} · 2 · 64 = 64 J`, `|W<sub>sürtünme</sub>| = 100 − 64 = <em>36 J</em> ✓`], n: ['Kaybolan mekanik enerji, sürtünmenin yaptığı (negatif) işe eşittir.'] } },
     { q: { t: '1000 W\'lık motor 400 kg\'lık yükü 10 s\'de 2 m yukarı çıkarıyor. Motorun verimi yüzde kaçtır?', o: ['%80', '%40', '%100', '%8'],
       s: ['Yararlı iş: m g h = 400 · 10 · 2 = 8000 J', 'Harcanan: P · t = 1000 · 10 = 10 000 J', `verim = ${F('8000', '10 000')} = <em>%80</em> ✓`], n: ['Kalan %20 (2000 J) sürtünme ve ısı olarak kaybolur.'] } },
@@ -164,14 +164,14 @@
   ] });
   const g7 = gorev(s7, { yk: 'AYT7-g1', no: 1, icon: '🚃', name: 'Vagonları birleştir', task: 'Momentum, itme ve çarpışma sonrası hızları hesaplayın.', steps: [
     { do: S => { S.m1 = 4; S.v1 = 5; S.m2 = 1; }, sub: '4 kg\'lık araba 5 m/s ile 1 kg\'lık duran arabaya doğru gidiyor.', go: '▶︎ Başlat' },
-    { q: { t: '3 kg\'lık bir cisim 4 m/s hızla gidiyor. Momentumu kaç kg·m/s\'dir?', o: ['12', '7', '24', '0,75'],
+    { q: { t: '3 kg\'lık bir cisim 4 m/s hızla gidiyor. Momentumu kaç kg·m/s\'dir?', o: ['12', '7', '24', '0,75', '6'],
       s: [`${FM('p = m · v')} = 3 · 4 = <em>12 kg·m/s</em> ✓`], n: ['Momentum hız yönündedir.'] } },
-    { q: { t: '0,5 kg\'lık top duvara 20 m/s ile dik çarpıp 20 m/s ile geri dönüyor. Momentumdaki değişmenin büyüklüğü kaç kg·m/s\'dir?', o: ['20', '0', '10', '40'],
+    { q: { t: '0,5 kg\'lık top duvara 20 m/s ile dik çarpıp 20 m/s ile geri dönüyor. Momentumdaki değişmenin büyüklüğü kaç kg·m/s\'dir?', o: ['20', '0', '10', '40', '60'],
       s: ['Δp = m (v<sub>son</sub> − v<sub>ilk</sub>) = 0,5 · (−20 − 20)', '|Δp| = <em>20 kg·m/s</em> ✓'], n: ['Sık yanlış: hızların büyüklüğü aynı olduğu için Δp = 0 demek. Yön değişti!'] } },
-    { q: { t: 'Top duvara 0,02 s temas ediyorsa duvarın topa uyguladığı ortalama kuvvet kaç N\'dur?', o: ['1000 N', '400 N', '20 N', '2000 N'],
+    { q: { t: 'Top duvara 0,02 s temas ediyorsa duvarın topa uyguladığı ortalama kuvvet kaç N\'dur?', o: ['1000 N', '400 N', '20 N', '2000 N', '500 N'],
       s: [`${FM('F · Δt = Δp')} → F = ${F('20', '0,02')} = <em>1000 N</em> ✓`], n: ['Temas süresi kısaldıkça kuvvet büyür; hava yastığı süreyi uzatarak kuvveti azaltır.'] } },
     { do: S => { S.kos = 1; }, sub: 'Arabalar çarpışıp yapışıyor…', until: S => !S.kos },
-    { q: { t: '4 kg\'lık araba 5 m/s ile duran 1 kg\'lık arabaya çarpıp yapışıyor. Ortak hızları kaç m/s\'dir?', o: ['4 m/s', '5 m/s', '2,5 m/s', '1 m/s'], f: ['m7t'],
+    { q: { t: '4 kg\'lık araba 5 m/s ile duran 1 kg\'lık arabaya çarpıp yapışıyor. Ortak hızları kaç m/s\'dir?', o: ['4 m/s', '5 m/s', '2,5 m/s', '1 m/s', '8 m/s'], f: ['m7t'],
       s: ['Momentum korunur: 4 · 5 + 1 · 0 = (4 + 1) v', `v = ${F('20', '5')} = <em>4 m/s</em> ✓`], n: ['Çarpışma süresince dış kuvvetler ihmal edilir; iç kuvvetler momentumu değiştirmez.'] } },
   ] });
   konuEkle('AYT', 'İtme ve Çizgisel Momentum', { dersler: [d7], gorevler: [g7] });
@@ -217,13 +217,13 @@
   ] });
   const g8 = gorev(s8, { yk: 'AYT8-g1', no: 1, icon: '🎠', name: 'Tahterevalliyi dengele', task: 'Tork, denge ve destek tepki kuvvetini hesaplayın.', steps: [
     { do: S => { S.W1 = 60; S.d1 = 1; S.goster2 = 0; S.W2 = 20; S.d2 = 3; }, sub: 'Sol tarafta 60 N\'luk yük destekten 1 m uzakta.', go: '▶︎ Başlat' },
-    { q: { t: 'Uzunluğu 0,5 m olan anahtara uca dik 40 N kuvvet uygulanıyor. Tork kaç N·m\'dir?', o: ['20 N·m', '80 N·m', '40 N·m', '0,0125 N·m'],
+    { q: { t: 'Uzunluğu 0,5 m olan anahtara uca dik 40 N kuvvet uygulanıyor. Tork kaç N·m\'dir?', o: ['20 N·m', '80 N·m', '40 N·m', '0,0125 N·m', '10 N·m'],
       s: [`${FM('τ = F · d')} = 40 · 0,5 = <em>20 N·m</em> ✓`], n: ['Daha uzun anahtar aynı kuvvetle daha büyük tork sağlar.'] } },
-    { q: { t: 'Destekten 1 m solda 60 N var. Dengeleme için destekten 3 m sağa kaç N\'luk yük asılmalı?', o: ['20 N', '60 N', '180 N', '30 N'], f: ['t8a', 't8t'],
+    { q: { t: 'Destekten 1 m solda 60 N var. Dengeleme için destekten 3 m sağa kaç N\'luk yük asılmalı?', o: ['20 N', '60 N', '180 N', '30 N', '40 N'], f: ['t8a', 't8t'],
       s: [`${FM('Στ = 0')}: 60 · 1 = W · 3 → <em>W = 20 N</em> ✓`], n: ['Uzaklık 3 kat → gereken kuvvet 3\'te 1.'] } },
-    { do: S => { S.goster2 = 1; }, q: { t: 'Kütlesiz çubuk dengede. Desteğin çubuğa uyguladığı tepki kuvveti kaç N\'dur?', o: ['80 N', '60 N', '40 N', '20 N'], f: ['t8t', 't8a', 't8b'],
+    { do: S => { S.goster2 = 1; }, q: { t: 'Kütlesiz çubuk dengede. Desteğin çubuğa uyguladığı tepki kuvveti kaç N\'dur?', o: ['80 N', '60 N', '40 N', '20 N', '160 N'], f: ['t8t', 't8a', 't8b'],
       s: [`${FM('ΣF = 0')}: N = 60 + 20 = <em>80 N</em> ✓`], n: ['Tork dengesi kadar kuvvet dengesi de sağlanmalı.'] } },
-    { q: { t: '4 m uzunluğunda, 40 N ağırlığındaki düzgün çubuk sol ucundan 1 m uzaktaki destekte duruyor. Yatay dengede kalması için sol uca kaç N asılmalıdır?', o: ['40 N', '20 N', '80 N', '120 N'],
+    { q: { t: '4 m uzunluğunda, 40 N ağırlığındaki düzgün çubuk sol ucundan 1 m uzaktaki destekte duruyor. Yatay dengede kalması için sol uca kaç N asılmalıdır?', o: ['40 N', '20 N', '80 N', '120 N', '160 N'],
       s: ['Çubuğun ağırlığı orta noktada: destekten 2 − 1 = 1 m sağda', `${FM('Στ = 0')}: W · 1 = 40 · 1 → <em>W = 40 N</em> ✓`], n: ['Düzgün (türdeş) çubuğun ağırlık merkezi tam ortasıdır.'] } },
   ] });
   konuEkle('AYT', 'Tork ve Denge', { dersler: [d8], gorevler: [g8] });

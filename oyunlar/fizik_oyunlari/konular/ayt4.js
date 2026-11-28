@@ -52,13 +52,13 @@
   ] });
   const g13 = gorev(s13, { yk: 'AYT13-g1', no: 1, icon: '⚡', name: 'Levhaları yükle', task: 'Düzgün alanı, kuvveti, kazanılan enerjiyi ve kondansatör yükünü bulun.', data: [['Gerilim', 'V = 200 V'], ['Levha aralığı', 'd = 4 cm'], ['μC', '10⁻⁶ C'], ['μF', '10⁻⁶ F']], steps: [
     { do: S => { S.V = 200; S.d = 4; }, sub: 'Levhalar arasında 200 V gerilim var.', go: '▶︎ Başlat' },
-    { q: { t: 'Levhalar arasındaki elektrik alanın büyüklüğü kaç V/m\'dir?', o: ['5000 V/m', '50 V/m', '800 V/m', '8000 V/m'], f: ['c13e', 'c13d'],
+    { q: { t: 'Levhalar arasındaki elektrik alanın büyüklüğü kaç V/m\'dir?', o: ['5000 V/m', '50 V/m', '800 V/m', '8000 V/m', '10000 V/m'], f: ['c13e', 'c13d'],
       s: [`${FM(`E = ${F('V', 'd')}`)} = ${F('200', '0,04')} = <em>5000 V/m</em> ✓`], n: ['d metreye çevrilmeli: 4 cm = 0,04 m.'] } },
-    { q: { t: 'Levhalar arasındaki 2 μC\'luk yüke etki eden elektriksel kuvvet kaç N\'dur?', o: ['0,01 N', '0,1 N', '10 N', '0,0004 N'], f: ['c13F'],
+    { q: { t: 'Levhalar arasındaki 2 μC\'luk yüke etki eden elektriksel kuvvet kaç N\'dur?', o: ['0,01 N', '0,1 N', '10 N', '0,0004 N', '0,02 N'], f: ['c13F'],
       s: [`${FM('F = q E')} = 2 · 10<sup>−6</sup> · 5000 = <em>0,01 N</em> ✓`], n: ['Düzgün alanda yük nerede olursa olsun kuvvet aynıdır.'] } },
     { do: S => { S.x = 0; S.v = 0; S.kos = 1; }, q: { t: '2 μC\'luk yük + levhadan − levhaya ulaşınca kinetik enerjisi kaç J artar?', o: ['4 · 10<sup>−4</sup> J', '4 · 10<sup>−2</sup> J', '10<sup>−4</sup> J', '2 · 10<sup>−4</sup> J'],
       s: ['§1. YOL · W = qV', `W = 2 · 10<sup>−6</sup> · 200 = <em>4 · 10<sup>−4</sup> J</em> ✓`, '§2. YOL · W = F · d', `W = 0,01 · 0,04 = <em>4 · 10<sup>−4</sup> J</em> ✓`], n: ['Elektriksel kuvvetin yaptığı iş kinetik enerji artışına eşittir.'] } },
-    { q: { t: '5 μF\'lık kondansatör 12 V\'luk pile bağlanıyor. Kondansatörde depolanan yük kaç μC\'dir?', o: ['60 μC', '2,4 μC', '17 μC', '720 μC'],
+    { q: { t: '5 μF\'lık kondansatör 12 V\'luk pile bağlanıyor. Kondansatörde depolanan yük kaç μC\'dir?', o: ['60 μC', '2,4 μC', '17 μC', '720 μC', '120 μC'],
       s: [`${FM('Q = C V')} = 5 μF · 12 V = <em>60 μC</em> ✓`], n: [`Depolanan enerji: ${F('1', '2')} · 5 · 10<sup>−6</sup> · 144 = 3,6 · 10<sup>−4</sup> J.`] } },
   ] });
   konuEkle('AYT', 'Düzgün Elektrik Alan ve Sığa', { dersler: [d13], gorevler: [g13] });
@@ -108,11 +108,11 @@
   ] });
   const g14 = gorev(s14, { yk: 'AYT14-g1', no: 1, icon: '🔌', name: 'Raylı jeneratör', task: 'Hareketli çubukta indüksiyon emk\'sı, akım ve manyetik kuvveti bulun.', steps: [
     { do: S => { S.v = 10; }, sub: 'Çubuk 10 m/s sabit hızla çekiliyor.', go: '▶︎ Başlat' },
-    { do: S => { S.kos = 1; }, q: { t: 'Çubuğun uçları arasında oluşan indüksiyon emk\'sı kaç V\'tur?', o: ['2 V', '20 V', '0,2 V', '8 V'], f: ['m14B', 'm14v'],
+    { do: S => { S.kos = 1; }, q: { t: 'Çubuğun uçları arasında oluşan indüksiyon emk\'sı kaç V\'tur?', o: ['2 V', '20 V', '0,2 V', '8 V', '4 V'], f: ['m14B', 'm14v'],
       s: [`${FM('ε = B L v')} = 0,5 · 0,4 · 10 = <em>2 V</em> ✓`], n: ['B, L ve v birbirine dik olduğu için doğrudan çarpılır.'] } },
-    { q: { t: 'Devreden geçen akım kaç A\'dir?', o: ['0,5 A', '8 A', '2 A', '0,2 A'], f: ['m14I'],
+    { q: { t: 'Devreden geçen akım kaç A\'dir?', o: ['0,5 A', '8 A', '2 A', '0,2 A', '1 A'], f: ['m14I'],
       s: [`${FM(`I = ${F('ε', 'R')}`)} = ${F('2', '4')} = <em>0,5 A</em> ✓`], n: ['Rayların ve çubuğun direnci ihmal edildi.'] } },
-    { q: { t: 'Çubuğa etki eden manyetik kuvvetin büyüklüğü kaç N\'dur?', o: ['0,1 N', '1 N', '0,4 N', '2 N'], f: ['m14F'],
+    { q: { t: 'Çubuğa etki eden manyetik kuvvetin büyüklüğü kaç N\'dur?', o: ['0,1 N', '1 N', '0,4 N', '2 N', '0,2 N'], f: ['m14F'],
       s: [`${FM('F = B I L')} = 0,5 · 0,5 · 0,4 = <em>0,1 N</em> ✓`], n: [`Kontrol: güç F · v = 0,1 · 10 = 1 W = I<sup>2</sup>R = 0,25 · 4 = 1 W ✓`] } },
     { q: { t: 'Çubuğa etki eden manyetik kuvvetin yönü nedir?', o: ['Hareket yönüne zıt', 'Hareket yönünde', 'Manyetik alan yönünde', 'Akım yönünde'], f: ['m14F', 'm14v'],
       s: ['Lenz kuralı: indüksiyon akımı hareketi engelleyecek yönde kuvvet doğurur.', 'Kuvvet <em>harekete zıttır</em> ✓'], n: ['Kuvvet hareket yönünde olsaydı çubuk kendiliğinden hızlanır, enerji yoktan var olurdu.'] } },
@@ -167,9 +167,9 @@
     { do: S => { S.N1 = 400; S.N2 = 100; S.V1 = 220; S.ac = 1; }, sub: 'Düşürücü transformatör çalışıyor.', go: '▶︎ Başlat' },
     { q: { t: 'Bir AC kaynağın en büyük gerilimi 100' + SQ('2') + ' V\'tur. Voltmetre kaç V gösterir?', o: ['100 V', '100' + SQ('2') + ' V', '200 V', '50 V'],
       s: [`${FM(`V<sub>etkin</sub> = ${F('V<sub>max</sub>', SQ('2'))}`)} = ${F('100' + SQ('2'), SQ('2'))} = <em>100 V</em> ✓`], n: ['Voltmetre ve ampermetre etkin değeri gösterir.'] } },
-    { q: { t: 'N₁ = 400, N₂ = 100 sarımlı transformatörün birinci bobinine 220 V uygulanıyor. İkinci bobinin gerilimi kaç V\'tur?', o: ['55 V', '880 V', '220 V', '110 V'], f: ['t15t', 't15b'],
+    { q: { t: 'N₁ = 400, N₂ = 100 sarımlı transformatörün birinci bobinine 220 V uygulanıyor. İkinci bobinin gerilimi kaç V\'tur?', o: ['55 V', '880 V', '220 V', '110 V', '27,5 V'], f: ['t15t', 't15b'],
       s: [`V<sub>2</sub> = V<sub>1</sub> · ${F('N<sub>2</sub>', 'N<sub>1</sub>')} = 220 · ${F('100', '400')} = <em>55 V</em> ✓`], n: ['N₂ < N₁ → düşürücü transformatör.'] } },
-    { q: { t: 'Birinci bobinden 2 A akım geçiyorsa ikinci bobinden kaç A geçer? (ideal)', o: ['8 A', '0,5 A', '2 A', '4 A'],
+    { q: { t: 'Birinci bobinden 2 A akım geçiyorsa ikinci bobinden kaç A geçer? (ideal)', o: ['8 A', '0,5 A', '2 A', '4 A', '16 A'],
       s: ['§1. YOL · güç eşitliği', `220 · 2 = 55 · I<sub>2</sub> → <em>I<sub>2</sub> = 8 A</em> ✓`, '§2. YOL · sarım oranı', `I<sub>2</sub> = I<sub>1</sub> · ${F('N<sub>1</sub>', 'N<sub>2</sub>')} = 2 · ${F('400', '100')} = <em>8 A</em> ✓`], n: ['Gerilimi düşüren transformatör akımı aynı oranda yükseltir.'] } },
     { do: S => { S.ac = 0; }, q: { t: 'Kaynak 220 V\'luk doğru akım kaynağıyla değiştirilirse ikinci bobinin gerilimi kaç V olur?', o: ['0', '55 V', '220 V', '880 V'], f: ['t15b'],
       s: ['Doğru akımda manyetik akı sabittir: ΔΦ = 0', `ε = − ${F('ΔΦ', 'Δt')} = 0 → <em>V<sub>2</sub> = 0</em> ✓`], n: ['Anahtarın açılıp kapandığı anlarda kısa süreli indüksiyon olur; sürekli çalışmaz.'] } },

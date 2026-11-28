@@ -111,15 +111,15 @@
   ] });
   const gNw = gorev(sNw, { yk: 'AYT3-g3', no: 3, icon: '⛸️', name: 'Newton laboratuvarı soruları', task: 'Bileşke kuvvet, eylemsizlik, F = ma, etki–tepki, sürtünme ve bağlı cisimler.', data: [['g', '10 m/s²']], steps: [
     { do: S => kutuK(S, 4, 30, 10, 0, 0), sub: '4 kg kutuya iki yatay kuvvet uygulanıyor.', go: '▶︎ Başlat' },
-    { do: S => { S.kos = 1; }, q: { t: 'Sürtünmesiz yatay zemindeki 4 kg\'lık kutuya sağa 30 N, sola 10 N\'luk kuvvet uygulanıyor. Kutunun ivmesi kaç m/s²\'dir?', o: ['5', '10', '2,5', '7,5'], f: ['nwF1', 'nwF2', 'nwT'],
+    { do: S => { S.kos = 1; }, q: { t: 'Sürtünmesiz yatay zemindeki 4 kg\'lık kutuya sağa 30 N, sola 10 N\'luk kuvvet uygulanıyor. Kutunun ivmesi kaç m/s²\'dir?', o: ['5', '10', '2,5', '7,5', '15'], f: ['nwF1', 'nwF2', 'nwT'],
       s: ['F<sub>net</sub> = 30 − 10 = 20 N (sağa)', `a = ${F('20', '4')} = <em>5 m/s²</em> ✓`], n: ['Düşeyde mg ve N dengededir; hareketi yatay kuvvetlerin bileşkesi belirler.', 'Ağırlık (mg) cismin ağırlık merkezinden düşey aşağı, N zeminden cisme doğru yukarıdır.'] } },
-    { do: S => kutuK(S, 10, 40, 0, 0.5, 0.3), q: { t: '10 kg\'lık kutu ile zemin arasında μ<sub>s</sub> = 0,5 ve μ<sub>k</sub> = 0,3. Duran kutuya 40 N yatay kuvvet uygulanırsa sürtünme kuvveti kaç N olur?', o: ['40', '50', '30', '0'], f: ['nwf'],
+    { do: S => kutuK(S, 10, 40, 0, 0.5, 0.3), q: { t: '10 kg\'lık kutu ile zemin arasında μ<sub>s</sub> = 0,5 ve μ<sub>k</sub> = 0,3. Duran kutuya 40 N yatay kuvvet uygulanırsa sürtünme kuvveti kaç N olur?', o: ['40', '50', '30', '0', '80'], f: ['nwf'],
       s: ['f<sub>s,max</sub> = 0,5 · 100 = 50 N', '40 N < 50 N → kutu kıpırdamaz; statik sürtünme uygulanan kuvvete eşit: <em>40 N</em> ✓'], n: ['Statik sürtünme sabit bir sayı değildir; en çok μ<sub>s</sub>N olabilir.', 'Kutu kaysaydı sürtünme μ<sub>k</sub>N = 30 N olurdu.'] } },
     { do: S => patenK(S, 50, 75), q: { t: 'Sürtünmesiz buzda 50 kg ve 75 kg\'lık iki patenci birbirini itiyor. Hafif patencinin ivmesi ağır olanınkinin kaç katıdır?', o: ['1,5', '1', F('2', '3'), '2,5'], f: ['nwV1', 'nwV2'],
       s: ['Kuvvetler eşit (3. yasa): F aynı', `${F('a<sub>1</sub>', 'a<sub>2</sub>')} = ${F('m<sub>2</sub>', 'm<sub>1</sub>')} = ${F('75', '50')} = <em>1,5</em> ✓`], n: ['Etki–tepki kuvvetleri eşittir; ivmeler kütleyle ters orantılıdır.'] } },
     { do: diskK, q: { t: 'Hareket eden bir cisme etki eden bütün kuvvetlerin bileşkesi sıfır olursa cisim nasıl hareket eder?', o: ['Sabit hızla doğrusal', 'Yavaşlayıp durur', 'Hızlanır', 'Hemen durur'], f: ['nwvb'],
       s: ['1. yasa: F<sub>net</sub> = 0 → ivme 0 → <em>sabit hızla doğrusal</em> ✓'], n: ['Yavaşlayan bir cisim görüyorsan ona hareketine zıt yönde bir kuvvet (sürtünme gibi) etki ediyordur.'] } },
-    { do: arabaK, q: { t: 'Sürtünmesiz yatay düzlemde birbirine iple bağlı 3 kg ve 2 kg\'lık arabalardan önde olana 20 N\'luk kuvvet uygulanıyor. İpteki gerilme kuvveti kaç N\'dur? (İp önde 3 kg, arkada 2 kg arabayı bağlıyor.)', o: ['8', '12', '20', '4'],
+    { do: arabaK, q: { t: 'Sürtünmesiz yatay düzlemde birbirine iple bağlı 3 kg ve 2 kg\'lık arabalardan önde olana 20 N\'luk kuvvet uygulanıyor. İpteki gerilme kuvveti kaç N\'dur? (İp önde 3 kg, arkada 2 kg arabayı bağlıyor.)', o: ['8', '12', '20', '4', '16'],
       s: [`§1. YOL`, `Sistem: a = ${F('20', '3 + 2')} = 4 m/s²`, 'Arka araba (2 kg) yalnız iple çekilir: T = 2 · 4 = <em>8 N</em> ✓', '§2. YOL', 'Ön araba: 20 − T = 3 · 4 → T = <em>8 N</em> ✓'], n: ['İp gerilmesi, ipin çektiği cisimlerin kütlesiyle orantılıdır: T = F · m<sub>arka</sub> / m<sub>toplam</sub>.'] } },
   ] });
   FZ.konuEk('TYT', 'Hareket ve Kuvvet', { dersler: [dNw] });
@@ -191,11 +191,11 @@
     { do: yolK, sub: 'A → B → C yolculuğu (4 m doğu + 3 m kuzey).', go: '▶︎ Başlat' },
     { do: S => { S.kos = 1; }, q: { t: 'Araba A → B → C yolunu 7 s\'de alıyor. Ortalama sürati ve ortalama hızının büyüklüğü kaç m/s\'dir?', o: [`1 ve ${F('5', '7')}`, `${F('5', '7')} ve 1`, '1 ve 1', `${F('7', '5')} ve 1`], f: ['hrT', 'hrD'],
       s: [`Ortalama sürat = ${F('7 m', '7 s')} = 1 m/s`, `Ortalama hız = ${F('5 m', '7 s')} = <em>${F('5', '7')} m/s</em> ✓`], n: ['Ortalama hızın büyüklüğü ortalama sürati geçemez; yol doğrusal ve tek yönlüyse eşittir.'] } },
-    { do: S => karsK(S, 3, 2, 10), q: { t: 'Aralarında 10 m olan iki araba 3 m/s ve 2 m/s sabit hızlarla birbirine doğru hareket ediyor. Karşılaştıklarında hızlı araba kaç m yol almış olur?', o: ['6', '4', '5', '10'], f: ['hrT'],
+    { do: S => karsK(S, 3, 2, 10), q: { t: 'Aralarında 10 m olan iki araba 3 m/s ve 2 m/s sabit hızlarla birbirine doğru hareket ediyor. Karşılaştıklarında hızlı araba kaç m yol almış olur?', o: ['6', '4', '5', '10', '12'], f: ['hrT'],
       s: [`t = ${F('10', '3 + 2')} = 2 s`, 'Hızlı araba: 3 · 2 = <em>6 m</em> ✓'], n: ['Karşılaşmada alınan yollar hızlarla orantılıdır: 3 : 2 → 6 m ve 4 m.'] } },
-    { do: S => yetK(S, 4, 1, 6), q: { t: 'Aynı yönde hareket eden arabalardan arkadaki 4 m/s, öndeki 1 m/s hızla gidiyor. Aralarında 6 m varsa arkadaki kaç s sonra yetişir?', o: ['2', '1,2', '6', '1,5'], f: ['hrT'],
+    { do: S => yetK(S, 4, 1, 6), q: { t: 'Aynı yönde hareket eden arabalardan arkadaki 4 m/s, öndeki 1 m/s hızla gidiyor. Aralarında 6 m varsa arkadaki kaç s sonra yetişir?', o: ['2', '1,2', '6', '1,5', '4'], f: ['hrT'],
       s: [`t = ${F('6', '4 − 1')} = <em>2 s</em> ✓`], n: ['Aynı yönde hareket ederken aradaki uzaklık hız farkı kadar kapanır.'] } },
-    { q: { t: 'Bir koşucu 400 m\'lik pistte tam bir tur atıp başladığı yere dönüyor. Yer değiştirmesi kaç m\'dir?', o: ['0', '400', '200', '800'],
+    { q: { t: 'Bir koşucu 400 m\'lik pistte tam bir tur atıp başladığı yere dönüyor. Yer değiştirmesi kaç m\'dir?', o: ['0', '400', '200', '800', '1'],
       s: ['İlk ve son konum aynı → yer değiştirme <em>0</em> ✓', 'Alınan yol ise 400 m.'], n: ['Tam turda ortalama hız 0, ortalama sürat ise yol / süre olur.'] } },
   ] });
   FZ.konuEk('TYT', 'Hareket ve Kuvvet', { dersler: [dHr], gorevler: [gHr] });

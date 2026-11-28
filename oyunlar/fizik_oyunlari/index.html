@@ -140,6 +140,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 .op.sec{background:#1e3a8a;border-color:#60a5fa}.op.sec i{background:#60a5fa;color:#0b1b3a}
 #qc.cev .op{min-height:0;padding:10px 18px;font-size:30px}#qc.cev .op i{width:44px;height:44px;font-size:26px}
 #qc.cev #qt{font-size:30px}
+#opts.bes{gap:9px}#opts.bes .op{min-height:64px;font-size:29px;padding:8px 18px}#opts.bes .op i{width:44px;height:44px;font-size:26px}#qc.cev #opts.bes .op.dim{display:none}
 #fb{font:900 36px Inter}#fb:empty{display:none}
 #fb.ok{color:#4ade80}#fb.no{color:#f87171}
 #sol{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:auto;scrollbar-color:#F5A300 #2a303c;font-size:44px;background:#1f232c;border-radius:18px;padding:12px 22px;border:2px dashed #475569}
@@ -745,15 +746,15 @@ const M1 = {
     { sub: 'Oyuncak roket sürtünmesiz yatay masada, 2 m uzunluğundaki ipe bağlı. Başlat\'a basın, roket dönsün.', go: '▶︎ Başlat' },
     { do: S => { S.spin = true; }, sub: 'Roket bir turu 2 saniyede atıyor (her tur aynı sürede: düzgün çembersel hareket).', wait: 3.2 },
     { q: { t: `Roket bir turu <b>T = 2 s</b>'de atıyor. Roketin <b>açısal hızı (ω)</b> kaç rad/s?<br><small>(π = 3 alın)</small>`,
-      o: ['3 rad/s', '6 rad/s', '1,5 rad/s', '12 rad/s'], lab: 'ω = ?', at: 'peg', f: ['r1r'],
+      o: ['3 rad/s', '6 rad/s', '1,5 rad/s', '12 rad/s', '9 rad/s'], lab: 'ω = ?', at: 'peg', f: ['r1r'],
       s: [`Açısal hız: <span class="fm">ω = ${F('2π', 'T')}</span>`, `ω = ${F('2 · 3', '2')}`, `ω = <em>3 rad/s</em> ✓`],
       after: (S, M) => { S.w = 'ω = 3 rad/s'; board('Açısal hız', 'ω = 3 rad/s'); } } },
     { do: S => { S.v = true; S.vt = 'v = ?'; }, q: { t: `İp uzunluğu <b>r = 2 m</b>. Roketin <b>çizgisel hızı (v)</b> kaç m/s?`,
-      o: ['6 m/s', '1,5 m/s', '12 m/s', '3 m/s'], f: ['r1v', 'r1r', 'r1w'],
+      o: ['6 m/s', '1,5 m/s', '12 m/s', '3 m/s', '18 m/s'], f: ['r1v', 'r1r', 'r1w'],
       s: [`Çizgisel hız: <span class="fm">v = ω · r</span>`, `v = 3 · 2`, `v = <em>6 m/s</em> ✓`, `Hız (<span class="g">v</span>) → her an <em>TEĞET</em>`],
       after: S => { S.vt = 'v = 6 m/s'; board('Çizgisel hız', 'v = 6 m/s'); } } },
     { do: S => { S.av = true; S.at = 'a = ?'; }, q: { t: `Roketin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
-      o: ['18 m/s²', '12 m/s²', '3 m/s²', '36 m/s²'], f: ['r1a', 'r1f'],
+      o: ['18 m/s²', '12 m/s²', '3 m/s²', '36 m/s²', '9 m/s²'], f: ['r1a', 'r1f'],
       s: [`Merkezcil ivme: <span class="fm">a = ${F('v<sup>2</sup>', 'r')}</span>`, `a = ${F('6<sup>2</sup>', '2')} = ${F('36', '2')}`, `a = <em>18 m/s²</em> ✓`, `Kuvvet (<span class="r">F</span>) ve ivme (<span class="p">a</span>) → <em>MERKEZE</em>`],
       after: S => { S.at = 'a = 18 m/s²'; board('Merkezcil ivme', 'a = 18 m/s²'); } } },
     { q: { t: `İp koparsa roket hangi yolu izler?`,
@@ -833,15 +834,15 @@ const M2 = {
       after: S => { S.wedge = true; } } },
     { sub: 'Renkli dilimler: son 2 saniyede taranan açı. Kırmızının dilimi en büyük.', wait: 2.5 },
     { q: { t: `Kırmızı arabanın (r = 10 m) <b>açısal hızı (ω)</b> kaç rad/s?`,
-      o: ['1 rad/s', '10 rad/s', '100 rad/s', '0,1 rad/s'], lab: 'ω = ?', at: 0, f: ['v0', 'cr0'],
+      o: ['1 rad/s', '10 rad/s', '100 rad/s', '0,1 rad/s', '2 rad/s'], lab: 'ω = ?', at: 0, f: ['v0', 'cr0'],
       s: [`ω = ${F('v', 'r')} = ${F('10', '10')} = <em>1 rad/s</em> ✓`, `Yeşil: ${F('10', '20')} = ${F('1', '2')} rad/s`, `Mavi: ${F('10', '30')} = ${F('1', '3')} rad/s`],
       after: S => { S.cw = true; board('Kırmızı · açısal hız', 'ω = 1 rad/s'); } } },
     { do: S => { S.a = true; }, q: { t: `Mor oklar merkezcil ivme. Mavi arabanın (r = 30 m) <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
-      o: ['3,3 m/s²', '10 m/s²', '300 m/s²', '0,33 m/s²'], lab: 'a = ?', at: 2, f: ['a2', 'v2', 'c2'],
+      o: ['3,3 m/s²', '10 m/s²', '300 m/s²', '0,33 m/s²', '6,6 m/s²'], lab: 'a = ?', at: 2, f: ['a2', 'v2', 'c2'],
       s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')} = ${F('10<sup>2</sup>', '30')}`, `a = ${F('100', '30')} ≈ <em>3,3 m/s²</em> ✓`, `Kırmızı: 10 m/s², Yeşil: 5 m/s²`, `r küçülünce a <em>BÜYÜR</em>`],
       after: S => { S.ca = true; board('Mavi · merkezcil ivme', 'a ≈ 3,3 m/s²'); } } },
     { q: { t: `Kırmızı araba (r = 10 m, v = 10 m/s) bir turu kaç saniyede tamamlar?<br><small>(π = 3 alın)</small>`,
-      o: ['6 s', '3 s', '60 s', '1 s'], lab: 'T = ?', at: 0, f: ['v0', 'c0'],
+      o: ['6 s', '3 s', '60 s', '1 s', '12 s'], lab: 'T = ?', at: 0, f: ['v0', 'c0'],
       s: [`Bir tur yolu: 2πr = 2 · 3 · 10 = 60 m`, `Periyot: T = ${F('2πr', 'v')} = ${F('60', '10')}`, `T = <em>6 s</em> ✓`],
       after: () => board('Kırmızı · periyot', 'T = 6 s') } },
     { do: S => { S.run = false; S.t = 0; S.lap = -1; }, sub: 'Şimdi kırmızı arabanın turunu ölçelim. Arabalar çizgiye dizildi.', go: '⏱ Turu ölç' },
@@ -1082,15 +1083,15 @@ const M4 = {
     { do: S => { SFX.horn(); M4.go(S, 'bottom', ROLL.sLoop); }, sub: 'Tren durgun bırakıldı: potansiyel enerji (m · g · h) → kinetik enerji (<span class="fr"><span>1</span><span>2</span></span> · m · v<sup>2</sup>)', until: S => !S.run },
     { do: S => { S.vlab = 'v = ?'; S.alab = 'a'; }, sub: 'Döngünün dibi. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tren h = 45 m yükseklikten durgun bırakıldı. Döngünün dibinde <b>hızı (v)</b> kaç m/s?<br><small>(Sürtünme yok, g = 10 m/s²)</small>`,
-      o: ['30 m/s', '45 m/s', '900 m/s', '15 m/s'], f: ['t4v', 't4h'],
+      o: ['30 m/s', '45 m/s', '900 m/s', '15 m/s', '60 m/s'], f: ['t4v', 't4h'],
       s: [`Enerji korunur: <span class="fm">m · g · h = ${F('1', '2')} · m · v<sup>2</sup></span>`, `v = ${SQ('2 · g · h')} = ${SQ('2 · 10 · 45')}`, `v = ${SQ('900')} = <em>30 m/s</em> ✓`],
       after: S => { S.vlab = 'v = 30 m/s'; board('Dipte hız', 'v = 30 m/s'); } } },
     { q: { t: `Döngünün yarıçapı r = 10 m. Dipte trenin <b>açısal hızı (ω)</b> kaç rad/s?`,
-      o: ['3 rad/s', '300 rad/s', '0,3 rad/s', '30 rad/s'], lab: 'ω = ?', f: ['t4v', 't4r'],
+      o: ['3 rad/s', '300 rad/s', '0,3 rad/s', '30 rad/s', '6 rad/s'], lab: 'ω = ?', f: ['t4v', 't4r'],
       s: [`Açısal hız: <span class="fm">ω = ${F('v', 'r')}</span>`, `ω = ${F('30', '10')} = <em>3 rad/s</em> ✓`],
       after: () => board('Dipte açısal hız', 'ω = 3 rad/s') } },
     { do: S => { S.alab = 'a = ?'; }, q: { t: `Dipte trenin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
-      o: ['90 m/s²', '9 m/s²', '30 m/s²', '3 m/s²'], f: ['t4a', 't4v', 't4r'],
+      o: ['90 m/s²', '9 m/s²', '30 m/s²', '3 m/s²', '180 m/s²'], f: ['t4a', 't4v', 't4r'],
       s: [`Merkezcil ivme: a = ${F('v<sup>2</sup>', 'r')} = ${F('30<sup>2</sup>', '10')} = ${F('900', '10')}`, `a = <em>90 m/s²</em> (yukarı, merkeze) ✓`, `<span class="o">N</span> − <span class="r">mg</span> = m · a → <span class="o">N</span> > <span class="r">mg</span>: kendini <em>AĞIR</em> hissedersin`],
       after: S => { S.alab = 'a = 90 m/s²'; board('Dipte merkezcil ivme', 'a = 90 m/s²'); } } },
     { q: { t: `Dipte trenin <b>açısal ivmesi (α)</b> kaç rad/s²?`,
@@ -1108,11 +1109,11 @@ const M4 = {
     { do: S => { S.vlab = 'v'; S.alab = 'a = ?'; M4.go(S, 'top', ROLL.sTop); }, sub: 'Tren tepeye çıkıyor…', until: S => !S.run },
     { sub: 'Döngünün tepesi: yükseklik 2r = 20 m. Tren durduruldu.', wait: 0.8 },
     { q: { t: `Tepede yükseklik 2r = 20 m. Trenin <b>hızının karesi (v²)</b> kaçtır?`,
-      o: ['500 m²/s²', '900 m²/s²', '400 m²/s²', '100 m²/s²'], lab: 'v² = ?', f: ['t4v'],
+      o: ['500 m²/s²', '900 m²/s²', '400 m²/s²', '100 m²/s²', '1000 m²/s²'], lab: 'v² = ?', f: ['t4v'],
       s: [`m · g · h = m · g · 2r + ${F('1', '2')} · m · v<sup>2</sup>`, `v<sup>2</sup> = 2 · g · (h − 2r) = 2 · 10 · (45 − 20)`, `v<sup>2</sup> = <em>500</em> → v ≈ 22,4 m/s ✓`],
       after: S => { S.vlab = 'v ≈ 22,4 m/s'; board('Tepede hız', 'v² = 500 (v ≈ 22,4 m/s)'); } } },
     { q: { t: `Tepede trenin <b>merkezcil ivmesi (a)</b> kaç m/s²?`,
-      o: ['50 m/s²', '90 m/s²', '10 m/s²', '5 m/s²'], f: ['t4a', 't4m'],
+      o: ['50 m/s²', '90 m/s²', '10 m/s²', '5 m/s²', '100 m/s²'], f: ['t4a', 't4m'],
       s: [`a = ${F('v<sup>2</sup>', 'r')} = ${F('500', '10')}`, `a = <em>50 m/s²</em> (aşağı, merkeze) ✓`, `Tepede v küçüldü → a da <em>KÜÇÜLDÜ</em> (90 → 50)`],
       after: S => { S.alab = 'a = 50 m/s²'; board('Tepede merkezcil ivme', 'a = 50 m/s²'); } } },
     { q: { t: `Tren tepede ters duruyor. Raydan <b>düşer mi?</b>`,
@@ -1534,10 +1535,14 @@ function ask(q) {
   if (!$('notlar').classList.contains('hide')) notAc(true);
   $('qn').textContent = `SORU ${GAME.qn} / ${GAME.M.steps.filter(s => s.q).length}`;
   $('qt').innerHTML = q.t; $('fb').textContent = ''; $('fb').className = ''; $('sol').innerHTML = ''; $('qnext').classList.add('hide');
-  $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
+  $('opts').innerHTML = order.map((oi, k) => `<button class="op" data-k="${k}"><i>${'ABCDE'[k]}</i><span>${q.o[oi]}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => answer(+b.dataset.k));
   $('qc').classList.remove('hide'); $('qc').classList.remove('cev'); $('sub').classList.add('q'); subSigdir(); CAM.gvo = 170;
+  soruSigdir(q);
 }
+// ÖSYM düzeni: 5 seçenekli (A–E) sorularda seçenekler sıkışır; soru kökü kartı taşırırsa yazı küçülür
+function soruSigdir(q) { $('opts').classList.toggle('bes', q.o.length > 4); const qt = $('qt'), qc = $('qc'); qt.style.fontSize = ''; let f = 34;
+  while (qc.scrollHeight > qc.clientHeight + 2 && f > 24) { f -= 2; qt.style.fontSize = f + 'px'; } }
 // ---- Konu anlatımı kartları: tür etiketiyle (MERAK, KAVRAM, ÇÖZÜMLÜ ÖRNEK, DİKKAT, ÖZET...) ----
 const TURLER = { merak: ['MERAK', '#8b5cf6'], tanim: ['TANIM · NEDİR?', '#0f766e'], tarih: ['KİM BULDU · BİRİM · ÖLÇME', '#a16207'], kavram: ['KAVRAM', '#2563eb'], gozlem: ['GÖZLEM', '#0891b2'], ornek: ['ÇÖZÜMLÜ ÖRNEK', '#16a34a'], dikkat: ['DİKKAT · KAVRAM YANILGISI', '#dc2626'], ozet: ['ÖZET', '#F5A300'], gunluk: ['GÜNLÜK HAYAT', '#db2777'] };
 function kartBasla(etiket, renk, baslik) {
@@ -1577,7 +1582,7 @@ function kesYaz() { const Q = GAME.q; if (!Q || !Q.kesif) return; const x = Q.q,
 function tahmin(p) {
   GAME.q = { q: p, answered: false, tahmin: true }; SON_Q = p;
   kartBasla('TAHMİN ET', '#7c3aed', p.t);
-  $('opts').innerHTML = p.o.map((t, k) => `<button class="op" data-k="${k}"><i>${'ABCD'[k]}</i><span>${t}</span></button>`).join('');
+  $('opts').innerHTML = p.o.map((t, k) => `<button class="op" data-k="${k}"><i>${'ABCDE'[k]}</i><span>${t}</span></button>`).join('');
   [...$('opts').children].forEach(b => b.onclick = () => tahminSec(+b.dataset.k));
   if (!$('notlar').classList.contains('hide')) notAc(true);
 }
@@ -1729,7 +1734,7 @@ addEventListener('keydown', e => {
   if (GAME.mode === 'game' && (k === '+' || k === '-' || k === '=')) { const L = [0.25, 0.5, 1, 2], i = L.indexOf(CTL.hiz); return setHiz(L[clamp(i + (k === '-' ? -1 : 1), 0, 3)]); }
   if (GAME.mode !== 'game') return;
   if (!$('ov').classList.contains('hide')) { if (k === ' ' || k === 'enter') { e.preventDefault(); const b = $('ovGo') || $('ovN'); b && b.click(); } return; }
-  const idx = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, b: 1, c: 2, d: 3 }[k];
+  const idx = { '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, a: 0, b: 1, c: 2, d: 3, e: 4 }[k];
   if (GAME.q && !GAME.q.answered && idx != null) return GAME.q.tahmin ? tahminSec(idx) : answer(idx);
   if (k === ' ' || k === 'enter' || k === 'arrowright') { e.preventDefault(); if (GAME.q) qContinue(); else if (!$('go').classList.contains('hide')) $('go').click(); }
 });
@@ -2203,6 +2208,7 @@ window.__oyun = { GAME, MISSIONS, startMission, answer, qContinue, next, soruFor
 <script src="konular/kitap12.js"></script>
 <script src="konular/kitap13.js"></script>
 <script src="konular/kitap14.js"></script>
+<script src="konular/osym.js"></script>
 <script src="konular/tanimlar.js"></script>
 <script src="konular/bilgi.js"></script>
 <script src="konular/son.js"></script>

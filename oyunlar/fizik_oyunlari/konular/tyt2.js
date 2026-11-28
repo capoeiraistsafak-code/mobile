@@ -53,16 +53,16 @@
   ] });
   const g4 = gorev(s4, { yk: 'TYT4-g1', no: 1, icon: '🔴', name: 'Topu rampadan indir', task: 'Rampadan bırakılan topun enerjilerini ve hızını hesaplayın.', steps: [
     { sub: '4 kg\'lık top 5 m yüksekliğinde duruyor.', go: '▶︎ Başlat' },
-    { q: { t: '4 kg\'lık topun 5 m yükseklikteki <b>potansiyel enerjisi</b> kaç J\'dür? (g = 10 m/s²)', o: ['200 J', '20 J', '9 J', '2000 J'], f: ['e4b0', 'e4h'],
+    { q: { t: '4 kg\'lık topun 5 m yükseklikteki <b>potansiyel enerjisi</b> kaç J\'dür? (g = 10 m/s²)', o: ['200 J', '20 J', '9 J', '2000 J', '400 J'], f: ['e4b0', 'e4h'],
       s: [`${FM('E<sub>p</sub> = m · g · h')} = 4 · 10 · 5 = <em>200 J</em> ✓`], n: ['Ep, seçilen yere (yer seviyesi) göre ölçülür; yer seviyesinde Ep = 0 kabul edilir.'] } },
     { do: S => { S.hedef = RL / 2; S.kos = 1; }, sub: 'Top yarı yüksekliğe iniyor…', until: S => !S.kos },
     { q: { t: 'Sürtünme yok. Top 2,5 m yüksekliğe indiğinde <b>kinetik enerjisi</b> kaç J\'dür?', o: ['100 J', '200 J', '50 J', '0'], f: ['e4b0', 'e4b1'],
       s: ['Bu noktada Ep = 4 · 10 · 2,5 = 100 J', `E<sub>k</sub> = E<sub>toplam</sub> − E<sub>p</sub> = 200 − 100 = <em>100 J</em> ✓`], n: ['Sürtünme yoksa mekanik enerji (Ep + Ek) her noktada aynıdır.'] } },
     { do: S => { S.hedef = 12.5; S.kos = 1; }, sub: 'Top yere iniyor…', until: S => !S.kos },
-    { q: { t: 'Sürtünme yoksa top yere kaç m/s hızla varır?', o: ['10 m/s', '100 m/s', '5 m/s', '20 m/s'], lab: 'v = ?', f: ['e4v'],
+    { q: { t: 'Sürtünme yoksa top yere kaç m/s hızla varır?', o: ['10 m/s', '100 m/s', '5 m/s', '20 m/s', '30 m/s'], lab: 'v = ?', f: ['e4v'],
       s: ['§1. YOL · enerji korunumu', `m g h = ${F('1', '2')} m v² → v = ${SQ('2 · 10 · 5')} = <em>10 m/s</em> ✓`, '§2. YOL · kinetik enerjiden', `${F('1', '2')} · 4 · v² = 200 → v² = 100 → <em>v = 10 m/s</em> ✓`], n: ['Hız kütleye bağlı değildir; 1 kg\'lık top da 10 m/s ile varır.'] } },
     { do: S => { S.x = 0; S.kayip = 0.36; S.hedef = 12.5; S.kos = 1; }, sub: 'Bu kez rampa sürtünmeli…', until: S => !S.kos },
-    { q: { t: 'Sürtünmeli rampada top yere 8 m/s ile varıyor. Kaç J enerji <b>ısıya</b> dönüşmüştür?', o: ['72 J', '128 J', '200 J', '36 J'], f: ['e4b2', 'e4b1'],
+    { q: { t: 'Sürtünmeli rampada top yere 8 m/s ile varıyor. Kaç J enerji <b>ısıya</b> dönüşmüştür?', o: ['72 J', '128 J', '200 J', '36 J', '144 J'], f: ['e4b2', 'e4b1'],
       s: [`E<sub>k</sub> = ${F('1', '2')} · 4 · 8² = 128 J`, `Isı = 200 − 128 = <em>72 J</em> ✓`], n: ['Sürtünme kuvvetinin yaptığı iş kadar mekanik enerji ısıya dönüşür; toplam enerji yine korunur.'] } },
   ] });
   konuEkle('TYT', 'Enerji', { dersler: [d4], gorevler: [g4] });
@@ -115,9 +115,9 @@
     { q: { t: '300 g su 20 °C\'tan 80 °C\'a ısıtılacak. Kaç cal ısı gerekir?', o: ['18 000 cal', '6 000 cal', '24 000 cal', '1 800 cal'], lab: 'Q = ?', f: ['e5T'],
       s: [`${FM('Q = m · c · ΔT')} = 300 · 1 · (80 − 20) = <em>18 000 cal</em> ✓`], n: ['ΔT = son sıcaklık − ilk sıcaklık.'] } },
     { do: S => { S.isit = 1; }, sub: 'Su ısınıyor…', until: S => !S.isit },
-    { q: { t: 'Aynı 18 000 cal ısı 600 g suya verilseydi sıcaklığı kaç °C artardı?', o: ['30 °C', '60 °C', '120 °C', '15 °C'],
+    { q: { t: 'Aynı 18 000 cal ısı 600 g suya verilseydi sıcaklığı kaç °C artardı?', o: ['30 °C', '60 °C', '120 °C', '15 °C', '90 °C'],
       s: [`ΔT = ${F('Q', 'm · c')} = ${F('18 000', '600 · 1')} = <em>30 °C</em> ✓`, 'Kütle 2 katına çıktı → ΔT yarıya indi.'], n: ['Aynı ısı, kütle arttıkça daha az sıcaklık artışı sağlar (ters orantı).'] } },
-    { q: { t: '100 g 80 °C su ile 300 g 20 °C su karıştırılıyor. Isı kaybı yoksa denge sıcaklığı kaç °C\'tır?', o: ['35 °C', '50 °C', '40 °C', '30 °C'],
+    { q: { t: '100 g 80 °C su ile 300 g 20 °C su karıştırılıyor. Isı kaybı yoksa denge sıcaklığı kaç °C\'tır?', o: ['35 °C', '50 °C', '40 °C', '30 °C', '70 °C'],
       s: ['§1. YOL · alınan ısı = verilen ısı', '100 · 1 · (80 − T) = 300 · 1 · (T − 20) → <em>T = 35 °C</em> ✓', '§2. YOL · kütle ağırlıklı ortalama', `T = ${F('100 · 80 + 300 · 20', '400')} = ${F('14 000', '400')} = <em>35 °C</em> ✓`],
       n: ['Aynı maddeler karışınca denge sıcaklığı kütle ağırlıklı ortalamadır; kütlesi büyük olanın sıcaklığına daha yakındır.'] } },
     { do: S => { S.T = 0; S.Th = 0.001; S.Q = 0; S.buz = 50; S.buz0 = 50; }, q: { t: '0 °C\'taki 50 g buzu tamamen eritmek için kaç cal ısı gerekir? (L = 80 cal/g)', o: ['4 000 cal', '50 cal', '80 cal', '400 cal'],
@@ -168,12 +168,12 @@
   ] });
   const g6 = gorev(s6, { yk: 'TYT6-g1', no: 1, icon: '🧲', name: 'Yükleri paylaştır', task: 'Dokunma ile yük dağılımını ve Coulomb kuvvetini hesaplayın.', steps: [
     { do: S => { S.qa = 8; S.qb = -2; }, sub: 'Özdeş iki küre: +8q ve −2q.', go: '▶︎ Başlat' },
-    { q: { t: 'Özdeş küreler (+8q ve −2q) dokundurulup ayrılıyor. Her birinin son yükü nedir?', o: ['+3q', '+5q', '+4q', '+6q'], f: ['e6a', 'e6b'],
+    { q: { t: 'Özdeş küreler (+8q ve −2q) dokundurulup ayrılıyor. Her birinin son yükü nedir?', o: ['+3q', '+5q', '+4q', '+6q', '+1,5q'], f: ['e6a', 'e6b'],
       s: ['Toplam yük: +8q − 2q = +6q (korunur)', `Özdeş küreler eşit paylaşır: ${F('+6q', '2')} = <em>+3q</em> ✓`], n: ['Dokunma sonunda iletkenlerin potansiyelleri eşitlenir; özdeş kürelerde bu, yüklerin eşitlenmesi demektir.'] } },
     { do: S => { S.dok = 1; S.faz = 0; S.paylasti = 0; }, sub: 'Küreler dokunuyor…', until: S => S.faz >= 2 },
-    { q: { t: 'İki yük arasındaki uzaklık <b>yarıya</b> indirilirse aralarındaki kuvvet kaç katına çıkar?', o: ['4 katına', '2 katına', 'Yarısına', 'Değişmez'], f: ['e6F', 'e6F2'],
+    { q: { t: 'İki yük arasındaki uzaklık <b>yarıya</b> indirilirse aralarındaki kuvvet kaç katına çıkar?', o: ['4 katına', '2 katına', 'Yarısına', 'Değişmez', '4\'te birine'], f: ['e6F', 'e6F2'],
       s: [`F ∝ ${F('1', 'd<sup>2</sup>')} → d yarıya inince d² dörtte birine iner`, '<em>F 4 katına</em> çıkar ✓'], n: ['Ters kare kuralı: uzaklık k katına çıkınca kuvvet k² katına iner.'] } },
-    { do: S => { S.dok = 0; S.qa = 9; S.qb = 0; S.ra = 0.45; S.rb = 0.9; S.paylasti = 0; }, q: { t: 'Yarıçapları r ve 2r olan iletken kürelerden küçüğünün yükü +9q, büyüğü yüksüz. Dokundurulup ayrılınca büyük kürenin yükü ne olur?', o: ['+6q', '+3q', '+4,5q', '+9q'], f: ['e6a', 'e6b'],
+    { do: S => { S.dok = 0; S.qa = 9; S.qb = 0; S.ra = 0.45; S.rb = 0.9; S.paylasti = 0; }, q: { t: 'Yarıçapları r ve 2r olan iletken kürelerden küçüğünün yükü +9q, büyüğü yüksüz. Dokundurulup ayrılınca büyük kürenin yükü ne olur?', o: ['+6q', '+3q', '+4,5q', '+9q', '+12q'], f: ['e6a', 'e6b'],
       s: ['Toplam: +9q. Yük yarıçapla orantılı paylaşılır: r : 2r = 1 : 2', `Büyük küre: ${F('2', '3')} · 9q = <em>+6q</em> ✓ (küçük: +3q)`], n: ['Dokunan iletkenlerin potansiyelleri eşitlenir: V = kq/r → q, r ile orantılıdır.'] } },
     { do: S => { S.dok = 1; S.faz = 0; }, sub: 'Farklı büyüklükteki küreler dokunuyor…', until: S => S.faz >= 2 },
     { q: { t: 'Yüklü bir iletken kürenin fazla yükü nerede toplanır?', o: ['Dış yüzeyinde', 'Merkezinde', 'İçinde düzgün dağılır', 'Yalnız bir noktada'],
@@ -230,13 +230,13 @@
   ] });
   const g7 = gorev(s7, { yk: 'TYT7-g1', no: 1, icon: '🔌', name: 'Devreyi kur', task: 'Ohm yasasıyla akım, eşdeğer direnç, güç ve enerjiyi hesaplayın.', steps: [
     { do: S => { S.V = 12; S.R1 = 4; }, sub: '12 V pil ve 4 Ω direnç.', go: '▶︎ Anahtarı kapat' },
-    { do: S => { S.ac = 1; }, q: { t: '12 V\'luk pile 4 Ω\'luk direnç bağlanıyor. Devreden geçen akım kaç A\'dir?', o: ['3 A', '48 A', '0,33 A', '16 A'], lab: 'I = ?', f: ['e7I', 'e7a'],
+    { do: S => { S.ac = 1; }, q: { t: '12 V\'luk pile 4 Ω\'luk direnç bağlanıyor. Devreden geçen akım kaç A\'dir?', o: ['3 A', '48 A', '0,33 A', '16 A', '6 A'], lab: 'I = ?', f: ['e7I', 'e7a'],
       s: [`${FM('V = I · R')} → I = ${F('V', 'R')} = ${F('12', '4')} = <em>3 A</em> ✓`], n: ['Ohm yasası: aynı direnç için akım gerilimle doğru orantılıdır.'] } },
-    { do: S => { S.R1 = 2; S.R2 = 4; S.seri = 1; }, q: { t: '2 Ω ve 4 Ω\'luk dirençler 12 V\'luk pile <b>seri</b> bağlanıyor. 4 Ω\'luk direncin uçları arasındaki gerilim kaç V\'tur?', o: ['8 V', '4 V', '12 V', '6 V'], f: ['e7a', 'e7b', 'e7I'],
+    { do: S => { S.R1 = 2; S.R2 = 4; S.seri = 1; }, q: { t: '2 Ω ve 4 Ω\'luk dirençler 12 V\'luk pile <b>seri</b> bağlanıyor. 4 Ω\'luk direncin uçları arasındaki gerilim kaç V\'tur?', o: ['8 V', '4 V', '12 V', '6 V', '16 V'], f: ['e7a', 'e7b', 'e7I'],
       s: ['R<sub>eş</sub> = 2 + 4 = 6 Ω → I = 12 / 6 = 2 A', `V<sub>2</sub> = I · R<sub>2</sub> = 2 · 4 = <em>8 V</em> ✓ (2 Ω\'da 4 V)`], n: ['Seri bağlamada gerilim dirençlerle doğru orantılı paylaşılır; büyük direnç büyük gerilim alır.'] } },
-    { q: { t: '3 Ω ve 6 Ω\'luk dirençler <b>paralel</b> bağlanıyor. Eşdeğer direnç kaç Ω\'dur?', o: ['2 Ω', '9 Ω', '4,5 Ω', '18 Ω'],
+    { q: { t: '3 Ω ve 6 Ω\'luk dirençler <b>paralel</b> bağlanıyor. Eşdeğer direnç kaç Ω\'dur?', o: ['2 Ω', '9 Ω', '4,5 Ω', '18 Ω', '4 Ω'],
       s: ['§1. YOL · ters toplam', `${F('1', 'R<sub>eş</sub>')} = ${F('1', '3')} + ${F('1', '6')} = ${F('3', '6')} → <em>R<sub>eş</sub> = 2 Ω</em> ✓`, '§2. YOL · çarpım bölü toplam', `R<sub>eş</sub> = ${F('3 · 6', '3 + 6')} = ${F('18', '9')} = <em>2 Ω</em> ✓`], n: ['Paralel eşdeğer direnç her zaman en küçük dirençten de küçüktür.'] } },
-    { q: { t: '6 V\'luk pille çalışan bir lambadan 0,5 A akım geçiyor. Lamba 10 dakikada kaç J elektrik enerjisi harcar?', o: ['1800 J', '3 J', '30 J', '180 J'],
+    { q: { t: '6 V\'luk pille çalışan bir lambadan 0,5 A akım geçiyor. Lamba 10 dakikada kaç J elektrik enerjisi harcar?', o: ['1800 J', '3 J', '30 J', '180 J', '3600 J'],
       s: [`${FM('P = V · I')} = 6 · 0,5 = 3 W`, `${FM('E = P · t')} = 3 · 600 = <em>1800 J</em> ✓`], n: ['Süreyi saniyeye çevirmeyi unutmayın: 10 dk = 600 s.'] } },
   ] });
   konuEkle('TYT', 'Elektrik ve Manyetizma', { dersler: [d7], gorevler: [g7] });

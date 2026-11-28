@@ -69,13 +69,13 @@
     { do: KV('duvar', { m: 2, F: 50 }), sub: 'Kuvvet düzeneği: duvar, masa, ip ve eğik düzlem. Oklar gerçek oranlı.', go: '▶︎ Başla' },
     { do: KV('duvar', { m: 2, F: 50 }), q: { t: '2 kg\'lık kitap düşey duvara 50 N yatay kuvvetle bastırılarak dengede tutuluyor. Duvarın kitaba uyguladığı sürtünme kuvveti ve tepki kuvveti nedir? (g = 10 m/s²)', o: ['f = 20 N yukarı, N = 50 N yatay (duvardan kitaba)', 'f = 50 N yukarı, N = 20 N', 'f = 20 N aşağı, N = 50 N', 'f = 0, N = 20 N yukarı'],
       b: ['Tepki kuvveti yüzeye diktir ve yüzeyden cisme doğrudur.', 'Dengede: düşeyde ve yatayda ayrı ayrı net kuvvet sıfır.'], s: ['Düşey: f = mg = <em>20 N yukarı</em>', 'Yatay: N = F = <em>50 N</em>, duvardan kitaba ✓'], n: ['Burada N yataydır; mg ile hiçbir ilgisi yoktur. N her zaman mg\'nin tersi değildir.'] } },
-    { do: KV('masa', { m: 3, F: 20 }), q: { t: 'Masadaki 3 kg\'lık kutunun üstüne elle 20 N düşey aşağı kuvvet uygulanıyor. Masanın kutuya uyguladığı tepki kuvveti kaç N\'dur? (g = 10 m/s²)', o: ['50', '30', '20', '10'],
+    { do: KV('masa', { m: 3, F: 20 }), q: { t: 'Masadaki 3 kg\'lık kutunun üstüne elle 20 N düşey aşağı kuvvet uygulanıyor. Masanın kutuya uyguladığı tepki kuvveti kaç N\'dur? (g = 10 m/s²)', o: ['50', '30', '20', '10', '100'],
       b: ['Düşeyde denge: yukarı kuvvetler = aşağı kuvvetler.'], s: ['N = mg + F = 30 + 20 = <em>50 N</em> ✓'] } },
-    { do: KV('cek', { m: 3, F: 10 }), q: { t: 'Masadaki 3 kg\'lık kutu elle 10 N düşey yukarı çekiliyor (kutu yerinden kalkmıyor). Masanın tepki kuvveti kaç N\'dur? (g = 10 m/s²)', o: ['20', '30', '40', '10'],
+    { do: KV('cek', { m: 3, F: 10 }), q: { t: 'Masadaki 3 kg\'lık kutu elle 10 N düşey yukarı çekiliyor (kutu yerinden kalkmıyor). Masanın tepki kuvveti kaç N\'dur? (g = 10 m/s²)', o: ['20', '30', '40', '10', '60'],
       b: ['Düşeyde denge: N + F = mg'], s: ['N = 30 − 10 = <em>20 N</em> ✓'], n: ['F, mg\'ye ulaşınca N sıfır olur ve kutu masadan kalkmaya başlar.'] } },
     { do: KV('ip', { m: 4 }), q: { t: 'Tavana iple asılı 4 kg\'lık kutu dengede. İpteki gerilme kuvveti kaç N\'dur? Kutunun ağırlığının tepkisi nedir? (g = 10 m/s²)', o: ['40 N; kutunun Dünya\'yı çekmesi', '40 N; ipteki gerilme', '4 N; tavanın tepkisi', '0; kutu hareketsiz'],
       b: ['Etki–tepki kuvvetleri farklı cisimlere etki eder.'], s: ['Denge: T = mg = <em>40 N</em>', 'Ağırlığın tepkisi kutunun Dünya\'ya uyguladığı çekim kuvvetidir ✓'] } },
-    { do: KV('egik', { m: 5, th: 37 }), q: { t: 'Eğim açısı 37° olan eğik düzlemde duran 5 kg\'lık kutuya yüzeyin uyguladığı tepki kuvveti kaç N\'dur? (cos 37° = 0,8; g = 10 m/s²)', o: ['40', '50', '30', '62,5'],
+    { do: KV('egik', { m: 5, th: 37 }), q: { t: 'Eğim açısı 37° olan eğik düzlemde duran 5 kg\'lık kutuya yüzeyin uyguladığı tepki kuvveti kaç N\'dur? (cos 37° = 0,8; g = 10 m/s²)', o: ['40', '50', '30', '62,5', '80'],
       b: ['Tepki kuvveti yüzeye diktir: ağırlığın yüzeye dik bileşenini dengeler.', FM('N = m g cos θ')], s: ['N = 50 · 0,8 = <em>40 N</em> ✓'], n: ['N burada mg\'den küçüktür ve düşey değildir; ağırlık her zaman düşey aşağıdır.'] } },
   ];
   kst.forEach(st => { if (st.q) st.q.goster = KVG; }); hazirla(kst);
@@ -104,7 +104,7 @@
   tablo('Elektrik ve Manyetizma', 'TYT7-tb', TB(['Alet', 'Güç', 'Günlük süre'], [['Çamaşır makinesi', '2000 W', '1 saat'], ['Buzdolabı', '150 W', '24 saat'], ['Televizyon', '100 W', '5 saat'], ['Ütü', '1500 W', '0,5 saat']]), [
     { t: 'Tablodaki aletlerden hangisi günde en çok elektrik enerjisi harcar?', o: ['Buzdolabı', 'Çamaşır makinesi', 'Ütü', 'Televizyon'],
       b: [FM('E = P · t') + ' (kWh = kW · saat)'], s: ['Çamaşır 2 kWh · Buzdolabı 3,6 kWh · TV 0,5 kWh · Ütü 0,75 kWh', 'En çok: <em>buzdolabı</em> ✓'], n: ['Gücü en büyük olan alet değil, güç × süresi en büyük olan en çok enerji harcar.'] },
-    { t: 'Tablodaki aletlerin günlük toplam enerji tüketimi kaç kWh\'tir?', o: ['6,85', '3,75', '68,5', '5,1'],
+    { t: 'Tablodaki aletlerin günlük toplam enerji tüketimi kaç kWh\'tir?', o: ['6,85', '3,75', '68,5', '5,1', '13,7'],
       b: [FM('E = P · t')], s: ['2 + 3,6 + 0,5 + 0,75 = <em>6,85 kWh</em> ✓'] },
   ]);
   tablo('Hareket ve Kuvvet', 'TYT3-tb', TB(['Araç', 'İlk konum', 'Son konum', 'Alınan yol'], [['K', '+10 m', '+40 m', '30 m'], ['L', '+10 m', '−20 m', '50 m'], ['M', '−10 m', '+20 m', '30 m']]), [
