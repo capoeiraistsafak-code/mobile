@@ -11,7 +11,7 @@
   const C = 2, H = 2; // ayna aralığı
   const sOG = sahne({ icon: '🚀', cam: [[0.6, 4.6, 16], [0.6, 2.1, 0]], plate: [16, 5, 0, 0],
     data: [['Işık saati', 'aynalar arası gidiş-dönüş = 1 tık'], ['c', '3 · 10⁸ m/s']],
-    S0: () => ({ b: 0.6, kos: 0, tt: 0, x: -6 }),
+    S0: () => ({ b: 0.6, kos: 0, tt: 0, x: -3.5 }),   // tren kadrajın içinde başlar
     kur(g) {
       const per = new THREE.Group(); per.position.set(-6.5, 0, 0); g.add(per);
       kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4, 0); kutu(per, 1.2, 0.1, 0.8, 0x64748b, 0, 0.4 + H, 0); const f1 = top(per, 0.12, 0xfacc15, 0, 0.5, 0, { edge: false });
@@ -77,7 +77,7 @@
   // DALGA–PARÇACIK İKİLİĞİ — Compton saçılması (λ_C = 2,43 pm)
   // =====================================================================
   const LC = 2.43;
-  const sDP = sahne({ icon: '🎱', cam: [[1.8, 7, 8], [1.8, 0, 0]], plate: [12, 9, 0, 0],
+  const sDP = sahne({ icon: '🎱', cam: [[0.4, 7.5, 9.5], [0.4, 0, 0]], plate: [12, 9, 0, 0],
     data: [['Gelen foton', 'λ = 20 pm (X ışını)'], ['h/(m<sub>e</sub>c)', '2,43 pm']],
     S0: () => ({ th: 90, faz: 0, kos: 0, lam: 20 }),
     kur(g) {

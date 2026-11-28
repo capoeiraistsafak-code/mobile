@@ -42,7 +42,7 @@
         const yol = new THREE.CurvePath(); let seg = 0; for (let i = 1; i < P.length; i++) { const a = V3(X(P[i - 1][0]), Y(P[i - 1][1]), Z + 0.02), b = V3(X(P[i][0]), Y(P[i][1]), Z + 0.02); if (a.distanceTo(b) > 1e-4) { yol.add(new THREE.LineCurve3(a, b)); seg++; } }
         if (!seg) { m.visible = false; return; }
         m.geometry.dispose(); m.geometry = new THREE.TubeGeometry(yol, Math.max(64, seg * 24), 0.035, 6);
-        if (S.tt > 0) { T.nokta[k].visible = true; T.nokta[k].position.set(X(S.tt), Y(deg(P, S.tt)), Z + 0.05); }
+        if (S.tt > 0) { const tq = Math.max(P[0][0], Math.min(P[P.length - 1][0], S.tt)); T.nokta[k].visible = true; T.nokta[k].position.set(X(tq), Y(deg(P, tq)), Z + 0.05); }   // nokta her zaman eğrinin üstünde
         if (S.adlar && S.adlar[k]) { const [tl, yl] = S.adlar[k]; FZ.setTag(['grA', 'grB', 'grC'][k], S.adlar[k][2]); FZ.show(['grA', 'grB', 'grC'][k], V3(X(tl), Y(yl), Z), 1, 0, -14); } });
       // hareket grafiklerinde arabalar: x–t'de doğrudan, v–t'de integral, a–t'de iki kez integral
       T.araba.forEach((a, k) => { const P = S.eg[k]; const hareket = S.araba && P && (S.tur === 'x' || S.tur === 'v' || S.tur === 'a'); a.visible = !!hareket; if (!hareket) return;
