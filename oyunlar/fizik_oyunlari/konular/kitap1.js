@@ -87,7 +87,7 @@
       const cis = kutu(G.kald, 0.8, 0.8, 0.8, 0x6b7280, 0, 3, 0); cis.material = FZ.metal(0x6b7280);
       const oG = ok(0x475569, 'bsG'), oT = ok(0x0ea5e9, 'bsT'), oF = ok(0x16a34a, 'bsF'), oN = ok(0x0ea5e9, 'bsN');
       [['bsG', 'G', '#475569'], ['bsT', 'T', '#0284c7'], ['bsF', 'F<sub>k</sub>', '#16a34a'], ['bsN', 'N', '#0284c7'], ['bsv0', 'v<sub>1</sub>', '#111827'], ['bsv1', 'v<sub>2</sub>', '#111827'], ['bsv2', 'v<sub>3</sub>', '#111827']].forEach(([i, h, c]) => etiket(i, h, c));
-      ['bsA', 'bsB', 'bsC', 'bsD', 'bsE', 'bsH'].forEach(i => etiket(i, '', '#1e3a8a')); kart('bsK', '', '#F5C400'); kart('bsP', '', '#2563eb');
+      ['bsA', 'bsB', 'bsC', 'bsD', 'bsE', 'bsH'].forEach(i => etiket(i, '', '#1e3a8a')); kart('bsK', '', '#F5C400'); kart('bsP', '', '#2563eb'); for (let i = 0; i < 6; i++) etiket('bsg' + i, '', '#111827');   // P–t grafiği ölçek sayıları
       return { G, ece, sung, sg, sp0, tug, tug2, kap, su, yagK, mus, pano, eks, cz, uYol, uSu, uYag, ubMus, hsu1, hsu2, p1, p2, kol, car, tan, mano, ov, bCiva, gz, mc, din, dip, cis, ksu, oG, oT, oF, oN, sonO: -1 };
     },
     tick(S, dt, o) {
@@ -124,7 +124,8 @@
         o.pano.visible = !!S.dolum; o.eks.visible = !!S.dolum; o.cz.forEach(l => l.visible = !!S.dolum);
         if (S.dolum) { const X = t => 4 + t / 14 * 3.2, Y = h => 1.5 + h / KH * 1.8, Z = -0.35; FZ.setLine(o.eks, [V3(X(0), Y(KH) + 0.1, Z), V3(X(0), Y(0), Z), V3(X(14), Y(0), Z)]);
           S.iz.forEach((L, i) => { if (L.length > 1) FZ.setLine(o.cz[i], L.map(([t, h]) => V3(X(Math.min(14, t)), Y(h), Z))); else o.cz[i].visible = false; });
-          FZ.setTag('bsP', 'P – t'); FZ.show('bsP', V3(5.6, 3.7, -0.35), 1); }
+          FZ.setTag('bsP', 'P – t'); FZ.show('bsP', V3(5.6, 3.7, -0.35), 1);
+          [[`${Math.round(KH * 0.2 * 10000)} Pa`, V3(X(0) - 0.55, Y(KH), Z)], [`${Math.round(KH * 0.1 * 10000)} Pa`, V3(X(0) - 0.55, Y(KH / 2), Z)], ['0', V3(X(0) - 0.2, Y(0) - 0.2, Z)], ['7 s', V3(X(7), Y(0) - 0.25, Z)], ['14 s', V3(X(14), Y(0) - 0.25, Z)]].forEach(([t, p], i) => { FZ.setTag('bsg' + i, t); FZ.show('bsg' + i, p, 0.9); }); }
       } else if (S.mod === 'ubor') {
         const hy = S.yag * S.yagH, x = 0.4 * hy, y0 = 2.0, ara = y0 - x, sag = y0 + x, ust = ara + hy;
         const sL = y => 3.3 - y, sR = y => 2.4 + Math.PI + (y - 0.9), T = o.uYol.getLength();

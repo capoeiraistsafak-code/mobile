@@ -186,7 +186,7 @@
   // =====================================================================
   const YOL = [V3(-3, 0.3, 0), V3(-3, 3.3, 0), V3(3, 3.3, 0), V3(3, 0.3, 0), V3(-3, 0.3, 0)];
   const yolNokta = u => { u = ((u % 4) + 4) % 4; const i = Math.floor(u); return YOL[i].clone().lerp(YOL[i + 1], u - i); };
-  const s7 = sahne({ icon: '💡', cam: [[0, 4.5, 11], [0, 1.8, 0]], plate: [12, 6, 0, 0],
+  const s7 = sahne({ icon: '💡', cam: [[0, 5.2, 14], [0, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['Ohm yasası', 'V = I · R']],
     S0: () => ({ V: 12, R1: 4, R2: 0, seri: 0, ac: 0, u: 0, pus: 0 }),
     kur(g) {

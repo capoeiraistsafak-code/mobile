@@ -6,14 +6,19 @@
   // =====================================================================
   // TYT 8 · BASINÇ VE KALDIRMA KUVVETİ — dinamometreye asılı blok suya iner
   // =====================================================================
-  const s8 = sahne({ icon: '🌊', cam: [[2.5, 4.2, 10], [0.4, 2.2, 0]], plate: [12, 7, 0, 0],
+  const s8 = sahne({ icon: '🌊', cam: [[2.6, 4.8, 14], [0.2, 3.0, 0]], plate: [12, 7, 0, 0],
     data: [['Suyun özkütlesi', '1000 kg/m³'], ['g', '10 m/s²']],
     S0: () => ({ bat: 0, hedef: 0, G: 15, V: 500, dSiv: 1000 }),
     kur(g) {
       silindir(g, 1.8, 1.8, 3, 0xbfdbfe, 0, 1.5, 0, { op: 0.25, edge: false });
       const su = silindir(g, 1.75, 1.75, 2.4, 0x38bdf8, 0, 1.2, 0, { op: 0.55, edge: false });
       kutu(g, 0.12, 6, 0.12, 0x64748b, -2.4, 3, 0); kutu(g, 2.6, 0.12, 0.12, 0x64748b, -1.15, 6, 0);
-      const din = silindir(g, 0.18, 0.18, 0.9, 0xf8fafc, 0, 5.4, 0); const ip = silindir(g, 0.02, 0.02, 1, 0x111827, 0, 4, 0, { edge: false });
+      const din = silindir(g, 0.18, 0.18, 0.9, 0xf8fafc, 0, 5.4, 0, { op: 0.55 });   // dinamometre: şeffaf tüp, içinde yay, ölçek çizgileri, üst halka ve alt kanca
+      { const y = FZ.yay(g, 0.11, 8, 0x64748b, 0.018); y.rotation.z = -Math.PI / 2; y.position.set(0, 5.8, 0); y.scale.x = 0.75;
+        for (let i = 0; i < 6; i++) kutu(g, 0.12, 0.012, 0.01, 0x111827, 0.12, 5.05 + i * 0.14, 0.17, { edge: false, cast: false });
+        const h1 = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.025, 6, 16), FZ.metal()); h1.position.set(0, 5.98, 0); g.add(h1);
+        const h2 = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.02, 6, 16, Math.PI * 1.4), FZ.metal()); h2.position.set(0, 4.88, 0); h2.rotation.z = Math.PI * 0.8; g.add(h2); }
+      const ip =silindir(g, 0.02, 0.02, 1, 0x111827, 0, 4, 0, { edge: false });
       const blok = kutu(g, 0.8, 0.8, 0.8, 0xf59e0b, 0, 3.6, 0);
       for (let i = 0; i <= 4; i++) { kutu(g, 0.3, 0.02, 0.02, 0xffffff, 1.9, 2.4 - i * 0.5, 0, { edge: false }); }
       kart('e8d', '', '#F5C400'); etiket('e8G', 'G', '#dc2626'); etiket('e8k', 'F<sub>k</sub>', '#0891b2'); etiket('e8T', 'T', '#7c3aed');

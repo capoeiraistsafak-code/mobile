@@ -7,7 +7,7 @@
   // =====================================================================
   // AYT 1 · VEKTÖRLER — zeminde iki vektör ve bileşke (uç uca ekleme)
   // =====================================================================
-  const s1 = sahne({ icon: '➡️', cam: [[1, 10, 8], [1.5, 0, -1]], plate: [14, 11, 1, -1],
+  const s1 = sahne({ icon: '➡️', cam: [[0.3, 11, 9.5], [0.3, 0, -0.6]], plate: [14, 11, 1, -1],
     data: [['Bileşke', 'R = A + B (vektörel)']],
     S0: () => ({ A: 3, B: 4, th: 90, uc: 0, R: 0, bil: 0 }),
     kur(g) { etiket('v1A', 'A', '#dc2626'); etiket('v1B', 'B', '#2563eb'); etiket('v1R', 'R', '#16a34a'); kart('v1t', '', '#F5C400');
@@ -20,7 +20,7 @@
       FZ.setArrow(o.oB, bB, b, b.length()); FZ.show('v1B', bB.clone().add(b.clone().multiplyScalar(0.5)).add(V3(0.4, 0, 0)), 1);
       const r = a.clone().add(b), R = Math.sqrt(S.A ** 2 + S.B ** 2 + 2 * S.A * S.B * Math.cos(rad(S.th)));
       if (S.bil) { FZ.setArrow(o.oR, O.clone().add(V3(0, 0.05, 0)), r, Math.max(0.05, r.length())); FZ.show('v1R', O.clone().add(r.clone().multiplyScalar(0.5)).add(V3(-0.4, 0, 0)), 1); }
-      FZ.setTag('v1t', `A = ${fs(S.A)} · B = ${fs(S.B)} · açı = ${S.th}°${S.bil ? ` · R = ${fs(R)}` : ''}`); FZ.show('v1t', V3(1.5, 0.2, 3.6), 1);
+      FZ.setTag('v1t', `A = ${fs(S.A)} · B = ${fs(S.B)} · açı = ${S.th}°${S.bil ? ` · R = ${fs(R)}` : ''}`); FZ.show('v1t', V3(1, 0.2, -4.2), 1);
     } });
   const d1 = ders(s1, { yk: 'AYT1-d1', no: 1, icon: '🧭', name: 'İki kuvvet birleşince', task: 'Vektörel toplama, uç uca ekleme, bileşkenin sınırları, bileşenlere ayırma.', steps: [
     { k: { tur: 'merak', b: 'İki kişi bir kutuyu farklı yönlere çekerse kutu nereye gider?', m: ['Birisi doğuya 3 N, diğeri kuzeye 4 N çekiyor. Kutu 7 N\'luk kuvvetle mi çekilir?'], dugme: 'Başlayalım ▶︎' } },
@@ -113,7 +113,7 @@
   // =====================================================================
   // AYT 3 · NEWTON'UN HAREKET YASALARI — masada blok, makaradan sarkan kütle
   // =====================================================================
-  const s3 = sahne({ icon: '🧱', cam: [[0.5, 4.5, 11], [0.5, 2.2, 0]], plate: [12, 6, 0, 0],
+  const s3 = sahne({ icon: '🧱', cam: [[-0.3, 5, 14], [-0.3, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['g', '10 m/s²'], ['İp', 'kütlesiz, makara sürtünmesiz']],
     S0: () => ({ mA: 3, mB: 2, k: 0, x: 0, v: 0, kos: 0 }),
     kur(g) {
@@ -168,7 +168,7 @@
   // =====================================================================
   // AYT 4 · BİR BOYUTTA SABİT İVMELİ HAREKET — fren yapan araba ve v–t grafiği
   // =====================================================================
-  const s4 = sahne({ icon: '🚦', ses: 'engine', cam: [[1, 6, 16], [1, 1.5, 0]], plate: [26, 7, 2, 0],
+  const s4 = sahne({ icon: '🚦', ses: 'engine', cam: [[1.5, 6.5, 19], [1.5, 1.8, 0]], plate: [26, 7, 2, 0],
     data: [['Ölçek', '1 birim = 5 m']],
     cam2: S => { const X = -9 + S.x / 5; return [[X + 5, 6, 16], [X + 5, 1.5, 0]]; },
     S0: () => ({ x: 0, v: 20, a: -5, kos: 0, tt: 0, iz: [] }),
