@@ -168,7 +168,7 @@
   // =====================================================================
   // nükleon başına bağlanma enerjisi (MeV), gerçek eğriye yakın basit model: Fe-56 civarında tepe ≈ 8,8 MeV
   const BE = A => A < 2 ? 0 : A <= 4 ? [0, 0, 1.1, 2.8, 7.07][A] : A < 56 ? 7.07 + (8.79 - 7.07) * (1 - Math.exp(-(A - 4) / 12)) : 8.79 - (A - 56) * 0.0058;
-  const sNK = sahne({ icon: '☢️', cam: [[3, 4, 16], [3, 2.4, 0]], plate: [13, 5, 1, 0],
+  const sNK = sahne({ icon: '☢️', cam: [[0.9, 4.4, 16.5], [0.9, 2.6, 0]], plate: [13, 5, 1, 0],
     data: [['1 u', '931,5 MeV/c²'], ['R₀', '1,2 fm']],
     S0: () => ({ mod: 'fisyon', faz: 0, kos: 0, A: 56 }),
     kur(g) {
@@ -177,13 +177,17 @@
       for (let i = 0; i < 40; i++) { const u = Math.random() * 2 - 1, f = Math.random() * Math.PI * 2, r = 0.75 * Math.cbrt(Math.random()); nuk.push(top(cek, 0.17, i % 2 ? 0xef4444 : 0x94a3b8, r * Math.sqrt(1 - u * u) * Math.cos(f), r * u, r * Math.sqrt(1 - u * u) * Math.sin(f), { edge: false })); }
       const n0 = top(g, 0.12, 0x94a3b8, 0, 0, 0, { edge: false }), nn = [0, 1, 2].map(() => top(g, 0.12, 0x94a3b8, 0, 0, 0, { edge: false }));
       kart('nkt', '', '#F5C400'); kart('nkg', 'Nükleon başına bağlanma enerjisi', '#475569'); kart('nkf', 'Fe-56', '#dc2626');
+      { const gx = A => 0.8 + A / 240 * 5, gy = b => 0.6 + b / 9 * 3, L = FZ.levha;   // eksen ölçekleri: A (kütle numarası) ve E/A (MeV)
+        [60, 120, 180, 240].forEach(A => L(g, String(A), 0.6, 0.38, '#e5e7eb', '#111827', gx(A), gy(0) - 0.32, 0));
+        [2, 4, 6, 8].forEach(b => L(g, String(b), 0.38, 0.38, '#e5e7eb', '#111827', gx(0) - 0.32, gy(b), 0));
+        L(g, 'A', 0.4, 0.4, '#e5e7eb', '#111827', gx(240) + 0.35, gy(0), 0); L(g, 'E/A (MeV)', 1.4, 0.38, '#e5e7eb', '#111827', gx(0) + 0.75, gy(9.2) + 0.3, 0); }
       return { egri, eks, nok, cek, nuk, n0, nn };
     },
     tick(S, dt, o) {
       const gx = A => 0.8 + A / 240 * 5, gy = b => 0.6 + b / 9 * 3, pts = [];
       for (let A = 2; A <= 240; A += 2) pts.push(V3(gx(A), gy(BE(A)), 0)); FZ.setLine(o.egri, pts);
       FZ.setLine(o.eks, [V3(gx(0), gy(9.2), 0), V3(gx(0), gy(0), 0), V3(gx(240), gy(0), 0)]); o.nok.position.set(gx(S.A), gy(BE(S.A)), 0.05);
-      FZ.show('nkg', V3(3.3, 4.4, 0), 1); FZ.show('nkf', V3(gx(56), gy(8.79) + 0.45, 0), 1);
+      FZ.show('nkg', V3(3.6, 4.9, 0), 1); FZ.show('nkf', V3(gx(56), gy(8.79) + 0.45, 0), 1);
       if (S.kos) S.faz = Math.min(3, S.faz + dt);
       const fis = S.mod === 'fisyon', f = S.faz;
       o.n0.visible = fis && f < 1; o.n0.position.set(-6 + 2.5 * Math.min(1, f) - 0.0, 2.2, 0);

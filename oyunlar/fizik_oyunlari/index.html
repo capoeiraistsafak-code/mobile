@@ -608,7 +608,9 @@ function dashLine(color, ds = .2, gs = .14) { const l = new THREE.Line(new THREE
 function setLine(l, pts) { l.geometry.setFromPoints(pts); l.computeLineDistances(); l.visible = true; }
 function textSprite(txt, w, h, bg, fg) {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = Math.round(512 * h / w); const x = cv.getContext('2d');
-  x.fillStyle = bg; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = fg; x.font = `900 ${Math.round(cv.height * .62)}px Inter, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillStyle = bg; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = fg; let fpx = Math.round(cv.height * .62); x.font = `900 ${fpx}px Inter, sans-serif`;
+  while (fpx > 10 && x.measureText(txt).width > cv.width * 0.92) { fpx -= 2; x.font = `900 ${fpx}px Inter, sans-serif`; }   // yazı levhadan taşmasın: sığana kadar küçült
+  x.textAlign = 'center'; x.textBaseline = 'middle';
   x.fillText(txt, cv.width / 2, cv.height / 2 + 4); const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tx })); return m;
 }
@@ -666,7 +668,7 @@ const FOCUS = () => (GAME.q && GAME.q.q.f) ? GAME.q.q.f : null;
 function show(id, p3, op = 1, dx = 0, dy = 0) {
   const d = TAG[id]; if (!d || op <= 0) return; if (GAME.q && !GAME.q.answered && GAME.q.q.gizle && GAME.q.q.gizle.includes(id)) return; if (GAME.q && !GAME.q.answered && GAME.q.q.kartGizle && d.classList.contains('chip') && !(GAME.q.q.f || []).includes(id)) return;   /* kitap sorularında sahnenin hesap kartları cevaba kadar gizli */ const p = p3.clone().project(cam); if (p.z > 1) return;
   const f = FOCUS(); if (f) { if (f.includes(id) || id === 'qlab') { d.classList.add('odak'); } else { d.classList.remove('odak'); op *= 0.22; } } else d.classList.remove('odak');
-  d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = ((1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;
+  d.style.left = ((p.x + 1) / 2 * 1920 + dx) + 'px'; d.style.top = Math.max(d.classList.contains('chip') ? 175 : 155, (1 - p.y) / 2 * 1080 + dy) + 'px'; d.style.opacity = op; d._on = true;   // üst menü çubuğunun arkasına girmesin
 }
 setTimeout(() => { const q = tag('qlab', '', '#F5C400', '#1f232c'); q.style.fontSize = '46px'; q.style.border = '4px solid #1f232c'; });
 function setTag(id, html) { const d = TAG[id]; if (!d) return; const now = performance.now();
@@ -1364,7 +1366,8 @@ function panelDuzen() {
   $('tabQ').classList.toggle('hide', !(qcAcik && PANEL.qc)); $('tabB').classList.toggle('hide', !(bdAcik && PANEL.board)); $('paletMini').classList.toggle('hide', !(plAcik && PANEL.palet));
   if (!PANEL.qc) $('tabQ').classList.remove('yeni');
   if (GAME.mode === 'game') { const soruGorunur = qcAcik && !PANEL.qc;            // kamera: sahne boş alana ortalansın
-    CAM.gvo = soruGorunur ? 170 : (bdAcik && !PANEL.board ? -200 : 0);
+    const bdGor = bdAcik && !PANEL.board;   // sol değer paneli de açıksa sahne iki panelin arasındaki boşluğa ortalanır (≈ 100 px), yalnız soru kartı açıksa 170 px
+    CAM.gvo = soruGorunur ? (bdGor ? 100 : 170) : (bdGor ? -200 : 0);
     const sb = $('sub'); if (sb.classList.contains('q') !== soruGorunur) { sb.classList.toggle('q', soruGorunur); subSigdir(); } }
   try { const r = document.querySelector('#palet .renk.on'); $('pmRenk').style.background = r ? (r.dataset.r || getComputedStyle(r).backgroundColor) : '#ec4899'; } catch (e) {} }
 function panelAyarla(ad, kucuk) { PANEL[ad] = kucuk; try { SFX.click(); } catch (e) {} panelDuzen(); }

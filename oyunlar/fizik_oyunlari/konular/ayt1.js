@@ -7,7 +7,7 @@
   // =====================================================================
   // AYT 1 · VEKTÖRLER — zeminde iki vektör ve bileşke (uç uca ekleme)
   // =====================================================================
-  const s1 = sahne({ icon: '➡️', cam: [[1, 10, 8], [1.5, 0, -1]], plate: [14, 11, 1, -1],
+  const s1 = sahne({ icon: '➡️', cam: [[0.3, 11, 9.5], [0.3, 0, -0.6]], plate: [14, 11, 1, -1],
     data: [['Bileşke', 'R = A + B (vektörel)']],
     S0: () => ({ A: 3, B: 4, th: 90, uc: 0, R: 0, bil: 0 }),
     kur(g) { etiket('v1A', 'A', '#dc2626'); etiket('v1B', 'B', '#2563eb'); etiket('v1R', 'R', '#16a34a'); kart('v1t', '', '#F5C400');
@@ -20,7 +20,7 @@
       FZ.setArrow(o.oB, bB, b, b.length()); FZ.show('v1B', bB.clone().add(b.clone().multiplyScalar(0.5)).add(V3(0.4, 0, 0)), 1);
       const r = a.clone().add(b), R = Math.sqrt(S.A ** 2 + S.B ** 2 + 2 * S.A * S.B * Math.cos(rad(S.th)));
       if (S.bil) { FZ.setArrow(o.oR, O.clone().add(V3(0, 0.05, 0)), r, Math.max(0.05, r.length())); FZ.show('v1R', O.clone().add(r.clone().multiplyScalar(0.5)).add(V3(-0.4, 0, 0)), 1); }
-      FZ.setTag('v1t', `A = ${fs(S.A)} · B = ${fs(S.B)} · açı = ${S.th}°${S.bil ? ` · R = ${fs(R)}` : ''}`); FZ.show('v1t', V3(1.5, 0.2, 3.6), 1);
+      FZ.setTag('v1t', `A = ${fs(S.A)} · B = ${fs(S.B)} · açı = ${S.th}°${S.bil ? ` · R = ${fs(R)}` : ''}`); FZ.show('v1t', V3(1, 0.2, -4.2), 1);
     } });
   const d1 = ders(s1, { yk: 'AYT1-d1', no: 1, icon: '🧭', name: 'İki kuvvet birleşince', task: 'Vektörel toplama, uç uca ekleme, bileşkenin sınırları, bileşenlere ayırma.', steps: [
     { k: { tur: 'merak', b: 'İki kişi bir kutuyu farklı yönlere çekerse kutu nereye gider?', m: ['Birisi doğuya 3 N, diğeri kuzeye 4 N çekiyor. Kutu 7 N\'luk kuvvetle mi çekilir?'], dugme: 'Başlayalım ▶︎' } },
@@ -113,7 +113,7 @@
   // =====================================================================
   // AYT 3 · NEWTON'UN HAREKET YASALARI — masada blok, makaradan sarkan kütle
   // =====================================================================
-  const s3 = sahne({ icon: '🧱', cam: [[0.5, 4.5, 11], [0.5, 2.2, 0]], plate: [12, 6, 0, 0],
+  const s3 = sahne({ icon: '🧱', cam: [[-0.3, 5, 14], [-0.3, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['g', '10 m/s²'], ['İp', 'kütlesiz, makara sürtünmesiz']],
     S0: () => ({ mA: 3, mB: 2, k: 0, x: 0, v: 0, kos: 0 }),
     kur(g) {
@@ -168,7 +168,7 @@
   // =====================================================================
   // AYT 4 · BİR BOYUTTA SABİT İVMELİ HAREKET — fren yapan araba ve v–t grafiği
   // =====================================================================
-  const s4 = sahne({ icon: '🚦', ses: 'engine', cam: [[1, 6, 16], [1, 1.5, 0]], plate: [26, 7, 2, 0],
+  const s4 = sahne({ icon: '🚦', ses: 'engine', cam: [[1.5, 6.5, 19], [1.5, 1.8, 0]], plate: [26, 7, 2, 0],
     data: [['Ölçek', '1 birim = 5 m']],
     cam2: S => { const X = -9 + S.x / 5; return [[X + 5, 6, 16], [X + 5, 1.5, 0]]; },
     S0: () => ({ x: 0, v: 20, a: -5, kos: 0, tt: 0, iz: [] }),
@@ -177,8 +177,12 @@
       const araba = FZ.araba(g, 0x16a34a);
       const pano = kutu(g, 7, 4, 0.1, 0x111827, 9, 3, -2.5, { cast: false });
       const grafik = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x22c55e })); g.add(grafik);
-      levha(g, 'v', 0.4, 0.4, '#111827', '#fff', 5.8, 4.8, -2.4); levha(g, 't', 0.4, 0.4, '#111827', '#fff', 12.3, 1.2, -2.4);
+      levha(g, 'v (m/s)', 1.1, 0.36, '#111827', '#fff', 6.3, 4.8, -2.4); levha(g, 't (s)', 0.8, 0.36, '#111827', '#fff', 12.1, 0.85, -2.4);
       kutu(g, 0.04, 3.5, 0.02, 0xffffff, 6, 2.9, -2.4, { edge: false }); kutu(g, 6.2, 0.04, 0.02, 0xffffff, 9.1, 1.2, -2.4, { edge: false });
+      // ölçek: v 0–30 m/s (1 m/s → 0,11 birim), t 0–10 s (1 s → 0,6 birim) · ızgara çizgileri ve sayılar
+      [10, 20, 30].forEach(v => { kutu(g, 6.0, 0.012, 0.01, 0x334155, 9.0, 1.2 + v * 0.11, -2.42, { edge: false, cast: false }); levha(g, String(v), 0.42, 0.3, '#111827', '#cbd5e1', 5.65, 1.2 + v * 0.11, -2.4); });
+      [2, 4, 6, 8].forEach(t => { kutu(g, 0.012, 3.4, 0.01, 0x334155, 6 + t * 0.6, 2.9, -2.42, { edge: false, cast: false }); levha(g, String(t), 0.3, 0.3, '#111827', '#cbd5e1', 6 + t * 0.6, 0.95, -2.4); });
+      levha(g, '0', 0.3, 0.3, '#111827', '#cbd5e1', 5.75, 0.95, -2.4);
       etiket('a4v', 'v', '#16a34a'); kart('a4t', '', '#F5C400');
       return { araba, grafik, ov: ok(0x22c55e, 'a4v') };
     },
@@ -187,7 +191,7 @@
       const X = -9 + S.x / 5; FZ.tekerDondur(o.araba, X - o.araba.position.x); o.araba.position.x = X;
       for (let i = 0; i <= 12; i++) FZ.show('a4m' + i, V3(-9 + i * 2, 0.05, 1.8), 1, 0, 20);
       if (S.v > 0.1) { FZ.setArrow(o.ov, V3(X, 1.3, 0.5), V3(1, 0, 0), S.v / 8); FZ.show('a4v', V3(X + S.v / 8 + 0.3, 1.3, 0.5), 1); }
-      o.grafik.geometry.setFromPoints(S.iz.length ? S.iz.map(([t, v]) => V3(6 + t * 0.6, 1.2 + v * 0.12, -2.38)) : [V3(6, 1.2, -2.38), V3(6, 1.2, -2.38)]);
+      o.grafik.geometry.setFromPoints(S.iz.length ? S.iz.map(([t, v]) => V3(6 + t * 0.6, 1.2 + v * 0.11, -2.38)) : [V3(6, 1.2, -2.38), V3(6, 1.2, -2.38)]);
       o.araba.visible = true;
       FZ.setTag('a4t', `t = ${fs(S.tt)} s · v = ${fs(S.v)} m/s · x = ${fs(S.x)} m`); FZ.show('a4t', V3(X, 2.4, 0), 1);
       S.ses = S.kos ? [0.05 + S.v / 400, S.v / 30] : [0, 0];

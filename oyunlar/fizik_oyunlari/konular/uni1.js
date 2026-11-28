@@ -135,7 +135,7 @@
   // KUANTUM TÜNELLEME — enerji engeli, T ≈ e^(−2κa), V₀ − E = 1 eV, κ ≈ 5,12 nm⁻¹ (elektron)
   // =====================================================================
   const KAP = 5.12;
-  const sT = sahne({ icon: '🚇', cam: [[1.8, 3.6, 14.5], [1.8, 2, 0]], plate: [12, 4, 0, 0],
+  const sT = sahne({ icon: '🚇', cam: [[0.6, 4, 16], [0.6, 2, 0]], plate: [12, 4, 0, 0],
     data: [['Parçacık', 'elektron'], ['Enerji', 'E = 3 eV'], ['Engel', 'V₀ = 4 eV']],
     S0: () => ({ a: 0.25, ph: 0, kuant: 1, par: [], zam: 0, gec: 0, top: 0 }),
     kur(g) {

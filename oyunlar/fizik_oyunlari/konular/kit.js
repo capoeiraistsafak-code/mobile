@@ -260,6 +260,11 @@
     const b = M(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 8), 0x9ca3af); b.rotation.x = Math.PI / 2; a.add(b);
     [-0.15, 0.15].forEach(z => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 16), FZ.metal(renk)); t.rotation.x = Math.PI / 2; ekle(a, t, 0, 0, z); });
     return a; };
+  // Kıvrımlı helezon yay: +x yönünde 1 birim uzunlukta; boyu scale.x ile ayarlanır (sıkışınca sarımlar sıklaşır)
+  FZ.yay = (g, r = 0.2, sarim = 10, renk = 0x9ca3af, kalin = 0.03) => { const a = new THREE.Group(); g.add(a); const pts = [], n = sarim * 24;
+    for (let i = 0; i <= n; i++) { const u = i / n, t = u * sarim * Math.PI * 2; pts.push(V3(u, Math.sin(t) * r, Math.cos(t) * r)); }
+    a.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, kalin, 6, false), FZ.metal ? FZ.metal(renk) : new THREE.MeshLambertMaterial({ color: renk })));
+    return a; };
   // İnsan kolunu dünya koordinatındaki bir noktaya uzat (i: 0 sol, 1 sağ)
   FZ.koluUzat = (ins, i, hedef) => { const k = ins.kollar[i]; ins.updateMatrixWorld(true); const omz = k.getWorldPosition(V3()); const yerel = ins.worldToLocal(hedef.clone()), oml = ins.worldToLocal(omz.clone()), d = yerel.sub(oml);
     const L = d.length(); k.rotation.set(Math.atan2(-d.z, Math.hypot(d.x, -d.y)) * 0, 0, 0); const dir = d.clone().normalize();
@@ -284,7 +289,8 @@
 
   // Ölçek yazısı: ön yüze bakan küçük, şeffaf zeminli sayı (dereceli silindir, termometre, cetvel…)
   FZ.yazi = (g, txt, x, y, z, boy = 0.16, renk = '#111827', zemin = 'rgba(255,255,255,0.88)') => { const c = document.createElement('canvas'), w = 256, h = 96; c.width = w; c.height = h; const k = c.getContext('2d');
-    k.font = '900 64px Inter, sans-serif'; const tw = Math.min(w - 8, k.measureText(txt).width + 24); k.fillStyle = zemin; k.beginPath(); k.roundRect((w - tw) / 2, 8, tw, h - 16, 18); k.fill();
+    let fp = 64; k.font = '900 64px Inter, sans-serif'; while (fp > 24 && k.measureText(txt).width > w - 28) { fp -= 4; k.font = `900 ${fp}px Inter, sans-serif`; }   // uzun yazı küçülerek sığar
+    const tw = Math.min(w - 8, k.measureText(txt).width + 24); k.fillStyle = zemin; k.beginPath(); k.roundRect((w - tw) / 2, 8, tw, h - 16, 18); k.fill();
     k.fillStyle = renk; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(txt, w / 2, h / 2 + 4);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const m = new THREE.Mesh(new THREE.PlaneGeometry(boy * w / h, boy), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
     m.position.set(x, y, z); m.userData.golgesiz = true; g.add(m); return m; };

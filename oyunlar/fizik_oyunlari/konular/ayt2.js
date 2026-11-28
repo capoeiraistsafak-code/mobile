@@ -8,7 +8,7 @@
   // AYT 5 · ATIŞLAR — top atan namlu ve yörünge (1 birim = 20 m)
   // =====================================================================
   const K5 = 1 / 20;
-  const s5 = sahne({ icon: '🏀', cam: [[1, 5, 22], [1, 1.8, 0]], plate: [24, 6, 3, 0],
+  const s5 = sahne({ icon: '🏀', cam: [[0, 5.5, 24], [0, 2.2, 0]], plate: [24, 6, 3, 0],
     data: [['g', '10 m/s²'], ['Hava direnci', 'yok']],
     S0: () => ({ v0: 50, th: 37, tt: 0, kos: 0, mod: 'egik', h0: 0, iz: [] }),
     kur(g) {
@@ -67,7 +67,7 @@
   // =====================================================================
   // AYT 6 · ENERJİ VE HAREKET — eğik düzlemden kayıp yaya çarpan blok
   // =====================================================================
-  const s6 = sahne({ icon: '🛷', cam: [[3.5, 5, 20], [3.5, 1.8, 0]], plate: [16, 5, 0, 0],
+  const s6 = sahne({ icon: '🛷', cam: [[2.5, 5.5, 22], [2.5, 2, 0]], plate: [16, 5, 0, 0],
     data: [['Bloğun kütlesi', 'm = 2 kg'], ['Yükseklik', 'h = 5 m'], ['g', '10 m/s²']],
     S0: () => ({ m: 2, h: 5, k: 800, kayip: 0, s: 0, kos: 0, sik: 0 }),
     kur(g) {

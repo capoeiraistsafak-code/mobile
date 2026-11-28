@@ -8,7 +8,7 @@
   // =====================================================================
   const RL = 8, RH = 4;                                                   // rampa: 8 birim uzun, 4 birim yüksek (1 birim = 1,25 m → h = 5 m)
   const ry = x => x < RL ? RH * (1 + Math.cos(Math.PI * x / RL)) / 2 : 0;
-  const s4 = sahne({ icon: '⚡', cam: [[1.5, 5, 15], [1.5, 2, 0]], plate: [20, 6, 2, 0],
+  const s4 = sahne({ icon: '⚡', cam: [[0.8, 5.5, 17.5], [0.8, 2, 0]], plate: [20, 6, 2, 0],
     data: [['Topun kütlesi', 'm = 4 kg'], ['Rampa yüksekliği', 'h = 5 m'], ['g', '10 m/s²']],
     S0: () => ({ x: 0, kos: 0, kayip: 0, m: 4, h: 5, vYer: 0 }),
     kur(g) {
@@ -186,7 +186,7 @@
   // =====================================================================
   const YOL = [V3(-3, 0.3, 0), V3(-3, 3.3, 0), V3(3, 3.3, 0), V3(3, 0.3, 0), V3(-3, 0.3, 0)];
   const yolNokta = u => { u = ((u % 4) + 4) % 4; const i = Math.floor(u); return YOL[i].clone().lerp(YOL[i + 1], u - i); };
-  const s7 = sahne({ icon: '💡', cam: [[0, 4.5, 11], [0, 1.8, 0]], plate: [12, 6, 0, 0],
+  const s7 = sahne({ icon: '💡', cam: [[0, 5.2, 14], [0, 2.2, 0]], plate: [12, 6, 0, 0],
     data: [['Ohm yasası', 'V = I · R']],
     S0: () => ({ V: 12, R1: 4, R2: 0, seri: 0, ac: 0, u: 0, pus: 0 }),
     kur(g) {
